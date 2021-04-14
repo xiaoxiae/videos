@@ -11,3 +11,13 @@ Source code:
 
 Music:
 <credit>
+
+Software used:
+Manim (animations): https://github.com/ManimCommunity/manim/
+Kdenlive (video editor): https://kdenlive.org/en/
+Audacity (audio editor): https://www.audacityteam.org/
+
+------------------
+
+References:
+<things I used to make this video>
