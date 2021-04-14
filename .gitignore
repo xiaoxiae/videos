@@ -1,5 +1,11 @@
+# Generated
 **/__pycache__/
 **/media/
+**/video/
+
+# Symlinks
+*/manim.cfg
+*/utilitites.py
+
+# Private + binaries
 ignored/
-*.mp4
-*.mp3
