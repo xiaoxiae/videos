@@ -1,6 +1,7 @@
 """Various utilities used throughout the videos."""
 from manim import *
 from math import *
+from random import *
 
 def create_code(self, code):
     """Create code more evenly."""
