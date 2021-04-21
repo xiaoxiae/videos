@@ -2,6 +2,7 @@
 **/__pycache__/
 **/media/
 **/video/
+**/audio/
 
 # Symlinks
 */manim.cfg

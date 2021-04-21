@@ -10,12 +10,13 @@ Source code:
 <link to blob in this repository>
 
 Music:
-<credit>
+<credit the music used>
 
 Software used:
 Manim (animations): https://github.com/ManimCommunity/manim/
-Kdenlive (video):   https://kdenlive.org/en/
-Audacity (audio):   https://www.audacityteam.org/
+Kdenlive (video): https://kdenlive.org/en/
+ffmpeg (video): https://ffmpeg.org/
+arecord (audio): https://linux.die.net/man/1/arecord
 
 ------------------
 
