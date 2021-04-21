@@ -1,50 +1,7 @@
 from utilities import *
 
-class Intro(Scene):
-    def construct(self):
-
-        min_x = float('inf')
-        min_y = float('inf')
-        max_x = float('-inf')
-        max_y = float('-inf')
-
-        seed(134)
-
-        for row in self.camera.get_coords_of_all_pixels():
-            for x, y in row:
-                if min_x > x:
-                    min_x = x
-                if min_y > y:
-                    min_y = y
-                if max_x < x:
-                    max_x = x
-                if max_y < y:
-                    max_y = y
-
-        text = Tex("\Huge Voronoi Diagrams")
-
-        self.play(Write(text))
-        self.play(FadeOut(text))
-
-        a = SVGMobject("1.svg", width=max_x-min_x, height=max_y-min_y)
-        b = SVGMobject("2.svg", width=max_x-min_x, height=max_y-min_y)
-        c = SVGMobject("3.svg", width=max_x-min_x, height=max_y-min_y)
-        d = SVGMobject("4.svg", width=max_x-min_x, height=max_y-min_y)
-
-        self.play(Write(a))
-        self.play(Unwrite(a))
-        self.play(Write(b))
-        self.play(Unwrite(b))
-        self.play(Write(c))
-        self.play(Unwrite(c))
-
 class Simple(Scene):
     def construct(self):
-        text = Tex("\Large Creating a Voronoi diagram")
-
-        self.play(Write(text))
-        self.play(FadeOut(text))
-
         min_x = float('inf')
         min_y = float('inf')
         max_x = float('-inf')
@@ -65,15 +22,12 @@ class Simple(Scene):
 
         n = 10
 
-        dots = [Dot([uniform(min_x, max_x), uniform(min_y, max_y), 0]) for _ in range(n)]
+        width = 1920.0
+        height = 1080.0
+        centers = [(251, 776), (1820, 389), (879, 65), (1025, 1013), (1913, 979), (178, 70), (1284, 559), (715, 671), (1440, 69), (1485, 980)]
 
-        for dot in dots:
-            x, y, _ = dot.get_center()
-            x -= min_x
-            y -= min_y
-
-            xn = x / (max_x - min_x)
-            yn = y / (max_y - min_y)
+        print(x / width * (max_x - min_x) - min_x)
+        dots = [Dot([(x / width * (max_x - min_x) + min_x), (y / height * (max_y - min_y) + min_y), 0]) for x, y in centers]
 
         self.play(LaggedStart(*map(FadeIn, dots)))
 
@@ -101,16 +55,13 @@ class Simple(Scene):
 
         self.play(FadeOut(lines[6]), FadeOut(center))
 
+        self.play(Unwrite(SVGMobject("1.svg", height=(max_y - min_y), width=(max_x - min_x))), run_time=2)
+
         center.remove_updater(tmp)
 
 
 class Points(Scene):
     def construct(self):
-        text = Tex("\Large Distributing points more evenly")
-
-        self.play(Write(text))
-        self.play(FadeOut(text))
-
         min_x = float('inf')
         min_y = float('inf')
         max_x = float('-inf')
@@ -206,11 +157,6 @@ class Points(Scene):
 
 class Metric(Scene):
     def construct(self):
-        text = Tex("\Large Chosing a different metric")
-
-        self.play(Write(text))
-        self.play(FadeOut(text))
-
         min_x = float('inf')
         min_y = float('inf')
         max_x = float('-inf')
@@ -335,11 +281,6 @@ class Metric(Scene):
 
 class Color(Scene):
     def construct(self):
-        text = Tex("\Large Assigning colors")
-
-        self.play(Write(text))
-        self.play(FadeOut(text))
-
         dots = list(map(Dot, [[-0.22223248, -2.2748981 ,  0.        ], [5.02542935, 3.19432106, 0.        ], [-5.59603133,  3.22596847,  0.        ], [ 5.55709686, -2.98486069,  0.        ], [-0.3587377,  3.3184144,  0.       ], [-5.92227625, -3.12034469,  0.        ], [2.31565885, 0.53980622, 0.        ], [-2.78178311, -0.0077623 ,  0.        ], [ 2.69523115, -3.54040193,  0.        ], [-6.17100105,  0.11923881,  0.        ]]))
 
         colors = [(145, 219, 87),
@@ -399,3 +340,6 @@ class Color(Scene):
         self.bring_to_back(img)
         self.remove(img)
         self.play(FadeIn(img))
+
+
+
