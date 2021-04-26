@@ -14,3 +14,9 @@ Links to music used throughout my videos, along with their licensing and attribu
 - Lick Stick by <a href="https://app.sessions.blue/browse/track/31460">Blue Dot Sessions</a>
 - Night Light by <a href="https://app.sessions.blue/browse/track/31459">Blue Dot Sessions</a>
 - ZigZag Heart by <a href="https://app.sessions.blue/browse/track/31462">Blue Dot Sessions</a>
+
+### Glass Obelisk
+Morning Glare by <a href="https://app.sessions.blue/browse/track/33800">Blue Dot Sessions</a>
+Pacific Time by <a href="https://app.sessions.blue/browse/track/33801">Blue Dot Sessions</a>
+Plate Glass by <a href="https://app.sessions.blue/browse/track/33802">Blue Dot Sessions</a>
+Dell Mare by <a href="https://app.sessions.blue/browse/track/33804">Blue Dot Sessions</a>
