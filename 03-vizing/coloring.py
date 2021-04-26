@@ -1,7 +1,11 @@
 from pulp import *
+from utilities import *
 
-# Petersen's graph as an example
-edges = [(0, 1), (0, 4), (0, 5), (1, 2), (1, 6), (2, 3), (2, 7), (3, 4), (3, 8), (4, 9), (5, 7), (5, 8), (6, 8), (6, 9), (7, 9)]
+N = 50
+vertices = [i for i in range(N)]
+edges = nx.random_geometric_graph(N, 0.19).edges
+
+colors = ["RED", "GREEN", "BLUE", "YELLOW", "PINK", "GRAY", "ORANGE", "WHITE", "PURPLE"]
 
 # number of vertices
 n = len(set([u for u, v in edges] + [v for u, v in edges]))
@@ -40,8 +44,12 @@ model += edge_chromatic_number
 
 status = model.solve(PULP_CBC_CMD(msg=False))
 
-print("edge chromatic number:", int(edge_chromatic_number.value()))
+print(f"g = Graph({vertices}, {edges}, layout='circular', layout_scale=3)")
+print("self.play(Write(g))")
+print("self.play(")
 for i, j in edges:
     for color in range(n):
         if variables[(i, j)][color].value() != 0:
-            print(f"edge {(i, j)}: color {color}")
+            print(f"    g.edges[{(i, j)}].animate.set_color({colors[color]}),")
+print("    )")
+print("self.play(FadeOut(g))")

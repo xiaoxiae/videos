@@ -1,45 +1,42 @@
 # Vizing's theorem
-In this video, we'll be proving Vizing's theorem, which puts an upper and lower bound on edge coloring of a graph. A valid edge coloring of a graph is a coloring of edges such that no vertex has edges of the same color.
+In this video, we'll be proving Vizing's theorem, which puts an upper and lower bound on the number of colors needed to edge-color a graph. An edge coloring is valid, if no vertex contains edges of the same color.
 
 ## Theorem (Intro)
-[t1] Vizig's Theorem states, that the number of colors needed to edge-color a graph is either the degree of the graph, or degree of the graph plus one.
+More precisely, the theorem states that the number of colors chi prime needed to edge-color a graph is between the degree of the graph \Delta(G) and the degree of the graph plus one.
 
-## Degree (Degree TODO)
-As a reminder, the degree of a vertex is the number of outgoing edges, and the degree of the entire graph is the maximum degree of one of its vertices.
+## - (Degree)
+As a reminder, the degree of a vertex is the number of its edges, and the degree of the entire graph is the maximum degree of its vertices.
 
 ## Example (Example)
-Let's look at an example graph. We can use 3 colors to colors it, which happens to be its degree. However, adding additional two edges like so doesn't change the degree, but increases the number of colors needed by one.
+Let's look at an example graph. We can use 3 colors to color its edges, which also happens to be its degree. However, adding additional two edges like so doesn't change the degree, but increases the number of colors needed by one.
 
 ## Lower bound (LowerBound)
+Proving the lower bound is simple. Looking at a vertex with degree \Delta(G), we obviously need as many colors as the number of its edges.
 
-Proving the lower bound is quite trivial. Looking at a vertex with the maximum degree in the graph, we obviously need as many colors as the number of its edges.
+Before proving the upper bound, let's make a quick observation that will be useful during the proof.
 
-[l2] Before proving the upper bound, let's make a quick observation that will be useful during the proof.
+## - (FreeColor)
+When we have \Delta(G) + 1 colors, each vertex of the graph has at least one free color. By free, we mean that it doesn't have an edge of this color. If some adjacent vertex also has this color, they can switch the color of the edge between them with their free color, without breaking the coloring.
 
-[l2] When we have \chi + 1 colors, each vertex of the graph has at least one free color. By this, we mean that we can change the color of any of the vertex's edge to the free color and not break the coloring (for this particular vertex). This makes sense, because we have one more color than the degree of the graph.
+This makes sense, because we have one more color than the degree of the graph.
 
 ## Upper bound (UpperBound)
+We'll prove the upper bound using a contradiction. Let's assume that we can't in fact color some graph $G$ using chi prime + 1 colors. This means that whichever way we color the graph, we'll always have some uncolored edge (x, y).
 
-[l2] We'll prove the upper bound using a contradiction. Let's assume that we can't in fact color some graph $G$ using \chi + 1 colors. This means that while coloring, we ran out of colors and can't color some vertex ${x, y}$.
-
-From the previous observation, we know that $x$ has some free color. $y$ can't have this free color, because we could then color the edge with this color, so it has to have one different from $x$. This means that there is an edge with this color from $x$ to some other vertex, which also has some free color.
+From the previous observation, we know that $x$ has some free color. $y$ can't have this free color, because we could then color the edge (x, y) using it, so it has to have one that $x$ doesn't. Because $x$ doesn't have it, there must be an edge with this color from $x$ to some other vertex, which also has some free color.
 
 This chain can go on a bit, but eventually, one of two things will happen.
 
-Case one is that the free color of the last vertex in the chain is the color of $x$. In this case, we'll go back the chain and change colors, like so. This frees up the color for $x$ that we need and we colored e.
+Case one is that the free color of the last vertex in the chain is the free color of $x$. In this case, we'll go back the chain and change colors, like so. This frees up the color for $x$ that we needed to color (x, y) and we've reached a contradiction.
 
-Case two is that the free color of the last vertex is color of an edge from $x$ that we've seen before. This is a little unpleasant, since we're now stuck in a loop and can't use the previous trick.
+Case two is that the free color of the last vertex is the color of an edge from $x$ that we've seen before. This is unfortunate, since we're now stuck in a loop and can't use the previous trick.
 
-In this case, let's look at the longest path from this vertex of alternating free colors of $x$ and $v$, starting at $w$.
+In this case, we'll take the longest path from $w$ of alternating free colors of $x$ and $v$, and switch its colors. We're doing this to remove the loop by freeing up a different color for $x$.
 
-Let's think about why switching the colors on this path doesn't break anything.
+Let's think about why this doesn't break the coloring.
 
-For vertices in between, nothing happens, since the blue edge turns red and a red turns blue. For $x$, the free color was red to begin with, and just turns blue.
+For vertices in between, nothing happens. For $x$, the free color was red to begin with, so it just turns blue. For the ending vertex, we'll make the observation that either red or blue must have been free, because otherwise the path that we took wasn't the longest.
 
-For the ending vertex, we'll make the observation that either red or blue has to also be free, because otherwise the path that we took wouldn't be the longest.
+We've now reduced the problem to case one, which we know reaches a contradiction, proving the upper bound.
 
-TODO: end animation
-
-This means that we've reached a contradiction, since no matter what, we can color the vertex (x, y) using no more than \Delta(G) \le \chi'(G), proving the theorem.
-
-TODO: proof rectangle
+Combining the lower and upper bound, we see that no matter what, we can always color any graph using either \Delta(G) or \Delta(G) + 1 colors.
