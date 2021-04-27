@@ -1,11 +1,7 @@
 from pulp import *
-from utilities import *
 
-N = 50
-vertices = [i for i in range(N)]
-edges = nx.random_geometric_graph(N, 0.19).edges
-
-colors = ["RED", "GREEN", "BLUE", "YELLOW", "PINK", "GRAY", "ORANGE", "WHITE", "PURPLE"]
+import networkx as nx
+edges = nx.petersen_graph().edges
 
 # number of vertices
 n = len(set([u for u, v in edges] + [v for u, v in edges]))
@@ -37,19 +33,15 @@ for color in range(n):
 # edge chromatic number is also the number of the highest color
 for i, j in edges:
     for color in range(n):
-        model += edge_chromatic_number >= color * variables[(i, j)][color]
+        model += edge_chromatic_number >= (color + 1) * variables[(i, j)][color]
 
 # we're minimizing the edge chromatic number
 model += edge_chromatic_number
 
 status = model.solve(PULP_CBC_CMD(msg=False))
 
-print(f"g = Graph({vertices}, {edges}, layout='circular', layout_scale=3)")
-print("self.play(Write(g))")
-print("self.play(")
+print(f"edge chromatic number: {int(edge_chromatic_number.value())}")
 for i, j in edges:
     for color in range(n):
         if variables[(i, j)][color].value() != 0:
-            print(f"    g.edges[{(i, j)}].animate.set_color({colors[color]}),")
-print("    )")
-print("self.play(FadeOut(g))")
+            print(f"{(i, j)}: {color}")
