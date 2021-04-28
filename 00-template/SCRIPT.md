@@ -1,12 +1,12 @@
-# Voronoi Diagrams
+# Video name
 
 ## Section one (SectionOneClassName)
 
-[one1] This is a sentence in the script to record.
+[o1] This is a sentence in the script to record.
 
-[one2] This is another sentence in the script to record.
+[o2] This is another sentence in the script to record.
 
 ## Section two (SectionTwoClassName)
 
-[two1] This is a third sentence to record.
+[w1] This is a third sentence to record.
 

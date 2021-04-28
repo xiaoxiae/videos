@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mlt LC_NUMERIC="C" producer="main_bin" version="6.26.1" root="/home/xiaoxiae">
+<mlt LC_NUMERIC="C" producer="main_bin" version="6.26.1" root="/home/xiaoxiae/Documents/Education/Programming/Manim/00-template">
  <profile frame_rate_num="60" sample_aspect_num="1" display_aspect_den="9" colorspace="709" progressive="1" description="HD 1080p 60 fps" display_aspect_num="16" frame_rate_den="1" width="1920" height="1080" sample_aspect_den="1"/>
  <playlist id="main_bin">
   <property name="kdenlive:docproperties.activeTrack">2</property>
@@ -13,8 +13,11 @@
   <property name="kdenlive:docproperties.externalproxyparams"/>
   <property name="kdenlive:docproperties.generateimageproxy">0</property>
   <property name="kdenlive:docproperties.generateproxy">0</property>
+  <property name="kdenlive:docproperties.groups">[
+]
+</property>
   <property name="kdenlive:docproperties.kdenliveversion">20.12.3</property>
-  <property name="kdenlive:docproperties.position">0</property>
+  <property name="kdenlive:docproperties.position">1244</property>
   <property name="kdenlive:docproperties.previewextension"/>
   <property name="kdenlive:docproperties.previewparameters"/>
   <property name="kdenlive:docproperties.profile">atsc_1080p_60</property>
@@ -33,13 +36,10 @@
   <property name="kdenlive:docproperties.zoom">8</property>
   <property name="kdenlive:expandedFolders"/>
   <property name="kdenlive:documentnotes"/>
-  <property name="kdenlive:docproperties.groups">[
-]
-</property>
   <property name="xml_retain">1</property>
  </playlist>
- <producer id="black_track" in="00:00:00.000" out="00:20:00.000">
-  <property name="length">23860:55:45.880</property>
+ <producer id="black_track" in="00:00:00.000" out="00:08:25.000">
+  <property name="length">2147483647</property>
   <property name="eof">continue</property>
   <property name="resource">black</property>
   <property name="aspect_ratio">1</property>
@@ -135,7 +135,7 @@
   <track hide="audio" producer="playlist6"/>
   <track producer="playlist7"/>
  </tractor>
- <tractor id="tractor4" global_feed="1" in="00:00:00.000" out="00:20:00.000">
+ <tractor id="tractor4" global_feed="1" in="00:00:00.000" out="00:08:25.000">
   <track producer="black_track"/>
   <track producer="tractor0"/>
   <track producer="tractor1"/>
@@ -201,6 +201,11 @@
    <property name="iec_scale">0</property>
    <property name="mlt_service">audiolevel</property>
    <property name="disable">1</property>
+  </filter>
+  <filter id="filter9">
+   <property name="mlt_service">avfilter.subtitles</property>
+   <property name="internal_added">237</property>
+   <property name="av.filename">/tmp/1619043766034.srt</property>
   </filter>
  </tractor>
 </mlt>
