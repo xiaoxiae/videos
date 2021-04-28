@@ -2,31 +2,31 @@
 
 ## Intro (Intro)
 
-<intro1> Voronoi diagrams are a way of partitioning a plane into regions, depending on how close they are to a given set of points.
+[intro1] Voronoi diagrams are a way of partitioning a plane into regions, depending on how close they are to a given set of points.
 
-<intro2> Although the concept is simple, there is a lot of things to think about when trying to generate a neat-looking Voronoi diagram.
+[intro2] Although the concept is simple, there is a lot of things to think about when trying to generate a neat-looking Voronoi diagram.
 
 ## Creating a simple Voronoi diagram (Simple)
 
-<intro3> To create a simple Voronoi diagram, let's first randomly pick the points (called seeds) that decide how to partition the plane. For clarity, we'll give each seed a color.
+[simple1] To create a simple Voronoi diagram, let's first randomly pick the points (called seeds) that decide how to partition the plane. For clarity, we'll give each seed a color.
 
-<intro4> Each point on the plane then belongs to the region of the closest seed.
+[simple2] Each point on the plane then belongs to the region of the closest seed.
 
 ## Distributing points more evenly (Points + 2)
 
-<intro5> This looks quite nice, but picking seeds randomly isn't usually what we want, since it can sometimes create uneven regions. Let's try something different.
+[points1] This looks quite nice, but picking seeds randomly isn't usually what we want, since it can sometimes create uneven regions. Let's try something different.
 
-When generating a seed, let's actually generate more candidates, and pick the one that is furthest from the others. This approach is called Mitchel's best candidate algorithm and is a way of producing more natural-looking point distributions.
+[points2] When generating a seed, let's actually generate more candidates, and pick the one that is furthest from the others. This approach is called Mitchel's best candidate algorithm and is a way of producing more natural-looking point distributions.
 
-Note that the number of candidates we're generating is proportional to how many have already been generated, since the more seeds we have, the harder it is to find a proper place for a new one.
+[points3] Note that the number of candidates we're generating is proportional to how many have already been generated, since the more seeds we have, the harder it is to find a proper place for a new one.
 
 ## Metric (Chosing a different metric)
-Another thing that we can tweak is the way we measure the distance between two points (called a metric).
+[intro8] Another thing that we can tweak is the way we measure the distance between two points (called a metric).
 
-Until now, we've been using the euclidean metric, where the distance of two points is the length of the line between them. 
-This is very natural, but is definitely not the only way to do it.
+[intro9] Until now, we've been using the euclidean metric, where the distance of two points is the length of the line between them. 
+[intro10] This is very natural, but is definitely not the only way to do it.
 
-Let's look at the Manhattan (or taxicab) distance instead. Here, the distance is the absolute value of $x$ and $y$
+[metric3] Let's look at the Manhattan (or taxicab) distance instead. Here, the distance is the absolute value of $x$ and $y$
 
 ## Colors (Assigning colors)
 One thing you might have noticed is that in previous examples, the colors of the adjacent regions were always different.
