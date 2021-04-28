@@ -22,5 +22,4 @@ sox (audio): http://sox.sourceforge.net/
 
 ------------------
 
-References:
 <things I used to make this video>
