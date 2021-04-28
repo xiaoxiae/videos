@@ -1,12 +1,5 @@
 from utilities import *
 
-def visuallyChangeColor(self, l):
-    self.play(
-            *[a.animate.set_color(b) for a, b in l],
-            *[Flash(a, color=b) for a, b in l],
-            )
-
-
 
 class BeforeIntro(Scene):
     def construct(self):

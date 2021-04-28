@@ -35,3 +35,10 @@ def fade(f):
         self.play(*map(FadeOut, self.mobjects))
 
     return inner
+
+def visuallyChangeColor(self, l):
+    """Animations to visually change the color of something."""
+    self.play(
+            *[a.animate.set_color(b) for a, b in l],
+            *[Flash(a, color=b) for a, b in l],
+            )
