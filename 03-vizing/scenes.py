@@ -166,7 +166,6 @@ class BeforeIntro(Scene):
 
         visuallyChangeColor(self, [(g.edges[(2, 3)], RED)])
 
-
 class Intro(Scene):
     @fade
     def construct(self):
@@ -190,6 +189,9 @@ class Example(Scene):
 
         edges = [(2, 3), (2,4), (1,4), (1, 5), (3, 4)]
         g = Graph(vertices, edges, layout="circular", layout_scale=3, labels=True)
+
+        for i in g._labels:
+            g._labels[i].scale(0)
 
         self.play(Write(g), run_time=3)
 
@@ -402,10 +404,10 @@ class UpperBound(Scene):
 
         visuallyChangeColor(self, [(g.edges[(1, 2)], RED)])
 
-        visuallyChangeColor(self, [
-            (g.edges[(1, 2)], WHITE),
-            (b, PINK),
-            ])
+        self.play(
+                g.edges[(1, 2)].animate.set_color(WHITE),
+                b.animate.set_color(PINK)
+                )
 
         g.edges[(1, 3)].set_color(PINK),
 
