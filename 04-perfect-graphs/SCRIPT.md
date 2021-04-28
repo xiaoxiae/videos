@@ -1,43 +1,35 @@
-# Introduction
-Perfect graphs are a family of graphs that contain many graph families and have various special properties, notably that many algorithms that are NP complete on a general graph can be solved efficiently on a perfect one.
+# Introduction (Introduction TODO)
+Perfect graphs are certaion graphs with various special properties, notably that many algorithms that are NP complete on a general graph can be solved on them efficiently. They include many graph families, notably TODO.
 
-There exists various characterizations of perfect graphs. The one that we'll be focusing on in this video is the weak perfect graph theorem, proved in 1972 by László Lovász.
+There exist various characterizations of perfect graphs. The one that we'll be focusing on in this video is the weak perfect graph theorem, proved in 1972 by László Lovász.
 
 Before proceeding to the proof, there are some definitions and lemmas we have to know.
 
-# Complement graph
-A graph $H$ is a complement of the graph $G$, if and only if each two vertices of $G$ are not adjacent in $H$.
+# Complement graph (Complement)
+A graph $H$ is a complement of the graph $G$, if and only if each two vertices adjacent in $G$ are not adjacent in $H$.
 
-TODO: animation on complement examples
+# Clique and independent set (CliqueAndIndependentSet)
+A clique is a subgraph of a graph, such that each two vertices are adjacent. Analogically, and independent set of a graph is a set of vertices such that no two are adjacent.
 
-# Clique and independent set
-A clique is a subgraph of a graph, such that each two vertices are adjacent.
-
-TODO: A nice animation like this one: https://upload.wikimedia.org/wikipedia/commons/d/d0/VR_complex.svg
-
-Analogically, and independent set of a graph is a set of vertices such that no two are adjacent.
-
-TODO: animation on the same graph!
+We'll also denote omega(G) to be the number of vertices of the largest clique in G, and alpha(G) to be the largest independent set in G.
 
 These two concepts are closely tied together. Considering a complement of a graph, we see that each independent set becomes a clique, and each clique an independent set.
 
-This will be important in the proof.
+TODO: animation on this graph
 
-TODO: again animation on this graph
-
-# Induced subgraph
+# Induced subgraph (InducedSubgraph TODO)
 A graph $H$ is an induced subgraph of the graph $G$, if and only if we can get $H$ by removing zero or more vertices from $G$. Note that we're only removing whole vertices (and their edges), not edges by themselves.
 
-# Chromatic number
-The chromatic number of
+TODO: animation on this graph
 
-TODO: animation!!
+# Chromatic number (ChromaticNumber TODO)
+The chromatic number of a graph is the smallest number of colors we can use to color the graph's vertices, such that no two adjacent vertices have the same color.
 
-# Perfect Graphs
-For the most important definition of the video, a graph is perfect if and only if it's chromatic number 
+TODO: animation on this graph
 
-## Definition
-## Examples
+# Perfect Graphs (PerfectGraphs TODO)
+Finally, a graph is perfect if and only if its chromatic number is equal to the TODO
+
 
 # Observations
 chi g >= omega g

@@ -28,6 +28,14 @@ def highlightText(text):
     for i in range(1, len(text), 2):
         text[i].set_color(YELLOW)
 
+def createHighlightedParagraph(*args, speed=0.04, width=22, size=r"\normalsize"):
+    text = Tex(r"\parbox{" + str(width) + "em}{" + size + " " + args[0], *args[1:-1], args[-1] + "}")
+    highlightText(text)
+    return len("".join(args).replace("$", "")) * speed, text
+
+def fade_all(self):
+    self.play(*map(FadeOut, self.mobjects))
+
 def fade(f):
     """A decorator for construct method of scenes where all objects should fade at the end."""
     def inner(self):
