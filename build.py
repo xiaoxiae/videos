@@ -10,7 +10,7 @@ if os.path.exists(video_directory):
     shutil.rmtree(video_directory)
 
 # call Manim
-subprocess.Popen(["manim", "scenes.py", "-a"]).communicate()
+subprocess.Popen(["manim", "scenes.py", "-aqk"]).communicate()
 
 # rename to [1..n].mp4
 for scene in os.listdir(video_directory):
