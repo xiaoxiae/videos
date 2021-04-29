@@ -28,7 +28,10 @@ def highlightText(text):
     for i in range(1, len(text), 2):
         text[i].set_color(YELLOW)
 
-def createHighlightedParagraph(*args, speed=0.04, width=22, size=r"\normalsize"):
+def createHighlightedParagraph(*args, speed=0.04, width=22, size=r"\normalsize", splitBy = None):
+    if splitBy is not None:
+        args = args[0].split(splitBy)
+
     text = Tex(r"\parbox{" + str(width) + "em}{" + size + " " + args[0], *args[1:-1], args[-1] + "}")
     highlightText(text)
     return len("".join(args).replace("$", "")) * speed, text

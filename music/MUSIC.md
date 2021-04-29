@@ -3,20 +3,20 @@ Links to music used throughout my videos, along with their licensing and attribu
 
 ## Creative Commons
 
-### Confectionery (https://app.sessions.blue/album/b5443885-3772-41d1-b6eb-3c7cc337deb6)
-- Beignet by <a href="https://app.sessions.blue/browse/track/31213">Blue Dot Sessions</a>
-- Bundt by <a href="https://app.sessions.blue/browse/track/31208">Blue Dot Sessions</a>
-- Maisie Dreamer by <a href="https://app.sessions.blue/browse/track/31458">Blue Dot Sessions</a>
-- Palms Down by <a href="https://app.sessions.blue/browse/track/31218">Blue Dot Sessions</a>
+### Confectionery
+- Beignet by Blue Dot Sessions: https://app.sessions.blue/browse/track/31213
+- Bundt by Blue Dot Sessions: https://app.sessions.blue/browse/track/31208
+- Maisie Dreamer by Blue Dot Sessions: https://app.sessions.blue/browse/track/31458
+- Palms Down by Blue Dot Sessions: https://app.sessions.blue/browse/track/31218
 
-### Nursery (https://app.sessions.blue/album/44e82507-b9c3-47fd-b584-ebd143fec248)
-- A Little Powder by <a href="https://app.sessions.blue/browse/track/31461">Blue Dot Sessions</a>
-- Lick Stick by <a href="https://app.sessions.blue/browse/track/31460">Blue Dot Sessions</a>
-- Night Light by <a href="https://app.sessions.blue/browse/track/31459">Blue Dot Sessions</a>
-- ZigZag Heart by <a href="https://app.sessions.blue/browse/track/31462">Blue Dot Sessions</a>
+### Nursery
+- A Little Powder by Blue Dot Sessions: https://app.sessions.blue/browse/track/31461
+- Lick Stick by Blue Dot Sessions: https://app.sessions.blue/browse/track/31460
+- Night Light by Blue Dot Sessions: https://app.sessions.blue/browse/track/31459
+- ZigZag Heart by Blue Dot Sessions: https://app.sessions.blue/browse/track/31462
 
 ### Glass Obelisk
-Morning Glare by <a href="https://app.sessions.blue/browse/track/33800">Blue Dot Sessions</a>
-Pacific Time by <a href="https://app.sessions.blue/browse/track/33801">Blue Dot Sessions</a>
-Plate Glass by <a href="https://app.sessions.blue/browse/track/33802">Blue Dot Sessions</a>
-Dell Mare by <a href="https://app.sessions.blue/browse/track/33804">Blue Dot Sessions</a>
+- Morning Glare by Blue Dot Sessions: https://app.sessions.blue/browse/track/33800
+- Pacific Time by Blue Dot Sessions: https://app.sessions.blue/browse/track/33801
+- Plate Glass by Blue Dot Sessions: https://app.sessions.blue/browse/track/33802
+- Dell Mare by Blue Dot Sessions: https://app.sessions.blue/browse/track/33804
