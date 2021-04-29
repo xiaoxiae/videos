@@ -10,7 +10,7 @@ Source code:
 https://github.com/xiaoxiae/videos/tree/master/04-perfect-graphs
 
 Music:
-<credit the music used>
+Maisie Dreamer by Blue Dot Sessions: https://app.sessions.blue/browse/track/31458
 
 Software used:
 Manim (animations): https://github.com/ManimCommunity/manim/

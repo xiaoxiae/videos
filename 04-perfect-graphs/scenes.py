@@ -1,6 +1,30 @@
 from utilities import *
 from chromatic import *
 
+dark_color = DARKER_GRAY
+
+class MyBulletedList(Tex):
+    def __init__(
+        self,
+        *items,
+        buff=MED_LARGE_BUFF,
+        dot_scale_factor=2,
+        tex_environment=None,
+        **kwargs,
+    ):
+        self.buff = buff
+        self.dot_scale_factor = dot_scale_factor
+        self.tex_environment = tex_environment
+        line_separated_items = [s + "\\\\" for s in items]
+        Tex.__init__(
+            self, *line_separated_items, tex_environment=tex_environment, **kwargs
+        )
+        for part in self:
+            dot = MathTex("\\cdot").scale(self.dot_scale_factor)
+            dot.next_to(part[0], LEFT, MED_SMALL_BUFF)
+            part.add_to_back(dot)
+        self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
+
 
 class Introduction(Scene):
     def construct(self):
@@ -40,6 +64,25 @@ class Introduction(Scene):
 
         self.play( FadeOut(text), FadeOut(image),)
 
+        title = Tex("\Large Definitions")
+        title.shift(UP * 2.5)
+
+        self.play(Write(title))
+
+        text = MyBulletedList(
+                r"Complement graph $\mid \overline{G}$",
+                r"Clique, independent set $\mid$ $\alpha(G), \omega(G)$",
+                r"(Strict) induced subgraph $\mid$ $H \subseteq G$, $H \subset G$",
+                r"Chromatic number $\mid$ $\chi(G)$",
+                r"Perfect graph",
+                dot_scale_factor=3,
+                buff=MED_SMALL_BUFF 
+                )
+
+        text.next_to(title, 2 * DOWN).shift(DOWN * 0.5)
+
+        self.play(Write(text), run_time=2.5)
+
 
 class Complement(Scene):
     def construct(self):
@@ -48,7 +91,7 @@ class Complement(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-        duration, text = createHighlightedParagraph("A graph", " $H$ ", "is a ","complement"," of the graph ","$G$",", if and only if each two vertices ","adjacent in $G$"," are ","not adjacent in $H$",".", size=r"\footnotesize")
+        duration, text = createHighlightedParagraph("A ","complement"," of a graph", " $G$ ", "is a graph ","$\conj{G}$",", such that ","each to vertices"," are adjacent in ","$\conj{G}$",", if and only if they are ","not adjacent"," in ","$G$",".", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -71,7 +114,7 @@ class Complement(Scene):
         h_edges = [(1, 3), (1, 4), (2, 3), (3, 5), (4, 5)]
         h = Graph(vertices, h_edges, layout="circular", layout_scale=1.5/2).scale(2)
         h.shift(DOWN * 1.5 + RIGHT * 3)
-        h_text = Tex("H")
+        h_text = Tex("$\conj{G}$")
         h_text.next_to(h, RIGHT + UP).shift(DOWN * 0.80 + LEFT * 0.6)
 
         self.play(Write(g), Write(g_text), Write(h), Write(h_text))
@@ -96,6 +139,8 @@ class Complement(Scene):
 
 class CliqueAndIndependentSet(Scene):
     def construct(self):
+        global dark_color
+
         title = Tex("\Large Clique and independent set")
 
         self.play(Write(title))
@@ -138,8 +183,6 @@ class CliqueAndIndependentSet(Scene):
         g.shift(DOWN * 1.65)
 
         self.play(Write(g))
-
-        dark_color = DARKER_GRAY
 
         def to_color(color):
             return [g.vertices[i].animate.set_color(color) for i in vertices] + [g.edges[e].animate.set_color(color) for e in edges]
@@ -247,6 +290,7 @@ class CliqueAndIndependentSet(Scene):
 
         fade_all(self)
 
+        seed(2)
         a = nx.gnm_random_graph(7, 11)
         A = Graph.from_networkx(a, layout="circular", layout_scale=1.3).scale(2)
 
@@ -254,40 +298,44 @@ class CliqueAndIndependentSet(Scene):
         B = Graph.from_networkx(b, layout="circular", layout_scale=1.3).scale(2)
 
         C = Graph.from_networkx(b, layout="circular", layout_scale=1.3).scale(2)
-        C.vertices[1].set_color(YELLOW),
-        C.vertices[2].set_color(YELLOW),
+        C.vertices[3].set_color(YELLOW),
         C.vertices[4].set_color(YELLOW),
+        C.vertices[5].set_color(YELLOW),
 
         to_color_no_animate(B, dark_color)
 
         self.play(Write(B), Write(A))
         self.play(
-                A.vertices[1].animate.set_color(YELLOW),
-                A.vertices[2].animate.set_color(YELLOW),
+                A.vertices[3].animate.set_color(YELLOW),
                 A.vertices[4].animate.set_color(YELLOW),
-                A.edges[(1, 4)].animate.set_color(YELLOW),
-                A.edges[(2, 4)].animate.set_color(YELLOW),
-                A.edges[(1, 2)].animate.set_color(YELLOW),
+                A.vertices[5].animate.set_color(YELLOW),
+                A.edges[(3, 4)].animate.set_color(YELLOW),
+                A.edges[(3, 5)].animate.set_color(YELLOW),
+                A.edges[(4, 5)].animate.set_color(YELLOW),
                 )
 
         self.play(
                 *to_color_animate(A, dark_color, True),
                 *to_color_animate(B, WHITE),
-                A.edges[(1, 4)].animate.set_color("#3a4504"),
-                A.edges[(2, 4)].animate.set_color("#3a4504"),
-                A.edges[(1, 2)].animate.set_color("#3a4504"),
+                A.edges[(3, 4)].animate.set_color("#3a4504"),
+                A.edges[(3, 5)].animate.set_color("#3a4504"),
+                A.edges[(4, 5)].animate.set_color("#3a4504"),
                 FadeIn(C),
                 )
 
+        fade_all(self)
+
 class InducedSubgraph(Scene):
     def construct(self):
+        global dark_color
         title = Tex("\Large Induced subgraph")
 
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-        duration, text = createHighlightedParagraph("A graph ","$H$"," is an ","induced subgraph"," of ","$G$"," (denoted ","$H \subseteq G$","), if and only if we can get ","$H$"," by ","removing zero or more vertices"," from ","$G$",".", size=r"\footnotesize")
+        duration, text = createHighlightedParagraph("A graph ","$H$"," is an ","induced subgraph"," of ","$G$"," (denoted ","$H \subseteq G$","), if and only if we can get ","$H$"," by ","removing ","zero"," or more vertices"," from ","$G$",".", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
+        text[12].set_color(YELLOW)
 
         self.play(Write(text), run_time=duration)
 
@@ -324,7 +372,91 @@ class InducedSubgraph(Scene):
 
         self.play(Write(g))
 
-        # TODO
+        def to_color(color):
+            return [g.vertices[i].animate.set_color(color) for i in vertices] + [g.edges[e].animate.set_color(color) for e in edges]
+
+        self.play(
+                g.vertices[9].animate.set_color(dark_color),
+                g.vertices[10].animate.set_color(dark_color),
+                g.edges[(8, 9)].animate.set_color(dark_color),
+                g.edges[(8, 10)].animate.set_color(dark_color),
+                g.edges[(9, 10)].animate.set_color(dark_color),
+                g.vertices[7].animate.set_color(dark_color),
+                g.edges[(6, 7)].animate.set_color(dark_color),
+                g.vertices[1].animate.set_color(dark_color),
+                g.edges[(1, 2)].animate.set_color(dark_color),
+                g.edges[(1, 3)].animate.set_color(dark_color),
+                g.edges[(1, 4)].animate.set_color(dark_color),
+                )
+
+        self.wait()
+
+        self.play(
+                *to_color(WHITE),
+                g.vertices[10].animate.set_color(dark_color),
+                g.vertices[1].animate.set_color(dark_color),
+                g.vertices[2].animate.set_color(dark_color),
+                g.vertices[5].animate.set_color(dark_color),
+                g.edges[(9, 10)].animate.set_color(dark_color),
+                g.edges[(8, 10)].animate.set_color(dark_color),
+                g.edges[(1, 2)].animate.set_color(dark_color),
+                g.edges[(1, 3)].animate.set_color(dark_color),
+                g.edges[(1, 4)].animate.set_color(dark_color),
+                g.edges[(2, 4)].animate.set_color(dark_color),
+                g.edges[(2, 3)].animate.set_color(dark_color),
+                g.edges[(3, 5)].animate.set_color(dark_color),
+                g.edges[(5, 6)].animate.set_color(dark_color),
+                )
+
+        self.wait()
+
+        self.play(
+                *to_color(WHITE),
+                g.vertices[1].animate.set_color(dark_color),
+                g.vertices[2].animate.set_color(dark_color),
+                g.vertices[4].animate.set_color(dark_color),
+                g.vertices[7].animate.set_color(dark_color),
+                g.edges[(1, 2)].animate.set_color(dark_color),
+                g.edges[(1, 3)].animate.set_color(dark_color),
+                g.edges[(1, 4)].animate.set_color(dark_color),
+                g.edges[(2, 3)].animate.set_color(dark_color),
+                g.edges[(2, 4)].animate.set_color(dark_color),
+                g.edges[(3, 4)].animate.set_color(dark_color),
+                g.edges[(4, 8)].animate.set_color(dark_color),
+                g.edges[(6, 7)].animate.set_color(dark_color),
+                )
+
+        sis = Tex(r"\footnotesize strict i. subgraph").set_color(YELLOW)
+        sis.move_to(text[3])
+
+        subset = Tex(r"\footnotesize $H \subset G$").set_color(YELLOW)
+        subset.move_to(text[7]).shift(UP * 0.024)
+
+        one = Tex(r"\footnotesize one").set_color(YELLOW)
+        one.move_to(text[12])
+
+        title2 = Tex("\Large Strict induced subgraph")
+        title2.move_to(title)
+
+        self.play(Unwrite(title),
+                Write(title2),
+                run_time=1.0,
+                )
+
+        self.play(Unwrite(text[3]),
+                Write(sis),
+                run_time=1.0,
+                )
+
+        self.play(Unwrite(text[7]),
+                Write(subset),
+                run_time=1.0,
+                )
+
+        self.play(Unwrite(text[12]),
+                Write(one),
+                run_time=1.0,
+                )
 
         fade_all(self)
 
@@ -386,5 +518,40 @@ class ChromaticNumber(Scene):
         self.play(g.animate.shift(LEFT))
 
         self.play( Write(chi))
+
+        fade_all(self)
+
+class PerfectGraph(Scene):
+    def construct(self):
+        title = Tex("\Large Perfect graph")
+
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 2.5))
+
+        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if |$\forall H \subseteq G: \chi(H) = \omega(H)$|.", size=r"\footnotesize", splitBy="|")
+        text.next_to(title, 2 * DOWN)
+
+        self.play(Write(text), run_time=duration)
+
+        seed(2)
+        while True:
+            n = 9
+            m =randint(1, n * (n - 1) // 2)
+            if m < 15 or m > 17:
+                continue
+            a = nx.gnm_random_graph(n, m)
+            if not nx.is_chordal(a):
+                continue
+            print(a.edges)
+            break
+
+        A = Graph.from_networkx(a, layout="spring", layout_scale=1.3).scale(2)
+        self.play(Write(A))
+
+        a_coloring = get_coloring(a.edges)
+
+        self.play(
+            *[A.vertices[v].animate.set_color(a_coloring[v]) for v in a_coloring],
+        )
 
         fade_all(self)
