@@ -1,5 +1,5 @@
-# Introduction (Introduction TODO)
-Perfect graphs are certaion graphs with various special properties, notably that many algorithms that are NP complete on a general graph can be solved on them efficiently. They include many graph families, notably TODO.
+# Introduction (Introduction)
+Perfect graphs are certain type of graphs with various interesting properties, most notably that many algorithms that are NP complete on a general graph can be solved efficiently on a perfect one.
 
 There exist various characterizations of perfect graphs. The one that we'll be focusing on in this video is the weak perfect graph theorem, proved in 1972 by László Lovász.
 
@@ -15,21 +15,14 @@ We'll also denote omega(G) to be the number of vertices of the largest clique in
 
 These two concepts are closely tied together. Considering a complement of a graph, we see that each independent set becomes a clique, and each clique an independent set.
 
-TODO: animation on this graph
-
 # Induced subgraph (InducedSubgraph TODO)
-A graph $H$ is an induced subgraph of the graph $G$, if and only if we can get $H$ by removing zero or more vertices from $G$. Note that we're only removing whole vertices (and their edges), not edges by themselves.
+A graph $H$ is an induced subgraph of the graph $G$ (denoted $H \subseteq G$), if and only if we can get $H$ by removing zero or more vertices from $G$. Note that we're only removing whole vertices (and their edges), not edges by themselves.
 
-TODO: animation on this graph
-
-# Chromatic number (ChromaticNumber TODO)
-The chromatic number of a graph is the smallest number of colors we can use to color the graph's vertices, such that no two adjacent vertices have the same color.
-
-TODO: animation on this graph
+# Chromatic number (ChromaticNumber)
+The chromatic number $\chi(G)$ of a graph $G$ is the smallest number of colors we can use to color the graph's vertices, such that no two adjacent vertices have the same color.
 
 # Perfect Graphs (PerfectGraphs TODO)
-Finally, a graph is perfect if and only if its chromatic number is equal to the TODO
-
+Finally, a graph $G$ is perfect, if and only if $\forall H \subseteq G: \chi(H) = \omega(H)$.
 
 # Observations
 chi g >= omega g
