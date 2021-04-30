@@ -72,7 +72,7 @@ class Introduction(Scene):
         text = MyBulletedList(
                 r"Complement graph $\mid \overline{G}$",
                 r"Clique, independent set $\mid$ $\alpha(G), \omega(G)$",
-                r"(Strict) induced subgraph $\mid$ $H \subseteq G$, $H \subset G$",
+                r"(Proper) induced subgraph $\mid$ $H \subseteq G$, $H \subset G$",
                 r"Chromatic number $\mid$ $\chi(G)$",
                 r"Perfect graph",
                 dot_scale_factor=3,
@@ -426,7 +426,7 @@ class InducedSubgraph(Scene):
                 g.edges[(6, 7)].animate.set_color(dark_color),
                 )
 
-        sis = Tex(r"\footnotesize strict i. subgraph").set_color(YELLOW)
+        sis = Tex(r"\footnotesize proper i. subgraph").set_color(YELLOW)
         sis.move_to(text[3])
 
         subset = Tex(r"\footnotesize $H \subset G$").set_color(YELLOW)
@@ -435,7 +435,7 @@ class InducedSubgraph(Scene):
         one = Tex(r"\footnotesize one").set_color(YELLOW)
         one.move_to(text[12])
 
-        title2 = Tex("\Large Strict induced subgraph")
+        title2 = Tex("\Large Proper induced subgraph")
         title2.move_to(title)
 
         self.play(Unwrite(title),
@@ -523,6 +523,8 @@ class ChromaticNumber(Scene):
 
 class PerfectGraph(Scene):
     def construct(self):
+        global dark_color
+
         title = Tex("\Large Perfect graph")
 
         self.play(Write(title))
@@ -533,25 +535,59 @@ class PerfectGraph(Scene):
 
         self.play(Write(text), run_time=duration)
 
-        seed(2)
-        while True:
-            n = 9
-            m =randint(1, n * (n - 1) // 2)
-            if m < 15 or m > 17:
-                continue
-            a = nx.gnm_random_graph(n, m)
-            if not nx.is_chordal(a):
-                continue
-            print(a.edges)
-            break
+        s = 0.13
+        lt = { 1 : [-23.077176841641393, -3.6014238478640053, 0],
+            2 : [-17.53400032559717, -0.7232673082021435, 0],
+            3 : [-17.585547717712963, -6.611537570521636, 0],
+            4 : [-11.87839351679463, -3.7000433413833758, 0],
+            5 : [-7.810612906695855, -0.14713004947159197, 0],
+            6 : [-13.139976458938843, 2.483979391581951, 0],
+            7 : [-7.873814738368363, -7.324043997994387, 0],
+            8 : [-4.128425988901852, -3.7682916367758734, 0],
+            9 : [0.9505618235022141, -7.371686271022552, 0],
+            10 : [1.0132341302781502, -0.2549027730859073, 0],
+            11 : [-28.505591928163522, -6.575932020162197, 0],
+            12 : [-28.452365469134666, -0.5317762398287528, 0],
+            13 : [-13.2486886857803, -9.86088904888131, 0]}
 
-        A = Graph.from_networkx(a, layout="spring", layout_scale=1.3).scale(2)
-        self.play(Write(A))
+        lt_avg_x = 0
+        lt_avg_y = 0
 
-        a_coloring = get_coloring(a.edges)
+        for i in lt:
+            lt_avg_x += lt[i][0]
+            lt_avg_y += lt[i][1]
+
+        lt_avg_x /= len(lt)
+        lt_avg_y /= len(lt)
+
+        for i in lt:
+            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * s, 0)
+
+        vertices = [i + 1 for i in range(13)]
+        edges = [(1, 2), (3, 2), (2, 4), (4, 5), (6, 4), (4, 7), (5, 7), (1, 3), (3, 4), (6, 5), (8, 4), (8, 7), (8, 5), (8, 9), (10, 8), (11, 1), (12, 11), (12, 1), (13, 7), (13, 4)]
+        g = Graph(vertices, edges, layout=lt).scale(2)
+        g.shift(DOWN * 1.2)
+
+        self.play(Write(g))
+
+        self.play(g.animate.shift(LEFT))
+
+        coloring = get_coloring(g.edges, one_indexing=True)
+
+        chi = Tex("$\chi(G) = 4$")
+
+        def to_color(color):
+            return [g.vertices[i].animate.set_color(color) for i in g.vertices] + [g.edges[e].animate.set_color(color) for e in g.edges]
 
         self.play(
-            *[A.vertices[v].animate.set_color(a_coloring[v]) for v in a_coloring],
+            *[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring],
+            Write(chi),
+        )
+
+        self.play(
+            *to_color(WHITE),
+            g.vertices[1].animate.set_color(dark_color),
+            g.vertices[3].animate.set_color(dark_color),
         )
 
         fade_all(self)

@@ -6,3 +6,4 @@
 
 # Private + binaries
 ignored/
+*.pdf

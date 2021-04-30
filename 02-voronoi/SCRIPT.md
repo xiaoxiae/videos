@@ -24,6 +24,7 @@
 [intro8] Another thing that we can tweak is the way we measure the distance between two points (called a metric).
 
 [intro9] Until now, we've been using the euclidean metric, where the distance of two points is the length of the line between them. 
+
 [intro10] This is very natural, but is definitely not the only way to do it.
 
 [metric3] Let's look at the Manhattan (or taxicab) distance instead. Here, the distance is the absolute value of $x$ and $y$

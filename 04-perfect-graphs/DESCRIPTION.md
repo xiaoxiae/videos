@@ -24,7 +24,10 @@ sox (audio): http://sox.sourceforge.net/
 [EN] Vašek Chvátal's article about the Strong Perfect Graph Theorem:
 http://users.encs.concordia.ca/~chvatal/perfect/spgt.html
 
+[EN] Reinhard Diestel: Graph Theory:
+http://diestel-graph-theory.com/
+
 [CZ] Martin Koutecký's lecture on Combinatorics and Graph Theory:
 https://research.koutecky.name/db/teaching:kg22021_prednaska
 
-[EN] Wikipedia of the definitions and theorems, for accurate translation from Czech to English
+[EN] Wikipedia, for accurate translations from Czech to English
