@@ -7,3 +7,4 @@
 # Private + binaries
 ignored/
 *.pdf
+*.xopp~

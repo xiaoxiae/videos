@@ -29,10 +29,8 @@ Aditionally, it is a proper subgraph, if we remove one or more vertices.
 # Chromatic number (ChromaticNumber)
 The chromatic number $\chi(G)$ of a graph $G$ is the smallest number of colors we can use to color the graph's vertices, such that no two adjacent vertices have the same color.
 
-# Perfect graph (PerfectGraph TODO)
+# Perfect graph (PerfectGraph)
 Finally, a graph $G$ is perfect, if and only if $\forall H \subseteq G: \chi(H) = \omega(H)$.
-
-TODO: animation of some induced subgraphs, their chis and omegas
 
 --- LEMMA 1 ---
 
@@ -51,14 +49,14 @@ For the induction step, TODO the rest of the proof
 
 --- WEAK PERFECT GRAPH THEOREM ---
 
-# Weak perfect graph theorem
-The weak perfect graph theorem states that a graph $G$ is perfect, if and only if $\bar{G}$ is perfect.
+# Weak perfect graph theorem (Theorem)
+Now we'll finally prove the main theorem which state that a graph $G$ is perfect, if and only if $\bar{G}$ is perfect.
 
-First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symetrical (complementing a complement graph yields the original graph).
+First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symetrical (complementing a complement graph yields the original graph). TODO: in text
 
 We'll prove the implication using a contradiction. Let's take the smallest $G$ (in the number of vertices) that is perfect but $\bar{G}$ isn't.
 
-Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Furthermore, $H = \bar{G}$, because if $H \subset \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} \subset G$), which would be a contradiction with the minimality of $(G, \bar{G})$.
+Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Furthermore, $H = \bar{G}$, because if $H \subset \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} \subset G$ and $G$ is perfect). This would, however, be a contradiction with the minimality of $(G, \bar{G})$.
 
 TODO: obrázek toho lemmatu?
 

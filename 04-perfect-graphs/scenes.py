@@ -91,7 +91,7 @@ class Complement(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-        duration, text = createHighlightedParagraph("A ","complement"," of a graph", " $G$ ", "is a graph ","$\conj{G}$",", such that ","each to vertices"," are adjacent in ","$\conj{G}$",", if and only if they are ","not adjacent"," in ","$G$",".", size=r"\footnotesize")
+        duration, text = createHighlightedParagraph("A ","complement"," of a graph", " $G$ ", "is a graph ","$\overline{G}$",", such that ","each to vertices"," are adjacent in ","$\overline{G}$",", if and only if they are ","not adjacent"," in ","$G$",".", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -114,7 +114,7 @@ class Complement(Scene):
         h_edges = [(1, 3), (1, 4), (2, 3), (3, 5), (4, 5)]
         h = Graph(vertices, h_edges, layout="circular", layout_scale=1.5/2).scale(2)
         h.shift(DOWN * 1.5 + RIGHT * 3)
-        h_text = Tex("$\conj{G}$")
+        h_text = Tex("$\overline{G}$")
         h_text.next_to(h, RIGHT + UP).shift(DOWN * 0.80 + LEFT * 0.6)
 
         self.play(Write(g), Write(g_text), Write(h), Write(h_text))
@@ -570,24 +570,75 @@ class PerfectGraph(Scene):
 
         self.play(Write(g))
 
-        self.play(g.animate.shift(LEFT))
+        self.play(g.animate.shift(LEFT * 1.2))
 
         coloring = get_coloring(g.edges, one_indexing=True)
 
         chi = Tex("$\chi(G) = 4$")
+        omega = Tex("$\omega(G) = 4$")
+        chii = Tex("$\chi(H) = 3$")
+        omegaa = Tex("$\omega(H) = 3$")
 
         def to_color(color):
             return [g.vertices[i].animate.set_color(color) for i in g.vertices] + [g.edges[e].animate.set_color(color) for e in g.edges]
+
+        chi.next_to(g, RIGHT).shift(RIGHT * 0.3 + UP * 0.4)
+        omega.next_to(chi, DOWN)
+        chii.next_to(g, RIGHT).shift(RIGHT * 0.3 + UP * 0.4)
+        omegaa.next_to(chi, DOWN)
 
         self.play(
             *[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring],
             Write(chi),
         )
 
+        take = (4, 5, 7, 8)
+
+        self.play(
+            *to_color(YELLOW),
+            *[g.vertices[v].animate.set_color(WHITE) for v in vertices if v not in take],
+            *[g.edges[(a, b)].animate.set_color(WHITE) for a, b in edges if a not in take or b not in take],
+            Write(omega),
+        )
+
+        take = (11, 12, 1, 3, 2, 4)
+
         self.play(
             *to_color(WHITE),
-            g.vertices[1].animate.set_color(dark_color),
-            g.vertices[3].animate.set_color(dark_color),
+            *[g.vertices[v].animate.set_color(dark_color) for v in vertices if v not in take],
+            *[g.edges[(a, b)].animate.set_color(dark_color) for a, b in edges if a not in take or b not in take],
+        )
+
+        less_edges = [(take.index(a), take.index(b)) for a, b in edges if a in take and b in take]
+        less_coloring = get_coloring(less_edges)
+
+        self.play(
+            *[g.vertices[v].animate.set_color(less_coloring[i]) for i, v in enumerate(take)],
+            Transform(chi, chii),
+        )
+
+        takeee = (1, 3, 2)
+
+        self.play(
+            *[g.vertices[v].animate.set_color(WHITE) for i, v in enumerate(take)],
+            *[g.edges[(a, b)].animate.set_color(YELLOW) for a, b in edges if a in takeee and b in takeee],
+            *[g.vertices[v].animate.set_color(YELLOW) for i, v in enumerate(takeee)],
+            Transform(omega, omegaa),
         )
 
         fade_all(self)
+
+def getFuzzyVertex(n):
+    g = nx.complete_graph(n + 1)
+    return Graph.from_networkx(g, layout="spring", layout_scale=0.1).scale(2)
+
+def drawFuzzyVertex(g):
+    return [FadeIn(g.vertices[0])] + [FadeIn(g.edges[(a, b)]) for a, b in g.edges if a == 0 or b == 0]
+
+class Theorem(Scene):
+    def construct(self):
+        fv = getFuzzyVertex(2)
+        self.play( *drawFuzzyVertex(fv))
+
+
+
