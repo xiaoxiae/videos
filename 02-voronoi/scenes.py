@@ -1,42 +1,38 @@
 from utilities import *
 
+def get_voronoi_dots(path):
+    with open(path, "r") as f:
+        dictionary = load(f.read())
+
+    return [k for k in dictionary], [dictionary[k] for k in dictionary]
+
+
+def get_corner_points(self):
+    min_x = float('inf')
+    min_y = float('inf')
+    max_x = float('-inf')
+    max_y = float('-inf')
+
+    for row in self.camera.get_coords_of_all_pixels():
+        for x, y in row:
+            if min_x > x:
+                min_x = x
+            if min_y > y:
+                min_y = y
+            if max_x < x:
+                max_x = x
+            if max_y < y:
+                max_y = y
+
+    return min_x, min_y, max_x, max_y, (max_x - min_x), (max_y - min_y)
+
+
 class Intro(Scene):
     def construct(self):
-
-        min_x = float('inf')
-        min_y = float('inf')
-        max_x = float('-inf')
-        max_y = float('-inf')
-
-        seed(134)
-
-        for row in self.camera.get_coords_of_all_pixels():
-            for x, y in row:
-                if min_x > x:
-                    min_x = x
-                if min_y > y:
-                    min_y = y
-                if max_x < x:
-                    max_x = x
-                if max_y < y:
-                    max_y = y
-
         text = Tex("\Huge Voronoi Diagrams")
 
         self.play(Write(text))
         self.play(FadeOut(text))
-
-        a = SVGMobject("1.svg", width=max_x-min_x, height=max_y-min_y)
-        b = SVGMobject("2.svg", width=max_x-min_x, height=max_y-min_y)
-        c = SVGMobject("3.svg", width=max_x-min_x, height=max_y-min_y)
-        d = SVGMobject("4.svg", width=max_x-min_x, height=max_y-min_y)
-
-        self.play(Write(a))
-        self.play(Unwrite(a))
-        self.play(Write(b))
-        self.play(Unwrite(b))
-        self.play(Write(c))
-        self.play(Unwrite(c))
 
 class Simple(Scene):
     def construct(self):
@@ -45,91 +41,29 @@ class Simple(Scene):
         self.play(Write(text))
         self.play(FadeOut(text))
 
-        min_x = float('inf')
-        min_y = float('inf')
-        max_x = float('-inf')
-        max_y = float('-inf')
+        min_x, min_y, max_x, max_y, w, h = get_corner_points(self)
 
-        seed(134)
+        dots, colors = get_voronoi_dots("ignored/intro-1.out")
 
-        for row in self.camera.get_coords_of_all_pixels():
-            for x, y in row:
-                if min_x > x:
-                    min_x = x
-                if min_y > y:
-                    min_y = y
-                if max_x < x:
-                    max_x = x
-                if max_y < y:
-                    max_y = y
-
-        n = 10
-
-        dots = [Dot([uniform(min_x, max_x), uniform(min_y, max_y), 0]) for _ in range(n)]
-
-        for dot in dots:
-            x, y, _ = dot.get_center()
-            x -= min_x
-            y -= min_y
-
-            xn = x / (max_x - min_x)
-            yn = y / (max_y - min_y)
+        dots = [Dot([(x - 0.5) * w, (y - 0.5) * h, 0]) for x, y in dots]
 
         self.play(LaggedStart(*map(FadeIn, dots)))
 
-        colors = [(87, 211, 219), (161, 87, 219), (87, 112, 219), (87, 211, 219), (145, 219, 87), (87, 112, 219), (87, 211, 219), (87, 112, 219), (161, 87, 219), (145, 219, 87)]
-        colors = [(color[0]/256, color[1]/256, color[2]/256) for color in colors]
-
-        self.play(*[dot.animate.set_fill(rgb_to_hex(color)) for dot, color in zip(dots, colors)])
-
-        center = Dot(ORIGIN)
-        self.play(FadeIn(center))
-
-        lines = [Line(center.get_center(), dots[i].get_center(), stroke_width = 2) for i in range(n)]
-
-        def tmp(mob, dt):
-            self.add(center)
-            self.add(*dots)
-
-        center.add_updater(tmp)
-
-        self.play(*map(Create, lines))
-
-        self.play(*map(FadeOut, lines[:6] + lines[7:]))
-
-        self.play(center.animate.set_fill(rgb_to_hex(colors[0])), lines[6].animate.set_fill(rgb_to_hex(colors[0])))
-
-        self.play(FadeOut(lines[6]), FadeOut(center))
-
-        center.remove_updater(tmp)
+        visuallyChangeColor(self, [(dot, color) for dot, color in zip(dots, colors)])
 
 
 class Points(Scene):
     def construct(self):
-        text = Tex("\Large Distributing points more evenly")
+        text = Tex("\Large Distributing points evenly")
 
         self.play(Write(text))
         self.play(FadeOut(text))
 
-        min_x = float('inf')
-        min_y = float('inf')
-        max_x = float('-inf')
-        max_y = float('-inf')
+        min_x, min_y, max_x, max_y, w, h = get_corner_points(self)
 
-        seed(134)
+        seed(2)
 
-        for row in self.camera.get_coords_of_all_pixels():
-            for x, y in row:
-                if min_x > x:
-                    min_x = x
-                if min_y > y:
-                    min_y = y
-                if max_x < x:
-                    max_x = x
-                if max_y < y:
-                    max_y = y
-
-        n = 10
+        n = 20
 
         def my_uniform(min_x, min_y, max_x, max_y, regions: int):
 
@@ -191,13 +125,6 @@ class Points(Scene):
 
         print([dot.get_center() for dot in dots])
 
-        #for dot in dots:
-        #    x, y= dot.get_center()[:2]
-
-        #    xn, yn = x / (max_x - min_x) + 0.5, y / (max_y - min_y) + 0.5
-
-        #    print(xn, yn)
-
         colors = [(145, 219, 87), (87, 211, 219), (87, 211, 219), (87, 211, 219), (161, 87, 219), (161, 87, 219), (87, 112, 219), (87, 112, 219), (87, 211, 219), (145, 219, 87)]
         colors = [(color[0]/256, color[1]/256, color[2]/256) for color in colors]
 
@@ -210,24 +137,6 @@ class Metric(Scene):
 
         self.play(Write(text))
         self.play(FadeOut(text))
-
-        min_x = float('inf')
-        min_y = float('inf')
-        max_x = float('-inf')
-        max_y = float('-inf')
-
-        seed(134)
-
-        for row in self.camera.get_coords_of_all_pixels():
-            for x, y in row:
-                if min_x > x:
-                    min_x = x
-                if min_y > y:
-                    min_y = y
-                if max_x < x:
-                    max_x = x
-                if max_y < y:
-                    max_y = y
 
         dot1start = Dot()
         dot1end = Dot()
@@ -293,10 +202,10 @@ class Metric(Scene):
             text.become(Tex(txt))
             text.next_to(dot2end.get_center(), UP)
 
-        self.play(ApplyMethod(dot1start.shift, LEFT*2), ApplyMethod(dot1end.shift, LEFT*2), run_time=1, rate_func=smooth)
+        self.play(ApplyMethod(dot1start.shift, LEFT*3), ApplyMethod(dot1end.shift, LEFT*3), run_time=1, rate_func=smooth)
 
-        dot2start.shift(RIGHT*2)
-        dot2end.shift(RIGHT*2)
+        dot2start.shift(RIGHT*3)
+        dot2end.shift(RIGHT*3)
 
         formula2 = Tex("$|x| + |y|$")
         formula2.move_to(dot2start.get_center())
@@ -399,3 +308,26 @@ class Color(Scene):
         self.bring_to_back(img)
         self.remove(img)
         self.play(FadeIn(img))
+
+class Applications(Scene):
+    def construct(self):
+        min_x, min_y, max_x, max_y, w, h = get_corner_points(self)
+
+        images = [
+            ImageMobject("ignored/images/dragonfly-resized.png"),
+            ImageMobject("ignored/images/giraffe-resized.png"),
+            ImageMobject("ignored/images/mud-resized.png"),
+            ImageMobject("ignored/images/soap-resized.png")]
+
+        for image in images:
+            image.width = w/3
+            image.height = h/3
+
+        self.play(FadeIn(images[0].shift(LEFT * 3 + UP * 2)))
+        self.play(FadeIn(images[1].shift(RIGHT * 3 + UP * 2)))
+        self.play(FadeIn(images[2].shift(LEFT * 3 + DOWN * 2)))
+        self.play(FadeIn(images[3].shift(RIGHT * 3 + DOWN * 2)))
+
+        fade_all(self)
+
+        # TODO: sem klip 
