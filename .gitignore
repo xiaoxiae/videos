@@ -3,8 +3,8 @@
 **/media
 **/video
 **/audio
+**/ignored
 
 # Private + binaries
-ignored/
 *.pdf
 *.xopp~
