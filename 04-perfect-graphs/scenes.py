@@ -724,6 +724,267 @@ class Lemma1(Scene):
         fade_all(self)
 
 
+class Lemma2(Scene):
+    def construct(self):
+        global dark_color
+
+        title = Tex("\Large Lemma 2")
+
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 1))
+
+        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, then any graph constructed from |$G$| by |expanding| a vertex is also |perfect|.", size=r"\footnotesize", splitBy="|")
+        text.next_to(title, 2 * DOWN)
+
+        self.play(Write(text), run_time=duration)
+
+        self.play(FadeOut(title))
+        self.play(text.animate.shift(UP * 3.3))
+
+        l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.15)
+
+        self.play(Write(l1))
+
+        #s = 0.16
+        #t = 0.16
+        #lt = { 1: [-12.029991806683347, 4.322127883398239, 0],
+        #    2: [-12.076574068953635, -1.7412590025323897, 0],
+        #    3: [-6.720733101887893, 1.2500538046558693, 0],
+        #    4: [-0.49692711688713764, 1.1491474582769117, 0],
+        #    5: [4.580001507046976, 5.772457897171072, 0],
+        #    6: [2.8472799643190907, -5.4330886795147935, 0],
+        #    7: [10.056125142803856, 5.6897045204928, 0],
+        #    8: [6.62012252897766, -0.5945984711319062, 0],
+        #    9: [10.98788525283437, -4.414560016084881, 0],
+        #    10: [-4.057687247555594, -5.415416431868287, 0],
+        #    11: [-6.465793761818169, 6.59644290985542, 0]}
+        #lt2 = {1 : [-12.029991806683347, 4.322127883398239, 0],
+        #    2 : [-12.076574068953635, -1.7412590025323897, 0],
+        #    3 : [-6.720733101887893, 1.2500538046558693, 0],
+        #    4 : [-0.8722482728059152, 2.341019980268004, 0],
+        #    5 : [4.580001507046976, 5.772457897171072, 0],
+        #    6 : [2.8472799643190907, -5.4330886795147935, 0],
+        #    7 : [10.056125142803856, 5.6897045204928, 0],
+        #    8 : [6.62012252897766, -0.5945984711319062, 0],
+        #    9 : [10.98788525283437, -4.414560016084881, 0],
+        #    10 : [-4.057687247555594, -5.415416431868287, 0],
+        #    11 : [-6.465793761818169, 6.59644290985542, 0],
+        #    12 : [-1.5366450936795812, -1.6601239954250642, 0],
+        #    13 : [2.318809025203322, 0.06587271750884371, 0]}
+
+        #lt_avg_x = 0
+        #lt_avg_y = 0
+
+        #for i in lt:
+        #    lt_avg_x += lt[i][0]
+        #    lt_avg_y += lt[i][1]
+
+        #lt_avg_x /= len(lt)
+        #lt_avg_y /= len(lt)
+
+        #for i in lt:
+        #    lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
+        #for i in lt2:
+        #    lt2[i] = ((lt2[i][0] - lt_avg_x) * s, (lt2[i][1] - lt_avg_y) * t, 0)
+
+        #vertices = [i + 1 for i in range(11)]
+        #vertices2 = [3, 4, 5, 6, 12, 13]
+        #edges = [(1, 2), (2, 3), (1, 3), (3, 4), (4, 5), (4, 6), (5, 7), (6, 8), (9, 8), (6, 10), (1, 11)]
+        #edges2 = [(u, v) for u, v in [(1, 2), (2, 3), (1, 3), (3, 4), (4, 5), (4, 6), (5, 7), (6, 8), (9, 8), (6, 10), (1, 11), (4, 12), (13, 12), (4, 13), (3, 12), (3, 13), (13, 6), (6, 12), (13, 5), (5, 12)] if u in vertices2 and v in vertices2]
+        #g = Graph(vertices, edges, layout=lt).scale(2)
+        #g2 = Graph(vertices2, edges2, layout=lt2).scale(2)
+        #g.shift(DOWN * 0.8)
+        #g2.shift(g.vertices[3].get_center() - g2.vertices[3].get_center())
+
+        #g.vertices[4].set_color(YELLOW)
+        #g2.vertices[4].set_color(YELLOW)
+        #g2.vertices[12].set_color(YELLOW)
+        #g2.vertices[13].set_color(YELLOW)
+
+        #self.play(Write(g))
+        #self.play(Circumscribe(g.vertices[4], Circle))
+        #group = VGroup(g2.vertices[4], g2.vertices[12],g2.vertices[13])
+        #self.play(
+        #        FadeTransform(g.vertices[4], group),
+        #        *[FadeOut(g.edges[(u, v)]) for u, v in edges if u == 4 or v == 4],
+        #        *[FadeIn(g2.edges[(u, v)]) for u, v in g2.edges],
+        #        *[FadeIn(g2.vertices[v]) for v in g2.vertices if v not in (4, 12, 13)],
+        #        )
+
+        #self.remove(group)
+        #self.play(
+        #         FadeOut(g2),
+        #        *[FadeOut(g.edges[(u, v)]) for u, v in edges if u != 4 and v != 4],
+        #        *[FadeOut(g.vertices[v]) for v in vertices if v != 4],
+        #         )
+
+        #g = Graph.from_networkx(nx.complete_graph(1), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6)
+        #h = Graph.from_networkx(nx.complete_graph(2), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6)
+
+        #self.play(
+        #        Write(g)
+        #    )
+
+        #self.play(
+        #        FadeTransform(g, h)
+        #    )
+
+        #self.play(
+        #        FadeOut(h)
+        #    )
+
+        s = 0.16
+        t = 0.16
+        lt = {1 : [31.8034087985056, 21.180454392536536, 0],
+            2 : [34.609439649137066, 15.785461954390827, 0],
+            3 : [38.18419657345534, 20.835063248552107, 0],
+            4 : [35.213109065971565, 26.23652372171837, 0],
+            5 : [44.76233477480106, 20.86973516627854, 0],
+            6 : [48.690086325063504, 16.052131276509638, 0],
+            7 : [51.07614064122136, 21.579182218042003, 0],
+            8 : [47.708359547565784, 26.402544082922805, 0],
+            9 : [41.97052991769025, 15.384911836633577, 0],
+            10 : [41.26645957589335, 26.325346343930015, 0],
+            11 : [57.17698377454542, 22.616073172202213, 0],
+            12 : [26.569111783890147, 24.5420949338908, 0],
+            13 : [26.563703898682927, 17.828541284261505, 0]}
+        lt2 = {1 : [31.8034087985056, 21.180454392536536, 0],
+            2 : [34.609439649137066, 15.785461954390827, 0],
+            3 : [38.18419657345534, 20.835063248552107, 0],
+            4 : [35.213109065971565, 26.23652372171837, 0],
+            5 : [44.76233477480106, 20.86973516627854, 0],
+            6 : [48.690086325063504, 16.052131276509638, 0],
+            7 : [51.07614064122136, 21.579182218042003, 0],
+            8 : [47.708359547565784, 26.402544082922805, 0],
+            9 : [41.97052991769025, 15.384911836633577, 0],
+            10 : [41.26645957589335, 26.325346343930015, 0],
+            11 : [57.17698377454542, 22.616073172202213, 0],
+            12 : [26.569111783890147, 24.5420949338908, 0],
+            13 : [26.563703898682927, 17.828541284261505, 0],
+            14 : [53.55910399699539, 26.968055538883853, 0]}
+        lt3 = {1 : [31.8034087985056, 21.180454392536536, 0],
+            2 : [31.16604926939867, 15.750680233383367, 0],
+            3 : [38.18419657345534, 20.835063248552107, 0],
+            4 : [35.213109065971565, 26.23652372171837, 0],
+            5 : [44.76233477480106, 20.86973516627854, 0],
+            6 : [48.690086325063504, 16.052131276509638, 0],
+            7 : [51.07614064122136, 21.579182218042003, 0],
+            8 : [47.708359547565784, 26.402544082922805, 0],
+            9 : [41.97052991769025, 15.384911836633577, 0],
+            10 : [41.26645957589335, 26.325346343930015, 0],
+            11 : [57.17698377454542, 22.616073172202213, 0],
+            12 : [26.569111783890147, 24.5420949338908, 0],
+            13 : [26.563703898682927, 17.828541284261505, 0],
+            14 : [36.96822307643766, 15.350960722392697, 0]}
+
+        lt_avg_x = 0
+        lt_avg_y = 0
+
+        for i in lt:
+            lt_avg_x += lt[i][0]
+            lt_avg_y += lt[i][1]
+
+        lt_avg_x /= len(lt)
+        lt_avg_y /= len(lt)
+
+        for i in lt:
+            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
+        for i in lt2:
+            lt2[i] = ((lt2[i][0] - lt_avg_x) * s, (lt2[i][1] - lt_avg_y) * t, 0)
+        for i in lt3:
+            lt3[i] = ((lt3[i][0] - lt_avg_x) * s, (lt3[i][1] - lt_avg_y) * t, 0)
+
+        vertices = [i + 1 for i in range(13)]
+        vertices2 = [7, 11, 14]
+        vertices3 = [1, 2, 3, 14]
+        edges = [(1, 2), (3, 4), (1, 4), (3, 2), (3, 1), (3, 5), (5, 6), (5, 7), (6, 7), (5, 8), (5, 9), (10, 4), (7, 11), (1, 12), (1, 13)]
+        edges2 = [(u, v) for u, v in [(1, 2), (3, 4), (1, 4), (3, 2), (3, 1), (3, 5), (5, 6), (5, 7), (6, 7), (5, 8), (5, 9), (10, 4), (7, 11), (1, 12), (1, 13), (11, 14), (7, 14)] if u in vertices2 and v in vertices2]
+        edges3 = [(u, v) for u, v in [(1, 2), (3, 4), (1, 4), (3, 2), (3, 1), (3, 5), (5, 6), (5, 7), (6, 7), (5, 8), (5, 9), (10, 4), (7, 11), (1, 12), (1, 13), (11, 14), (1, 14), (2, 14), (3, 14)] if u in vertices3 and v in vertices3]
+        g = Graph(vertices, edges, layout=lt).scale(2)
+        g.shift(DOWN * 0.8)
+        g2 = Graph(vertices2, edges2, layout=lt2).scale(2)
+        g2.shift(- g2.vertices[7].get_center() + g.vertices[7].get_center())
+        g2.vertices[11].set_color(GREEN)
+        g3 = Graph(vertices3, edges3, layout=lt3).scale(2)
+        g3.shift(- g3.vertices[1].get_center() + g.vertices[1].get_center())
+        g3.vertices[2].set_color(BLUE)
+
+        coloring = get_coloring(g.edges, one_indexing=True)
+
+        v_label = Tex("$v$").next_to(g.vertices[2], LEFT)
+        v_label_prime = Tex("$v'$").next_to(g3.vertices[14], RIGHT)
+
+        g_orig = Tex("$G$").shift(RIGHT * 4.6 + DOWN * 1.9)
+        g_label = Tex("$G$").shift(RIGHT * 4.6 + DOWN * 1.9)
+        g_prime_label = Tex("$G'$").shift(RIGHT * 4.6 + DOWN * 1.9)
+
+        for v in coloring:
+            g.vertices[v + 1].set_color(coloring[v])
+
+        self.play(
+                Write(g),
+                Write(g_label)
+                )
+
+        self.play(
+                Circumscribe(g.vertices[2], Circle),
+                Write(v_label),
+                )
+
+        group = VGroup(g3.vertices[2], g3.vertices[14])
+        self.play(
+                FadeTransform(g.vertices[2], group),
+                *[FadeOut(g.edges[(u, v)]) for u, v in edges if u == 2 or v == 2],
+                v_label.animate.next_to(g3.vertices[2], LEFT),
+                Transform(g_label, g_prime_label),
+                )
+
+        self.play(
+                *[FadeIn(g3.edges[(u, v)]) for u, v in g3.edges],
+                )
+
+        self.play(
+                Write(v_label_prime),
+                )
+
+        self.play(
+                Circumscribe(g3.vertices[14], Circle),
+                g3.vertices[14].animate.set_color(YELLOW),
+                )
+
+        self.play(
+                FadeOut(group),
+                *[FadeIn(g.edges[(u, v)]) for u, v in edges if u == 2 or v == 2],
+                *[FadeOut(g3.edges[(u, v)]) for u, v in g3.edges],
+                FadeIn(g.vertices[2]),
+                FadeOut(v_label),
+                FadeOut(v_label_prime),
+                Transform(g_label, g_orig),
+                )
+
+        v_label.next_to(g2.vertices[11], RIGHT)
+        v_label_prime.next_to(g2.vertices[14], RIGHT)
+        self.play(
+                Circumscribe(g.vertices[11], Circle),
+                Write(v_label),
+                )
+        group = VGroup(g2.vertices[11], g2.vertices[14])
+        self.play(
+                FadeTransform(g.vertices[11], group),
+                *[FadeOut(g.edges[(u, v)]) for u, v in edges if u == 11 or v == 11],
+                Transform(g_label, g_prime_label),
+                )
+
+        self.play(
+                *[FadeIn(g2.edges[(u, v)]) for u, v in g2.edges],
+                )
+
+        self.play(
+                Write(v_label_prime)
+                )
+
+        fade_all(self)
+
 
 class PerfectGraph(Scene):
     def construct(self):
@@ -837,13 +1098,6 @@ class PerfectGraph(Scene):
         self.wait()
 
         fade_all(self)
-
-def getFuzzyVertex(n):
-    g = nx.complete_graph(n + 1)
-    return Graph.from_networkx(g, layout="spring", layout_scale=0.15).scale(2).rotate(uniform(0, 2 * PI))
-
-def drawFuzzyVertex(g):
-    return [Write(g.vertices[0])] + [Write(g.edges[(a, b)]) for a, b in g.edges if a == 0 and b != 0]
 
 class Theorem(Scene):
     def construct(self):

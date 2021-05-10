@@ -43,27 +43,22 @@ The left implication can be proved using induction. The base case is $\omega(G) 
 
 We know that $G$ has a vast independent set $I$. Let $H$ be the induced subgraph from $G$ by removing this set. By induction, we know that $H$ is perfect, so $\chi(H) = \omega(H)$. Adding the vertices of $I$ back increases $\omega(H)$ by $1$ (all maxium cliques contained $1$ vertex from $I$) and also increases $\chi(H)$ by $1$ (we have to use a new color to color $I$).
 
-TODO: animace
-
 --- LEMMA 2 ---
 
 # Lemma 2 (Lemma2 TODO)
 Our second lemma states that if $G$ is perfect, then any graph constructed from $G$ by expanding a vertex is also perfect. By expanding, we mean that we replace the vertex with $K_n$ and connect it to all of its neighbours accordingly.
 
-For proof, we'll use induction on the number of vertices. Base case is expanding a single vertex to $K_2$, which is perfect.
-
-Now we have some graph $G$ and vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
+For proof, we'll use induction on the number of vertices. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
 
 Case one is that expanding increases $\omega$ ($\omega(G) = \omega(G') - 1$). This is fine, since we now have an additional color that we'll use on $v'$ and $G'$ is still perfect.
 
-Case two is that expanding doesn't increase $\omega$. In this case, let's take the coloring of $G$. Looking at the set of vertices with the same color as $x$, we know that this must be a vast independent set (since each clique contains all of the colors). However, $x$ is not a part of any such clique. Removing vertices of this color besides $x$ will decrease $\omega$ and give us $\chi(G) - 1$ coloring. Adding the vertices back, including the not-yet-added $x'$ proves the second case.
+Case two is that expanding doesn't increase $\omega$. In this case, let's take the coloring of $G$. Looking at the set of vertices with the same color as $v$, we know that this must be a vast independent set (since each clique contains all of the colors). However, $v$ is not a part of a maximum clique (otherwise $\omega$ would have increased).
 
-TODO: lepší wording
-TODO: animace
+Removing all vertices of this color besides $v$ will decrease $\omega$ by one and, by induction, give $\chi(G) - 1$ coloring. Adding the vertices back, including the not-yet-added $x'$ proves the second case.
 
 --- WEAK PERFECT GRAPH THEOREM ---
 
-# Weak perfect graph theorem (Theorem)
+# Weak perfect graph theorem (Theorem TODO)
 Now we'll finally prove the main theorem. It states that a graph $G$ is perfect, if and only if $\bar{G}$ is perfect.
 
 First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symetrical.
@@ -100,7 +95,7 @@ Combining those two inequalities, we get that $\omega(G') < \chi(G')$, meaning t
 
 --- STRONG PERFECT GRAPH THEOREM
 
-# Strong perfect graph theorem
+# Strong perfect graph theorem (Theorem2 TODO)
 A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if it's every hole and antihole is of even length (called a Berge graph). By hole, we mean an induced cycle and by antihole, a complement to an induced cycle.
 
 We won't be proving this theorem, since it took a 150-page paper to do so, but we'll observe that it immediately proves the Weak perfect graph theorem (from definition of complement - holes become antiholes and vice versa).
