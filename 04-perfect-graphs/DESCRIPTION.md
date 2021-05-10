@@ -1,4 +1,4 @@
-Perfect graphs, and the weak perfect graph theorem.
+The proof of the weak perfect graph theorem.
 
 ------------------
 

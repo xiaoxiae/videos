@@ -1,7 +1,7 @@
 from utilities import *
 from chromatic import *
 
-dark_color = DARKER_GRAY
+dark_color = DARK_GRAY
 
 class MyBulletedList(Tex):
     def __init__(
@@ -537,6 +537,157 @@ class ChromaticNumber(Scene):
 
         fade_all(self)
 
+class Lemma1(Scene):
+    def construct(self):
+        global dark_color
+
+        title = Tex("\Large Lemma 1")
+
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 1))
+
+        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if it contains an |independent set,| such that each m|aximum clique i|n $G$ |contains a vertex f|rom the set (called a v|ast independent set)|..", size=r"\footnotesize", splitBy="|")
+        text.next_to(title, 2 * DOWN)
+
+        self.play(Write(text), run_time=duration)
+
+        self.play(FadeOut(title))
+        self.play(text.animate.shift(UP * 3.3))
+
+        l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.15)
+
+        self.play(Write(l1))
+
+        s = 0.13
+        t = 0.13
+        lt = {
+             1 : [37.07173774694345, 24.513069552487252, 0],
+             2 : [42.21727425459074, 27.84392529421318, 0],
+             3 : [36.61427318962413, 30.571308404791655, 0],
+             4 : [48.00554555844992, 30.421376085990417, 0],
+             5 : [53.19846946334912, 27.223933155066213, 0],
+             6 : [47.5677835794533, 24.649184796285315, 0],
+             7 : [52.438226317756744, 21.183244775108147, 0],
+             8 : [59.343089264946734, 28.60991123463918, 0],
+             9 : [65.13351173235914, 26.519184930589873, 0],
+            10 : [64.1236082388095, 32.48951997100356, 0],
+            11 : [55.00129702910227, 33.20668506985356, 0],
+            12 : [59.047410413208894, 23.030623084674833, 0],
+            13 : [42.182298604016225, 20.996876352207323, 0],
+            14 : [42.84315130315794, 34.07480345101175, 0]}
+
+        lt_avg_x = 0
+        lt_avg_y = 0
+
+        for i in lt:
+            lt_avg_x += lt[i][0]
+            lt_avg_y += lt[i][1]
+
+        lt_avg_x /= len(lt)
+        lt_avg_y /= len(lt)
+
+        for i in lt:
+            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
+
+        vertices = [i + 1 for i in range(14)]
+        edges = [(1 ,  2), (2 ,  3), (1 ,  3), (2 ,  4), (4 ,  5), (6 ,  5), (2 ,  6), (5 ,  7), (6 ,  7), (5 ,  8), (9 ,  8), (10,  9), (10,  8), (11,  4), ( 9, 12), ( 1, 13), ( 3, 14 )]
+        g = Graph(vertices, edges, layout=lt).scale(2)
+        g.shift(DOWN * 1.1)
+
+        ri = Tex(r"$\Huge\Rightarrow$").shift( LEFT * 6.1 + UP * 0.8)
+        li = Tex(r"$\Huge\Leftarrow$").shift( LEFT * 6.1 + UP * 0.8)
+        self.play(Write(ri))
+
+        self.play(Write(g))
+
+        coloring = get_coloring(g.edges, one_indexing=True)
+
+        self.play(
+            *[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring],
+        )
+
+        take = (1, 2, 3, 8, 9, 10, 5, 6, 7)
+
+        self.play(
+            *[g.vertices[v].animate.set_color(dark_color) for v in vertices if v not in take],
+            *[g.edges[(a, b)].animate.set_color(dark_color) for a, b in edges if a not in take or b not in take],
+            g.edges[(5, 8)].animate.set_color(dark_color),
+            g.edges[(2, 6)].animate.set_color(dark_color),
+        )
+
+        take2 = (9, 6, 3)
+
+        self.play(
+                *[g.vertices[v].animate.set_color(WHITE) for v in vertices if v not in take2 and v in take],
+                *[g.vertices[v].animate.set_color(YELLOW) for v in vertices if v in take2],
+                *[Circumscribe(g.vertices[v], Circle, fade_out=True) for v in vertices if v in take2],
+                )
+
+        self.play(
+                FadeOut(g),
+                )
+
+        self.play(
+                Transform(ri, li),
+                )
+
+        wow = Graph([0], []).scale(2).shift(DOWN * 0.3)
+
+        self.play(
+                Write(wow)
+                )
+
+        s = 0.13
+        t = 0.13
+        lt = {1 : [15.309880071637778, 13.88267275823302, 0],
+            2 : [11.152629866734753, 18.473208465522124, 0],
+            3 : [21.533770509017973, 14.062269409469383, 0],
+            4 : [27.653696990616425, 14.33728783167967, 0],
+            5 : [24.379606335811236, 19.510373877028115, 0],
+            6 : [20.128537819154758, 24.02595082531033, 0],
+            7 : [13.899970073784655, 24.08450707296808, 0],
+            8 : [9.21073459378905, 28.051299475263892, 0],
+            9 : [17.983654838438074, 18.871973067254114, 0],
+            10 : [26.376723806437678, 27.54463130743147, 0],
+            11 : [30.093540665815272, 21.669662723253982, 0],
+            12 : [5.894245809297855, 20.83448131841834, 0],
+            13 : [6.894245809297855, 13.784481318418347, 0]}
+
+        lt_avg_x = 0
+        lt_avg_y = 0
+
+        for i in lt:
+            lt_avg_x += lt[i][0]
+            lt_avg_y += lt[i][1]
+
+        lt_avg_x /= len(lt)
+        lt_avg_y /= len(lt)
+
+        for i in lt:
+            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
+
+        vertices = [i + 1 for i in range(13)]
+        edges = [(1, 2), (1, 3), (4, 3), (4, 5), (3, 5), (6, 5), (6, 7), (2, 7), (8, 7), (6, 9), (10, 6), (11, 5), (2, 9), (1, 9), (2, 12), (2, 13)]
+
+        h = Graph(vertices, edges, layout=lt).scale(2)
+        h.shift(DOWN * 1.1)
+
+        gt = Tex("$G$").shift(RIGHT * 3.5 + UP * 0.2)
+        ht = Tex("$H$").shift(RIGHT * 3.5 + UP * 0.2)
+        gt_p = Tex("$G_\star$").shift(RIGHT * 3.5 + UP * 0.2)
+        ht_p = Tex("$H_\star$").shift(RIGHT * 3.5 + UP * 0.2)
+
+        self.play(
+                Transform(wow, h)
+                )
+
+        self.play(
+                Write(gt),
+                )
+
+        take = (1, 4)
+
+
 class PerfectGraph(Scene):
     def construct(self):
         global dark_color
@@ -671,7 +822,7 @@ class Theorem(Scene):
         text[3].set_color(WHITE)
         text.next_to(title, 2 * DOWN)
 
-        _, text2 = createHighlightedParagraph(r"Graph |$G$ is perfect| $\Rightarrow$ graph |$\bar{G}$ is perfect.", size=r"\footnotesize", splitBy="|")
+        impl = Tex(r"\footnotesize$\Rightarrow$")
 
         self.play(Write(text), run_time=duration)
 
@@ -681,76 +832,31 @@ class Theorem(Scene):
                 text.animate.shift(UP * 3.6)
                 )
 
-        text2.move_to(text)
+        impl.move_to(text[3].get_center())
 
         l1 = Line(LEFT * 10, RIGHT * 10).shift(UP * 2.6)
         self.play(Write(l1))
-        self.play(TransformMatchingShapes(text, text2))
+        self.play(
+                text[0].animate.shift(RIGHT * 0.9),
+                text[1].animate.shift(RIGHT * 0.9),
+                text[2].animate.shift(RIGHT * 0.9),
+                Transform(text[3], impl),
+                text[4].animate.shift(LEFT * 0.9),
+                text[5].animate.shift(LEFT * 0.9),
+                )
 
         a = Ellipse(width=5, height=3,color=WHITE).shift(LEFT * 3.4 + DOWN)
         b = Ellipse(width=5, height=3,color=WHITE).shift(RIGHT * 3.4 + DOWN)
 
-        a_text = Tex(r"$G_{\star}$").move_to(a).shift(UP * 2)
-        b_text = Tex(r"$\bar{G}$").move_to(b).shift(UP * 2)
-
-        aa = Ellipse(width=2.5, height=1.6,color=WHITE).shift(LEFT * 3.4 + DOWN * 1.2 + LEFT * 0.6)
-        bb = Ellipse(width=2.5, height=1.6,color=WHITE).shift(RIGHT * 3.4 + DOWN * 1.2 + LEFT * 0.6)
-
-        aa_text = Tex(r"$\bar{H}_{\star}$").move_to(a).shift(UP * 0.3 + RIGHT * 1.3)
-        bb_text = Tex(r"$H$").move_to(b).shift(UP * 0.3 + RIGHT * 1.3)
-
-        self.play(
-                Write(a),
-                Write(a_text),
-                )
-
-        self.play(
-                Write(b),
-                Write(b_text),
-                )
-
-        self.play(
-                Write(bb),
-                Write(bb_text),
-                )
-
-        self.play(
-                Write(aa),
-                Write(aa_text),
-                )
-
-        aaa_text = Tex("=").next_to(a_text, RIGHT)
-        bbb_text = Tex("=").next_to(b_text, RIGHT)
-
-        self.play(
-                Transform(aa, a),
-                Transform(bb, b),
-                FadeIn(aaa_text),
-                FadeIn(bbb_text),
-                aa_text.animate.next_to(aaa_text, RIGHT),
-                bb_text.animate.next_to(bbb_text, RIGHT),
-                )
-
-        ra = Rectangle(width = 8, height = 3.9 * 2).shift(LEFT * 4 + DOWN * 1.3).flip(DOWN)
-        rb = Rectangle(width = 8, height = 3.9 * 2).shift(RIGHT * 4 + DOWN * 1.3).flip(DOWN)
+        a_text = Tex(r"$G_{\star}$").move_to(a).shift(UP * 2.9)
+        b_text = Tex(r"$\bar{G}$").move_to(b).shift(UP * 2.9)
 
         l2 = Line(UP * 2.6, DOWN * 10)
         self.play(
-                Transform(a, ra, path_arc=-0.9),
-                Transform(b, rb, path_arc=-0.9),
-                FadeOut(aa),
-                FadeOut(bb),
-                FadeOut(aaa_text),
-                FadeOut(bbb_text),
-                FadeOut(aa_text),
-                FadeOut(bb_text),
-                a_text.animate.shift(UP * 0.9),
-                b_text.animate.shift(UP * 0.9),
+                Write(a_text),
+                Write(b_text),
+                Write(l2),
                 )
-
-        self.remove(a)
-        self.remove(b)
-        self.add(l2)
 
         seed(1)
 
@@ -933,28 +1039,31 @@ class Theorem(Scene):
 
         L = Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.3).scale(2).rotate(PI/6)
         L.move_to(v)
+        L.vertices[0].set_color(RED)
+        L.vertices[1].set_color(GREEN)
+        L.vertices[2].set_color(BLUE)
 
         a_prime_text = Tex(r"$G'_{\star}$").move_to(a_text)
 
         isssst = [
-            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[0].vertices[a]) for a in issss[0].vertices],
-            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[1].vertices[a]) for a in issss[1].vertices],
-            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[2].vertices[a]) for a in issss[2].vertices],
+            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": RED}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[0].vertices[a]) for a in issss[0].vertices],
+            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": GREEN}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[1].vertices[a]) for a in issss[1].vertices],
+            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": BLUE}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[2].vertices[a]) for a in issss[2].vertices],
         ]
 
         self.play(
-                Transform(v, L),
+                FadeTransform(v, L),
                 Transform(a_text, a_prime_text),
-                *[Transform(issss[0].vertices[a], b) for a, b in zip(issss[0].vertices, isssst[0])],
-                *[Transform(issss[1].vertices[a], b) for a, b in zip(issss[1].vertices, isssst[1])],
-                *[Transform(issss[2].vertices[a], b) for a, b in zip(issss[2].vertices, isssst[2])],
+                *[FadeTransform(issss[0].vertices[a], b) for a, b in zip(issss[0].vertices, isssst[0])],
+                *[FadeTransform(issss[1].vertices[a], b) for a, b in zip(issss[1].vertices, isssst[1])],
+                *[FadeTransform(issss[2].vertices[a], b) for a, b in zip(issss[2].vertices, isssst[2])],
                 )
 
         self.play(
-                FadeOut(v),
-                *[FadeOut(issss[0].vertices[a]) for a in issss[0].vertices],
-                *[FadeOut(issss[1].vertices[a]) for a in issss[1].vertices],
-                *[FadeOut(issss[2].vertices[a]) for a in issss[2].vertices],
+                FadeOut(L),
+                *[FadeOut(i) for i in isssst[0]],
+                *[FadeOut(i) for i in isssst[1]],
+                *[FadeOut(i) for i in isssst[2]],
                 )
 
         vertices_1 = Tex(r"$|V(G')|$").shift(UP * 0.7)

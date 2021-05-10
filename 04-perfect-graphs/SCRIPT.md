@@ -35,13 +35,13 @@ Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if
 --- LEMMA 1 ---
 
 # Lemma 1 (Lemma1 TODO)
-Our first lemma is actually a characterization of a perfect graph. It states that the graph $G$ is perfect, if and only if it contains a vast independent set. By vast, we mean an independent set in $G$, such that each maximum clique in $G$ contains a vertex from the set.
+Our first lemma is actually a characterization of a perfect graph. It states that the graph $G$ is perfect, if and only if it contains an independent set, such that each maximum clique in $G$ contains a vertex from the set (called a vast independent set).
 
-The left implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, then each clique has all possible colors. We can then let the independent set be vertices of any colors and see that it contains each maximum clique.
+The right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, then each clique has all possible colors. We can then let the independent set be vertices of any given color and see that it contains each maximum clique.
 
-The right implication can be proved using induction. The base case is $\omega(G) = 1$ and is trivially true. For the induction step, assume that $\omega(G) = n$ and that we've proven all previous values $< n$.
+The left implication can be proved using induction. The base case is $\omega(G) = 1$ and is trivially true. For the induction step, assume that $\omega(G) = n$ and that we've proven all previous values $< n$.
 
-We know that $G$ has a vast independent set $I$. Let $H$ be the induced subgraph $G - I$. We know that $H$ is perfect (via induction), so $\chi(H) = \omega(H)$. Adding the vertices $I$ back increases $\omega(H)$ by $1$ (all maxium cliques contained $1$ vertex from $I$) and also increases $\chi(H)$ by $1$ (we have to use a new color to color the added vertices).
+We know that $G$ has a vast independent set. Let $H$ be the induced subgraph from $G$ by removing the set. We know that $H$ is perfect (via induction), so $\chi(H) = \omega(H)$. Adding the vertices $I$ back increases $\omega(H)$ by $1$ (all maxium cliques contained $1$ vertex from $I$) and also increases $\chi(H)$ by $1$ (we have to use a new color to color the added vertices).
 
 TODO: animation
 
@@ -60,26 +60,21 @@ Now we'll finally prove the main theorem. It states that a graph $G$ is perfect,
 
 First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symetrical.
 
-TODO: better animation
-
 We'll prove the implication using a contradiction. Let's take the smallest graph $G$ (in the number of vertices) that is perfect but $\bar{G}$ isn't.
 
-Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Furthermore, $H = \bar{G}$, because if $H \subset \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} \subset G$ and $G$ is perfect). This would, however, be a contradiction with the minimality of $(G, \bar{G})$.
+Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it doesn't have a vast independent set, meaning that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
 
-$\bar{G}$ not having a vast independent set means that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
+Let's now list all of the cliques in $G$, calling them $Q_1$ to $Q_t$. From the previous observation, for each clique, we have a maximum independent set ($I_1, \ldots, I_t$), such that they miss one another.
 
-Let's now list all of the cliques in $G$, calling them $Q_1$ to $Q_t$. From the previous observation, for each clique, we have a maximum independent set ($I_1, \ldots, I_t$), such that they miss one another. 
-
-Now, we'll now do something that seems very strange, but is actually the core idea behind the proof. For each vertex $v$, let $f(v)$ denote the number of the maximum independent sets that it's in.
+Now, we'll now do something that seems very strange, but is actually the core idea behind the proof. For each vertex $v$ in $G$, let $f(v)$ denote the number of the maximum independent sets that it's in.
 
 We'll now create a new graph $G'$ from $G$ by expanding each vertex $v$ to size $f(v)$.
 
-Now we know that $G'$ is perfect, because $G$ was perfect and any graph expanded from $G$ is, using lemma 2, also perfect. The rest of the proof is basically playing with equations in order to reach a contradiction by showing that $\chi(G') != \omega(G')$.
+Now we know that $G'$ is perfect, because $G$ was perfect and any graph expanded from $G$ is, using lemma 2, also perfect.
 
-Let's count the number of vertices of $|V(G')|$. Since the maximum independent sets from $G$ don't overlap in $G'$ (by the way we expanded each vertex), it's the $t . \alpha(G)$.
+The rest of the proof is basically playing with equations in order to reach a contradiction by showing that $\chi(G') != \omega(G')$.
 
-TODO: animate how they don't overlap
-TODO: highlight
+Let's count the number of vertices of $|V(G')|$. Since the maximum independent sets from $G$ don't overlap in $G'$ (by the way we expanded each vertex), it's $t . \alpha(G)$.
 
 Using this, we'll approximate the chromatic number of $G'$. Because vertices of each color form an independent set (from definition of a coloring), the chromatic number is greater than $|V(G')| / \alpha(G')$. $\alpha(G')$ is, however, just $\alpha(G)$, because expanding a vertex can't increase the size of any maximum independent set.
 
