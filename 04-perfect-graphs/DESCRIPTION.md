@@ -28,7 +28,5 @@ https://research.koutecky.name/db/teaching:kg22021_prednaska
 http://web.math.ucsb.edu/~padraic/mathcamp_2011/perfectgraphs/MC2011_perfectgraphs_wk1_day4.pdf
 http://web.math.ucsb.edu/~padraic/mathcamp_2011/perfectgraphs/MC2011_perfectgraphs_wk1_day5.pdf
 
-[EN] Vašek Chvátal's article about the Strong Perfect Graph Theorem:
-http://users.encs.concordia.ca/~chvatal/perfect/spgt.html
-
-[EN] Wikipedia, for accurate translations from Czech to English
+[EN] The Strong Perfect Graph Theorem proof:
+http://www.columbia.edu/~mc2775/perfect.pdf
