@@ -671,6 +671,10 @@ class Lemma1(Scene):
 
         h = Graph(vertices, edges, layout=lt).scale(2)
         h.shift(DOWN * 1.1)
+        h2 = Graph(vertices, edges, layout=lt).scale(2)
+        h2.shift(DOWN * 1.1)
+
+        take = (9, 4)
 
         gt = Tex("$G$").shift(RIGHT * 3.5 + UP * 0.2)
         ht = Tex("$H$").shift(RIGHT * 3.5 + UP * 0.2)
@@ -685,7 +689,40 @@ class Lemma1(Scene):
                 Write(gt),
                 )
 
-        take = (1, 4)
+        self.play(
+                *[h.vertices[i].animate.set_color(YELLOW) for i in take],
+                *[Circumscribe(h.vertices[i], Circle) for i in take],
+                )
+
+        self.play(
+                FadeOut(h.vertices[take[0]]),
+                FadeOut(h.vertices[take[1]]),
+                )
+
+        self.add(h2)
+        self.remove(wow)
+        self.play(
+                *[FadeOut(h2.vertices[v]) for v in take],
+                *[FadeOut(h2.edges[(u, v)]) for u, v in h2.edges if u in take or v in take],
+                Transform(gt, ht),
+                )
+
+        coloring = get_coloring([(u, v) for u, v in h2.edges], one_indexing=True)
+        coloring[4] = RED
+        coloring[3] = GREEN
+        self.play(
+                *[h2.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring if v + 1 not in take],
+                Transform(gt, ht_p),
+                )
+
+        self.play(
+                *[FadeIn(h2.vertices[v].set_color(GREEN)) for v in take],
+                *[FadeIn(h2.edges[(u, v)]) for u, v in h2.edges if u in take or v in take],
+                Transform(gt, gt_p),
+                )
+
+        fade_all(self)
+
 
 
 class PerfectGraph(Scene):
