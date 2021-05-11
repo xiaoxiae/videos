@@ -1536,7 +1536,7 @@ class Theorem2(Scene):
 
         image1 = ImageMobject("proof1.png")
         image1.set_height(5).shift(LEFT * 2.1 + DOWN)
-        image2 = ImageMobject("proof1.png")
+        image2 = ImageMobject("proof2.png")
         image2.set_height(5).shift(RIGHT * 2.1 + DOWN)
 
         self.play(
