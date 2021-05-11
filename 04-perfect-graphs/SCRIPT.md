@@ -24,7 +24,7 @@ These two concepts are closely tied together. Considering a complement of a grap
 # Induced subgraph (InducedSubgraph)
 A graph $H$ is an induced subgraph of the graph $G$ (denoted $H \subseteq G$), if and only if we can get $H$ by removing zero or more vertices (along with their edges) from $G$.
 
-Aditionally, it is a proper subgraph, if we remove one or more vertices.
+Additionally, it is a proper subgraph, if we remove one or more vertices.
 
 # Chromatic number (ChromaticNumber)
 The chromatic number $\chi(G)$ of a graph $G$ is the smallest number of colors we have to use to color the graph's vertices, such that no two adjacent vertices have the same color.
@@ -45,7 +45,7 @@ We know that $G$ has a vast independent set $I$. Let $H$ be the induced subgraph
 
 --- LEMMA 2 ---
 
-# Lemma 2 (Lemma2 TODO)
+# Lemma 2 (Lemma2)
 Our second lemma states that if $G$ is perfect, then any graph constructed from $G$ by expanding a vertex is also perfect. By expanding, we mean that we replace the vertex with $K_n$ and connect it to all of its neighbours accordingly.
 
 For proof, we'll use induction on the number of vertices. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
@@ -61,7 +61,7 @@ Removing all vertices of this color besides $v$ will decrease $\omega$ by one an
 # Weak perfect graph theorem (Theorem TODO)
 Now we'll finally prove the main theorem. It states that a graph $G$ is perfect, if and only if $\bar{G}$ is perfect.
 
-First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symetrical.
+First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symmetrical.
 
 We'll prove the implication using a contradiction. Let's take the smallest graph $G$ (in the number of vertices) that is perfect but $\bar{G}$ isn't.
 
@@ -93,9 +93,11 @@ TODO: nice animation
 
 Combining those two inequalities, we get that $\omega(G') < \chi(G')$, meaning that $G'$ is not perfect and reaching a contradiction.
 
---- STRONG PERFECT GRAPH THEOREM
+--- STRONG PERFECT GRAPH THEOREM ---
 
-# Strong perfect graph theorem (Theorem2 TODO)
-A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if it's every hole and antihole is of even length (called a Berge graph). By hole, we mean an induced cycle and by antihole, a complement to an induced cycle.
+# Strong perfect graph theorem (Theorem2)
+A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only the length of its every hole and antihole (excluding length 3) is even (called a Berge graph). By hole, we mean an induced cycle and by antihole, a complement to an induced cycle.
 
-We won't be proving this theorem, since it took a 150-page paper to do so, but we'll observe that it immediately proves the Weak perfect graph theorem (from definition of complement - holes become antiholes and vice versa).
+The two examples are, using this theorem, not perfect, since they each contain either a hole or an antihole of size 5.
+
+We won't be proving this theorem, since it took a 150-page paper released in 2002 to do so, but we'll observe that it immediately proves the Weak perfect graph theorem (from definition of complement - holes become antiholes and vice versa).

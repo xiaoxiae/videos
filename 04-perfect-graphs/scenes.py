@@ -41,6 +41,7 @@ class MyBulletedList(Tex):
             part.become(text)
 
 class Introduction(Scene):
+    @fade
     def construct(self):
         a = nx.complete_graph(5)
         A = Graph.from_networkx(a, layout="circular", layout_scale=0.8).scale(2)
@@ -97,10 +98,9 @@ class Introduction(Scene):
 
         self.play(FadeIn(text))
 
-        fade_all(self)
-
 
 class Complement(Scene):
+    @fade
     def construct(self):
         title = Tex("\Large Graph complement")
 
@@ -151,11 +151,9 @@ class Complement(Scene):
                 FadeIn(gg.edges[(3,5)]),
                 )
 
-        fade_all(self)
-
 class CliqueAndIndependentSet(Scene):
+    @fade
     def construct(self):
-        global dark_color
 
         title = Tex("\Large Clique and independent set")
 
@@ -339,11 +337,9 @@ class CliqueAndIndependentSet(Scene):
                 FadeIn(C),
                 )
 
-        fade_all(self)
-
 class InducedSubgraph(Scene):
+    @fade
     def construct(self):
-        global dark_color
         title = Tex("\Large Induced subgraph")
 
         self.play(Write(title))
@@ -474,9 +470,8 @@ class InducedSubgraph(Scene):
                 run_time=1.0,
                 )
 
-        fade_all(self)
-
 class ChromaticNumber(Scene):
+    @fade
     def construct(self):
         title = Tex("\Large Chromatic number")
 
@@ -535,11 +530,9 @@ class ChromaticNumber(Scene):
 
         self.play( Write(chi))
 
-        fade_all(self)
-
 class Lemma1(Scene):
+    @fade
     def construct(self):
-        global dark_color
 
         title = Tex("\Large Lemma 1")
 
@@ -554,7 +547,7 @@ class Lemma1(Scene):
         self.play(FadeOut(title))
         self.play(text.animate.shift(UP * 3.3))
 
-        l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.15)
+        l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.12)
 
         self.play(Write(l1))
 
@@ -721,12 +714,10 @@ class Lemma1(Scene):
                 Transform(gt, gt_p),
                 )
 
-        fade_all(self)
-
 
 class Lemma2(Scene):
+    @fade
     def construct(self):
-        global dark_color
 
         title = Tex("\Large Lemma 2")
 
@@ -741,7 +732,7 @@ class Lemma2(Scene):
         self.play(FadeOut(title))
         self.play(text.animate.shift(UP * 3.3))
 
-        l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.15)
+        l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.12)
 
         self.play(Write(l1))
 
@@ -828,6 +819,9 @@ class Lemma2(Scene):
         self.play(
                 FadeTransform(g, h)
             )
+
+        coloring = get_coloring(h.edges)
+        self.play( *[h.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         self.play(
                 FadeOut(h)
@@ -983,12 +977,36 @@ class Lemma2(Scene):
                 Write(v_label_prime)
                 )
 
-        fade_all(self)
+        take = (3, 6, 10, 11)
+        take2 = (3, 6, 10)
+        self.play(
+                *[Circumscribe(g.vertices[v], Circle, fade_out=True) for v in vertices if v in take],
+                )
+
+        self.play(
+                *[g.edges[(u, v)].animate.set_color(dark_color) for u, v in g.edges if u in take2 or v in take2],
+                *[g.vertices[v].animate.set_color(dark_color) for v in take2],
+                g2.vertices[14].animate.set_color(dark_color),
+                *[g2.edges[(u, v)].animate.set_color(dark_color) for u, v in g2.edges if u == 14 or v == 14],
+                v_label_prime.animate.set_color(dark_color),
+                )
+
+        self.play(
+                g2.vertices[11].animate.set_color(RED),
+                )
+
+        self.play(
+                *[g.edges[(u, v)].animate.set_color(WHITE) for u, v in g.edges if u in take2 or v in take2],
+                *[g.vertices[v].animate.set_color(GREEN) for v in take2],
+                g2.vertices[14].animate.set_color(GREEN),
+                *[g2.edges[(u, v)].animate.set_color(WHITE) for u, v in g2.edges if u == 14 or v == 14],
+                v_label_prime.animate.set_color(WHITE),
+                )
 
 
 class PerfectGraph(Scene):
+    @fade
     def construct(self):
-        global dark_color
 
         title = Tex("\Large Perfect graph")
 
@@ -1097,12 +1115,11 @@ class PerfectGraph(Scene):
         )
         self.wait()
 
-        fade_all(self)
 
 class Theorem(Scene):
+    @fade
     def construct(self):
 
-        global dark_color
 
         title = Tex("\Large Weak perfect graph theorem")
 
@@ -1413,3 +1430,116 @@ class Theorem(Scene):
         self.play(TransformMatchingShapes(chi_31, chi_32))
         self.remove(chi_32)
         self.play(Transform(chi_32, chi_33))
+
+class Theorem2(Scene):
+    @fade
+    def construct(self):
+        title = Tex("\Large Strong perfect graph theorem")
+
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 0.7))
+
+        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| the |length| of its every |hole| and |antihole| (excluding length 3) is |even| (called a |Berge graph|).", size=r"\footnotesize", splitBy="|")
+        text[3].set_color(WHITE)
+        text.next_to(title, 2 * DOWN)
+
+        self.play(Write(text), run_time=duration)
+        self.play(FadeOut(title))
+        self.play(text.animate.shift(UP * 3.7))
+
+        l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.12)
+
+        self.play(Write(l1))
+
+        s = 0.09
+        t = 0.09
+        lt = {1 : [-0.13468417754907686, -11.382616759291821, 0],
+            2 : [-6.34849625738931, -11.40647453424448, 0],
+            3 : [-3.2526218113979337, -6.242787222493782, 0],
+            4 : [2.9143602874895524, -5.9709400410760605, 0],
+            5 : [-9.769595162673074, -6.223457085564913, 0],
+            6 : [-0.5868623771064418, -0.8392016711467933, 0],
+            7 : [-6.797128201812322, -0.7758522039253336, 0]}
+
+        lt_avg_x = 0
+        lt_avg_y = 0
+
+        for i in lt:
+            lt_avg_x += lt[i][0]
+            lt_avg_y += lt[i][1]
+
+        lt_avg_x /= len(lt)
+        lt_avg_y /= len(lt)
+
+        for i in lt:
+            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
+
+        vertices = [i + 1 for i in range(7)]
+        edges = [(1, 2), (3, 1), (4, 1), (3, 2), (5, 2), (3, 6), (6, 7), (4, 6), (5, 7)]
+        g = Graph(vertices, edges, layout=lt).scale(2)
+        g.shift(DOWN * 0.8 + LEFT * 3)
+
+        s = 0.13
+        t = 0.13
+        lt = {1 : [11.017918974171332, -6.591774340119114, 0],
+            2 : [16.962897427793656, -4.746124663681754, 0],
+            3 : [13.13398895475949, -9.70491764147956, 0],
+            4 : [13.21453712023058, -3.5349324907386763, 0],
+            5 : [16.912690271108087, -8.591990051119353, 0],
+            6 : [22.979777239232465, -9.802147496310052, 0],
+            7 : [23.059508184569292, -3.6947624028155706, 0]}
+
+        lt_avg_x = 0
+        lt_avg_y = 0
+
+        for i in lt:
+            lt_avg_x += lt[i][0]
+            lt_avg_y += lt[i][1]
+
+        lt_avg_x /= len(lt)
+        lt_avg_y /= len(lt)
+
+        for i in lt:
+            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
+
+        vertices = [i + 1 for i in range(7)]
+        edges = [(1, 2), (2, 3), (4, 5), (1, 5), (3, 4), (5, 6), (2, 7), (6, 7)]
+        h = Graph(vertices, edges, layout=lt).scale(2)
+        h.shift(DOWN * 0.8 + RIGHT * 3)
+
+        take_g = (2, 3, 5, 6, 7)
+        take_h = (1, 2, 3, 4, 5)
+
+        self.play(Write(g), Write(h))
+
+        hole = Tex("hole").next_to(g, UP)
+        antihole = Tex("antihole").next_to(h, UP)
+
+        self.play(
+                *[g.vertices[v].animate.set_color(dark_color) for v in g.vertices if v not in take_g],
+                *[g.edges[(u, v)].animate.set_color(dark_color) for u, v in g.edges if u not in take_g or v not in take_g],
+                *[h.vertices[v].animate.set_color(dark_color) for v in h.vertices if v not in take_h],
+                *[h.edges[(u, v)].animate.set_color(dark_color) for u, v in h.edges if u not in take_h or v not in take_h],
+                )
+
+        self.play(
+                Write(hole),
+                Write(antihole),
+                )
+
+        self.play(
+                FadeOut(g),
+                FadeOut(h),
+                FadeOut(hole),
+                FadeOut(antihole),
+                )
+
+        image1 = ImageMobject("proof1.png")
+        image1.set_height(5).shift(LEFT * 2.1 + DOWN)
+        image2 = ImageMobject("proof1.png")
+        image2.set_height(5).shift(RIGHT * 2.1 + DOWN)
+
+        self.play(
+                FadeIn(image1),
+                FadeIn(image2),
+                )
