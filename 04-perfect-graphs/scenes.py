@@ -1120,264 +1120,267 @@ class PerfectGraph(Scene):
 class Theorem(Scene):
     @fade
     def construct(self):
-        #title = Tex("\Large Weak perfect graph theorem")
+        title = Tex("\Large Weak perfect graph theorem")
 
-        #self.play(Write(title))
-        #self.play(title.animate.shift(UP * 0.7))
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 0.7))
 
-        #duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| graph |$\bar{G}$ is perfect.", size=r"\footnotesize", splitBy="|")
-        #text[3].set_color(WHITE)
-        #text.next_to(title, 2 * DOWN)
+        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| graph |$\bar{G}$ is perfect.", size=r"\footnotesize", splitBy="|")
+        text[3].set_color(WHITE)
+        text.next_to(title, 2 * DOWN)
 
-        #impl = Tex(r"\footnotesize$\Rightarrow$")
+        impl = Tex(r"\footnotesize$\Rightarrow$")
 
-        #self.play(Write(text), run_time=duration)
+        self.play(Write(text), run_time=duration)
 
-        #self.play(FadeOut(title))
+        self.play(FadeOut(title))
 
-        #self.play(
-        #        text.animate.shift(UP * 3.6)
-        #        )
+        self.play(
+                text.animate.shift(UP * 3.6)
+                )
 
-        #impl.move_to(text[3].get_center())
+        impl.move_to(text[3].get_center())
 
         l1 = Line(LEFT * 10, RIGHT * 10).shift(UP * 2.6)
         self.play(Write(l1))
-        #self.play(
-        #        text[0].animate.shift(RIGHT * 0.9),
-        #        text[1].animate.shift(RIGHT * 0.9),
-        #        text[2].animate.shift(RIGHT * 0.9),
-        #        Transform(text[3], impl),
-        #        text[4].animate.shift(LEFT * 0.9),
-        #        text[5].animate.shift(LEFT * 0.9),
-        #        )
+        self.play(
+                text[0].animate.shift(RIGHT * 0.9),
+                text[1].animate.shift(RIGHT * 0.9),
+                text[2].animate.shift(RIGHT * 0.9),
+                Transform(text[3], impl),
+                text[4].animate.shift(LEFT * 0.9),
+                text[5].animate.shift(LEFT * 0.9),
+                )
 
-        #a = Ellipse(width=5, height=3,color=WHITE).shift(LEFT * 3.4 + DOWN)
-        #b = Ellipse(width=5, height=3,color=WHITE).shift(RIGHT * 3.4 + DOWN)
+        a = Ellipse(width=5, height=3,color=WHITE).shift(LEFT * 3.4 + DOWN)
+        b = Ellipse(width=5, height=3,color=WHITE).shift(RIGHT * 3.4 + DOWN)
 
-        #a_text = Tex(r"$G_{\star}$").move_to(a).shift(UP * 2.9)
-        #b_text = Tex(r"$\bar{G}$").move_to(b).shift(UP * 2.9)
+        a_text = Tex(r"$G_{\star}$").move_to(a).shift(UP * 2.9)
+        b_text = Tex(r"$\bar{G}$").move_to(b).shift(UP * 2.9)
 
-        #l2 = Line(UP * 2.6, DOWN * 10)
-        #self.play(
-        #        Write(a_text),
-        #        Write(b_text),
-        #        Write(l2),
-        #        )
+        l2 = Line(UP * 2.6, DOWN * 10)
+        self.play(
+                Write(a_text),
+                Write(b_text),
+                Write(l2),
+                )
 
-        #seed(1)
+        seed(1)
 
-        #v = [
-        #    Graph([0], []).scale(2).shift(RIGHT * 2 + DOWN * 0.2),
-        #    Graph([0], []).scale(2).shift(RIGHT * 4 + DOWN * -1),
-        #    Graph([0], []).scale(2).shift(RIGHT * 5 + DOWN * 1.1),
-        #]
+        v = [
+            Graph([0], []).scale(2).shift(RIGHT * 2 + DOWN * 0.2),
+            Graph([0], []).scale(2).shift(RIGHT * 4 + DOWN * -1),
+            Graph([0], []).scale(2).shift(RIGHT * 5 + DOWN * 1.1),
+        ]
 
-        #a = nx.complete_graph(5)
-        #A = Graph.from_networkx(a, layout="circular", layout_scale=0.4).scale(2)
-        #A.shift(RIGHT * 2.5 + DOWN * 2.4)
-        #A.set_color(dark_color)
+        a = nx.complete_graph(5)
+        A = Graph.from_networkx(a, layout="circular", layout_scale=0.4).scale(2)
+        A.shift(RIGHT * 2.5 + DOWN * 2.4)
+        A.set_color(dark_color)
 
-        #self.play(
-        #        Write(v[0]),
-        #        Write(v[1]),
-        #        Write(v[2]),
-        #        Write(A)
-        #        )
+        self.play(
+                Write(v[0]),
+                Write(v[1]),
+                Write(v[2]),
+                Write(A)
+                )
 
-        #b = nx.complete_graph(3)
-        #lt = {
-        #        0: v[0].vertices[0].get_center() / 2,
-        #        1: v[1].vertices[0].get_center() / 2,
-        #        2: v[2].vertices[0].get_center() / 2,
-        #        }
-        #B = Graph.from_networkx(b, layout=lt).scale(2).shift(LEFT * 5.5 + DOWN * 0.1)
-
-
-        #c = nx.complete_graph(5)
-        #C = Graph.from_networkx(a, layout="circular", layout_scale=0.4).scale(2)
-        #C.move_to(A).shift(LEFT * 7.3 + DOWN * 0.1)
-        #C.set_color(dark_color)
-
-        #v2 = [
-        #    Graph([0], []).scale(2).move_to(C.vertices[0]).set_color(dark_color),
-        #    Graph([0], []).scale(2).move_to(C.vertices[1]).set_color(dark_color),
-        #    Graph([0], []).scale(2).move_to(C.vertices[2]).set_color(dark_color),
-        #    Graph([0], []).scale(2).move_to(C.vertices[3]).set_color(dark_color),
-        #    Graph([0], []).scale(2).move_to(C.vertices[4]).set_color(dark_color),
-        #]
-
-        #self.play(
-        #        Write(B),
-        #        Write(v2[0]),
-        #        Write(v2[1]),
-        #        Write(v2[2]),
-        #        Write(v2[3]),
-        #        Write(v2[4]),
-        #        )
-
-        #self.play(
-        #        a_text.animate.shift(LEFT * a_text.get_x()),
-        #        l2.animate.shift(RIGHT * 8),
-        #        A.animate.shift(RIGHT * 8),
-        #        b_text.animate.shift(RIGHT * 8),
-        #        v[0].animate.shift(RIGHT * 8),
-        #        v[1].animate.shift(RIGHT * 8),
-        #        v[2].animate.shift(RIGHT * 8),
-        #        B.animate.shift(RIGHT * 6 + DOWN * 0.8),
-        #        v2[0].animate.shift(RIGHT * 1.5 + UP * 1.6),
-        #        v2[1].animate.shift(RIGHT * 1.5 + UP * 1.6),
-        #        v2[2].animate.shift(RIGHT * 1.5 + UP * 1.6),
-        #        v2[3].animate.shift(RIGHT * 1.5 + UP * 1.6),
-        #        v2[4].animate.shift(RIGHT * 1.5 + UP * 1.6),
-        #        run_time=1.5
-        #        )
-
-        #q_text = Tex("$Q_1$").move_to(B).shift(RIGHT * 0.3)
-        #i_text = Tex("$I_1$").move_to(v2[1]).shift(DOWN * 0.8 + LEFT * 0.2)
-
-        #self.play(
-        #        Write(q_text),
-        #        )
-
-        #self.play(
-        #        Write(i_text),
-        #        )
-
-        #qs = [
-        #    Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(LEFT * 1.7 + UP * 0.2),
-        #    Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 2 + DOWN * 1.5),
-        #    Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(DOWN * .7 + LEFT * 1.6),
-        #    Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).shift(RIGHT * 3 + DOWN * 1),
-        #]
-
-        #iss = [
-        #    Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 2.7 + DOWN * 1.2).set_color(dark_color),
-        #    Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(LEFT * 3).set_color(dark_color),
-        #    Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 3).set_color(dark_color),
-        #    Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).shift(LEFT * 3 + DOWN * 1).set_color(dark_color),
-        #]
-
-        #iss_text = [Tex(f"$I_{str(i + 2) if i != len(iss) - 1 else 't'}$").move_to(iss[i].get_center_of_mass()) for i in range(len(iss))]
-        #qs_text = [Tex(f"$Q_{str(i + 2) if i != len(iss) - 1 else 't'}$").move_to(qs[i].get_center_of_mass()) for i in range(len(qs))]
-
-        #self.play(
-        #        FadeOut(v2[0]),
-        #        FadeOut(v2[1]),
-        #        FadeOut(v2[2]),
-        #        FadeOut(v2[3]),
-        #        FadeOut(v2[4]),
-        #        FadeOut(B),
-        #        FadeOut(q_text),
-        #        FadeOut(i_text),
-        #        Write(qs[0]),
-        #        Write(qs_text[0]),
-        #        Write(iss[0]),
-        #        Write(iss_text[0]),
-        #        )
-
-        #for i in range(len(iss) - 1):
-        #    self.play(
-        #            FadeOut(qs[i]),
-        #            FadeOut(qs_text[i]),
-        #            FadeOut(iss[i]),
-        #            FadeOut(iss_text[i]),
-        #            FadeIn(qs[i+1]),
-        #            FadeIn(qs_text[i+1]),
-        #            FadeIn(iss[i+1]),
-        #            FadeIn(iss_text[i+1]),
-        #            )
+        b = nx.complete_graph(3)
+        lt = {
+                0: v[0].vertices[0].get_center() / 2,
+                1: v[1].vertices[0].get_center() / 2,
+                2: v[2].vertices[0].get_center() / 2,
+                }
+        B = Graph.from_networkx(b, layout=lt).scale(2).shift(LEFT * 5.5 + DOWN * 0.1)
 
 
-        #self.play(
-        #    FadeOut(qs[len(qs) - 1]),
-        #    FadeOut(qs_text[len(qs) - 1]),
-        #    FadeOut(iss[len(qs) - 1]),
-        #    FadeOut(iss_text[len(qs) - 1]),
-        #    )
+        c = nx.complete_graph(5)
+        C = Graph.from_networkx(a, layout="circular", layout_scale=0.4).scale(2)
+        C.move_to(A).shift(LEFT * 7.3 + DOWN * 0.1)
+        C.set_color(dark_color)
 
-        #v_label = Tex("$v$")
-        #v_function = Tex("$f($", "$v$", "$) = 3$")
+        v2 = [
+            Graph([0], []).scale(2).move_to(C.vertices[0]).set_color(dark_color),
+            Graph([0], []).scale(2).move_to(C.vertices[1]).set_color(dark_color),
+            Graph([0], []).scale(2).move_to(C.vertices[2]).set_color(dark_color),
+            Graph([0], []).scale(2).move_to(C.vertices[3]).set_color(dark_color),
+            Graph([0], []).scale(2).move_to(C.vertices[4]).set_color(dark_color),
+        ]
 
-        #v = Graph([0], []).scale(2).move_to(ORIGIN + UP * 0.6)
+        self.play(
+                Write(B),
+                Write(v2[0]),
+                Write(v2[1]),
+                Write(v2[2]),
+                Write(v2[3]),
+                Write(v2[4]),
+                )
 
-        #self.play(
-        #        Write(v),
-        #        Write(v_label),
-        #        )
+        self.play(
+                a_text.animate.shift(LEFT * a_text.get_x()),
+                l2.animate.shift(RIGHT * 8),
+                A.animate.shift(RIGHT * 8),
+                b_text.animate.shift(RIGHT * 8),
+                v[0].animate.shift(RIGHT * 8),
+                v[1].animate.shift(RIGHT * 8),
+                v[2].animate.shift(RIGHT * 8),
+                B.animate.shift(RIGHT * 6 + DOWN * 0.8),
+                v2[0].animate.shift(RIGHT * 1.5 + UP * 1.6),
+                v2[1].animate.shift(RIGHT * 1.5 + UP * 1.6),
+                v2[2].animate.shift(RIGHT * 1.5 + UP * 1.6),
+                v2[3].animate.shift(RIGHT * 1.5 + UP * 1.6),
+                v2[4].animate.shift(RIGHT * 1.5 + UP * 1.6),
+                run_time=1.5
+                )
 
-        #issss = [
-        #    Graph([0, 1, 2, 3], [], layout="spring", layout_scale=0.5).scale(2).rotate(uniform(0, 2 * PI)).shift(LEFT * 4 + DOWN * 0.5 ).set_color(RED),
-        #    Graph([0, 1, 2, 3], [], layout="spring", layout_scale=0.5).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 4 + DOWN * 0.5).set_color(GREEN),
-        #    Graph([0, 1, 2, 3], [], layout="spring", layout_scale=0.5).scale(2).rotate(uniform(0, 2 * PI)).shift(DOWN * 2.2).set_color(BLUE),
-        #]
+        q_text = Tex("$Q_1$").move_to(B).shift(RIGHT * 0.3)
+        i_text = Tex("$I_1$").move_to(v2[1]).shift(DOWN * 0.8 + LEFT * 0.2)
 
-        #issss_text = [
-        #    Tex(f"$I_i$").move_to(issss[0].get_center_of_mass()),
-        #    Tex(f"$I_j$").move_to(issss[1].get_center_of_mass()),
-        #    Tex(f"$I_k$").move_to(issss[2].get_center_of_mass()),
-        #    ]
+        self.play(
+                Write(q_text),
+                )
 
-        #self.play(
-        #        v.animate.set_color_by_gradient((GREEN, GREEN, GREEN, RED, BLUE, BLUE, BLUE)),
-        #        Write(issss[0]),
-        #        Write(issss[1]),
-        #        Write(issss[2]),
-        #        Write(issss_text[0]),
-        #        Write(issss_text[1]),
-        #        Write(issss_text[2]),
-        #        )
+        self.play(
+                Write(i_text),
+                )
 
-        #v_function.shift(LEFT * v_function[1].get_center() - v_label.get_center())
+        qs = [
+            Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(LEFT * 1.7 + UP * 0.2),
+            Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 2 + DOWN * 1.5),
+            Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(DOWN * .7 + LEFT * 1.6),
+            Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.6).scale(2).shift(RIGHT * 3 + DOWN * 1),
+        ]
 
-        #self.play(
-        #        Write(v_function[0]),
-        #        Write(v_function[2]),
-        #        )
+        iss = [
+            Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 2.7 + DOWN * 1.2).set_color(dark_color),
+            Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(LEFT * 3).set_color(dark_color),
+            Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 3).set_color(dark_color),
+            Graph([0, 1, 2, 3, 4], [], layout="circular", layout_scale=0.6).scale(2).shift(LEFT * 3 + DOWN * 1).set_color(dark_color),
+        ]
 
-        #self.play(
-        #        FadeOut(v_function[0]),
-        #        FadeOut(v_function[2]),
-        #        FadeOut(v_label),
-        #        FadeOut(issss_text[0]),
-        #        FadeOut(issss_text[1]),
-        #        FadeOut(issss_text[2]),
-        #        )
+        iss_text = [Tex(f"$I_{str(i + 2) if i != len(iss) - 1 else 't'}$").move_to(iss[i].get_center_of_mass()) for i in range(len(iss))]
+        qs_text = [Tex(f"$Q_{str(i + 2) if i != len(iss) - 1 else 't'}$").move_to(qs[i].get_center_of_mass()) for i in range(len(qs))]
 
-        #L = Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.3).scale(2).rotate(PI/6)
-        #L.move_to(v)
-        #L.vertices[0].set_color(RED)
-        #L.vertices[1].set_color(GREEN)
-        #L.vertices[2].set_color(BLUE)
+        self.play(
+                FadeOut(v2[0]),
+                FadeOut(v2[1]),
+                FadeOut(v2[2]),
+                FadeOut(v2[3]),
+                FadeOut(v2[4]),
+                FadeOut(B),
+                FadeOut(q_text),
+                FadeOut(i_text),
+                Write(qs[0]),
+                Write(qs_text[0]),
+                Write(iss[0]),
+                Write(iss_text[0]),
+                )
 
-        #a_prime_text = Tex(r"$G'_{\star}$").move_to(a_text)
+        for i in range(len(iss) - 1):
+            self.play(
+                    FadeOut(qs[i]),
+                    FadeOut(qs_text[i]),
+                    FadeOut(iss[i]),
+                    FadeOut(iss_text[i]),
+                    FadeIn(qs[i+1]),
+                    FadeIn(qs_text[i+1]),
+                    FadeIn(iss[i+1]),
+                    FadeIn(iss_text[i+1]),
+                    )
 
-        #isssst = [
-        #    [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": RED}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[0].vertices[a]) for a in issss[0].vertices],
-        #    [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": GREEN}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[1].vertices[a]) for a in issss[1].vertices],
-        #    [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": BLUE}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[2].vertices[a]) for a in issss[2].vertices],
-        #]
 
-        #self.play(
-        #        FadeTransform(v, L),
-        #        Transform(a_text, a_prime_text),
-        #        *[FadeTransform(issss[0].vertices[a], b) for a, b in zip(issss[0].vertices, isssst[0])],
-        #        *[FadeTransform(issss[1].vertices[a], b) for a, b in zip(issss[1].vertices, isssst[1])],
-        #        *[FadeTransform(issss[2].vertices[a], b) for a, b in zip(issss[2].vertices, isssst[2])],
-        #        )
+        self.play(
+            FadeOut(qs[len(qs) - 1]),
+            FadeOut(qs_text[len(qs) - 1]),
+            FadeOut(iss[len(qs) - 1]),
+            FadeOut(iss_text[len(qs) - 1]),
+            )
 
-        #self.play(
-        #        FadeOut(L),
-        #        *[FadeOut(i) for i in isssst[0]],
-        #        *[FadeOut(i) for i in isssst[1]],
-        #        *[FadeOut(i) for i in isssst[2]],
-        #        )
+        v_label = Tex("$v$")
+        v_function = Tex("$f($", "$v$", "$) = 3$")
+
+        v = Graph([0], []).scale(2).move_to(ORIGIN + UP * 0.6)
+
+        self.play(
+                Write(v),
+                Write(v_label),
+                )
+
+        issss = [
+            Graph([0, 1, 2, 3], [], layout="spring", layout_scale=0.5).scale(2).rotate(uniform(0, 2 * PI)).shift(LEFT * 4 + DOWN * 0.5 ).set_color(RED),
+            Graph([0, 1, 2, 3], [], layout="spring", layout_scale=0.5).scale(2).rotate(uniform(0, 2 * PI)).shift(RIGHT * 4 + DOWN * 0.5).set_color(GREEN),
+            Graph([0, 1, 2, 3], [], layout="spring", layout_scale=0.5).scale(2).rotate(uniform(0, 2 * PI)).shift(DOWN * 2.2).set_color(BLUE),
+        ]
+
+        issss_text = [
+            Tex(f"$I_i$").move_to(issss[0].get_center_of_mass()),
+            Tex(f"$I_j$").move_to(issss[1].get_center_of_mass()),
+            Tex(f"$I_k$").move_to(issss[2].get_center_of_mass()),
+            ]
+
+        self.play(
+                v.animate.set_color_by_gradient((GREEN, GREEN, GREEN, RED, BLUE, BLUE, BLUE)),
+                Write(issss[0]),
+                Write(issss[1]),
+                Write(issss[2]),
+                Write(issss_text[0]),
+                Write(issss_text[1]),
+                Write(issss_text[2]),
+                )
+
+        v_function.shift(LEFT * v_function[1].get_center() - v_label.get_center())
+
+        self.play(
+                Write(v_function[0]),
+                Write(v_function[2]),
+                )
+
+        self.play(
+                FadeOut(v_function[0]),
+                FadeOut(v_function[2]),
+                FadeOut(v_label),
+                FadeOut(issss_text[0]),
+                FadeOut(issss_text[1]),
+                FadeOut(issss_text[2]),
+                )
+
+        L = Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.3).scale(2).rotate(PI/6)
+        L.move_to(v)
+        L.vertices[0].set_color(RED)
+        L.vertices[1].set_color(GREEN)
+        L.vertices[2].set_color(BLUE)
+
+        a_prime_text = Tex(r"$G'_{\star}$").move_to(a_text)
+
+        isssst = [
+            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": RED}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[0].vertices[a]) for a in issss[0].vertices],
+            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": GREEN}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[1].vertices[a]) for a in issss[1].vertices],
+            [Graph.from_networkx(nx.complete_graph(randint(2, 5)), layout="circular", layout_scale=0.2, vertex_config={0: {"fill_color": BLUE}}).scale(1.5).rotate(uniform(0, PI * 2)).move_to(issss[2].vertices[a]) for a in issss[2].vertices],
+        ]
+
+        self.play(
+                FadeTransform(v, L),
+                Transform(a_text, a_prime_text),
+                *[FadeTransform(issss[0].vertices[a], b) for a, b in zip(issss[0].vertices, isssst[0])],
+                *[FadeTransform(issss[1].vertices[a], b) for a, b in zip(issss[1].vertices, isssst[1])],
+                *[FadeTransform(issss[2].vertices[a], b) for a, b in zip(issss[2].vertices, isssst[2])],
+                )
+
+        self.play(
+                FadeOut(L),
+                *[FadeOut(i) for i in isssst[0]],
+                *[FadeOut(i) for i in isssst[1]],
+                *[FadeOut(i) for i in isssst[2]],
+                FadeOut(a_prime_text),
+                FadeOut(a_text),
+                )
+
 
         up_coeff = UP * 0.9
 
-        vertices_1 = Tex(r"$|V(G')|$").shift(up_coeff)
+        vertices_1 = Tex(r"$|V(G'_{\star})|$").shift(up_coeff)
         vertices_2 = Tex(r"$=$").shift(up_coeff)
-        vertices_3 = Tex(r"$t \cdot \alpha(G)$").shift(up_coeff)
+        vertices_3 = Tex(r"$t \cdot \alpha(G_{\star})$").shift(up_coeff)
 
         self.play(
                 Write(vertices_1),
@@ -1413,15 +1416,15 @@ class Theorem(Scene):
                 FadeOut(g)
                 )
 
-        chi_1 = Tex(r"$\chi(G')$").shift(up_coeff)
-        chi_1_copy = Tex(r"$\chi(G')$").shift(up_coeff)
+        chi_1 = Tex(r"$\chi(G'_{\star})$").shift(up_coeff)
+        chi_1_copy = Tex(r"$\chi(G'_{\star})$").shift(up_coeff)
         chi_2 = Tex(r"$\ge$").shift(up_coeff)
         chi_2_copy = Tex(r"$\ge$").shift(up_coeff)
-        chi_3 = Tex(r"$|V(G')|$").shift(up_coeff)
-        chi_4 = Tex(r"$\alpha(G')$").shift(up_coeff)
-        chi_5 = Tex(r"$\alpha(G)$").shift(up_coeff)
+        chi_3 = Tex(r"$|V(G'_{\star})|$").shift(up_coeff)
+        chi_4 = Tex(r"$\alpha(G'_{\star})$").shift(up_coeff)
+        chi_5 = Tex(r"$\alpha(G_{\star})$").shift(up_coeff)
         chi_6 = Tex(r"$t$").shift(up_coeff)
-        chi_7 = Tex(r"$t \cdot \alpha(G)$")
+        chi_7 = Tex(r"$t \cdot \alpha(G_{\star})$")
         chi_line = Line(LEFT * (chi_3.width / 2), (chi_3.width / 2) * RIGHT).next_to(chi_2, RIGHT)
         chi_3.next_to(chi_line, UP * 0.5)
         chi_4.next_to(chi_line, DOWN * 0.5)
@@ -1429,7 +1432,7 @@ class Theorem(Scene):
         chi_6.next_to(chi_2, RIGHT)
         chi_7.move_to(chi_3)
 
-        vertices_3_copy = Tex(r"$t \cdot \alpha(G)$").move_to(vertices_3)
+        vertices_3_copy = Tex(r"$t \cdot \alpha(G_{\star})$").move_to(vertices_3)
 
         self.play(
                 Write(chi_1),
@@ -1524,7 +1527,7 @@ class Theorem(Scene):
                 FadeOut(h),
                 )
 
-        omega_1 = Tex(r"$\omega(G')$").shift(up_coeff)
+        omega_1 = Tex(r"$\omega(G'_{\star})$").shift(up_coeff)
         omega_2 = Tex(r"$\le$").shift(up_coeff)
         omega_22 = Tex(r"$<$").shift(up_coeff)
         omega_3 = Tex(r"$t - 1$").shift(up_coeff)
