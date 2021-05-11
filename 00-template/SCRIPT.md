@@ -1,10 +1,21 @@
-# Section one (SectionOneClassName)
+---
+FIRST SECTION NAME
+---
 
-[o1] This is a sentence in the script to record.
+# FirstClassName
 
-[o2] This is another sentence in the script to record.
+<!--- voice-file-name-1 --> This is a sentence in the script to record.
 
-# Section two (SectionTwoClassName)
+<!--- voice-file-name-2 --> This is another sentence in the script to record.
 
-[w1] This is a third sentence to record.
+# SecondClassName
 
+<!--- voice-file-name-3 --> This is a third sentence to record.
+
+---
+SECOND SECTION NAME
+---
+
+# ThirdClassName
+
+<!--- voice-file-name-4 --> This is a fourth sentence to record.
