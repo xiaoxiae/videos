@@ -19,7 +19,7 @@ ffmpeg (video): https://ffmpeg.org/
 arecord (audio): https://linux.die.net/man/1/arecord
 sox (audio): http://sox.sourceforge.net/
 
-Special thanks to Jakub Medek for help with catching errors and providing feedback.
+Special thanks to Jakub Medek, Matěj Kripner and Martin Koutecký for help with catching errors and providing feedback.
 
 ------------------
 

@@ -35,14 +35,22 @@ DEFINITIONS
 <!--- p1 --> Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if $\forall H \subseteq G: \chi(H) = \omega(H)$.
 
 ---
-OBSERVATIONS
+OBSERVATIONS AND EXAMPLES
 ---
 
-G is perfect => every induced subgraph H is perfect
+# Observations
 
-Complete graphs are perfect
-Bipartite graphs are perfect
-Cycles of odd length are NOT perfect
+<!--- o1 --> With definitions out of the way, let's make a few observations about how perfect graphs behave that will help us understand the proof better.
+
+<!--- o2 --> Firstly, $\forall H \subseteq G: \omega(H) \le \chi(H)$, because each maximum clique has to contain $\omega(H)$ different colors. What perfect graphs are saying is that this inequality is actually an equality.
+
+<!--- o3 --> Secondly, if a graph is perfect, then each of its induced subgraphs is perfect too. This follows immediately from the definition of a perfect graph (since something is true for each of its induced subgraphs).
+
+<!--- o4 --> As for examples, some common families of graphs that are perfect include complete graphs ($\chi = n = \omega$) and bipartite graphs ($\chi$ is either 1 when it has no edges, or 2 if it does, either of which works).
+
+<!--- o5 --> Some families that are not perfect include cycles of odd length $\ge 5$ ($\omega = 2$ and $\chi = 3$) and even wheel graphs of length $\ge 6$ ($\omega = 3$ and $\chi = 4$).
+
+TODO: animace a výpis
 
 ---
 LEMMA 1
@@ -51,11 +59,11 @@ LEMMA 1
 # Lemma1
 <!--- lone1 --> Our first lemma is actually a characterization of a perfect graph. It states that the graph $G$ is perfect, if and only if each induced subgraph contains an independent set, such that each maximum clique in $G$ contains a vertex from the set (called a vast independent set).
 
-<!--- lone2 --> The right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, then each largest clique has all possible colors, menaning that we can then let the independent set be vertices of any given color.
+<!--- lone2 --> The left-to-right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, each largest clique contains all possible colors. That means we can choose any particular color and let the independent set be all vertices of that color. By definition, such independent set is vast.
 
-<!--- lone3 --> The left implication can be proved using induction on the number of vertices. The base case is trivially true. For the induction step, assume that we've proven the statement for all smaller graphs.
+<!--- lone3 --> The right-to-left implication can be proved using induction on the number of vertices. The base case is trivially true. For the induction step, assume that we've proven the statement for all smaller graphs.
 
-<!--- lone4 --> We know that $G$ has a vast independent set $I$. Let $H$ be the induced subgraph from $G$ by removing this set. By induction, we know that $H$ is perfect, so $\chi(H) = \omega(H)$. Adding the vertices of $I$ back increases $\omega$ by one (all maxium cliques contained one vertex from $I$) and also increases $\chi$ by one (we have to use a new color to color $I$).
+<!--- lone4 --> Let $G$ be a graph such that each induced subgraph of $G$ contains a vast independent set. Let $I$ be a vast independent set in $G$ itself. Let $H$ be the induced subgraph obtained from $G$ by removing $I$. Observe that $\omega(H) = \omega(G) - 1$, since all maximum cliques in $G$ contain one vertex from $I$. $H$ satisfies the right hand side of our equivalence, so by induction, $H$ is perfect. Therefore there exists a vertex coloring of $H$ using $\omega(G) - 1$ colors. Adding the vertices of $I$ back, we can color all of them using one extra color and obtain coloring of $G$ using $\omega(G)$ colors. 
 
 ---
 LEMMA 2
@@ -66,16 +74,13 @@ LEMMA 2
 
 TODO: ještě jeden příklad
 
-<!--- ltwo2 --> For proof, we'll again use induction on the number of vertices. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
+<!--- ltwo2 --> For proof, observe that expanding a vertex to $K_n$ is equivalent to expanding it to $K_2$ (n-1)-times. It's therefore sufficient to prove that expanding a vertex to $K_2$ doesn't destroy perfectness of a graph. Let's again use induction on the number of vertices in $G$. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
 
-<!--- ltwo3 --> Case one is that expanding increases $\omega$. This is fine, since we now have an additional color that we'll use on $v'$, so $G'$ is still perfect.
+<!--- ltwo3 --> Case one is that expanding increases $\omega$. Obviously, $\omega$ can only increase by 1. This is fine, since we now can use an additional color that we'll use on $v'$, so $G'$ is still perfect.
 
 <!--- ltwo4 --> Case two is that expanding doesn't increase $\omega$. In this case, let's take a $\chi$ coloring of $G$. Looking at the set of vertices with the same color as $v$, we know that this must be a vast independent set (since each clique contains all of the colors). However, $v$ is not a part of a maximum clique, because otherwise $\omega$ would have increased.
 
 <!--- ltwo5 --> Removing all vertices of this color besides $v$ will decrease $\omega$ by one and, by induction, give a $\chi(G) - 1$ coloring of the smaller graph. Adding the vertices back using the removed color, including the not-yet-added $v'$ proves the second case.
-
-TODO: říct že teď roztahuju, jak chci (indukcí)
-TODO: výraznější transformace
 
 ---
 WEAK PERFECT GRAPH THEOREM
@@ -92,7 +97,7 @@ WEAK PERFECT GRAPH THEOREM
 
 <!--- tone4 --> We now know that $\bar{G}$ doesn't have a vast independent set, meaning that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
 
-<!--- tone5 --> Let's list all of the cliques in $G_\star$, calling them $Q_1$ to $Q_t$. From the previous observation, for each clique, we have a maximum independent set ($I_1, \ldots, I_t$), such that they miss one another.
+<!--- tone5 --> Let's list all of the cliques in $G_\star$, calling them $Q_1$ to $Q_t$. From the previous observation, for each clique $Q_i$, we have a maximum independent set $I_i$, such that they are disjunct.
 
 <!--- tone6 --> We'll now do something that seems very strange, but is actually the core idea behind the proof. For each vertex $v$ in $G_\star$, let $f(v)$ denote the number of the maximum independent sets that it's in.
 
