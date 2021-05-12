@@ -31,8 +31,6 @@ DEFINITIONS
 # ChromaticNumber
 <!--- cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we can use to color the graph's vertices, such that no two adjacent vertices have the same color.
 
-TODO: minimum
-
 # PerfectGraph
 <!--- p1 --> Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if $\forall H \subseteq G: \chi(H) = \omega(H)$.
 
@@ -40,7 +38,11 @@ TODO: minimum
 OBSERVATIONS
 ---
 
-TODO
+G is perfect => every induced subgraph H is perfect
+
+Complete graphs are perfect
+Bipartite graphs are perfect
+Cycles of odd length are NOT perfect
 
 ---
 LEMMA 1
@@ -51,7 +53,7 @@ LEMMA 1
 
 <!--- lone2 --> The right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, then each largest clique has all possible colors, menaning that we can then let the independent set be vertices of any given color.
 
-<!--- lone3 --> The left implication can be proved using induction. The base case is trivially true. For the induction step, assume that we've proven the statement for all smaller graphs.
+<!--- lone3 --> The left implication can be proved using induction on the number of vertices. The base case is trivially true. For the induction step, assume that we've proven the statement for all smaller graphs.
 
 <!--- lone4 --> We know that $G$ has a vast independent set $I$. Let $H$ be the induced subgraph from $G$ by removing this set. By induction, we know that $H$ is perfect, so $\chi(H) = \omega(H)$. Adding the vertices of $I$ back increases $\omega$ by one (all maxium cliques contained one vertex from $I$) and also increases $\chi$ by one (we have to use a new color to color $I$).
 
@@ -64,7 +66,7 @@ LEMMA 2
 
 TODO: ještě jeden příklad
 
-<!--- ltwo2 --> For proof, we'll again use induction. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
+<!--- ltwo2 --> For proof, we'll again use induction on the number of vertices. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
 
 <!--- ltwo3 --> Case one is that expanding increases $\omega$. This is fine, since we now have an additional color that we'll use on $v'$, so $G'$ is still perfect.
 
@@ -84,11 +86,11 @@ WEAK PERFECT GRAPH THEOREM
 
 <!--- tone2 --> First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symmetrical.
 
-<!--- tone3 --> We'll prove the implication using a contradiction. Let's take some graph $G_\star$ that is perfect but $\bar{G}$ isn't.
+<!--- tone3 --> We'll prove the implication using a contradiction. Let's take the smallest graph $G_\star$ that is perfect but $\bar{G}$ isn't.
 
-<!--- tone4 --> Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it doesn't have a vast independent set, meaning that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
+<!--- tone3.5 --> Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Furthermore, $H = \bar{G}$, because if $H \subset \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} \subset G$ and $G$ is perfect). This would, however, be a contradiction with the minimality of $(G, \bar{G})$.
 
-TODO: doesn't follow! dokázat to pomocí nejmenšího
+<!--- tone4 --> We now know that $\bar{G}$ doesn't have a vast independent set, meaning that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
 
 <!--- tone5 --> Let's list all of the cliques in $G_\star$, calling them $Q_1$ to $Q_t$. From the previous observation, for each clique, we have a maximum independent set ($I_1, \ldots, I_t$), such that they miss one another.
 

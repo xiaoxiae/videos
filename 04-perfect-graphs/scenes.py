@@ -478,7 +478,7 @@ class ChromaticNumber(Scene):
         self.play(title.animate.shift(UP * 2.5))
 
 
-        duration, text = createHighlightedParagraph( "The ","chromatic number $\chi(G)$"," of a graph ","$G$"," is the ","smallest number of colors"," we can use to color the graph's ","vertices",", such that ","no two adjacent vertices"," have the ","same color.","", size=r"\footnotesize")
+        duration, text = createHighlightedParagraph( "The ","chromatic number $\chi(G)$"," of a graph ","$G$"," is the ","minimum number of colors"," we can use to color the graph's ","vertices",", such that ","no two adjacent vertices"," have the ","same color.","", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -920,7 +920,6 @@ class Lemma2(Scene):
                 )
 
         self.play(
-                Circumscribe(g.vertices[2], Circle),
                 Write(v_label),
                 )
 
@@ -930,9 +929,6 @@ class Lemma2(Scene):
                 *[FadeOut(g.edges[(u, v)]) for u, v in edges if u == 2 or v == 2],
                 v_label.animate.next_to(g3.vertices[2], LEFT),
                 Transform(g_label, g_prime_label),
-                )
-
-        self.play(
                 *[FadeIn(g3.edges[(u, v)]) for u, v in g3.edges],
                 )
 
@@ -958,7 +954,6 @@ class Lemma2(Scene):
         v_label.next_to(g2.vertices[11], RIGHT)
         v_label_prime.next_to(g2.vertices[14], RIGHT)
         self.play(
-                Circumscribe(g.vertices[11], Circle),
                 Write(v_label),
                 )
         group = VGroup(g2.vertices[11], g2.vertices[14])
@@ -966,9 +961,6 @@ class Lemma2(Scene):
                 FadeTransform(g.vertices[11], group),
                 *[FadeOut(g.edges[(u, v)]) for u, v in edges if u == 11 or v == 11],
                 Transform(g_label, g_prime_label),
-                )
-
-        self.play(
                 *[FadeIn(g2.edges[(u, v)]) for u, v in g2.edges],
                 )
 
@@ -992,6 +984,8 @@ class Lemma2(Scene):
 
         self.play(
                 g2.vertices[11].animate.set_color(RED),
+                Circumscribe(g2.vertices[11], Circle, color=RED),
+                *[Circumscribe(g.vertices[v], Circle, color=g.vertices[v].color) for v in g.vertices if v not in take2],
                 )
 
         self.play(
@@ -1153,17 +1147,67 @@ class Theorem(Scene):
         a = Ellipse(width=5, height=3,color=WHITE).shift(LEFT * 3.4 + DOWN)
         b = Ellipse(width=5, height=3,color=WHITE).shift(RIGHT * 3.4 + DOWN)
 
-        a_text = Tex(r"$G_{\star}$").move_to(a).shift(UP * 2.9)
-        b_text = Tex(r"$\bar{G}$").move_to(b).shift(UP * 2.9)
+        a_text = Tex(r"$G_{\star}$").move_to(a).shift(UP * 2)
+        b_text = Tex(r"$\bar{G}$").move_to(b).shift(UP * 2)
+
+        aa = Ellipse(width=2.5, height=1.6,color=WHITE).shift(LEFT * 3.4 + DOWN * 1.2 + LEFT * 0.6)
+        bb = Ellipse(width=2.5, height=1.6,color=WHITE).shift(RIGHT * 3.4 + DOWN * 1.2 + LEFT * 0.6)
+
+        aa_text = Tex(r"$\bar{H}_{\star}$").move_to(a).shift(UP * 0.3 + RIGHT * 1.3)
+        bb_text = Tex(r"$H$").move_to(b).shift(UP * 0.3 + RIGHT * 1.3)
+
+        self.play(
+                Write(a),
+                Write(a_text),
+                )
+
+        self.play(
+                Write(b),
+                Write(b_text),
+                )
+
+        self.play(
+                Write(bb),
+                Write(bb_text),
+                )
+
+        self.play(
+                Write(aa),
+                Write(aa_text),
+                )
+
+        aaa_text = Tex("=").next_to(a_text, RIGHT)
+        bbb_text = Tex("=").next_to(b_text, RIGHT)
+
+        self.play(
+                Transform(aa, a),
+                Transform(bb, b),
+                FadeIn(aaa_text),
+                FadeIn(bbb_text),
+                aa_text.animate.next_to(aaa_text, RIGHT),
+                bb_text.animate.next_to(bbb_text, RIGHT),
+                )
+
+        ra = Rectangle(width = 8, height = 3.9 * 2).shift(LEFT * 4 + DOWN * 1.3)
+        rb = Rectangle(width = 8, height = 3.9 * 2).shift(RIGHT * 4 + DOWN * 1.3)
 
         l2 = Line(UP * 2.6, DOWN * 10)
         self.play(
-                Write(a_text),
-                Write(b_text),
-                Write(l2),
+                Transform(a, ra),
+                Transform(b, rb),
+                FadeOut(aa),
+                FadeOut(bb),
+                FadeOut(aaa_text),
+                FadeOut(bbb_text),
+                FadeOut(aa_text),
+                FadeOut(bb_text),
+                a_text.animate.shift(UP * 0.9),
+                b_text.animate.shift(UP * 0.9),
                 )
 
-        seed(1)
+        self.remove(a)
+        self.remove(b)
+        self.add(l2)
 
         v = [
             Graph([0], []).scale(2).shift(RIGHT * 2 + DOWN * 0.2),
