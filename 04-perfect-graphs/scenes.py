@@ -1,8 +1,6 @@
 from utilities import *
-from chromatic import *
-from independent import *
 
-dark_color = DARK_GRAY
+dark_color = DARKER_GRAY
 
 class MyBulletedList(Tex):
     def __init__(
@@ -108,7 +106,7 @@ class Complement(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-        duration, text = createHighlightedParagraph("A ","complement"," of a graph", " $G$ ", "is a graph ","$\overline{G}$",", such that ","each to vertices"," are adjacent in ","$\overline{G}$",", if and only if they are ","not adjacent"," in ","$G$",".", size=r"\footnotesize")
+        duration, text = createHighlightedParagraph("A ","complement"," of a graph", " $G$ ", "is a graph ","$\overline{G}$",", such that ","each two vertices"," are adjacent in ","$\overline{G}$",", if and only if they are ","not adjacent"," in ","$G$",".", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -161,7 +159,7 @@ class CliqueAndIndependentSet(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-        duration, text = createHighlightedParagraph("A ","clique"," is a ","subgraph"," of a graph, such that ","each two vertices are adjacent."," Analogically, and ","independent set"," of a graph is a ","set of vertices"," such that ","no two are adjacent.", size=r"\footnotesize")
+        duration, text = createHighlightedParagraph("A ","clique"," is a ","subgraph"," of a graph, such that ","each two vertices are adjacent."," Analogically, an ","independent set"," of a graph is a ","set of vertices"," such that ","no two are adjacent.", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text[:6]), run_time=duration / 2)
@@ -588,8 +586,8 @@ class Lemma1(Scene):
         g = Graph(vertices, edges, layout=lt).scale(2)
         g.shift(DOWN * 1.1)
 
-        ri = Tex(r"$\Huge\Rightarrow$").shift( LEFT * 6.1 + UP * 0.8)
-        li = Tex(r"$\Huge\Leftarrow$").shift( LEFT * 6.1 + UP * 0.8)
+        ri = Tex(r"$\Huge\Rightarrow$").shift(UP * 1.2)
+        li = Tex(r"$\Huge\Leftarrow$").shift(UP * 1.2)
         self.play(Write(ri))
 
         self.play(Write(g))
@@ -1629,7 +1627,7 @@ class Theorem2(Scene):
         title = Tex("\Large Strong perfect graph theorem")
 
         self.play(Write(title))
-        self.play(title.animate.shift(UP * 0.7))
+        self.play(title.animate.shift(UP * 1.3))
 
         duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| the |length| of its every |hole| and |antihole| (excluding length 3) is |even| (called a |Berge graph|).", size=r"\footnotesize", splitBy="|")
         text[3].set_color(WHITE)
@@ -1669,7 +1667,7 @@ class Theorem2(Scene):
         vertices = [i + 1 for i in range(7)]
         edges = [(1, 2), (3, 1), (4, 1), (3, 2), (5, 2), (3, 6), (6, 7), (4, 6), (5, 7)]
         g = Graph(vertices, edges, layout=lt).scale(2)
-        g.shift(DOWN * 0.8 + LEFT * 3)
+        g.shift(DOWN * 1.1 + LEFT * 3)
 
         s = 0.13
         t = 0.13
@@ -1697,7 +1695,7 @@ class Theorem2(Scene):
         vertices = [i + 1 for i in range(7)]
         edges = [(1, 2), (2, 3), (4, 5), (1, 5), (3, 4), (5, 6), (2, 7), (6, 7)]
         h = Graph(vertices, edges, layout=lt).scale(2)
-        h.shift(DOWN * 0.8 + RIGHT * 3)
+        h.shift(DOWN * 1.1 + RIGHT * 3)
 
         take_g = (2, 3, 5, 6, 7)
         take_h = (1, 2, 3, 4, 5)

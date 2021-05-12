@@ -19,6 +19,8 @@ ffmpeg (video): https://ffmpeg.org/
 arecord (audio): https://linux.die.net/man/1/arecord
 sox (audio): http://sox.sourceforge.net/
 
+Special thanks to Jakub Medek for help with catching errors and providing feedback.
+
 ------------------
 
 [CZ] Martin Koutecký's lecture on Combinatorics and Graph Theory:
