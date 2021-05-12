@@ -9,3 +9,10 @@ A random list of ideas for videos.
 ## Automata and languages
 - Pumping lemma
 - Chomsky Hierarchy
+
+## Algorithms and Data Structures
+- Aho-Corasick
+- Goldberg
+- Bitonic search and (optimal) sorting networks
+- Cook-Levin theorem
+- Fortune's algorithm for Voronoi diagrams
