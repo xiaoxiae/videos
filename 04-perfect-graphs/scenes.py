@@ -491,7 +491,7 @@ class Lemma1(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 1))
 
-        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if it contains an |independent set,| such that each m|aximum clique i|n $G$ |contains a vertex f|rom the set (called a v|ast independent set)|..", size=r"\footnotesize", splitBy="|")
+        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if |each induced subgraph| contains an |independent set|, such that |each its maximum clique| contains a |vertex| from the set (called a v|ast independent set)|.", size=r"\footnotesize", splitBy="|")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -1731,13 +1731,13 @@ class Theorem2(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 1.3))
 
-        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| the |length| of its every |hole| and |antihole| (excluding length 3) is |even| (called a |Berge graph|).", size=r"\footnotesize", splitBy="|")
+        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| the |length| of its every |hole| and |antihole| (excluding length 3) is |even| (a |Berge graph|).", size=r"\footnotesize", splitBy="|")
         text[3].set_color(WHITE)
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
         self.play(FadeOut(title))
-        self.play(text.animate.shift(UP * 3.7))
+        self.play(text.animate.shift(UP * 3.1))
 
         l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.12)
 
@@ -1769,7 +1769,7 @@ class Theorem2(Scene):
         vertices = [i + 1 for i in range(7)]
         edges = [(1, 2), (3, 1), (4, 1), (3, 2), (5, 2), (3, 6), (6, 7), (4, 6), (5, 7)]
         g = Graph(vertices, edges, layout=lt).scale(2)
-        g.shift(DOWN * 1.5 + LEFT * 3)
+        g.shift(DOWN * 1.2 + LEFT * 3)
 
         s = 0.13
         t = 0.13
@@ -1797,26 +1797,25 @@ class Theorem2(Scene):
         vertices = [i + 1 for i in range(7)]
         edges = [(1, 2), (2, 3), (4, 5), (1, 5), (3, 4), (5, 6), (2, 7), (6, 7)]
         h = Graph(vertices, edges, layout=lt).scale(2)
-        h.shift(DOWN * 1.5 + RIGHT * 3)
+        h.shift(DOWN * 1.2 + RIGHT * 3)
 
         take_g = (2, 3, 5, 6, 7)
         take_h = (1, 2, 3, 4, 5)
 
-        self.play(Write(g), Write(h))
+        hole = Tex("hole").next_to(g, UP).shift(UP * 0.2)
+        antihole = Tex("antihole").next_to(h, UP).shift(UP * 0.2)
 
-        hole = Tex("hole").next_to(g, UP)
-        antihole = Tex("antihole").next_to(h, UP)
+        self.play(
+                Write(hole),
+                Write(antihole),
+                Write(g), Write(h),
+                )
 
         self.play(
                 *[g.vertices[v].animate.set_color(dark_color) for v in g.vertices if v not in take_g],
                 *[g.edges[(u, v)].animate.set_color(dark_color) for u, v in g.edges if u not in take_g or v not in take_g],
                 *[h.vertices[v].animate.set_color(dark_color) for v in h.vertices if v not in take_h],
                 *[h.edges[(u, v)].animate.set_color(dark_color) for u, v in h.edges if u not in take_h or v not in take_h],
-                )
-
-        self.play(
-                Write(hole),
-                Write(antihole),
                 )
 
         self.play(

@@ -24,12 +24,12 @@ DEFINITIONS
 <!--- cis3 --> These two concepts are closely tied together. Considering a complement of a graph, we see that each independent set becomes a clique, and vice versa.
 
 # InducedSubgraph
-<!--- is1 --> A graph $H$ is an induced subgraph of the graph $G$ (denoted $H \subseteq G$), if and only if we can get $H$ by removing zero or more vertices (along with their edges) from $G$.
+<!--- is1 --> A graph $H$ is an induced subgraph of the graph $G$, if and only if we can get $H$ by removing zero or more vertices (along with their edges) from $G$.
 
 <!--- is2 --> Additionally, it is a proper induced subgraph, if we remove one or more vertices.
 
 # ChromaticNumber
-<!--- cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we can use to color the graph's vertices, such that no two adjacent vertices have the same color.
+<!--- cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we have to use to color the graph's vertices, such that no two adjacent vertices have the same color.
 
 # PerfectGraph
 <!--- p1 --> Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if $\forall H \subseteq G: \chi(H) = \omega(H)$.
@@ -40,43 +40,45 @@ OBSERVATIONS AND EXAMPLES
 
 # Observations
 
-<!--- o1 --> With definitions out of the way, let's make a few observations about how perfect graphs behave that will help us understand the proof better.
+<!--- o1 --> With definitions out of the way, let's make a few observations about how perfect graphs behave, that will help us understand the proof better.
 
-<!--- o2 --> Firstly, $\forall H \subseteq G: \omega(H) \le \chi(H)$, because each maximum clique has to contain $\omega(H)$ different colors. What perfect graphs are saying is that this inequality is actually an equality.
+<!--- o2 --> Firstly, $\forall H \subseteq G: \chi(H) \ge \omega(H)$, because each maximum clique has to contain $\omega(H)$ different colors. For perfect graphs, this is an equality from definition.
 
-<!--- o3 --> Secondly, if a graph is perfect, then each of its induced subgraphs is perfect too. This follows immediately from the definition of a perfect graph (since something is true for each of its induced subgraphs).
+<!--- o3 --> Secondly, if a graph is perfect, then each its induced subgraph is perfect too. This again follows immediately from the definition of a perfect graph, since something is true for each of its induced subgraphs.
 
 <!--- o4 --> As for examples, some common families of graphs that are perfect include complete graphs ($\chi = n = \omega$) and bipartite graphs ($\chi$ is either 1 when it has no edges, or 2 if it does, either of which works).
 
-<!--- o5 --> Some families that are not perfect include cycles of odd length $\ge 5$ ($\omega = 2$ and $\chi = 3$) and even wheel graphs of length $\ge 6$ ($\omega = 3$ and $\chi = 4$).
+<!--- o5 --> Some families that are not perfect include cycles of odd length $\ge 5$ (because $\omega = 2$ and $\chi = 3$) and even wheel graphs of length $\ge 6$ (because $\omega = 3$ and $\chi = 4$).
 
 ---
 LEMMA 1
 ---
 
 # Lemma1
-<!--- lone1 --> Our first lemma is actually a characterization of a perfect graph. It states that the graph $G$ is perfect, if and only if each induced subgraph contains an independent set, such that each maximum clique in $G$ contains a vertex from the set (called a vast independent set).
+<!--- lone1 --> Our first lemma is actually a characterization of a perfect graph. It states that the graph $G$ is perfect, if and only if $\forall H \subseteq G$ contains an independent set, such that each maximum clique in $H$ contains a vertex from this set (called a vast independent set).
 
-<!--- lone2 --> The left-to-right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, each largest clique contains all possible colors. That means we can choose any particular color and let the independent set be all vertices of that color. By definition, such independent set is vast.
+<!--- lone2 --> The left-to-right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, each largest clique contains all possible colors. That means we can choose any color and let the independent set be all vertices of that color. By definition, such independent set is vast.
 
 <!--- lone3 --> The right-to-left implication can be proved using induction on the number of vertices. The base case is trivially true. For the induction step, assume that we've proven the statement for all smaller graphs.
 
-<!--- lone4 --> Let $G$ be a graph such that each induced subgraph of $G$ contains a vast independent set. Let $I$ be a vast independent set in $G$ itself. Let $H$ be the induced subgraph obtained from $G$ by removing $I$. Observe that $\omega(H) = \omega(G) - 1$, since all maximum cliques in $G$ contain one vertex from $I$. $H$ satisfies the right hand side of our equivalence, so by induction, $H$ is perfect. Therefore there exists a vertex coloring of $H$ using $\omega(G) - 1$ colors. Adding the vertices of $I$ back, we can color all of them using one extra color and obtain coloring of $G$ using $\omega(G)$ colors. 
+<!--- lone4 --> Let $G$ be a graph such that each induced subgraph of $G$ contains a vast independent set. Let $I$ be a vast independent set in $G$, and $H$ be the induced subgraph obtained from $G$ by removing $I$. Observe that $\omega(H) = \omega(G) - 1$, since all maximum cliques in $G$ contain one vertex from $I$. By induction, $H$ is perfect, so there exists a vertex coloring of $H$ using $\omega(G) - 1$ colors. Adding the vertices of $I$ back, we can color all of them using one extra color and obtain a coloring of $G$ using $\omega(G)$ colors.
 
 ---
 LEMMA 2
 ---
 
 # Lemma2
-<!--- ltwo1 --> Our second lemma states that if $G$ is perfect, then any graph constructed from $G$ by expanding a vertex is also perfect. By expanding, we mean that we replace the vertex with a complete graph of any size $K_n$ and connect it to all of its neighbours accordingly.
+<!--- ltwo1 --> Our second lemma states that if $G$ is perfect, then any graph constructed from $G$ by expanding a vertex is also perfect. By expanding, we mean that we replace the vertex with a complete graph of any size (denoted $K_n$) and connect it to all of its neighbours accordingly.
 
-<!--- ltwo2 --> For proof, observe that expanding a vertex to $K_n$ is equivalent to expanding it to $K_2$ (n-1)-times. It's therefore sufficient to prove that expanding a vertex to $K_2$ doesn't destroy perfectness of a graph. Let's again use induction on the number of vertices in $G$. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
+<!--- ltwo2 --> For proof, observe that expanding a vertex to $K_n$ is equivalent to repeatedly expanding it to $K_2$, so it's enough to prove that expanding a vertex to $K_2$ perserves perfectness.
 
-<!--- ltwo3 --> Case one is that expanding increases $\omega$. Obviously, $\omega$ can only increase by 1. This is fine, since we now can use an additional color that we'll use on $v'$, so $G'$ is still perfect.
+Let's again use induction on the number of vertices in $G$. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
+
+<!--- ltwo3 --> Case one is that expanding increases $\omega$ (obviously only by one). This is fine, since we can now use an additional color on $v'$, so $G'$ is still perfect.
 
 <!--- ltwo4 --> Case two is that expanding doesn't increase $\omega$. In this case, let's take a $\chi$ coloring of $G$. Looking at the set of vertices with the same color as $v$, we know that this must be a vast independent set (since each clique contains all of the colors). However, $v$ is not a part of a maximum clique, because otherwise $\omega$ would have increased.
 
-<!--- ltwo5 --> Removing all vertices of this color besides $v$ will decrease $\omega$ by one and, by induction, give a $\chi(G) - 1$ coloring of the smaller graph. Adding the vertices back using the removed color, including the not-yet-added $v'$ proves the second case.
+<!--- ltwo5 --> Removing all vertices of this color besides $v$ will decrease $\omega$ by one and, by induction, give a $\chi - 1$ coloring of the smaller graph. Adding the vertices back using the removed color, including the not-yet-added $v'$ proves the second case.
 
 ---
 WEAK PERFECT GRAPH THEOREM
