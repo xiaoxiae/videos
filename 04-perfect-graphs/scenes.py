@@ -30,8 +30,8 @@ class MyBulletedList(Tex):
                 continue
 
             a, b = parts
-            text = Tex(a + r"$\mid$", b).move_to(part)
-            text[1].set_color(YELLOW),
+            text = Tex(a, r"$\mid$", b).move_to(part)
+            text[2].set_color(YELLOW),
 
             dot = MathTex("\\cdot").scale(self.dot_scale_factor)
             dot.next_to(text[0], LEFT, MED_SMALL_BUFF)
@@ -79,23 +79,26 @@ class Introduction(Scene):
         self.play( FadeOut(text), FadeOut(image),)
 
         title = Tex("\Large Definitions")
-        title.shift(UP * 2.5)
+        title.shift(UP * 2.3)
 
         self.play(Write(title))
 
-        text = MyBulletedList(
-                r"Complement graph $\mid$ $\overline{G}$",
-                r"Clique, independent set $\mid$ $\omega(G), \alpha(G)$",
-                r"(Proper) induced subgraph $\mid$ $H \subseteq G$, $H \subset G$",
-                r"Chromatic number $\mid$ $\chi(G)$",
-                r"Perfect graph $\mid$ $G_{\star}$",
-                dot_scale_factor=3,
-                buff=MED_SMALL_BUFF 
-                )
+        text = [
+            [Tex(r"Complement graph"), Tex(r"$\overline{G}$")],
+            [Tex(r"Clique, independent set"), Tex(r"$\omega(G), \alpha(G)$")],
+            [Tex(r"(Proper) induced subgraph"), Tex(r"$H \subseteq G$, $H \subset G$")],
+            [Tex(r"Chromatic number"), Tex(r"$\chi(G)$")],
+            [Tex(r"Perfect graph"), Tex(r"$G_{\star}$")]]
 
-        text.next_to(title, 2 * DOWN).shift(DOWN * 0.5)
+        text[0][0].align_to(ORIGIN, RIGHT).shift(LEFT * 0.3 + UP * 0.7 + RIGHT * 1.1)
+        text[0][1].align_to(ORIGIN, LEFT).shift(RIGHT * 0.3 + UP * 0.7 + RIGHT * 1.1)
+        for i in range(1, len(text)):
+            text[i][0].next_to(text[i - 1][0], DOWN).align_to(ORIGIN, RIGHT).shift(LEFT * 0.3 + RIGHT * 1.1)
+            text[i][1].next_to(text[i - 1][1], DOWN).align_to(ORIGIN, LEFT).shift(RIGHT * 0.3 + RIGHT * 1.1)
 
-        self.play(FadeIn(text))
+        self.play(*[Write(i[0], run_time=1) for i in text])
+        self.play(Write(Line(UP * 1.3, DOWN * 2.1).shift(RIGHT * 1.1 + DOWN * 0.3)))
+        self.play(*[Write(i[1].set_color(YELLOW), run_time=0.5) for i in text])
 
 
 class Complement(Scene):
@@ -477,55 +480,42 @@ class ChromaticNumber(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-
         duration, text = createHighlightedParagraph( "The ","chromatic number $\chi(G)$"," of a graph ","$G$"," is the ","minimum number of colors"," we can use to color the graph's ","vertices",", such that ","no two adjacent vertices"," have the ","same color.","", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
+        
+        g = parse_graph("""
+                1 2 <28.673998493774764, 16.11549026915917> <23.425160412282423, 19.234907822119965>
+                3 2 <28.802200340160894, 22.148748965846544> <23.425160412282423, 19.234907822119965>
+                4 3 <34.11064204718341, 19.008283942135677> <28.802200340160894, 22.148748965846544>
+                4 1 <34.11064204718341, 19.008283942135677> <28.673998493774764, 16.11549026915917>
+                1 3 <28.673998493774764, 16.11549026915917> <28.802200340160894, 22.148748965846544>
+                4 5 <34.11064204718341, 19.008283942135677> <40.414236285526336, 19.051169376775814>
+                6 5 <36.96163252070064, 24.339334636825303> <40.414236285526336, 19.051169376775814>
+                5 7 <40.414236285526336, 19.051169376775814> <45.48388231995395, 15.29263869607948>
+                7 8 <45.48388231995395, 15.29263869607948> <39.14682477691944, 13.282261820358185>
+                5 9 <40.414236285526336, 19.051169376775814> <45.87721692607333, 21.935623154984626>
+                9 10 <45.87721692607333, 21.935623154984626> <49.89797067751592, 18.570427080407676>
+                10 11 <49.89797067751592, 18.570427080407676> <54.13724365458039, 15.423750231452608>
+                11 12 <54.13724365458039, 15.423750231452608> <54.18094749970476, 21.935623154984626>
+                9 12 <45.87721692607333, 21.935623154984626> <54.18094749970476, 21.935623154984626>
+                1 13 <28.673998493774764, 16.11549026915917> <23.457144377268467, 13.325965665482563>
+                2 14 <23.425160412282423, 19.234907822119965> <22.583067474780947, 24.557853862447182>
+                """, s=0.10, t=0.10)
 
-        s = 0.13
-        lt = {
-            1:  [47.38483438230261, 14.060368360180616, 0],
-            2:  [47.04426001805368, 21.347487665146264, 0],
-            3:  [50.9944860441275, 17.87959586965124, 0],
-            4:  [43.473770252465194, 17.531227666811304, 0],
-            5:  [55.79878824615697, 21.754965041566994, 0],
-            6:  [56.88020523754154, 15.782897747658021, 0],
-            7:  [62.40430614599554, 13.054510220630755, 0] ,
-            8:  [37.189798625724194, 17.32866367272487, 0],
-            9:  [31.926414399437974, 14.144547277873158, 0],
-            10: [31.749162068885, 20.199682815964888, 0]}
-
-        lt_avg_x = 0
-        lt_avg_y = 0
-
-        for i in lt:
-            lt_avg_x += lt[i][0]
-            lt_avg_y += lt[i][1]
-
-        lt_avg_x /= len(lt)
-        lt_avg_y /= len(lt)
-
-        for i in lt:
-            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * s, 0)
-
-        vertices = [i + 1 for i in range(10)]
-        edges = [(1, 2),  (1, 3), (1, 4),  (2, 3), (2, 4), (3, 4), (3, 5), (3, 6), (5, 6), (6, 7), (4, 8), (8, 9), (9, 10), (8, 10)]
-        g = Graph(vertices, edges, layout=lt).scale(2)
-        g.shift(DOWN * 1.65)
+        g.shift(DOWN * 1.70)
 
         self.play(Write(g))
 
         coloring = get_coloring(g.edges, one_indexing=True)
 
-        chi = Tex(r"$\chi$(G) = 4")
-        chi.next_to(g).shift(UP * 0.65 + LEFT * 1.7)
+        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
 
-        self.play(
-            *[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring],
-        )
+        self.play(g.animate.shift(LEFT * 1.3))
 
-        self.play(g.animate.shift(LEFT))
+        chi = Tex(r"$\chi$(G) = 3")
+        chi.next_to(g, RIGHT).shift(RIGHT * 0.5)
 
         self.play( Write(chi))
 
@@ -1107,6 +1097,111 @@ class PerfectGraph(Scene):
             TransformMatchingShapes(omega, omegaa),
         )
         self.wait()
+
+
+class Observations(Scene):
+    @fade
+    def construct(self):
+        title = Tex("\Large Observations")
+
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 2.5))
+
+        one = Tex(r"\small$\forall H \subseteq G: \omega(H) \le \chi(H)$").shift(LEFT * 3 + UP)
+        two = Tex(r"\small$G_\star \Rightarrow \forall H \subseteq G: H_\star$").shift(RIGHT * 3 + UP)
+
+        self.play(Write(one))
+
+        g = Graph.from_networkx(nx.complete_graph(5), layout="circular", layout_scale=0.6).scale(2)
+        g.shift(LEFT * 3 + DOWN * 1.5)
+
+        self.play(Write(g))
+        coloring = get_coloring(g.edges)
+        self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
+
+        self.play(Write(two))
+
+        g = parse_graph("""
+                1 2 <28.321813901107728, 28.675721154416973> <32.87561944049231, 24.45977927204777>
+                3 2 <26.915895781980787, 22.79756134095007> <32.87561944049231, 24.45977927204777>
+                3 1 <26.915895781980787, 22.79756134095007> <28.321813901107728, 28.675721154416973>
+                4 2 <33.24770177727062, 18.11545137329273> <32.87561944049231, 24.45977927204777>
+                4 5 <33.24770177727062, 18.11545137329273> <31.34755829803025, 12.22668404420929>
+                6 5 <27.2553244314561, 16.697459676808915> <31.34755829803025, 12.22668404420929>
+                4 6 <33.24770177727062, 18.11545137329273> <27.2553244314561, 16.697459676808915>
+                3 6 <26.915895781980787, 22.79756134095007> <27.2553244314561, 16.697459676808915>
+                4 7 <33.24770177727062, 18.11545137329273> <38.19963686006849, 13.825620464525823>
+                2 8 <32.87561944049231, 24.45977927204777> <34.81712389270086, 30.371822569173045>
+                2 9 <32.87561944049231, 24.45977927204777> <39.02180120198095, 25.325061233401833>
+                9 10 <39.02180120198095, 25.325061233401833> <39.36160664403505, 19.76151037083551>
+                """, s=0.09, t=0.09).rotate(PI / 3)
+        g.shift(RIGHT * 3 + DOWN * 1.5)
+        self.play(Write(g))
+
+        coloring = get_coloring(g.edges, one_indexing=True)
+        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
+
+        fade_all(self)
+
+        title = Tex("\Large Examples")
+
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 2.5))
+
+        g1 = Tex(r"$\text{complete}^{\star}$").shift(LEFT * 4.7 + UP * 0.7)
+        g2 = Tex(r"$\text{bipartite}^{\star}$").shift(LEFT * 1.7 + UP * 0.7)
+
+        g3 = Tex(r"$\text{odd cycles}_{\scriptsize\ge 5}$").shift(RIGHT * 1.7 + UP * 0.7)
+        g4 = Tex(r"$\text{wheel}_{\scriptsize\ge 6}$").shift(RIGHT * 4.7 + UP * 0.7)
+
+        self.play(Write(g1))
+
+        g = Graph.from_networkx(nx.complete_graph(4), layout="circular", layout_scale=0.5).scale(2).rotate(PI / 4)
+        g.shift(LEFT * 4.7 + DOWN * 1.3)
+        self.play(Write(g))
+        coloring = get_coloring(g.edges)
+        self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
+
+        self.play(Write(g2))
+
+        g = parse_graph("""
+            1 2 <37.34537111614888, 25.18886807744483> <44.004899931339125, 22.297273897437805>
+            3 2 <37.32817381688349, 19.139829354958998> <44.004899931339125, 22.297273897437805>
+            3 4 <37.32817381688349, 19.139829354958998> <43.940539956858906, 16.21648972542787>
+            5 2 <37.293336692987694, 12.987483033125892> <44.004899931339125, 22.297273897437805>
+            1 4 <37.34537111614888, 25.18886807744483> <43.940539956858906, 16.21648972542787>
+                """, s=0.09, t=0.09)
+        g.shift(LEFT * 1.7 + DOWN * 1.3)
+        self.play(Write(g))
+        coloring = get_coloring(g.edges, one_indexing=True)
+        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
+
+        self.play(Write(g3))
+
+        g = Graph.from_networkx(nx.cycle_graph(5), layout="circular", layout_scale=0.5).scale(2).rotate(2 * PI / 20)
+        g.shift(RIGHT * 1.7 + DOWN * 1.3)
+        self.play(Write(g))
+        coloring = get_coloring(g.edges)
+        self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
+
+        self.play(Write(g4))
+
+        g = parse_graph("""
+                1 2 <17.337719904381842, 13.098659761454995> <22.63234538756785, 16.96391344782175>
+                3 2 <20.592399935170032, 23.193830591605924> <22.63234538756785, 16.96391344782175>
+                3 4 <20.592399935170032, 23.193830591605924> <14.03701882720638, 23.17887744719346>
+                4 5 <14.03701882720638, 23.17887744719346> <12.025515945673726, 16.939718751923685>
+                1 5 <17.337719904381842, 13.098659761454995> <12.025515945673726, 16.939718751923685>
+                1 6 <17.337719904381842, 13.098659761454995> <17.32499999999996, 18.67499999999997>
+                2 6 <22.63234538756785, 16.96391344782175> <17.32499999999996, 18.67499999999997>
+                3 6 <20.592399935170032, 23.193830591605924> <17.32499999999996, 18.67499999999997>
+                4 6 <14.03701882720638, 23.17887744719346> <17.32499999999996, 18.67499999999997>
+                6 5 <17.32499999999996, 18.67499999999997> <12.025515945673726, 16.939718751923685>
+                """, s=0.09, t=0.09)
+        g.shift(RIGHT * 4.7 + DOWN * 1.15).rotate(PI)
+        self.play(Write(g))
+        coloring = get_coloring(g.edges, one_indexing=True)
+        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
 
 
 class Theorem(Scene):

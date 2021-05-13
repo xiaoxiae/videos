@@ -50,8 +50,6 @@ OBSERVATIONS AND EXAMPLES
 
 <!--- o5 --> Some families that are not perfect include cycles of odd length $\ge 5$ ($\omega = 2$ and $\chi = 3$) and even wheel graphs of length $\ge 6$ ($\omega = 3$ and $\chi = 4$).
 
-TODO: animace a výpis
-
 ---
 LEMMA 1
 ---
@@ -71,8 +69,6 @@ LEMMA 2
 
 # Lemma2
 <!--- ltwo1 --> Our second lemma states that if $G$ is perfect, then any graph constructed from $G$ by expanding a vertex is also perfect. By expanding, we mean that we replace the vertex with a complete graph of any size $K_n$ and connect it to all of its neighbours accordingly.
-
-TODO: ještě jeden příklad
 
 <!--- ltwo2 --> For proof, observe that expanding a vertex to $K_n$ is equivalent to expanding it to $K_2$ (n-1)-times. It's therefore sufficient to prove that expanding a vertex to $K_2$ doesn't destroy perfectness of a graph. Let's again use induction on the number of vertices in $G$. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
 

@@ -63,17 +63,20 @@ def get_coloring(edges, one_indexing=False):
     model = LpProblem(sense=LpMinimize)
 
     chromatic_number = LpVariable(name="chromatic number", cat='Integer')
+
     variables = [[LpVariable(name=f"x_{i}_{j}", cat='Binary') \
                   for i in range(n)] for j in range(n)]
 
     for i in range(n):
         model += lpSum(variables[i]) == 1
+
     for u, v in edges:
         for color in range(n):
             model += variables[u - (1 if one_indexing else 0)][color] + variables[v - (1 if one_indexing else 0)][color] <= 1
+
     for i in range(n):
         for j in range(n):
-            model += chromatic_number >= (j + 1) * variables[i][j]
+            model += chromatic_number >= (j + 2) * variables[i][j]
 
     model += chromatic_number
 
@@ -108,6 +111,7 @@ def parse_graph(graph, s=0.13, t=0.13):
 
     lt = {}
     edges = []
+    vertices = set()
 
     for line in graph.strip().splitlines():
         line = line.strip()
@@ -116,12 +120,12 @@ def parse_graph(graph, s=0.13, t=0.13):
         u_x, u_y = list(map(float, p1[:-2].strip().split(", ")))
         v_x, v_y = list(map(float, p2[:-2].strip().split(", ")))
 
-        print(u, v, (u_x, u_y), (v_x, v_y))
-
         lt[u] = [u_x, u_y, 0]
         lt[v] = [v_x, v_y, 0]
 
         edges.append((u, v))
+        vertices.add(u)
+        vertices.add(v)
 
     lt_avg_x = 0
     lt_avg_y = 0
@@ -136,4 +140,4 @@ def parse_graph(graph, s=0.13, t=0.13):
     for i in lt:
         lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * s, 0)
 
-    return Graph(vertices, edges, layout=lt).scale(2)
+    return Graph(sorted(list(vertices)), edges, layout=lt).scale(2)
