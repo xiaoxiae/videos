@@ -138,6 +138,6 @@ def parse_graph(graph, s=0.13, t=0.13):
     lt_avg_y /= len(lt)
 
     for i in lt:
-        lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * s, 0)
+        lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
 
     return Graph(sorted(list(vertices)), edges, layout=lt).scale(2)

@@ -98,7 +98,7 @@ class Introduction(Scene):
 
         self.play(*[Write(i[0], run_time=1) for i in text])
         self.play(Write(Line(UP * 1.3, DOWN * 2.1).shift(RIGHT * 1.1 + DOWN * 0.3)))
-        self.play(*[Write(i[1].set_color(YELLOW), run_time=0.5) for i in text])
+        self.play(*[Write(i[1].set_color(YELLOW), run_time=1.0) for i in text])
 
 
 class Complement(Scene):
@@ -353,35 +353,27 @@ class InducedSubgraph(Scene):
 
         self.play(Write(text), run_time=duration)
 
-        s = 0.13
-        lt = {
-            1:  [47.38483438230261, 14.060368360180616, 0],
-            2:  [47.04426001805368, 21.347487665146264, 0],
-            3:  [50.9944860441275, 17.87959586965124, 0],
-            4:  [43.473770252465194, 17.531227666811304, 0],
-            5:  [55.79878824615697, 21.754965041566994, 0],
-            6:  [56.88020523754154, 15.782897747658021, 0],
-            7:  [62.40430614599554, 13.054510220630755, 0] ,
-            8:  [37.189798625724194, 17.32866367272487, 0],
-            9:  [31.926414399437974, 14.144547277873158, 0],
-            10: [31.749162068885, 20.199682815964888, 0]}
+        g = parse_graph("""
+                1 2 <38.80574387665646, 19.075436670793508> <44.36083840295738, 21.761815830298648>
+                3 2 <39.179534414192304, 25.113064293143765> <44.36083840295738, 21.761815830298648>
+                1 3 <38.80574387665646, 19.075436670793508> <39.179534414192304, 25.113064293143765>
+                2 4 <44.36083840295738, 21.761815830298648> <47.96770691008718, 16.796776284879865>
+                5 4 <50.597978972573785, 22.308728990261567> <47.96770691008718, 16.796776284879865>
+                2 5 <44.36083840295738, 21.761815830298648> <50.597978972573785, 22.308728990261567>
+                5 6 <50.597978972573785, 22.308728990261567> <56.88123963001803, 22.427996649354146>
+                7 6 <60.146402953578516, 27.05692805463163> <56.88123963001803, 22.427996649354146>
+                8 6 <60.7674389075905, 17.639989234646468> <56.88123963001803, 22.427996649354146>
+                4 9 <47.96770691008718, 16.796776284879865> <54.11963143013985, 16.08659783621831>
+                10 5 <46.18150790504464, 26.93894486536683> <50.597978972573785, 22.308728990261567>
+                5 11 <50.597978972573785, 22.308728990261567> <53.97483357793314, 27.358585478522365>
+                3 12 <39.179534414192304, 25.113064293143765> <33.482340851356376, 21.51217934696702>
+                3 13 <39.179534414192304, 25.113064293143765> <33.81193012353412, 26.76776402287787>
+                7 11 <60.146402953578516, 27.05692805463163> <53.97483357793314, 27.358585478522365>
+                6 14 <56.88123963001803, 22.427996649354146> <63.959335631709266, 22.318577453431747>
+                6 11 <56.88123963001803, 22.427996649354146> <53.97483357793314, 27.358585478522365>
+                1 15 <38.80574387665646, 19.075436670793508> <33.877160014577754, 15.820817608659894>
+                """, s=0.13, t=0.11)
 
-        lt_avg_x = 0
-        lt_avg_y = 0
-
-        for i in lt:
-            lt_avg_x += lt[i][0]
-            lt_avg_y += lt[i][1]
-
-        lt_avg_x /= len(lt)
-        lt_avg_y /= len(lt)
-
-        for i in lt:
-            lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * s, 0)
-
-        vertices = [i + 1 for i in range(10)]
-        edges = [(1, 2),  (1, 3), (1, 4),  (2, 3), (2, 4), (3, 4), (3, 5), (3, 6), (5, 6), (6, 7), (4, 8), (8, 9), (9, 10), (8, 10)]
-        g = Graph(vertices, edges, layout=lt).scale(2)
         g.shift(DOWN * 1.65)
 
         self.play(Write(g))
@@ -389,56 +381,27 @@ class InducedSubgraph(Scene):
         def to_color(color):
             return [g.vertices[i].animate.set_color(color) for i in vertices] + [g.edges[e].animate.set_color(color) for e in edges]
 
+        take = (2, 5, 6, 11, 10, 7)
         self.play(
-                g.vertices[9].animate.set_color(dark_color),
-                g.vertices[10].animate.set_color(dark_color),
-                g.edges[(8, 9)].animate.set_color(dark_color),
-                g.edges[(8, 10)].animate.set_color(dark_color),
-                g.edges[(9, 10)].animate.set_color(dark_color),
-                g.vertices[7].animate.set_color(dark_color),
-                g.edges[(6, 7)].animate.set_color(dark_color),
-                g.vertices[1].animate.set_color(dark_color),
-                g.edges[(1, 2)].animate.set_color(dark_color),
-                g.edges[(1, 3)].animate.set_color(dark_color),
-                g.edges[(1, 4)].animate.set_color(dark_color),
-                )
+            *[g.vertices[v].animate.set_color(dark_color) for v in g.vertices if v not in take],
+            *[g.edges[(u, v)].animate.set_color(dark_color) for u, v in g.edges if u not in take or v not in take],
+            )
 
-        self.wait()
-
+        take = (1, 2, 3, 15, 4, 6, 7, 8, 14)
         self.play(
-                *to_color(WHITE),
-                g.vertices[10].animate.set_color(dark_color),
-                g.vertices[1].animate.set_color(dark_color),
-                g.vertices[2].animate.set_color(dark_color),
-                g.vertices[5].animate.set_color(dark_color),
-                g.edges[(9, 10)].animate.set_color(dark_color),
-                g.edges[(8, 10)].animate.set_color(dark_color),
-                g.edges[(1, 2)].animate.set_color(dark_color),
-                g.edges[(1, 3)].animate.set_color(dark_color),
-                g.edges[(1, 4)].animate.set_color(dark_color),
-                g.edges[(2, 4)].animate.set_color(dark_color),
-                g.edges[(2, 3)].animate.set_color(dark_color),
-                g.edges[(3, 5)].animate.set_color(dark_color),
-                g.edges[(5, 6)].animate.set_color(dark_color),
-                )
+            *[g.vertices[v].animate.set_color(WHITE) for v in g.vertices],
+            *[g.edges[(u, v)].animate.set_color(WHITE) for u, v in g.edges],
+            *[g.vertices[v].animate.set_color(dark_color) for v in g.vertices if v not in take],
+            *[g.edges[(u, v)].animate.set_color(dark_color) for u, v in g.edges if u not in take or v not in take],
+            )
 
-        self.wait()
-
+        take = (2, 3, 13, 12, 5, 6, 8, 14)
         self.play(
-                *to_color(WHITE),
-                g.vertices[1].animate.set_color(dark_color),
-                g.vertices[2].animate.set_color(dark_color),
-                g.vertices[4].animate.set_color(dark_color),
-                g.vertices[7].animate.set_color(dark_color),
-                g.edges[(1, 2)].animate.set_color(dark_color),
-                g.edges[(1, 3)].animate.set_color(dark_color),
-                g.edges[(1, 4)].animate.set_color(dark_color),
-                g.edges[(2, 3)].animate.set_color(dark_color),
-                g.edges[(2, 4)].animate.set_color(dark_color),
-                g.edges[(3, 4)].animate.set_color(dark_color),
-                g.edges[(4, 8)].animate.set_color(dark_color),
-                g.edges[(6, 7)].animate.set_color(dark_color),
-                )
+            *[g.vertices[v].animate.set_color(WHITE) for v in g.vertices],
+            *[g.edges[(u, v)].animate.set_color(WHITE) for u, v in g.edges],
+            *[g.vertices[v].animate.set_color(dark_color) for v in g.vertices if v not in take],
+            *[g.edges[(u, v)].animate.set_color(dark_color) for u, v in g.edges if u not in take or v not in take],
+            )
 
         sis = Tex(r"\footnotesize proper ind. subg.").set_color(YELLOW)
         sis.move_to(text[3])
@@ -1806,7 +1769,7 @@ class Theorem2(Scene):
         vertices = [i + 1 for i in range(7)]
         edges = [(1, 2), (3, 1), (4, 1), (3, 2), (5, 2), (3, 6), (6, 7), (4, 6), (5, 7)]
         g = Graph(vertices, edges, layout=lt).scale(2)
-        g.shift(DOWN * 1.1 + LEFT * 3)
+        g.shift(DOWN * 1.5 + LEFT * 3)
 
         s = 0.13
         t = 0.13
@@ -1834,7 +1797,7 @@ class Theorem2(Scene):
         vertices = [i + 1 for i in range(7)]
         edges = [(1, 2), (2, 3), (4, 5), (1, 5), (3, 4), (5, 6), (2, 7), (6, 7)]
         h = Graph(vertices, edges, layout=lt).scale(2)
-        h.shift(DOWN * 1.1 + RIGHT * 3)
+        h.shift(DOWN * 1.5 + RIGHT * 3)
 
         take_g = (2, 3, 5, 6, 7)
         take_h = (1, 2, 3, 4, 5)
