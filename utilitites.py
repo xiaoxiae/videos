@@ -4,6 +4,7 @@ from math import *
 from random import *
 from yaml import *
 from pulp import *
+from functools import *
 import networkx as nx
 
 def create_code(self, code):
