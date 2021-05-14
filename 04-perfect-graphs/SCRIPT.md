@@ -32,7 +32,7 @@ DEFINITIONS
 <!--- cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we have to use to color the graph's vertices, such that no two adjacent vertices have the same color.
 
 # PerfectGraph
-<!--- p1 --> Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if $\forall H \subseteq G: \chi(H) = \omega(H)$.
+<!--- p1 --> Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if $\forall H \leqslant G: \chi(H) = \omega(H)$.
 
 ---
 OBSERVATIONS AND EXAMPLES
@@ -42,7 +42,7 @@ OBSERVATIONS AND EXAMPLES
 
 <!--- o1 --> With definitions out of the way, let's make a few observations about how perfect graphs behave, that will help us understand the proof better.
 
-<!--- o2 --> Firstly, $\forall H \subseteq G: \chi(H) \ge \omega(H)$, because each maximum clique has to contain $\omega(H)$ different colors. For perfect graphs, this is an equality from definition.
+<!--- o2 --> Firstly, $\forall H \leqslant G: \chi(H) \ge \omega(H)$, because each maximum clique has to contain $\omega(H)$ different colors. For perfect graphs, this is an equality from definition.
 
 <!--- o3 --> Secondly, if a graph is perfect, then each its induced subgraph is perfect too. This again follows immediately from the definition of a perfect graph, since something is true for each of its induced subgraphs.
 
@@ -55,7 +55,7 @@ LEMMA 1
 ---
 
 # Lemma1
-<!--- lone1 --> Our first lemma is actually a characterization of a perfect graph. It states that the graph $G$ is perfect, if and only if $\forall H \subseteq G$ contains an independent set, such that each maximum clique in $H$ contains a vertex from this set (called a vast independent set).
+<!--- lone1 --> Our first lemma is actually a characterization of a perfect graph. It states that the graph $G$ is perfect, if and only if $\forall H \leqslant G$ contains an independent set, such that each maximum clique in $H$ contains a vertex from this set (called a vast independent set).
 
 <!--- lone2 --> The left-to-right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, each largest clique contains all possible colors. That means we can choose any color and let the independent set be all vertices of that color. By definition, such independent set is vast.
 
@@ -95,7 +95,7 @@ WEAK PERFECT GRAPH THEOREM
 
 <!--- tone4 --> We now know that $\bar{G}$ doesn't have a vast independent set, meaning that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
 
-<!--- tone5 --> Let's list all of the cliques in $G_\star$, calling them $Q_1$ to $Q_t$. From the previous observation, for each clique $Q_i$, we have a maximum independent set $I_i$, such that they are disjunct.
+<!--- tone5 --> Let's list all of the cliques in $G_\star$, calling them $Q_1$ to $Q_t$. From the previous observation, for each clique $Q_i$, we have a maximum independent set $I_i$, such that they are disjoint.
 
 <!--- tone6 --> We'll now do something that seems very strange, but is actually the core idea behind the proof. For each vertex $v$ in $G_\star$, let $f(v)$ denote the number of the maximum independent sets that it's in.
 
@@ -124,7 +124,7 @@ STRONG PERFECT GRAPH THEOREM
 ---
 
 # Theorem2
-<!--- ttwo1 --> A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if the length of its every hole and antihole (excluding length 3) is even. By hole, we mean an induced cycle and by antihole, we mean a complement to an induced cycle.
+<!--- ttwo1 --> A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if it doesn't contain a hole or an antihole greater than 3. By hole, we mean an induced cycle and by antihole, we mean a complement to an induced cycle.
 
 <!--- ttwo2 --> The two examples are, using this theorem, not perfect, since they each contain either a hole or an antihole of size 5.
 

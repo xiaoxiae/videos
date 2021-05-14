@@ -86,7 +86,7 @@ class Introduction(Scene):
         text = [
             [Tex(r"Complement graph"), Tex(r"$\overline{G}$")],
             [Tex(r"Clique, independent set"), Tex(r"$\omega(G), \alpha(G)$")],
-            [Tex(r"(Proper) induced subgraph"), Tex(r"$H \subseteq G$, $H \subset G$")],
+            [Tex(r"(Proper) induced subgraph"), Tex(r"$H \leqslant G$, $H < G$")],
             [Tex(r"Chromatic number"), Tex(r"$\chi(G)$")],
             [Tex(r"Perfect graph"), Tex(r"$G_{\star}$")]]
 
@@ -347,7 +347,7 @@ class InducedSubgraph(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-        duration, text = createHighlightedParagraph("A graph ","$H$"," is an ","induced subgraph"," of ","$G$"," (denoted ","$H \subseteq G$","), if and only if we can get ","$H$"," by ","removing ","zero"," or more vertices"," from ","$G$",".", size=r"\footnotesize")
+        duration, text = createHighlightedParagraph("A graph ","$H$"," is an ","induced subgraph"," of ","$G$"," (denoted ","$H \leqslant G$","), if and only if we can get ","$H$"," by ","removing ","zero"," or more vertices"," from ","$G$",".", size=r"\footnotesize")
         text.next_to(title, 2 * DOWN)
         text[12].set_color(YELLOW)
 
@@ -406,7 +406,7 @@ class InducedSubgraph(Scene):
         sis = Tex(r"\footnotesize proper ind. subg.").set_color(YELLOW)
         sis.move_to(text[3])
 
-        subset = Tex(r"\footnotesize $H \subset G$").set_color(YELLOW)
+        subset = Tex(r"\footnotesize $H < G$").set_color(YELLOW)
         subset.move_to(text[7]).shift(UP * 0.024)
 
         one = Tex(r"\footnotesize one").set_color(YELLOW)
@@ -959,7 +959,7 @@ class PerfectGraph(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.8))
 
-        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect| (informally denoted |$G_{\star}$|), if and only if |$$\forall H \subseteq G: \chi(H) = \omega(H)$$|", size=r"\footnotesize", splitBy="|")
+        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect| (informally denoted |$G_{\star}$|), if and only if |$$\forall H \leqslant G: \chi(H) = \omega(H)$$|", size=r"\footnotesize", splitBy="|")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -1070,8 +1070,8 @@ class Observations(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 2.5))
 
-        one = Tex(r"\small$\forall H \subseteq G: \omega(H) \le \chi(H)$").shift(LEFT * 3 + UP)
-        two = Tex(r"\small$G_\star \Rightarrow \forall H \subseteq G: H_\star$").shift(RIGHT * 3 + UP)
+        one = Tex(r"\small$\forall H \leqslant G: \omega(H) \le \chi(H)$").shift(LEFT * 3 + UP)
+        two = Tex(r"\small$G_\star \Rightarrow \forall H \leqslant G: H_\star$").shift(RIGHT * 3 + UP)
 
         self.play(Write(one))
 
@@ -1731,7 +1731,7 @@ class Theorem2(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 1.3))
 
-        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| the |length| of its every |hole| and |antihole| (excluding length 3) is |even| (a |Berge graph|).", size=r"\footnotesize", splitBy="|")
+        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| it |doesn't contain| a |hole| or an |antihole greater than 3| (a |Berge graph|).", size=r"\footnotesize", splitBy="|")
         text[3].set_color(WHITE)
         text.next_to(title, 2 * DOWN)
 
