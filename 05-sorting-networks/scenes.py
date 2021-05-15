@@ -1,24 +1,5 @@
 from utilities import *
 
-def hsv_to_rgb(h, s, v):
-    i = floor(h*6)
-    f = h*6 - i
-    p = v * (1-s)
-    q = v * (1-f*s)
-    t = v * (1-(1-f)*s)
-
-    return [
-        (v, t, p),
-        (q, v, p),
-        (p, v, t),
-        (p, q, v),
-        (t, p, v),
-        (v, p, q),
-    ][int(i%6)]
-
-def rainbow_to_rgb(i):
-    return rgb_to_hex(hsv_to_rgb(i * 0.8, 0.5, 1))
-
 networks = [
         None,
         [#1
@@ -151,8 +132,11 @@ class SortingNetwork(VMobject):
             for i in range(len(sublayer)):
                 a, b = sublayer[i]
 
-                a_circle = Circle(minor_circles_radius, color=WHITE).move_to(UP * ((a / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)).set_fill(WHITE, opacity=1)
-                b_circle = Circle(minor_circles_radius, color=WHITE).move_to(UP * ((b / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)).set_fill(WHITE, opacity=1)
+                a_pos = UP * ((a / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)
+                b_pos = UP * ((b / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)
+
+                a_circle = Circle(minor_circles_radius, color=WHITE).move_to(a_pos).set_fill(WHITE, opacity=1)
+                b_circle = Circle(minor_circles_radius, color=WHITE).move_to(b_pos).set_fill(WHITE, opacity=1)
                 line = Line(a_circle.get_center(), b_circle.get_center())
 
                 sublayer[i] = (a, b, a_circle, b_circle, line)
@@ -164,7 +148,7 @@ class SortingNetwork(VMobject):
         for _, text in self.comparator_titles:
             self.add(text)
 
-    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=6):
+    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=9):
         """Animate a sorting of numbers."""
         if numbers is None:
             numbers = [i + 1 for i in range(self.n)]
@@ -250,9 +234,11 @@ class SortingNetwork(VMobject):
                     flash_positions.append([position, number_circles[a], numbers_copy[a]])
                     flash_positions.append([position, number_circles[b], numbers_copy[b]])
 
+        delayed_flash_function = lambda p, x: 0 if (rate_func(x) - p) < 0 else (rate_func(x) - p) * 10 if (rate_func(x) - p) <= 0.1 else 1
+
         scene.play(
                 *[circle.animate.move_to(end.get_center()) for circle, end in zip(number_circles, self.ending_circles)],
-                *[Flash(obj, rate_func=partial(lambda p, x: 0 if (rate_func(x) - p) < 0 else (rate_func(x) - p) * 10 if (rate_func(x) - p) <= 0.1 else 1, pos), color=(rainbow_to_rgb(p / self.n)), run_time=duration) for pos, obj, p in flash_positions],
+                *[Flash(obj, rate_func=partial(delayed_flash_function, pos), color=(rainbow_to_rgb(p / self.n)), run_time=duration) for pos, obj, p in flash_positions],
                 run_time = duration,
                 rate_func=rate_func,
                 )
@@ -276,11 +262,10 @@ class SortingNetwork(VMobject):
 class Intro(Scene):
     @fade
     def construct(self):
-        sn = SortingNetwork(networks[6], 6)
+        sn = SortingNetwork(networks[8], 8)
 
         self.play(Write(sn))
 
         sn.animate_sort(self)
 
         self.play(Unwrite(sn))
-

@@ -142,3 +142,24 @@ def parse_graph(graph, s=0.13, t=0.13):
         lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
 
     return Graph(sorted(list(vertices)), edges, layout=lt).scale(2)
+
+def hsv_to_rgb(h, s, v):
+    """HSV to RGB (normalized from 0 to 1)"""
+    i = floor(h*6)
+    f = h*6 - i
+    p = v * (1-s)
+    q = v * (1-f*s)
+    t = v * (1-(1-f)*s)
+
+    return [
+        (v, t, p),
+        (q, v, p),
+        (p, v, t),
+        (p, q, v),
+        (t, p, v),
+        (v, p, q),
+    ][int(i%6)]
+
+def rainbow_to_rgb(i, s=0.7):
+    """Return a random color from a gradient."""
+    return rgb_to_hex(hsv_to_rgb(i, s, 1))
