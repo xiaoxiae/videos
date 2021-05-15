@@ -7,7 +7,7 @@ INTRODUCTION
 
 <!--- i2 --> There exist various characterizations of perfect graphs. The one that we'll be focusing on in this video is the Weak perfect graph theorem, proved in 1972 by László Lovász.
 
-<!--- i3 --> Before proceeding to the proof, there are quite a few definitions that we have to know in order to understand it. You might already know some of them, so feel free to skip forward in the video accordingly.
+<!--- *i3 --> Before proceeding to the proof, there are quite a few definitions that we have to know in order to understand it. You might already know some of them, so feel free to skip forward in the video accordingly.
 
 ---
 DEFINITIONS
@@ -19,17 +19,17 @@ DEFINITIONS
 # CliqueAndIndependentSet
 <!--- cis1 --> A clique is a subgraph of a graph, such that each two vertices are adjacent. Analogically, an independent set in a graph is a set of vertices such that no two are adjacent.
 
-<!--- cis2 --> We'll also denote $\omega(G)$ to be the size of the largest clique in $G$, and $\alpha(G)$ to be the size of the largest independent set in $G$.
+<!--- *cis2 --> We'll also denote $\omega(G)$ to be the size of the largest clique in $G$ (also called the clique number), and $\alpha(G)$ to be the size of the largest independent set in $G$ (also called the independence number).
 
 <!--- cis3 --> These two concepts are closely tied together. Considering a complement of a graph, we see that each independent set becomes a clique, and vice versa.
 
 # InducedSubgraph
 <!--- is1 --> A graph $H$ is an induced subgraph of the graph $G$, if and only if we can get $H$ by removing zero or more vertices (along with their edges) from $G$.
 
-<!--- is2 --> Additionally, it is a proper induced subgraph, if we remove one or more vertices.
+<!--- *is2 --> Additionally, it is a proper induced subgraph, if we remove one or more vertices.
 
 # ChromaticNumber
-<!--- cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we have to use to color the graph's vertices, such that no two adjacent vertices have the same color.
+<!--- *cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we have to use to color the graph's vertices, such that no two adjacent vertices have the same color.
 
 # PerfectGraph
 <!--- p1 --> Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if $\forall H \leqslant G: \chi(H) = \omega(H)$.
@@ -42,7 +42,7 @@ OBSERVATIONS AND EXAMPLES
 
 <!--- o1 --> With definitions out of the way, let's make a few observations about how perfect graphs behave, that will help us understand the proof better.
 
-<!--- o2 --> Firstly, $\forall H \leqslant G: \chi(H) \ge \omega(H)$, because each maximum clique has to contain $\omega(H)$ different colors. For perfect graphs, this is an equality from definition.
+<!--- o2 --> Firstly, $\forall H \leqslant G: \chi(H) \ge \omega(H)$, because each maximum clique has to contain $\omega(H)$ different colors. For perfect graphs, this becomes an equality from definition.
 
 <!--- o3 --> Secondly, if a graph is perfect, then each its induced subgraph is perfect too. This again follows immediately from the definition of a perfect graph, since something is true for each of its induced subgraphs.
 
