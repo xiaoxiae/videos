@@ -1,21 +1,36 @@
 ---
-FIRST SECTION NAME
+INTRODUCTION
 ---
 
-# FirstClassName
-
-<!--- voice-file-name-1 --> This is a sentence in the script to record.
-
-<!--- voice-file-name-2 --> This is another sentence in the script to record.
-
-# SecondClassName
-
-<!--- voice-file-name-3 --> This is a third sentence to record.
+TODO: what are sorting networks
+TODO: an example
 
 ---
-SECOND SECTION NAME
+SIMPLE ALGORITHMS
 ---
 
-# ThirdClassName
+# BubbleSort
 
-<!--- voice-file-name-4 --> This is a fourth sentence to record.
+---
+BITONIC SORT
+---
+
+# Construction
+
+---
+PROOF
+---
+
+# Zero-one principle
+
+# Proof
+
+---
+OPTIMAL SORTING NETWORKS
+---
+
+---
+TESTING NETWORK CORRECTNESS
+---
+
+TODO: algoritmická úloha s jednoznačným pořadím DAGu
