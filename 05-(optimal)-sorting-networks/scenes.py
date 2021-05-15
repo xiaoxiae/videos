@@ -1,5 +1,23 @@
 from utilities import *
 
+def hsv_to_rgb(h, s, v):
+    i = floor(h*6)
+    f = h*6 - i
+    p = v * (1-s)
+    q = v * (1-f*s)
+    t = v * (1-(1-f)*s)
+
+    return [
+        (v, t, p),
+        (q, v, p),
+        (p, v, t),
+        (p, q, v),
+        (t, p, v),
+        (v, p, q),
+    ][int(i%6)]
+
+def rainbow_to_rgb(i):
+    return rgb_to_hex(hsv_to_rgb(i * 0.8, 0.5, 1))
 
 networks = [
         None,
@@ -146,7 +164,7 @@ class SortingNetwork(VMobject):
         for _, text in self.comparator_titles:
             self.add(text)
 
-    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=10):
+    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=6):
         """Animate a sorting of numbers."""
         if numbers is None:
             numbers = [i + 1 for i in range(self.n)]
@@ -154,18 +172,26 @@ class SortingNetwork(VMobject):
 
         number_circles = []
         number_labels = []
-        for i, circle in enumerate(self.starting_circles):
-            number_circle = Circle(0.15, color=WHITE).set_fill(WHITE, opacity=1).move_to(circle.get_center())
-            label = Tex(f"${numbers[i]}$").move_to(circle.get_center()).set_color(BLACK).scale(0.5)
 
+        old_number_lines = []
+        number_lines = []
+        number_lines_starts = []
+
+        for i, circle in enumerate(self.starting_circles):
+            number_circle = Circle(0.15, color=WHITE).set_fill(WHITE, opacity=1).move_to(circle.get_center()).set_color(rainbow_to_rgb(numbers[i] / self.n))
+            label = Tex(f"${numbers[i]}$").move_to(circle.get_center()).set_color(BLACK).scale(0.5)
+            line = Line(number_circle.get_center(), number_circle.get_center()).set_color(rainbow_to_rgb(numbers[i] / self.n))
+
+            number_lines_starts.append(number_circle.get_center())
             number_circles.append(number_circle)
             number_labels.append(label)
+            number_lines.append(line)
 
         scene.play(*map(Write, number_circles))
         scene.play(*map(Write, number_labels))
+        scene.add(*number_lines)
 
         def tmp(ob, dt):
-
             pos, _, _, = number_circles[0].get_center()
             pos += self.width / 2
             pos /= self.width
@@ -179,7 +205,38 @@ class SortingNetwork(VMobject):
                         if numbers[a] < numbers[b]:
                             number_labels[a], number_labels[b] = number_labels[b], number_labels[a]
                             numbers[a], numbers[b] = numbers[b], numbers[a]
+                            old_number_lines.append(number_lines[a])
+                            old_number_lines.append(number_lines[b])
+                            number_lines_starts[a] = number_circles[a].get_center()
+                            number_lines_starts[b] = number_circles[b].get_center()
+                            number_lines[a] = Line()
+                            number_lines[b] = Line()
+                            scene.add(number_lines[a], number_lines[b])
 
+            for i in range(len(number_circles)):
+                old_number_lines.append(number_lines[i])
+                number_lines[i].become(Line(number_lines_starts[i], number_circles[i].get_center()).set_color(rainbow_to_rgb(numbers[i] / self.n)))
+
+            for i in range(len(number_circles)):
+                number_circles[i].set_color(rainbow_to_rgb(numbers[i] / self.n))
+
+            for c in self.starting_circles:
+                scene.bring_to_front(c)
+
+            for c in self.ending_circles:
+                scene.bring_to_front(c)
+
+            for _, sublayer in self.comparators:
+                for _, _, a, b, c in sublayer:
+                    scene.bring_to_front(a)
+                    scene.bring_to_front(b)
+                    scene.bring_to_front(c)
+
+            for c in number_circles:
+                scene.bring_to_front(c)
+
+            for c in number_labels:
+                scene.bring_to_front(c)
 
         number_labels[0].add_updater(tmp)
 
@@ -190,27 +247,36 @@ class SortingNetwork(VMobject):
             for a, b, _, _, _ in compars:
                 if numbers_copy[a] < numbers_copy[b]:
                     numbers_copy[a], numbers_copy[b] = numbers_copy[b], numbers_copy[a]
-                    flash_positions.append([position, number_circles[a]])
-                    flash_positions.append([position, number_circles[b]])
+                    flash_positions.append([position, number_circles[a], numbers_copy[a]])
+                    flash_positions.append([position, number_circles[b], numbers_copy[b]])
 
         scene.play(
-                *[circle.animate.shift(self.width * RIGHT) for circle in number_circles],
-                *[Flash(obj, rate_func=partial(lambda p, x: 0 if (rate_func(x) - p) < 0 else (rate_func(x) - p) * 10 if (rate_func(x) - p) <= 0.1 else 1, pos), run_time=duration) for pos, obj in flash_positions],
+                *[circle.animate.move_to(end.get_center()) for circle, end in zip(number_circles, self.ending_circles)],
+                *[Flash(obj, rate_func=partial(lambda p, x: 0 if (rate_func(x) - p) < 0 else (rate_func(x) - p) * 10 if (rate_func(x) - p) <= 0.1 else 1, pos), color=(rainbow_to_rgb(p / self.n)), run_time=duration) for pos, obj, p in flash_positions],
                 run_time = duration,
                 rate_func=rate_func,
                 )
 
+        for number_label in number_labels:
+            number_label.remove_updater(tmp)
+
         scene.play(
-                   *map(FadeOut, number_circles),
-                   *map(FadeOut, number_labels),
+                *map(FadeOut, number_lines),
+                *map(FadeOut, old_number_lines),
+                *map(FadeOut, number_circles),
+                *map(FadeOut, number_labels),
                 )
 
-        # TODO: barvy tam, kudy jeli
+        scene.remove(*number_lines)
+        scene.remove(*old_number_lines)
+        scene.remove(*number_circles)
+        scene.remove(*number_labels)
+
 
 class Intro(Scene):
     @fade
     def construct(self):
-        sn = SortingNetwork(networks[8], 8, width=8, height=5)
+        sn = SortingNetwork(networks[6], 6)
 
         self.play(Write(sn))
 
