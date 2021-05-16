@@ -219,14 +219,12 @@ class CliqueAndIndependentSet(Scene):
                 g.edges[(8,10)].animate.set_color(WHITE),
                 g.edges[(9,10)].animate.set_color(WHITE),
                 )
-        self.wait(0.5)
         self.play(
                 *to_color(dark_color),
                 g.vertices[5].animate.set_color(WHITE),
                 g.vertices[6].animate.set_color(WHITE),
                 g.edges[(5,6)].animate.set_color(WHITE),
                 )
-        self.wait(0.5)
         self.play(
                 *to_color(dark_color),
                 g.vertices[1].animate.set_color(WHITE),
@@ -240,7 +238,6 @@ class CliqueAndIndependentSet(Scene):
                 g.edges[(2,4)].animate.set_color(WHITE),
                 g.edges[(3,4)].animate.set_color(WHITE),
                 )
-        self.wait(0.5)
         self.play(*to_color(WHITE))
 
         self.play(Write(text[6:]), run_time=duration / 2)
@@ -251,13 +248,11 @@ class CliqueAndIndependentSet(Scene):
                 g.vertices[2].animate.set_color(WHITE),
                 g.vertices[6].animate.set_color(WHITE),
                 )
-        self.wait(0.5)
         self.play(
                 *to_color(dark_color),
                 g.vertices[10].animate.set_color(WHITE),
                 g.vertices[7].animate.set_color(WHITE),
                 )
-        self.wait(0.5)
         self.play(
                 *to_color(dark_color),
                 g.vertices[9].animate.set_color(WHITE),
@@ -265,7 +260,6 @@ class CliqueAndIndependentSet(Scene):
                 g.vertices[5].animate.set_color(WHITE),
                 g.vertices[7].animate.set_color(WHITE),
                 )
-        self.wait(0.5)
         self.play(*to_color(WHITE))
 
         omega = Tex(r"$\omega$(G) = 4")
@@ -491,7 +485,7 @@ class Lemma1(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 1))
 
-        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if |each induced subgraph| contains an |independent set|, such that |each its maximum clique| contains a |vertex| from the set (called a v|ast independent set)|.", size=r"\footnotesize", splitBy="|")
+        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if |each induced subgraph| contains an |independent set|, such that |each its maximum clique| contains a |vertex| from the set (|vast independent set|).", size=r"\footnotesize", splitBy="|")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -850,10 +844,10 @@ class Lemma2(Scene):
         g.shift(DOWN * 0.8)
         g2 = Graph(vertices2, edges2, layout=lt2).scale(2)
         g2.shift(- g2.vertices[7].get_center() + g.vertices[7].get_center())
-        g2.vertices[11].set_color(GREEN)
+        g2.vertices[11].set_color(BLUE)
         g3 = Graph(vertices3, edges3, layout=lt3).scale(2)
         g3.shift(- g3.vertices[1].get_center() + g.vertices[1].get_center())
-        g3.vertices[2].set_color(BLUE)
+        g3.vertices[2].set_color(GREEN)
 
         coloring = get_coloring(g.edges, one_indexing=True)
 
@@ -921,8 +915,9 @@ class Lemma2(Scene):
                 Write(v_label_prime)
                 )
 
-        take = (3, 6, 10, 11)
-        take2 = (3, 6, 10)
+        take = (1, 9, 6, 11, 8, 10)
+        take2 = (1, 9, 6, 8, 10)
+
         self.play(
                 *[Circumscribe(g.vertices[v], Circle, fade_out=True) for v in vertices if v in take],
                 )
@@ -936,15 +931,15 @@ class Lemma2(Scene):
                 )
 
         self.play(
-                g2.vertices[11].animate.set_color(RED),
-                Circumscribe(g2.vertices[11], Circle, color=RED),
                 *[Circumscribe(g.vertices[v], Circle, color=g.vertices[v].color) for v in g.vertices if v not in take2],
+                g2.vertices[11].animate.set_color(GREEN),
+                Circumscribe(g2.vertices[11], Circle, color=GREEN),
                 )
 
         self.play(
                 *[g.edges[(u, v)].animate.set_color(WHITE) for u, v in g.edges if u in take2 or v in take2],
-                *[g.vertices[v].animate.set_color(GREEN) for v in take2],
-                g2.vertices[14].animate.set_color(GREEN),
+                *[g.vertices[v].animate.set_color(BLUE) for v in take2],
+                g2.vertices[14].animate.set_color(BLUE),
                 *[g2.edges[(u, v)].animate.set_color(WHITE) for u, v in g2.edges if u == 14 or v == 14],
                 v_label_prime.animate.set_color(WHITE),
                 )
@@ -1021,7 +1016,6 @@ class PerfectGraph(Scene):
             *[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring],
             Write(chi),
         )
-        self.wait()
 
         take = (4, 5, 7, 8)
 
@@ -1031,7 +1025,6 @@ class PerfectGraph(Scene):
             *[g.edges[(a, b)].animate.set_color(WHITE) for a, b in edges if a not in take or b not in take],
             Write(omega),
         )
-        self.wait()
 
         take = (11, 12, 1, 3, 2, 4)
 
@@ -1040,7 +1033,6 @@ class PerfectGraph(Scene):
             *[g.vertices[v].animate.set_color(dark_color) for v in vertices if v not in take],
             *[g.edges[(a, b)].animate.set_color(dark_color) for a, b in edges if a not in take or b not in take],
         )
-        self.wait()
 
         less_edges = [(take.index(a), take.index(b)) for a, b in edges if a in take and b in take]
         less_coloring = get_coloring(less_edges)
@@ -1049,7 +1041,6 @@ class PerfectGraph(Scene):
             *[g.vertices[v].animate.set_color(less_coloring[i]) for i, v in enumerate(take)],
             TransformMatchingShapes(chi, chii),
         )
-        self.wait()
 
         takeee = (1, 3, 2)
 
@@ -1059,7 +1050,6 @@ class PerfectGraph(Scene):
             *[g.vertices[v].animate.set_color(YELLOW) for i, v in enumerate(takeee)],
             TransformMatchingShapes(omega, omegaa),
         )
-        self.wait()
 
 
 class Observations(Scene):
@@ -1103,6 +1093,14 @@ class Observations(Scene):
 
         coloring = get_coloring(g.edges, one_indexing=True)
         self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
+
+        take = (1, 2, 3)
+        self.play(
+            *[g.vertices[v].animate.set_color(WHITE) for v in g.vertices],
+            *[g.edges[(a, b)].animate.set_color(WHITE) for a, b in g.edges],
+            *[g.vertices[v].animate.set_color(YELLOW) for v in take],
+            *[g.edges[(a, b)].animate.set_color(YELLOW) for a, b in g.edges if a in take and b in take],
+            )
 
         fade_all(self)
 
@@ -1731,7 +1729,7 @@ class Theorem2(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 1.3))
 
-        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| it |doesn't contain| a |hole| or an |antihole greater than 3| (a |Berge graph|).", size=r"\footnotesize", splitBy="|")
+        duration, text = createHighlightedParagraph(r"Graph |$G$ is perfect|, |if and only if| it |doesn't contain| an |odd hole| or an |odd antihole greater than 3| (is a |Berge graph|).", size=r"\footnotesize", splitBy="|")
         text[3].set_color(WHITE)
         text.next_to(title, 2 * DOWN)
 

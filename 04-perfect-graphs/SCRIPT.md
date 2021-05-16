@@ -3,9 +3,9 @@ INTRODUCTION
 ---
 
 # Introduction
-<!--- i1 --> Perfect graphs are a family of graphs with various interesting properties, notably that many algorithms that are NP complete on a general graph can be solved efficiently on a perfect one.
+<!--- i1 --> Perfect graphs are a family of graphs with various interesting properties, notably that many problems that are NP complete on general graphs can be solved efficiently on perfect graphs.
 
-<!--- i2 --> There exist various characterizations of perfect graphs. The one that we'll be focusing on in this video is the Weak perfect graph theorem, proved in 1972 by László Lovász.
+<!--- i2 -->  There exist various characterizations of perfect graphs. The one that we'll be focusing on in this video is the Weak perfect graph theorem, proved in 1972 by László Lovász.
 
 <!--- *i3 --> Before proceeding to the proof, there are quite a few definitions that we have to know in order to understand it. You might already know some of them, so feel free to skip forward in the video accordingly.
 
@@ -29,7 +29,7 @@ DEFINITIONS
 <!--- *is2 --> Additionally, it is a proper induced subgraph, if we remove one or more vertices.
 
 # ChromaticNumber
-<!--- *cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we have to use to color the graph's vertices, such that no two adjacent vertices have the same color.
+<!--- *cn1 --> The chromatic number $\chi(G)$ of a graph $G$ is the minimum number of colors we need to color the graph's vertices, such that no two adjacent vertices have the same color.
 
 # PerfectGraph
 <!--- p1 --> Finally, a graph $G$ is perfect (informally denoted $G_{\star}$), if and only if $\forall H \leqslant G: \chi(H) = \omega(H)$.
@@ -40,11 +40,11 @@ OBSERVATIONS AND EXAMPLES
 
 # Observations
 
-<!--- o1 --> With definitions out of the way, let's make a few observations about how perfect graphs behave, that will help us understand the proof better.
+<!--- o1 --> With the definitions out of the way, let's make a few observations about how perfect graphs behave. Those will help us understand the proof better.
 
 <!--- o2 --> Firstly, $\forall H \leqslant G: \chi(H) \ge \omega(H)$, because each maximum clique has to contain $\omega(H)$ different colors. For perfect graphs, this becomes an equality from definition.
 
-<!--- o3 --> Secondly, if a graph is perfect, then each its induced subgraph is perfect too. This again follows immediately from the definition of a perfect graph, since something is true for each of its induced subgraphs.
+<!--- o3 --> Secondly, if a graph is perfect, then each of its induced subgraphs is perfect too. This again follows immediately from the definition of a perfect graph, since something is true for each of its induced subgraphs.
 
 <!--- o4 --> As for examples, some common families of graphs that are perfect include complete graphs ($\chi = n = \omega$) and bipartite graphs ($\chi$ is either 1 when it has no edges, or 2 if it does, either of which works).
 
@@ -59,7 +59,7 @@ LEMMA 1
 
 <!--- lone2 --> The left-to-right implication is pretty straight-forward. Since $\chi(G) = \omega(G)$, each largest clique contains all possible colors. That means we can choose any color and let the independent set be all vertices of that color. By definition, such independent set is vast.
 
-<!--- lone3 --> The right-to-left implication can be proved using induction on the number of vertices. The base case is trivially true. For the induction step, assume that we've proven the statement for all smaller graphs.
+<!--- lone3 --> The right-to-left implication can be proven using induction on the number of vertices. The base case is trivially true. For the induction step, assume that we've proven the statement for all smaller graphs.
 
 <!--- lone4 --> Let $G$ be a graph such that each induced subgraph of $G$ contains a vast independent set. Let $I$ be a vast independent set in $G$, and $H$ be the induced subgraph obtained from $G$ by removing $I$. Observe that $\omega(H) = \omega(G) - 1$, since all maximum cliques in $G$ contain one vertex from $I$. By induction, $H$ is perfect, so there exists a vertex coloring of $H$ using $\omega(G) - 1$ colors. Adding the vertices of $I$ back, we can color all of them using one extra color and obtain a coloring of $G$ using $\omega(G)$ colors.
 
@@ -68,11 +68,11 @@ LEMMA 2
 ---
 
 # Lemma2
-<!--- ltwo1 --> Our second lemma states that if $G$ is perfect, then any graph constructed from $G$ by expanding a vertex is also perfect. By expanding, we mean that we replace the vertex with a complete graph of any size (denoted $K_n$) and connect it to all of its neighbours accordingly.
+<!--- ltwo1 --> Our second lemma states that if $G$ is perfect, then any graph constructed from $G$ by expanding a vertex is also perfect. By expanding, we mean that we replace the vertex with a complete graph of any size (denoted $K_p$) and connect it to all of its neighbours accordingly.
 
-<!--- ltwo2 --> For proof, observe that expanding a vertex to $K_n$ is equivalent to repeatedly expanding it to $K_2$, so it's enough to prove that expanding a vertex to $K_2$ perserves perfectness.
+<!--- ltwo2 --> For proof, observe that expanding a vertex to $K_p$ is equivalent to repeatedly expanding it to $K_2$, so it's enough to prove that expanding a vertex to $K_2$ preserves perfectness.
 
-Let's again use induction on the number of vertices in $G$. Base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
+Let's again use induction on the number of vertices in $G$. The base case is expanding a single vertex to $K_2$, which is perfect. Now we have some graph $G$ and a vertex $v$ that we expand to $v$, $v'$, forming $G'$. We'll examine two cases.
 
 <!--- ltwo3 --> Case one is that expanding increases $\omega$ (obviously only by one). This is fine, since we can now use an additional color on $v'$, so $G'$ is still perfect.
 
@@ -89,9 +89,9 @@ WEAK PERFECT GRAPH THEOREM
 
 <!--- tone2 --> First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symmetrical.
 
-<!--- tone3 --> We'll prove the implication using a contradiction. Let's take the smallest graph $G_\star$ that is perfect but $\bar{G}$ isn't.
+<!--- tone3 --> We'll prove the implication by contradiction. Let's take the smallest graph $G_\star$ that is perfect but $\bar{G}$ isn't.
 
-<!--- tone3.5 --> Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Furthermore, $H = \bar{G}$, because if $H \subset \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} \subset G$ and $G$ is perfect). This would, however, be a contradiction with the minimality of $(G, \bar{G})$.
+<!--- tone3.5 --> Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Furthermore, it must be that $H = \bar{G}$, because if $H \subset \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} \subset G$ and $G$ is perfect). This would, however, be a contradiction with the minimality of $(G, \bar{G})$.
 
 <!--- tone4 --> We now know that $\bar{G}$ doesn't have a vast independent set, meaning that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
 
@@ -103,17 +103,17 @@ WEAK PERFECT GRAPH THEOREM
 
 <!--- tone8 --> Now we know that $G'_\star$ is perfect, because $G_\star$ was perfect and any graph expanded from $G_\star$ is, using lemma 2, also perfect.
 
-<!--- tone9 --> The rest of the proof is basically playing with equations in order to show that $\chi(G'_\star) \neq \omega(G'_\star)$, which would make $G'_\star$ not perfect, leading to a contradiction.
+<!--- tone9 --> The rest of the proof is basically rearranging inequalities in order to show that $\chi(G'_\star) \neq \omega(G'_\star)$, which would make $G'_\star$ not perfect, leading to a contradiction.
 
-<!--- tone10 --> Let's count the number of vertices of $G'_\star$. Since the maximum independent sets from $G_\star$ don't overlap in $G'_\star$ (from the way we expanded each vertex), it's equal to $t . \alpha(G_\star)$.
+<!--- tone10 --> Let's count the number of vertices of $G'_\star$. Since the maximum independent sets from $G_\star$ don't overlap in $G'_\star$ (from the way we expanded each vertex), it's equal to $t \cdot \alpha(G_\star)$.
 
-<!--- tone11 --> Using this, we'll approximate the chromatic number of $G'_\star$. It must be greater than $|V(G'_\star)| / \alpha(G'_\star)$, because that is the ideal situation (each color is not only an independent set, but also the largest one).
+<!--- tone11 --> Using this, we'll calculate the lower bound for $\chi(G'_\star)$. It must be greater than $|V(G'_\star)| / \alpha(G'_\star)$, because that is the most efficient use of the colors (each color is not only an independent set, but also the largest one).
 
 <!--- tone12 --> $\alpha(G'_\star)$ is, however, just $\alpha(G_\star)$, because expanding a vertex can't increase the size of the maximum independent set.
 
 <!--- tone13 --> Plugging the value for vertices and simplifying gives us $t$.
 
-<!--- tone14 --> We'll now make an approximation for $\omega(G'_\star)$.
+<!--- tone14 --> We'll now calculate the upper bound for $\omega(G'_\star)$.
 
 <!--- tone15 --> Let $Q'$ be the largest clique in $G'_\star$. This clique must have been created from inflating some clique $Q$ in $G_\star$. Recall that each clique in $G$ misses at least one maximum independent set. This means, that $\omega(G'_\star) \le t - 1$, because there can be at most one vertex for each independent set, except the one that we know it misses.
 
@@ -124,7 +124,7 @@ STRONG PERFECT GRAPH THEOREM
 ---
 
 # Theorem2
-<!--- ttwo1 --> A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if it doesn't contain a hole or an antihole greater than 3. By hole, we mean an induced cycle and by antihole, we mean a complement to an induced cycle.
+<!--- ttwo1 --> A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if it doesn't contain an odd hole or an odd antihole greater than 3. By hole, we mean an induced cycle and by antihole, we mean a complement to an induced cycle.
 
 <!--- ttwo2 --> The two examples are, using this theorem, not perfect, since they each contain either a hole or an antihole of size 5.
 
