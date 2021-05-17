@@ -10,6 +10,7 @@ SIMPLE ALGORITHMS
 ---
 
 # BubbleSort
+An algorithm that nicely shows 
 
 ---
 BITONIC SORT

@@ -71,6 +71,7 @@ class SortingNetwork(VMobject):
     ):
         super().__init__()
 
+        self.network = network
         self.n = n
         self.width = width
         self.height = height
@@ -83,12 +84,12 @@ class SortingNetwork(VMobject):
 
         # starting circles
         for i, circle in enumerate(self.starting_circles):
-            circle.move_to(((i / (n - 1)) * height - height / 2) * UP + LEFT * width / 2)
+            circle.move_to(((i / (n - 1)) * height - height / 2) * DOWN + LEFT * width / 2)
             self.add(circle)
 
         # ending circles
         for i, circle in enumerate(self.ending_circles):
-            circle.move_to(((i / (n - 1)) * height - height / 2) * UP + RIGHT * width / 2)
+            circle.move_to(((i / (n - 1)) * height - height / 2) * DOWN + RIGHT * width / 2)
             self.add(circle)
 
         # lines
@@ -123,7 +124,7 @@ class SortingNetwork(VMobject):
         for i in range(len(self.comparator_titles)):
             pos, text = self.comparator_titles[i]
             pos /= position
-            text.move_to(UP * (height / 2) * 1.4 + RIGHT * (-width / 2 + width * pos))
+            text.move_to(DOWN * (height / 2) * 1.4 + RIGHT * (-width / 2 + width * pos))
             self.comparator_titles[i] = (pos, text)
 
         # transform the sublayer list into (a, b, Circle(a), Circle(b), line) list
@@ -132,8 +133,8 @@ class SortingNetwork(VMobject):
             for i in range(len(sublayer)):
                 a, b = sublayer[i]
 
-                a_pos = UP * ((a / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)
-                b_pos = UP * ((b / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)
+                a_pos = DOWN * ((a / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)
+                b_pos = DOWN * ((b / (n - 1)) * height - height / 2) + RIGHT * (-width / 2 + width * position)
 
                 a_circle = Circle(minor_circles_radius, color=WHITE).move_to(a_pos).set_fill(WHITE, opacity=1)
                 b_circle = Circle(minor_circles_radius, color=WHITE).move_to(b_pos).set_fill(WHITE, opacity=1)
@@ -148,8 +149,8 @@ class SortingNetwork(VMobject):
         for _, text in self.comparator_titles:
             self.add(text)
 
-    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=9):
-        """Animate a sorting of numbers."""
+    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=2):
+        """Animate a sorting of numbers. TODO: less numbers"""
         if numbers is None:
             numbers = [i + 1 for i in range(self.n)]
             shuffle(numbers)
@@ -258,11 +259,69 @@ class SortingNetwork(VMobject):
         scene.remove(*number_circles)
         scene.remove(*number_labels)
 
+    def BubbleSorter(n, optimized=False):
+        """Create a bubble sort network of size n."""
+        if not optimized:
+            network = []
+            for i in range(n):
+                for j in range(i, n - 1):
+                    network.append([[(j - i, j + 1 - i)]])
+        else:
+            network = []
+            for i in range(1, n):
+                network.append([[]])
+                for j in range(0, i, 2):
+                    if i % 2 == 0:
+                        j += 1
+                    network[-1][-1].append((j, j + 1))
+            for i in reversed(range(1, n - 1)):
+                network.append([[]])
+                for j in range(0, i, 2):
+                    if i % 2 == 0:
+                        j += 1
+                    network[-1][-1].append((j, j + 1))
+
+        return SortingNetwork(network, n)
+
+    def BitonicSorter(n):
+        """Create a bitonic sort network of size 2**n."""
+        network = []
+
+        # https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/BitonicSort.svg/1920px-BitonicSort.svg.png 
+        # blue part
+        for i in range(n):
+            # orange and red parts
+            for j in reversed(range(i + 1)):
+                size = 2 ** (j + 1)
+                network.append([])
+
+                # orange part
+                if j == i:
+                    for _ in range(size // 2):
+                        network[-1].append([])
+
+                    for k in range((2 ** n) // size):
+                        for l in range(size // 2):
+                            network[-1][l].append((k * size + l, k * size + size - l - 1))
+
+                # red part
+                else:
+                    for _ in range(size // 2):
+                        network[-1].append([])
+
+                    for k in range((2 ** n) // size):
+                        for l in range(size // 2):
+                            network[-1][l].append((k * size + l, k * size + l + size // 2))
+
+        return SortingNetwork(network, (2 ** n))
+
 
 class Intro(Scene):
     @fade
     def construct(self):
-        sn = SortingNetwork(networks[8], 8)
+        #sn = SortingNetwork(networks[6], 6)
+        sn = SortingNetwork.BitonicSorter(3)
+        #sn_op = SortingNetwork.BubbleSorter(5, optimized=True)
 
         self.play(Write(sn))
 

@@ -19,7 +19,6 @@ ffmpeg (video): https://ffmpeg.org/
 arecord (audio): https://linux.die.net/man/1/arecord
 sox (audio): http://sox.sourceforge.net/
 
-
 ------------------
 
 TODO: formátování
