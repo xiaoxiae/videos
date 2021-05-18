@@ -5,6 +5,9 @@ INTRODUCTION
 TODO: what are sorting networks
 TODO: an example
 
+# Directed and Undirected
+TODO: convertsion between directed and undirected (twist wires)
+
 ---
 SIMPLE ALGORITHMS
 ---
