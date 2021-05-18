@@ -77,7 +77,7 @@ class SortingNetwork(VMobject):
         self.width = width
         self.height = height
         self.oriented = oriented
-        self.compare_function = lambda a, b, nums: nums[min(a, b)] < nums[max(a, b)] if not self.oriented else (nums[a] > nums[b])
+        self.compare_function = lambda a, b, nums: nums[min(a, b)] > nums[max(a, b)] if not self.oriented else (nums[a] > nums[b])
 
         corner_circles_radius = 0.05
         comparator_circles_radius = 0.11
@@ -279,7 +279,7 @@ class SortingNetwork(VMobject):
         scene.remove(*number_circles)
         scene.remove(*number_labels)
 
-    def BubbleSorter(n, optimized=False):
+    def BubbleSorter(n, optimized=False, **kwargs):
         """Create a bubble sort network of size n."""
         if not optimized:
             network = []
@@ -301,7 +301,7 @@ class SortingNetwork(VMobject):
                         j += 1
                     network[-1][-1].append((j, j + 1))
 
-        return SortingNetwork(network, n)
+        return SortingNetwork(network, n, **kwargs)
 
     def BitonicSorter(n, oriented=True):
         """Create a (possibly oriented) bitonic sort network of size 2**n."""
@@ -339,9 +339,9 @@ class SortingNetwork(VMobject):
 class Intro(Scene):
     @fade
     def construct(self):
-        sn = SortingNetwork(optimal_networks[6], 6, oriented=True)
+        sn = SortingNetwork(optimal_networks[6], 6, oriented=False)
         #sn = SortingNetwork.BitonicSorter(2)
-        #sn_op = SortingNetwork.BubbleSorter(5, optimized=True)
+        #sn = SortingNetwork.BubbleSorter(5, optimized=True, oriented=True)
 
         self.play(Write(sn))
 
