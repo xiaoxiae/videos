@@ -14,4 +14,3 @@ A random list of ideas for videos.
 - Aho-Corasick
 - Goldberg
 - Cook-Levin theorem
-- Fortune's algorithm for Voronoi diagrams

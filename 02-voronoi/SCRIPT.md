@@ -1,5 +1,8 @@
 === Voronoi Diagrams ===
 
+# TODO: formátování
+# TODO: fortune algorithm
+
 --- Intro ---
 
 # Intro (Intro)
