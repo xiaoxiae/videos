@@ -68,8 +68,11 @@ class SortingNetwork(VMobject):
             n,
             height = 2.5,
             width = 5.5,
+            oriented = False,
     ):
         super().__init__()
+
+        # TODO: oriented!
 
         self.network = network
         self.n = n

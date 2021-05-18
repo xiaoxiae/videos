@@ -1,4 +1,4 @@
-<what the video is about>
+An introduction to sorting networks.
 
 ------------------
 
@@ -21,10 +21,11 @@ sox (audio): http://sox.sourceforge.net/
 
 ------------------
 
-TODO: formátování
+[EN] Ron Zeno's article about optimal sorting networks for smaller inputs:
 https://www.angelfire.com/blog/ronz/Articles/999SortingNetworksReferen.html
-https://www.sciencedirect.com/science/article/pii/S0022000016300836
-https://www.cs.brandeis.edu/~hugues/sorting_networks.html
 
+[EN] Doug Hoyte's presentation about sorting networks:
 https://hoytech.github.io/sorting-networks/
+
+[EN] Chapter 28 of Introduction to Algorithms:
 http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/chap28.htm
