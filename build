@@ -1,3 +1,5 @@
+#!/bin/python3
+
 """A script for building all of the files to be put together."""
 import subprocess
 import shutil
