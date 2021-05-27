@@ -812,8 +812,6 @@ class Lemma2(Scene):
                 FadeOut(kp),
                  )
 
-        return
-
         graphs = [
             Graph.from_networkx(nx.complete_graph(1), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6),
             Graph.from_networkx(nx.complete_graph(2), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6),
@@ -1105,11 +1103,11 @@ class PerfectGraph(Scene):
             *[g.edges[(a, b)].animate.set_color(dark_color) for a, b in edges if a not in take or b not in take],
         )
 
-        less_edges = [(take.index(a), take.index(b)) for a, b in edges if a in take and b in take]
+        less_edges = [(a, b) for a, b in edges if a in take and b in take]
         less_coloring = get_coloring(take, less_edges)
 
         self.play(
-            *[g.vertices[v].animate.set_color(less_coloring[i]) for i, v in enumerate(take)],
+            *[g.vertices[v].animate.set_color(less_coloring[v]) for v in take],
             TransformMatchingShapes(chi, chii),
         )
 
@@ -1209,6 +1207,7 @@ class Observations(Scene):
                 """, s=0.09, t=0.09)
         g.shift(LEFT * 1.7 + DOWN * 1.3)
         self.play(Write(g))
+
         coloring = get_coloring(g.vertices, g.edges)
         self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 

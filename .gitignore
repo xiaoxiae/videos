@@ -1,10 +1,9 @@
-# Generated
 **/__pycache__
 **/media
 **/video
 **/audio
 **/ignored
 
-# Private + binaries
 *.pdf
+*.html
 *.xopp~

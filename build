@@ -23,9 +23,17 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-n", "--no-manim",
+    dest="no_manim",
+    action="store_true",
+    help="don't actually run Manim, just do the video post-processing",
+    default=False,
+)
+
+parser.add_argument(
     "-q", "--quality",
     choices=["l", "m", "h", "k"],
-    default="h",
+    default="k",
     help="the quality of the video"
 )
 
@@ -35,25 +43,34 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # get the parser and parse the commands
 arguments = parser.parse_args()
 
-# from scratch!
-if os.path.exists(video_directory):
-    shutil.rmtree(video_directory)
+# (possibly) call Manim
+if not arguments.no_manim:
+    if arguments.scene is None:
+        if os.path.exists(video_directory):
+            shutil.rmtree(video_directory)
 
-# call Manim
-subprocess.Popen(["manim", "scenes.py", "-aqh"] + ([] if arguments.scene is None else [arguments.scene])).communicate()
+        subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-aq{arguments.quality}"]).communicate()
+    else:
+        subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", arguments.scene]).communicate()
 
 # rename to [1..n].mp4
 for scene in os.listdir(video_directory):
     if os.path.isdir(os.path.join(video_directory, scene)):
-        with open(os.path.join(video_directory, scene, "partial_movie_file_list.txt")) as f:
-            for i, video in enumerate(f.read().splitlines()[1:]):
-                path, name = os.path.split(video[11:-1])
+        partial_file_path = os.path.join(video_directory, scene, "partial_movie_file_list.txt")
 
-                original_path = os.path.join(path, name)
-                changed_path = os.path.join(path, f"{i+1}.mp4")
-                image_path = os.path.join(path, f"{i+1}.png")
+        if os.path.exists(partial_file_path):
+            with open(partial_file_path) as f:
+                for i, video in enumerate(f.read().splitlines()[1:]):
+                    path, name = os.path.split(video[11:-1])
 
-                os.rename(original_path, changed_path)
+                    original_path = os.path.join(path, name)
+                    changed_path = os.path.join(path, f"{i+1}.mp4")
+                    image_path = os.path.join(path, f"{i+1}.png")
 
-                # save the last frames
-                subprocess.Popen(["ffmpeg", "-sseof", "-3", "-i",  changed_path, "-update", "1", "-q:v", "1", image_path]).communicate()
+                    os.rename(original_path, changed_path)
+
+                    # save the last frames
+                    subprocess.Popen(["ffmpeg", "-sseof", "-3", "-i",  changed_path, "-update", "1", "-q:v", "1", "-y", image_path]).communicate()
+
+            os.remove(partial_file_path)
+

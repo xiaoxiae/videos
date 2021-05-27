@@ -1,4 +1,152 @@
 1
-0:00:00,000 --> 0:00:05,000
-Subtitles!
+00:00:00,850 --> 00:00:10,750
+Perfect graphs are a family of graphs with various interesting properties, notably that many problems that are NP complete on general graphs can be solved efficiently on perfect graphs.
+
+2
+00:00:12,000 --> 00:00:15,250
+There exist various characterizations of perfect graphs.
+
+3
+00:00:15,250 --> 00:00:21,966
+The one that we’ll be focusing on in this video is the Weak perfect graph theorem, proved in 1972 by László Lovász.
+
+4
+00:00:22,816 --> 00:00:29,283
+Before proceeding to the proof, there are quite a few definitions that we have to know in order to understand it.
+
+5
+00:00:29,283 --> 00:00:33,600
+You might already know some of them, so feel free to skip forward in the video accordingly.
+
+6
+00:00:37,466 --> 00:00:47,150
+A complement of a graph G is a graph Ḡ, such that each two vertices are adjacent in Ḡ, if and only if they are not adjacent in G.
+
+7
+00:00:52,450 --> 00:00:57,300
+A clique is a subgraph of a graph, such that each two vertices are adjacent.
+
+8
+00:01:01,633 --> 00:01:07,550
+Analogically, an independent set in a graph is a set of vertices such that no two are adjacent.
+
+9
+00:01:09,550 --> 00:01:15,550
+We’ll also denote ω(G) to be the size of the largest clique in G (also called the clique number),
+
+10
+00:01:15,550 --> 00:01:20,700
+and α(G) to be the size of the largest independent set in G (also called the independence number).
+
+11
+00:01:21,333 --> 00:01:24,316
+These two concepts are closely tied together.
+
+12
+00:01:24,316 --> 00:01:30,333
+Considering a complement of a graph, we see that each independent set becomes a clique, and vice versa.
+
+13
+00:01:34,316 --> 00:01:44,449
+A graph H is an induced subgraph of the graph G, if and only if we can get H by removing zero or more vertices (along with their edges) from G.
+
+14
+00:01:45,033 --> 00:01:50,916
+Additionally, it is a proper induced subgraph, if we remove one or more vertices.
+
+15
+00:01:54,800 --> 00:02:05,183
+The chromatic number χ(G) of a graph G is the minimum number of colors we need to color the graph’s vertices, such that no two adjacent vertices have the same color.
+
+16
+00:02:08,883 --> 00:02:19,283
+Finally, a graph G is perfect (informally denoted G⋆), if and only if ∀H ≤ G : χ(H) = ω(H).
+
+17
+00:02:23,283 --> 00:02:30,266
+With the definitions out of the way, let’s make a few observations about how perfect graphs behave, that will help us understand the proof better.
+
+18
+00:02:31,700 --> 00:02:42,616
+Firstly, ∀H ≤ G : ω(H) ≤ χ(H), because each maximum clique has to contain as many colors as its vertices.
+
+19
+00:02:42,616 --> 00:02:46,250
+For perfect graphs, this becomes an equality from definition.
+
+20
+00:02:47,466 --> 00:02:52,833
+Secondly, if a graph is perfect, then each of its induced subgraphs is perfect too.
+
+21
+00:02:52,833 --> 00:02:59,166
+This again follows immediately from the definition of a perfect graph, since something is true for each of its induced subgraphs.
+
+22
+00:02:59,666 --> 00:03:07,350
+As for examples, some common families of graphs that are perfect include complete graphs (where χ and ω is the number of vertices)
+
+23
+00:03:07,350 --> 00:03:14,416
+and bipartite graphs (where χ is either 1 when it has no edges, or 2 if it does, either of which works).
+
+24
+00:03:15,033 --> 00:03:26,516
+Some families that are not perfect include cycles of odd length ≥ 5 (because ω = 2 and χ = 3) and even wheel graphs of length ≥ 6 (because ω = 3 and χ = 4).
+
+25
+00:03:27,566 --> 00:03:31,216
+Our first lemma is actually a characterization of a perfect graph.
+
+26
+00:03:31,216 --> 00:03:42,566
+It states that the graph G is perfect, if and only if ∀H ≤ G contains an independent set, such that each maximum clique in H contains a vertex from this set (called a vast independent set).
+
+27
+00:03:45,566 --> 00:03:48,400
+The left-to-right implication is pretty straight-forward.
+
+28
+00:03:48,400 --> 00:03:54,483
+Since χ(G) = ω(G), each largest clique contains all possible colors.
+
+29
+00:03:54,483 --> 00:04:00,183
+That means we can choose any color and let the independent set be all vertices of that color.
+
+30
+00:04:00,183 --> 00:04:03,233
+By definition, such independent set is vast.
+
+31
+00:04:04,283 --> 00:04:08,933
+The right-to-left implication can be proven using induction on the number of vertices.
+
+32
+00:04:08,933 --> 00:04:10,983
+Add text
+
+33
+00:04:10,983 --> 00:04:15,083
+For the induction step, assume that we’ve proven the statement for all smaller graphs.
+
+34
+00:04:16,000 --> 00:04:21,916
+Let G be a graph such that each induced subgraph of G contains a vast independent set.
+
+35
+00:04:21,916 --> 00:04:28,700
+Let I be a vast independent set in G, and H be the induced subgraph obtained from G by removing I.
+
+36
+00:04:29,383 --> 00:04:38,583
+Observe that ω(H) = ω(G) − 1, since all maximum cliques in G contain one vertex from I.
+
+37
+00:04:38,583 --> 00:04:46,216
+By induction, H is perfect, so there exists a vertex coloring of H using ω(G) − 1 colors.
+
+38
+00:04:46,216 --> 00:04:54,433
+Adding the vertices of I back, we can color all of them using one extra color and obtain a coloring of G using ω(G) colors.
 
