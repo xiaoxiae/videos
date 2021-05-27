@@ -5,6 +5,7 @@ from random import *
 from yaml import *
 from pulp import *
 from functools import *
+from itertools import *
 import networkx as nx
 
 def create_code(self, code):
@@ -57,9 +58,18 @@ def visuallyChangeColor(self, l):
             *[Flash(a, color=b) for a, b in l],
             )
 
-def get_coloring(edges, one_indexing=False):
-    n = len(set([u for u, v in edges] + [v for u, v in edges]))
+def get_coloring(vertices, edges):
+    """Get the coloring of a set of edges, returning a vertex: color dictionary."""
+    n = len(vertices)
     colors = [RED, GREEN, BLUE, PINK, ORANGE, LIGHT_BROWN]
+
+    mapping = {}
+    inverse_mapping = {}
+    for i, vertex in enumerate(vertices):
+        mapping[vertex] = i
+        inverse_mapping[i] = vertex
+
+    seed(0)
 
     model = LpProblem(sense=LpMinimize)
 
@@ -73,7 +83,7 @@ def get_coloring(edges, one_indexing=False):
 
     for u, v in edges:
         for color in range(n):
-            model += variables[u - (1 if one_indexing else 0)][color] + variables[v - (1 if one_indexing else 0)][color] <= 1
+            model += variables[mapping[u]][color] + variables[mapping[v]][color] <= 1
 
     for i in range(n):
         for j in range(n):
@@ -83,7 +93,7 @@ def get_coloring(edges, one_indexing=False):
 
     status = model.solve(PULP_CBC_CMD(msg=False))
 
-    return {i: colors[j]
+    return {inverse_mapping[i]: colors[j]
           for i in range(n) for j in range(n) if variables[i][j].value()}
 
 def get_independent_set(edges, one_indexing=False):
@@ -163,3 +173,44 @@ def hsv_to_rgb(h, s, v):
 def rainbow_to_rgb(i, s=0.7):
     """Return a random color from a gradient."""
     return rgb_to_hex(hsv_to_rgb(i, s, 1))
+
+def induced_subgraphs(vertices, edges, min_size=1, max_size=None):
+    """A generator of all induced subgraphs of the graph, sorted by size (largest to smallest)."""
+    n = len(vertices)
+
+    if max_size is None:
+        max_size = n + 1
+
+    # an induced subgraph of each size (besides 0)
+    for i in reversed(range(min_size, max_size)):
+        for subset in combinations(vertices, r=i):
+            yield list(subset), [(u, v) for u, v in edges if u in subset and v in subset]
+
+def get_maximum_clique(vertices, edges):
+    n = len(vertices)
+
+    model = LpProblem(sense=LpMaximize)
+
+    mapping = {}
+    inverse_mapping = {}
+    for i, vertex in enumerate(vertices):
+        mapping[vertex] = i
+        inverse_mapping[i] = vertex
+
+    seed(0)
+
+    # is the given vertex a part of the clique
+    variables = [LpVariable(name=f"x_{i}", cat='Binary') for i in range(n)]
+
+    non_edges = [(u, v) for u in range(n) for v in range(u + 1, n) if (inverse_mapping[u], inverse_mapping[v]) not in edges and (inverse_mapping[v], inverse_mapping[u]) not in edges]
+
+    # non-edges are not together in the clique
+    for u, v in non_edges:
+        model += variables[u] + variables[v] <= 1
+
+    # the clique has to be maximal
+    model += lpSum(variables)
+
+    status = model.solve(PULP_CBC_CMD(msg=False))
+
+    return [inverse_mapping[i] for i in range(n) if variables[i].value()]

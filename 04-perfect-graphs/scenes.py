@@ -56,15 +56,71 @@ class Introduction(Scene):
 
         self.play(Write(A), Write(B), Write(C))
 
-        a_coloring = get_coloring(a.edges)
-        b_coloring = get_coloring(b.edges)
-        c_coloring = get_coloring(c.edges)
+        a_coloring = get_coloring(A.vertices, A.edges)
+        b_coloring = get_coloring(B.vertices, B.edges)
+        c_coloring = get_coloring(C.vertices, C.edges)
 
         self.play(
             *[A.vertices[v].animate.set_color(a_coloring[v]) for v in a_coloring],
             *[B.vertices[v].animate.set_color(b_coloring[v]) for v in b_coloring],
             *[C.vertices[v].animate.set_color(c_coloring[v]) for v in c_coloring],
         )
+
+        fade_all(self)
+
+        g = parse_graph("""
+                1 2 <26.662885174713242, -0.7880518956362271> <20.299615079452142, -2.2027292248396355>
+                2 3 <20.299615079452142, -2.2027292248396355> <24.56830953315177, -6.584729247606959>
+                1 3 <26.662885174713242, -0.7880518956362271> <24.56830953315177, -6.584729247606959>
+                2 4 <20.299615079452142, -2.2027292248396355> <22.271553727598977, 3.6316758770792>
+                4 5 <22.271553727598977, 3.6316758770792> <17.343615139918665, 7.446951416786913>
+                2 6 <20.299615079452142, -2.2027292248396355> <13.85481794189012, -3.659900839715152>
+                6 7 <13.85481794189012, -3.659900839715152> <8.262548996537001, -0.18671408544088353>
+                7 8 <8.262548996537001, -0.18671408544088353> <11.607524150202432, 5.1194551775136174>
+                5 8 <17.343615139918665, 7.446951416786913> <11.607524150202432, 5.1194551775136174>
+                4 9 <22.271553727598977, 3.6316758770792> <28.162799439120477, 5.191593717507401>
+                1 4 <26.662885174713242, -0.7880518956362271> <22.271553727598977, 3.6316758770792>
+                9 10 <28.162799439120477, 5.191593717507401> <32.80591827783357, 1.273524410044267>
+                1 10 <26.662885174713242, -0.7880518956362271> <32.80591827783357, 1.273524410044267>
+                10 11 <32.80591827783357, 1.273524410044267> <37.171572621859234, 5.723006910222321>
+                1 12 <26.662885174713242, -0.7880518956362271> <30.779947977758507, -5.495824590447945>
+                10 13 <32.80591827783357, 1.273524410044267> <38.66223902123862, -0.8626255741213468>
+                7 17 <8.262548996537001, -0.18671408544088353> <4.952940120341388, 5.132420983952579>
+                1 9 <26.662885174713242, -0.7880518956362271> <28.162799439120477, 5.191593717507401>
+                7 19 <8.262548996537001, -0.18671408544088353> <3.791160976605441, -4.557989994527501>
+                7 20 <8.262548996537001, -0.18671408544088353> <2.027663453810312, 0.5658076528131637>
+                22 6 <15.494879193803206, -9.683178155518133> <13.85481794189012, -3.659900839715152>
+                6 21 <13.85481794189012, -3.659900839715152> <10.104081393525236, -8.653103182332902>
+                """, s=0.11, t=0.11).scale(1.4)
+
+        self.play(Write(g))
+
+        isub = list(induced_subgraphs(g.vertices, g.edges))
+        shuffle(isub)
+        isub = [(v, e) for v, e in isub if len(e) > 5]
+
+        for v, e in isub[:10]:
+            self.play(
+                *[g.vertices[u].animate.set_color(WHITE) for u in v],
+                *[g.edges[f].animate.set_color(WHITE) for f in e],
+                *[g.vertices[u].animate.set_color(dark_color) for u in g.vertices if u not in v],
+                *[g.edges[f].animate.set_color(dark_color) for f in g.edges if f not in e],
+                )
+
+            coloring = get_coloring(v, e)
+            self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
+
+            maximum_clique = get_maximum_clique(v, e)
+
+            self.play(
+                *[g.vertices[u].animate.set_color(WHITE) for u in v],
+                *[g.edges[f].animate.set_color(WHITE) for f in e],
+                *[g.vertices[u].animate.set_color(dark_color) for u in g.vertices if u not in v],
+                *[g.edges[f].animate.set_color(dark_color) for f in g.edges if f not in e],
+                *[g.vertices[u].animate.set_color(YELLOW) for u in maximum_clique],
+                *[g.edges[(u, v)].animate.set_color(YELLOW) for u, v in e if u in maximum_clique and v in maximum_clique],
+                *[Circumscribe(g.vertices[u], Circle) for u in maximum_clique],
+                )
 
         fade_all(self)
 
@@ -465,9 +521,9 @@ class ChromaticNumber(Scene):
 
         self.play(Write(g))
 
-        coloring = get_coloring(g.edges, one_indexing=True)
+        coloring = get_coloring(g.vertices, g.edges)
 
-        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
+        self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         self.play(g.animate.shift(LEFT * 1.3))
 
@@ -539,11 +595,9 @@ class Lemma1(Scene):
 
         self.play(Write(g))
 
-        coloring = get_coloring(g.edges, one_indexing=True)
+        coloring = get_coloring(g.vertices, g.edges)
 
-        self.play(
-            *[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring],
-        )
+        self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         take = (1, 2, 3, 8, 9, 10, 5, 6, 7)
 
@@ -646,11 +700,10 @@ class Lemma1(Scene):
                 Transform(gt, ht),
                 )
 
-        coloring = get_coloring([(u, v) for u, v in h2.edges], one_indexing=True)
-        coloring[4] = RED
-        coloring[3] = GREEN
+        coloring = [BLUE, RED, RED, GREEN, BLUE, RED, BLUE, RED, GREEN, BLUE, RED, BLUE, BLUE]
+
         self.play(
-                *[h2.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring if v + 1 not in take],
+                *[h2.vertices[v].animate.set_color(coloring[v - 1]) for v in h2.vertices if v not in take],
                 Transform(gt, ht_p),
                 )
 
@@ -677,6 +730,8 @@ class Lemma2(Scene):
 
         self.play(FadeOut(title))
         self.play(text.animate.shift(UP * 3.3))
+
+        kp = Tex("$K_3$")
 
         l1 = Line(LEFT * 10, RIGHT * 10).next_to(text, DOWN).shift(DOWN * 0.12)
 
@@ -746,6 +801,7 @@ class Lemma2(Scene):
                 *[FadeOut(g.edges[(u, v)]) for u, v in edges if u == 4 or v == 4],
                 *[FadeIn(g2.edges[(u, v)]) for u, v in g2.edges],
                 *[FadeIn(g2.vertices[v]) for v in g2.vertices if v not in (4, 12, 13)],
+                Write(kp.next_to(g2.vertices[4], UP).set_color(YELLOW)),
                 )
 
         self.remove(group)
@@ -753,7 +809,22 @@ class Lemma2(Scene):
                  FadeOut(g2),
                 *[FadeOut(g.edges[(u, v)]) for u, v in edges if u != 4 and v != 4],
                 *[FadeOut(g.vertices[v]) for v in vertices if v != 4],
+                FadeOut(kp),
                  )
+
+        return
+
+        graphs = [
+            Graph.from_networkx(nx.complete_graph(1), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6),
+            Graph.from_networkx(nx.complete_graph(2), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6),
+            Graph.from_networkx(nx.complete_graph(3), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6),
+        ]
+
+        self.play(Write(graphs[0]))
+        for g in graphs[1:]:
+            self.play(Transform(graphs[0], g))
+
+        self.play(FadeOut(graphs[0]))
 
         g = Graph.from_networkx(nx.complete_graph(1), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6)
         h = Graph.from_networkx(nx.complete_graph(2), layout="circular", layout_scale=0.4).scale(2).shift(DOWN * 0.6)
@@ -766,7 +837,7 @@ class Lemma2(Scene):
                 FadeTransform(g, h)
             )
 
-        coloring = get_coloring(h.edges)
+        coloring = get_coloring(h.vertices, h.edges)
         self.play( *[h.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         self.play(
@@ -849,7 +920,7 @@ class Lemma2(Scene):
         g3.shift(- g3.vertices[1].get_center() + g.vertices[1].get_center())
         g3.vertices[2].set_color(GREEN)
 
-        coloring = get_coloring(g.edges, one_indexing=True)
+        coloring = get_coloring(g.vertices, g.edges)
 
         v_label = Tex("$v$").next_to(g.vertices[2], LEFT)
         v_label_prime = Tex("$v'$").next_to(g3.vertices[14], RIGHT)
@@ -859,7 +930,7 @@ class Lemma2(Scene):
         g_prime_label = Tex("$G'$").shift(RIGHT * 4.6 + DOWN * 1.9)
 
         for v in coloring:
-            g.vertices[v + 1].set_color(coloring[v])
+            g.vertices[v].set_color(coloring[v])
 
         self.play(
                 Write(g),
@@ -997,7 +1068,7 @@ class PerfectGraph(Scene):
 
         self.play(g.animate.shift(LEFT * 1.2))
 
-        coloring = get_coloring(g.edges, one_indexing=True)
+        coloring = get_coloring(g.vertices, g.edges)
 
         chi = Tex("$\chi(G) = 4$")
         omega = Tex("$\omega(G) = 4$")
@@ -1013,7 +1084,7 @@ class PerfectGraph(Scene):
         omegaa.next_to(chi, DOWN)
 
         self.play(
-            *[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring],
+            *[g.vertices[v].animate.set_color(coloring[v]) for v in coloring],
             Write(chi),
         )
 
@@ -1035,7 +1106,7 @@ class PerfectGraph(Scene):
         )
 
         less_edges = [(take.index(a), take.index(b)) for a, b in edges if a in take and b in take]
-        less_coloring = get_coloring(less_edges)
+        less_coloring = get_coloring(take, less_edges)
 
         self.play(
             *[g.vertices[v].animate.set_color(less_coloring[i]) for i, v in enumerate(take)],
@@ -1069,7 +1140,7 @@ class Observations(Scene):
         g.shift(LEFT * 3 + DOWN * 1.5)
 
         self.play(Write(g))
-        coloring = get_coloring(g.edges)
+        coloring = get_coloring(g.vertices, g.edges)
         self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         self.play(Write(two))
@@ -1091,16 +1162,20 @@ class Observations(Scene):
         g.shift(RIGHT * 3 + DOWN * 1.5)
         self.play(Write(g))
 
-        coloring = get_coloring(g.edges, one_indexing=True)
-        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
+        isub = list(induced_subgraphs(g.vertices, g.edges))
+        shuffle(isub)
+        isub = [(v, e) for v, e in isub if len(e) >= 4]
 
-        take = (1, 2, 3)
-        self.play(
-            *[g.vertices[v].animate.set_color(WHITE) for v in g.vertices],
-            *[g.edges[(a, b)].animate.set_color(WHITE) for a, b in g.edges],
-            *[g.vertices[v].animate.set_color(YELLOW) for v in take],
-            *[g.edges[(a, b)].animate.set_color(YELLOW) for a, b in g.edges if a in take and b in take],
-            )
+        for v, e in isub[:10]:
+            self.play(
+                *[g.vertices[u].animate.set_color(WHITE) for u in v],
+                *[g.edges[f].animate.set_color(WHITE) for f in e],
+                *[g.vertices[u].animate.set_color(dark_color) for u in g.vertices if u not in v],
+                *[g.edges[f].animate.set_color(dark_color) for f in g.edges if f not in e],
+                )
+
+            coloring = get_coloring(v, e)
+            self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         fade_all(self)
 
@@ -1120,7 +1195,7 @@ class Observations(Scene):
         g = Graph.from_networkx(nx.complete_graph(4), layout="circular", layout_scale=0.5).scale(2).rotate(PI / 4)
         g.shift(LEFT * 4.7 + DOWN * 1.3)
         self.play(Write(g))
-        coloring = get_coloring(g.edges)
+        coloring = get_coloring(g.vertices, g.edges)
         self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         self.play(Write(g2))
@@ -1134,15 +1209,15 @@ class Observations(Scene):
                 """, s=0.09, t=0.09)
         g.shift(LEFT * 1.7 + DOWN * 1.3)
         self.play(Write(g))
-        coloring = get_coloring(g.edges, one_indexing=True)
-        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
+        coloring = get_coloring(g.vertices, g.edges)
+        self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         self.play(Write(g3))
 
         g = Graph.from_networkx(nx.cycle_graph(5), layout="circular", layout_scale=0.5).scale(2).rotate(2 * PI / 20)
         g.shift(RIGHT * 1.7 + DOWN * 1.3)
         self.play(Write(g))
-        coloring = get_coloring(g.edges)
+        coloring = get_coloring(g.vertices, g.edges)
         self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
         self.play(Write(g4))
@@ -1161,8 +1236,8 @@ class Observations(Scene):
                 """, s=0.09, t=0.09)
         g.shift(RIGHT * 4.7 + DOWN * 1.15).rotate(PI)
         self.play(Write(g))
-        coloring = get_coloring(g.edges, one_indexing=True)
-        self.play(*[g.vertices[v + 1].animate.set_color(coloring[v]) for v in coloring])
+        coloring = get_coloring(g.vertices, g.edges)
+        self.play(*[g.vertices[v].animate.set_color(coloring[v]) for v in coloring])
 
 
 class Theorem(Scene):
@@ -1676,7 +1751,6 @@ class Theorem(Scene):
                 Write(q_label),
                 )
 
-
         self.play(
             h.vertices[1].animate.set_color(BLUE),
             h.vertices[2].animate.set_color(RED),
@@ -1697,8 +1771,18 @@ class Theorem(Scene):
             h.vertices[12].animate.set_color(GREEN),
             )
 
+        self.play(
+            Circumscribe(h.vertices[5], Circle),
+            Circumscribe(h.vertices[6], Circle),
+            Circumscribe(h.vertices[7], Circle),
+            Circumscribe(h.vertices[8], Circle),
+            )
+
         self.play(FadeOut(q_label))
+
         self.play(Write(omega_1))
+
+        return
 
         self.play(omega_1.animate.next_to(omega_2, LEFT))
         omega_3.next_to(omega_2, RIGHT)
