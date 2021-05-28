@@ -63,9 +63,18 @@ for scene in os.listdir(video_directory):
                 for i, video in enumerate(f.read().splitlines()[1:]):
                     path, name = os.path.split(video[11:-1])
 
+                    video_folder = "vid"
+                    image_folder = "img"
+
+                    if not os.path.exists(os.path.join(path, video_folder)):
+                        os.path.mkdir(os.path.join(path, video_folder))
+
+                    if not os.path.exists(os.path.join(path, image_folder)):
+                        os.path.mkdir(os.path.join(path, image_folder))
+
                     original_path = os.path.join(path, name)
-                    changed_path = os.path.join(path, f"{i+1}.mp4")
-                    image_path = os.path.join(path, f"{i+1}.png")
+                    changed_path = os.path.join(path, "vid", f"{i+1}.mp4")
+                    image_path = os.path.join(path, "img", f"{i+1}.png")
 
                     os.rename(original_path, changed_path)
 
