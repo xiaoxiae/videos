@@ -2,31 +2,23 @@
 INTRODUCTION
 ---
 
+# Introduction
 Sorting networks are made of wires that transmit values, and comparators that compare and possibly swap those values, putting the larger value at the bottom of the comparator.
 
-Here is an example of a sorting network, and an example computation on a few inputs.
+Here is an example of a sorting network, and an example computation on a sample input.
 
-TODO: size 5, some inputs
-
-As you can see, it sorts each one correctly.
-
-# Depth
 You might have noticed that since the computation seems to run in parallel on the entire network, we could make it faster by shifting the comparators such that they get executed at the same time, when they don't share the same wire.
-
-TODO: animation of the optimization where they stick together
-TODO: animation from one network to another
-TODO: no layer labels
 
 We can think of this as the depth of the sorting network -- the number of layers of wires that get executed at the same time.
 
 ---
-SIMPLE ALGORITHMS
+BUBBLE SORT
 ---
 
 # BubbleSort
 We'll use bubble sort as an example of a sorting network that we can generate for any number of wires. It repeatedly gets the largest element to the last position by switching successive pairs of elements.
 
-We need about $\mathcal{O}(n^2)$ comparators in total, the same as regular bubble sort. However, by smartly overlapping comparators, the depth of the sorting network becomes linear $\mathcal{O}(n)$.
+We need about $\mathcal{O}(n^2)$ comparators in total, the same as regular bubble sort. However, by smartly overlapping comparators, the depth of the sorting network becomes $\mathcal{O}(n)$.
 
 ---
 BITONIC SORT

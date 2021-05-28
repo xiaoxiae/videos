@@ -1,65 +1,5 @@
 from utilities import *
 
-optimal_networks = [
-        None,
-        [#1
-            [],
-        ],
-        [#2
-            [[(0, 1)]],
-        ],
-        [#3
-            [[(1, 2)]],
-            [[(0, 1)]],
-            [[(1, 2)]],
-        ],
-        [#4
-            [[(0, 1), (2, 3)]],
-            [[(1, 3)], [(0, 2)]],
-            [[(1, 2)]],
-        ],
-        [#5
-            [[(1, 2), (3, 4)]],
-            [[(1, 3)], [(0, 2)]],
-            [[(2, 4)], [(0, 3)]],
-            [[(0, 1), (2, 3)]],
-            [[(1, 2)]],
-        ],
-        [#6
-            [[(0, 1), (2, 3), (4, 5)]],
-            [[(0, 2), (3, 5)],  [(1, 4)]],
-            [[(0, 1), (2, 3), (4, 5)]],
-            [[(1, 2), (3, 4)]],
-            [[(2, 3)]],
-        ],
-        [#7
-            [[(1, 2), (3, 4), (5, 6)]],
-            [[(0, 2), (4, 6)], [(3, 5)]],
-            [[(2, 6)], [(1, 5)], [(0, 4)]],
-            [[(2, 5)], [(0, 3)]],
-            [[(2, 4)], [(1, 3)]],
-            [[(0, 1), (2, 3), (4, 5)]],
-        ],
-        [#8
-            [[(0, 7)], [(1, 6)], [(2, 5)], [(3, 4)]],
-            [[(0, 3), (4, 7)], [(1, 2), (5, 6)]],
-            [[(0, 1), (2, 3), (4, 5), (6, 7)]],
-            [[(3, 5)], [(2, 4)]],
-            [[(1, 2), (3, 4), (5, 6)]],
-            [[(2, 3), (4, 5)]],
-            [[(3, 4)]],
-        ],
-        [#9
-            [[(1, 8)], [(2, 7)], [(3, 6)], [(4, 5)]],
-            [[(0, 2), (6, 7)], [(1, 4), (5, 8)]],
-            [[(2, 6), (7, 8)], [(0, 3), (4, 5)]],
-            [[(0, 1), (3, 5)], [(2, 4), (6, 7)]],
-            [[(1, 3), (5, 7)], [(4, 6)]],
-            [[(1, 2), (3, 4), (5, 6), (7, 8)]],
-            [[(2, 3), (4, 5)]],
-        ],
-    ]
-
 
 class SortingNetwork(VMobject):
     def __init__(
@@ -69,6 +9,7 @@ class SortingNetwork(VMobject):
             height = 2.5,
             width = 5.5,
             oriented = False,
+            depth_labels = True,
     ):
         super().__init__()
 
@@ -111,10 +52,10 @@ class SortingNetwork(VMobject):
         # add appropriately spaced comparators
         self.comparators = []
         self.comparator_layer_numbers = []
-        for layer in network:
+        for i, layer in enumerate(network):
             subpos = position
             for sublayer in layer:
-                self.comparators.append([position, sublayer])  # position is horizontal
+                self.comparators.append([position, sublayer, i])  # position is horizontal
                 position += sublayer_spacing
                 subpos += position
             subpos = (subpos - position) / len(layer)
@@ -131,11 +72,17 @@ class SortingNetwork(VMobject):
             pos /= position
 
             # labels will be below the layers of the comaprator
-            text.move_to(DOWN * (height / 2) * 1.4 + RIGHT * (-width / 2 + width * pos))
+            text.move_to(DOWN * (height / 2) * 1.3 + RIGHT * (-width / 2 + width * pos))
             self.comparator_layer_numbers[i] = (pos, text)
 
+        if depth_labels:
+            for _, text in self.comparator_layer_numbers:
+                self.add(text)
+        else:
+            self.comparator_layer_numbers = []
+
         # transform the sublayer list into (a, b, Circle(a), Circle(b), line) list
-        for position, sublayer in self.comparators:
+        for position, sublayer, _ in self.comparators:
             for i in range(len(sublayer)):
                 a, b = sublayer[i]
 
@@ -166,11 +113,8 @@ class SortingNetwork(VMobject):
                 self.add(b_circle)
                 self.add(line)
 
-        for _, text in self.comparator_layer_numbers:
-            self.add(text)
-
-    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=4):
-        """Animate a sorting of numbers. TODO: less numbers"""
+    def animate_sort(self, scene, numbers = None, rate_func=linear, duration=7):
+        """Animate a sorting of numbers. TODO: less numbers."""
         if numbers is None:
             numbers = [i + 1 for i in range(self.n)]
             shuffle(numbers)
@@ -204,7 +148,7 @@ class SortingNetwork(VMobject):
             for circle, label in zip(number_circles, number_labels):
                 label.move_to(circle.get_center())
 
-            for position, compars in self.comparators:
+            for position, compars, _ in self.comparators:
                 if pos > position > pos - dt:
                     for a, b, _, _, _ in compars:
                         if self.compare_function(a, b, numbers):
@@ -231,7 +175,7 @@ class SortingNetwork(VMobject):
             for c in self.ending_circles:
                 scene.bring_to_front(c)
 
-            for _, sublayer in self.comparators:
+            for _, sublayer, _ in self.comparators:
                 for _, _, a, b, c in sublayer:
                     scene.bring_to_front(a)
                     scene.bring_to_front(b)
@@ -248,7 +192,7 @@ class SortingNetwork(VMobject):
         numbers_copy = list(numbers)
         flash_positions = []
 
-        for position, compars in self.comparators:
+        for position, compars, _ in self.comparators:
             for a, b, _, _, _ in compars:
                 if self.compare_function(a, b, numbers_copy):
                     numbers_copy[a], numbers_copy[b] = numbers_copy[b], numbers_copy[a]
@@ -279,7 +223,72 @@ class SortingNetwork(VMobject):
         scene.remove(*number_circles)
         scene.remove(*number_labels)
 
-    def BubbleSorter(n, optimized=False, **kwargs):
+    def animate_optimization(self, other, canvas):
+        """Animate the optimization from one network to another. Note that they must be
+        the same networks (same comparators)."""
+
+        self_comparators = []
+        other_comparators = []
+
+        for _, comparators, _ in self.comparators:
+            self_comparators += comparators
+
+        for _, comparators, _ in other.comparators:
+            other_comparators += comparators
+
+        self_comparators = sorted(self_comparators, key=lambda a: (a[0], a[1]))
+        other_comparators = sorted(other_comparators, key=lambda a: (a[0], a[1]))
+
+        comparator_animations = [
+                *[a[2].animate.move_to(b[2]) for a, b in zip(self_comparators, other_comparators)],
+                *[a[3].animate.move_to(b[3]) for a, b in zip(self_comparators, other_comparators)],
+                *[a[4].animate.move_to(b[4]) for a, b in zip(self_comparators, other_comparators)],
+                ]
+
+        self_label_count = len(self.comparator_layer_numbers)
+        other_label_count = len(other.comparator_layer_numbers)
+
+        if self_label_count > other_label_count:
+            canvas.play(
+                    *comparator_animations,
+                    *[a[1].animate.move_to(b[1]) for a, b in zip(self.comparator_layer_numbers, other.comparator_layer_numbers)],
+                    *[FadeOut(self.comparator_layer_numbers[i][1]) for i in range(other_label_count, self_label_count)],
+                    )
+        else:
+            canvas.play(
+                    *comparator_animations,
+                    *[a[1].animate.move_to(b[1]) for a, b in zip(self.comparator_layer_numbers, other.comparator_layer_numbers)],
+                    *[FadeIn(other.comparator_layer_numbers[i][1]) for i in range(self_label_count, other_label_count)],
+                    )
+
+    def animate_wires_swap(self, wires, canvas):
+        """Animate wires swapping."""
+        line_swaps = []
+        for a, b in wires:
+            line_swaps += [
+                    self.lines[a].animate.move_to(self.lines[b]),
+                    self.lines[b].animate.move_to(self.lines[a]),
+                    self.starting_circles[a].animate.move_to(self.starting_circles[b]),
+                    self.starting_circles[b].animate.move_to(self.starting_circles[a]),
+                    self.ending_circles[a].animate.move_to(self.ending_circles[b]),
+                    self.ending_circles[b].animate.move_to(self.ending_circles[a]),
+                    ]
+
+            # TODO: properly, this is very wrong
+            for _, comparators, _ in self.comparators:
+                for aa, bb, c, d, e in comparators:
+                    new_e = type(e)(e.end, e.start)
+                    if min(a, b) == min(aa, bb) and max(a, b) == max(aa, bb):
+                        line_swaps += [
+                                c.animate.move_to(d),
+                                d.animate.move_to(c),
+                                Transform(e, new_e),
+                                ]
+
+        canvas.play(*line_swaps)
+
+    @classmethod
+    def BubbleSorter(cls, n, optimized=False, **kwargs):
         """Create a bubble sort network of size n."""
         if not optimized:
             network = []
@@ -303,8 +312,10 @@ class SortingNetwork(VMobject):
 
         return SortingNetwork(network, n, **kwargs)
 
-    def BitonicSorter(n, oriented=True):
+    @classmethod
+    def BitonicSorter(cls, n, oriented=False, **kwargs):
         """Create a (possibly oriented) bitonic sort network of size 2**n."""
+        # TODO: oriented
         network = []
 
         # https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/BitonicSort.svg/1920px-BitonicSort.svg.png 
@@ -333,18 +344,162 @@ class SortingNetwork(VMobject):
                         for l in range(size // 2):
                             network[-1][l].append((k * size + l, k * size + l + size // 2))
 
-        return SortingNetwork(network, (2 ** n))
+        return SortingNetwork(network, (2 ** n), **kwargs)
+
+    @classmethod
+    def OptimalSorter(cls, n, optimized=True, **kwargs):
+        """Create the optimal sorting network of size n (up to size 9)"""
+        optimal_networks = [
+                None,
+                [#1
+                    [],
+                ],
+                [#2
+                    [[(0, 1)]],
+                ],
+                [#3
+                    [[(1, 2)]],
+                    [[(0, 1)]],
+                    [[(1, 2)]],
+                ],
+                [#4
+                    [[(0, 1), (2, 3)]],
+                    [[(1, 3)], [(0, 2)]],
+                    [[(1, 2)]],
+                ],
+                [#5
+                    [[(1, 2), (3, 4)]],
+                    [[(1, 3)], [(0, 2)]],
+                    [[(2, 4)], [(0, 3)]],
+                    [[(0, 1), (2, 3)]],
+                    [[(1, 2)]],
+                ],
+                [#6
+                    [[(0, 1), (2, 3), (4, 5)]],
+                    [[(0, 2), (3, 5)],  [(1, 4)]],
+                    [[(0, 1), (2, 3), (4, 5)]],
+                    [[(1, 2), (3, 4)]],
+                    [[(2, 3)]],
+                ],
+                [#7
+                    [[(1, 2), (3, 4), (5, 6)]],
+                    [[(0, 2), (4, 6)], [(3, 5)]],
+                    [[(2, 6)], [(1, 5)], [(0, 4)]],
+                    [[(2, 5)], [(0, 3)]],
+                    [[(2, 4)], [(1, 3)]],
+                    [[(0, 1), (2, 3), (4, 5)]],
+                ],
+                [#8
+                    [[(0, 7)], [(1, 6)], [(2, 5)], [(3, 4)]],
+                    [[(0, 3), (4, 7)], [(1, 2), (5, 6)]],
+                    [[(0, 1), (2, 3), (4, 5), (6, 7)]],
+                    [[(3, 5)], [(2, 4)]],
+                    [[(1, 2), (3, 4), (5, 6)]],
+                    [[(2, 3), (4, 5)]],
+                    [[(3, 4)]],
+                ],
+                [#9
+                    [[(1, 8)], [(2, 7)], [(3, 6)], [(4, 5)]],
+                    [[(0, 2), (6, 7)], [(1, 4), (5, 8)]],
+                    [[(2, 6), (7, 8)], [(0, 3), (4, 5)]],
+                    [[(0, 1), (3, 5)], [(2, 4), (6, 7)]],
+                    [[(1, 3), (5, 7)], [(4, 6)]],
+                    [[(1, 2), (3, 4), (5, 6), (7, 8)]],
+                    [[(2, 3), (4, 5)]],
+                ],
+            ]
+
+        network = optimal_networks[n]
+
+        # de-optimize the network
+        if not optimized:
+            new_network = []
+            for layer in network:
+                for comparator in layer:
+                    for c in comparator:
+                        new_network.append([[c]])
+
+            return SortingNetwork(new_network, n, oriented=False, **kwargs)
+        else:
+            return SortingNetwork(network, n, oriented=False, **kwargs)
+
+    def get_comparators(self):
+        """Return a list of VGroups of all comparators."""
+        c = []
+        for _, comparators, _ in self.comparators:
+            for comparator in comparators:
+                c.append(VGroup(comparator[2], comparator[3], comparator[4]))
+        return c
+
+    def get_lines(self):
+        """Return a list of VGroups of lines."""
+        return [VGroup(*items) for items in zip(self.lines, self.starting_circles, self.ending_circles)]
+
+    def get_layer_numbers(self):
+        """Return a list of MObjects of layer numbers."""
+        return [text for _, text in self.comparator_layer_numbers]
+
+    def get_layers(self):
+        """Return a list of VGroups of layers (just their comparators)."""
+        c = []
+
+        layer = 0
+        sub_c = []
+        for _, comparators, l in self.comparators:
+            if l != layer:
+                c.append(VGroup(*sub_c))
+                sub_c = []
+                layer = l
+
+            for comparator in comparators:
+                sub_c += [comparator[2], comparator[3], comparator[4]]
+
+        return c + [VGroup(*sub_c)]
 
 
-class Intro(Scene):
+class Introduction(Scene):
     @fade
     def construct(self):
-        sn = SortingNetwork(optimal_networks[6], 6, oriented=False)
-        #sn = SortingNetwork.BitonicSorter(2)
-        #sn = SortingNetwork.BubbleSorter(5, optimized=True, oriented=True)
+        sn = SortingNetwork.OptimalSorter(7, width=9, height=4.5, depth_labels=False, optimized=False)
+        sn_optimized = SortingNetwork.OptimalSorter(7, width=9, height=4.5, depth_labels=False, optimized=True)
+        sn_optimized_layers = SortingNetwork.OptimalSorter(7, width=9, height=4.5, depth_labels=True, optimized=True)
 
         self.play(Write(sn))
 
+        lines = sn.get_lines()
+        self.play(
+            AnimationGroup(*[Indicate(line) for line in lines], lag_ratio=0.07),
+            )
+
+        comparators = sn.get_comparators()
+        self.play(
+            AnimationGroup(*[Indicate(comparator) for comparator in comparators], lag_ratio=0.07),
+            )
+        self.remove(*comparators)
+
         sn.animate_sort(self)
 
-        self.play(Unwrite(sn))
+        sn.animate_optimization(sn_optimized, self)
+
+        numbers = sn_optimized_layers.get_layer_numbers()
+        self.play(*[FadeIn(number) for number in numbers])
+
+        layers = sn_optimized.get_layers()
+        self.play(
+            *[layer.animate.set_color(rainbow_to_rgb(i / len(layers) * 3/10 + 0.2)) for i, layer in enumerate(layers)],
+            *[layer.animate.set_color(rainbow_to_rgb(i / len(layers) * 3/10 + 0.2)) for i, layer in enumerate(numbers)],
+        )
+
+class BubbleSort(Scene):
+    @fade
+    def construct(self):
+        sn = SortingNetwork.BubbleSorter(5, width=7, height=3.5, optimized=False, oriented=True)
+        sn_optimized = SortingNetwork.BubbleSorter(5, width=7, height=3.5, optimized=True)
+
+        self.play(Write(sn))
+
+        #sn.animate_sort(self)
+
+        sn.animate_wires_swap([(0, 1), (2, 3)], self)
+
+        #sn.animate_optimization(sn_optimized, self)
