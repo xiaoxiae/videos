@@ -1,5 +1,5 @@
 1
-00:00:00,850 --> 00:00:10,750
+00:00:-1,-16 --> 00:00:10,750
 Perfect graphs are a family of graphs with various interesting properties, notably that many problems that are NP complete on general graphs can be solved efficiently on perfect graphs.
 
 2
@@ -124,7 +124,7 @@ The right-to-left implication can be proven using induction on the number of ver
 
 32
 00:04:08,933 --> 00:04:10,983
-Add text
+The base case is trivially true.
 
 33
 00:04:10,983 --> 00:04:15,083

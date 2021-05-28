@@ -1738,6 +1738,21 @@ class Theorem(Scene):
         for i in lt:
             lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
 
+        A = Graph.from_networkx(nx.complete_graph(5), layout="circular", layout_scale=0.8).scale(2)
+        A.shift(DOWN * 0.9)
+
+        qp_label = Tex("$Q'$").shift(UP * 0.2 + RIGHT * 1.3)
+
+        self.play(
+                Write(A),
+                Write(qp_label),
+                )
+
+        self.play(
+                FadeOut(A),
+                FadeOut(qp_label),
+                )
+
         vertices = [i + 1 for i in range(17)]
         edges = [(1, 2), (3, 4), (4, 2), (3, 1), (1, 4), (3, 2)]
         h = Graph(vertices, edges, layout=lt).scale(2)
@@ -1780,8 +1795,6 @@ class Theorem(Scene):
         self.play(FadeOut(q_label))
 
         self.play(Write(omega_1))
-
-        return
 
         self.play(omega_1.animate.next_to(omega_2, LEFT))
         omega_3.next_to(omega_2, RIGHT)
