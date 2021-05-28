@@ -67,10 +67,10 @@ for scene in os.listdir(video_directory):
                     image_folder = "img"
 
                     if not os.path.exists(os.path.join(path, video_folder)):
-                        os.path.mkdir(os.path.join(path, video_folder))
+                        os.mkdir(os.path.join(path, video_folder))
 
                     if not os.path.exists(os.path.join(path, image_folder)):
-                        os.path.mkdir(os.path.join(path, image_folder))
+                        os.mkdir(os.path.join(path, image_folder))
 
                     original_path = os.path.join(path, name)
                     changed_path = os.path.join(path, "vid", f"{i+1}.mp4")
