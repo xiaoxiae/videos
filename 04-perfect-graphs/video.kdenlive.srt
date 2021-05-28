@@ -147,6 +147,6 @@ Observe that ω(H) = ω(G) − 1, since all maximum cliques in G contain one ver
 By induction, H is perfect, so there exists a vertex coloring of H using ω(G) − 1 colors.
 
 38
-00:04:46,216 --> 00:04:54,433
+00:04:46,216 --> 00:04:55,432
 Adding the vertices of I back, we can color all of them using one extra color and obtain a coloring of G using ω(G) colors.
 
