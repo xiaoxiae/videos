@@ -25,7 +25,7 @@ BITONIC SORT
 ---
 
 # Construction
-This is nice, but we can do much better. One way is to use something called a bitonic sort.
+This is nice, but we can do better. One way is to use something called a bitonic sort.
 
 It gets its name from bitonic sequences, which are the code idea behind this algorithm. They are sequences of numbers, such that they either increase and then decrease, or vice versa.
 
@@ -36,6 +36,8 @@ The algorithm is built out of smaller building blocks called half-cleaners, that
 TODO: animace toho, na co se to splitne
 
 It looks extremely simple, but it's not at all obvious why it should split a bitonic sequence into two.
+
+TODO: dokončení konstrukce
 
 # Zero-one principle
 For proof, we will use something called the zero-one principle. It states that if a sorting network correctly sorts all sequences of 0's and 1's (of valid size), then it correctly sorts all sequences.
@@ -52,10 +54,18 @@ TODO: animate flipping
 OPTIMAL SORTING NETWORKS
 ---
 
+A collection of sorting networks that are even better than bitonic sort are optimal sorting networks, either in the number of comparators or possible depth.
 
+The following table captures the current limits for smaller inputs. notice that starting at ..., TODO že je to prostě těžký.
 
 ---
 TESTING NETWORK CORRECTNESS
 ---
 
+An interesting question is how hard the problem of deciding whether a network correctly sorts all inputs is. It turns out that it is co-NP. This means that we can check in polynomial time that the network doesn't sort, given an input that it sorts incorrectly. Unfortunately, a polynomial-time algorithm for finding such input is not currently known.
+
 TODO: Co-NP-complete: https://link.springer.com/chapter/10.1007/978-3-662-25209-3_18
+
+Luckily, we can use the zero-one principle and only try all sequences of 0's and 1's, instead of trying out all permutations, which makes a huge difference (although it's still exponential).
+
+TODO: table
