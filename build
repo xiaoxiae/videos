@@ -34,7 +34,7 @@ parser.add_argument(
     "-q", "--quality",
     choices=["l", "m", "h", "k"],
     default="k",
-    help="the quality of the video"
+    help="the quality of the video (k=4K by default)"
 )
 
 # licenses (to give as options)

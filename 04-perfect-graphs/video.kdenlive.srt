@@ -1,33 +1,33 @@
 1
-00:00:-1,-16 --> 00:00:10,750
+00:00:01,666 --> 00:00:10,649
 Perfect graphs are a family of graphs with various interesting properties, notably that many problems that are NP complete on general graphs can be solved efficiently on perfect graphs.
 
 2
-00:00:12,000 --> 00:00:15,250
+00:00:12,000 --> 00:00:15,000
 There exist various characterizations of perfect graphs.
 
 3
-00:00:15,250 --> 00:00:21,966
+00:00:15,033 --> 00:00:21,749
 The one that we’ll be focusing on in this video is the Weak perfect graph theorem, proved in 1972 by László Lovász.
 
 4
-00:00:22,816 --> 00:00:29,283
+00:00:22,816 --> 00:00:29,116
 Before proceeding to the proof, there are quite a few definitions that we have to know in order to understand it.
 
 5
-00:00:29,283 --> 00:00:33,600
+00:00:29,116 --> 00:00:33,166
 You might already know some of them, so feel free to skip forward in the video accordingly.
 
 6
-00:00:37,466 --> 00:00:47,150
+00:00:37,466 --> 00:00:45,899
 A complement of a graph G is a graph Ḡ, such that each two vertices are adjacent in Ḡ, if and only if they are not adjacent in G.
 
 7
-00:00:52,450 --> 00:00:57,300
+00:00:52,450 --> 00:00:57,200
 A clique is a subgraph of a graph, such that each two vertices are adjacent.
 
 8
-00:01:01,633 --> 00:01:07,550
+00:01:01,633 --> 00:01:07,316
 Analogically, an independent set in a graph is a set of vertices such that no two are adjacent.
 
 9
@@ -35,118 +35,322 @@ Analogically, an independent set in a graph is a set of vertices such that no tw
 We’ll also denote ω(G) to be the size of the largest clique in G (also called the clique number),
 
 10
-00:01:15,550 --> 00:01:20,700
+00:01:15,550 --> 00:01:21,050
 and α(G) to be the size of the largest independent set in G (also called the independence number).
 
 11
-00:01:21,333 --> 00:01:24,316
+00:01:22,600 --> 00:01:25,250
 These two concepts are closely tied together.
 
 12
-00:01:24,316 --> 00:01:30,333
+00:01:25,250 --> 00:01:30,950
 Considering a complement of a graph, we see that each independent set becomes a clique, and vice versa.
 
 13
-00:01:34,316 --> 00:01:44,449
+00:01:35,583 --> 00:01:44,499
 A graph H is an induced subgraph of the graph G, if and only if we can get H by removing zero or more vertices (along with their edges) from G.
 
 14
-00:01:45,033 --> 00:01:50,916
+00:01:46,300 --> 00:01:51,300
 Additionally, it is a proper induced subgraph, if we remove one or more vertices.
 
 15
-00:01:54,800 --> 00:02:05,183
+00:01:56,066 --> 00:02:06,449
 The chromatic number χ(G) of a graph G is the minimum number of colors we need to color the graph’s vertices, such that no two adjacent vertices have the same color.
 
 16
-00:02:08,883 --> 00:02:19,283
+00:02:10,150 --> 00:02:20,083
 Finally, a graph G is perfect (informally denoted G⋆), if and only if ∀H ≤ G : χ(H) = ω(H).
 
 17
-00:02:23,283 --> 00:02:30,266
+00:02:24,550 --> 00:02:31,700
 With the definitions out of the way, let’s make a few observations about how perfect graphs behave, that will help us understand the proof better.
 
 18
-00:02:31,700 --> 00:02:42,616
+00:02:31,700 --> 00:02:43,250
 Firstly, ∀H ≤ G : ω(H) ≤ χ(H), because each maximum clique has to contain as many colors as its vertices.
 
 19
-00:02:42,616 --> 00:02:46,250
+00:02:43,683 --> 00:02:47,316
 For perfect graphs, this becomes an equality from definition.
 
 20
-00:02:47,466 --> 00:02:52,833
+00:02:47,500 --> 00:02:53,299
 Secondly, if a graph is perfect, then each of its induced subgraphs is perfect too.
 
 21
-00:02:52,833 --> 00:02:59,166
+00:02:53,300 --> 00:02:59,200
 This again follows immediately from the definition of a perfect graph, since something is true for each of its induced subgraphs.
 
 22
-00:02:59,666 --> 00:03:07,350
+00:03:01,333 --> 00:03:08,733
 As for examples, some common families of graphs that are perfect include complete graphs (where χ and ω is the number of vertices)
 
 23
-00:03:07,350 --> 00:03:14,416
+00:03:08,733 --> 00:03:15,183
 and bipartite graphs (where χ is either 1 when it has no edges, or 2 if it does, either of which works).
 
 24
-00:03:15,033 --> 00:03:26,516
+00:03:16,700 --> 00:03:27,600
 Some families that are not perfect include cycles of odd length ≥ 5 (because ω = 2 and χ = 3) and even wheel graphs of length ≥ 6 (because ω = 3 and χ = 4).
 
 25
-00:03:27,566 --> 00:03:31,216
+00:03:29,233 --> 00:03:32,750
 Our first lemma is actually a characterization of a perfect graph.
 
 26
-00:03:31,216 --> 00:03:42,566
+00:03:32,750 --> 00:03:44,666
 It states that the graph G is perfect, if and only if ∀H ≤ G contains an independent set, such that each maximum clique in H contains a vertex from this set (called a vast independent set).
 
 27
-00:03:45,566 --> 00:03:48,400
+00:03:47,233 --> 00:03:50,233
 The left-to-right implication is pretty straight-forward.
 
 28
-00:03:48,400 --> 00:03:54,483
+00:03:50,233 --> 00:03:56,483
 Since χ(G) = ω(G), each largest clique contains all possible colors.
 
 29
-00:03:54,483 --> 00:04:00,183
+00:03:56,483 --> 00:04:01,850
 That means we can choose any color and let the independent set be all vertices of that color.
 
 30
-00:04:00,183 --> 00:04:03,233
+00:04:01,850 --> 00:04:04,516
 By definition, such independent set is vast.
 
 31
-00:04:04,283 --> 00:04:08,933
+00:04:05,950 --> 00:04:10,600
 The right-to-left implication can be proven using induction on the number of vertices.
 
 32
-00:04:08,933 --> 00:04:10,983
+00:04:10,600 --> 00:04:12,650
 The base case is trivially true.
 
 33
-00:04:10,983 --> 00:04:15,083
+00:04:12,650 --> 00:04:16,450
 For the induction step, assume that we’ve proven the statement for all smaller graphs.
 
 34
-00:04:16,000 --> 00:04:21,916
+00:04:17,666 --> 00:04:23,583
 Let G be a graph such that each induced subgraph of G contains a vast independent set.
 
 35
-00:04:21,916 --> 00:04:28,700
+00:04:23,583 --> 00:04:30,367
 Let I be a vast independent set in G, and H be the induced subgraph obtained from G by removing I.
 
 36
-00:04:29,383 --> 00:04:38,583
+00:04:31,050 --> 00:04:39,550
 Observe that ω(H) = ω(G) − 1, since all maximum cliques in G contain one vertex from I.
 
 37
-00:04:38,583 --> 00:04:46,216
+00:04:39,550 --> 00:04:46,667
 By induction, H is perfect, so there exists a vertex coloring of H using ω(G) − 1 colors.
 
 38
-00:04:46,216 --> 00:04:55,432
+00:04:46,666 --> 00:04:54,099
 Adding the vertices of I back, we can color all of them using one extra color and obtain a coloring of G using ω(G) colors.
+
+39
+00:04:55,983 --> 00:05:02,833
+Our second lemma states that if G is perfect, then any graph constructed from G by expanding a vertex is also perfect.
+
+40
+00:05:04,233 --> 00:05:13,133
+By expanding, we mean that we replace the vertex with a complete graph of any size (denoted Kp) and connect it to all of its neighbours accordingly.
+
+41
+00:05:13,700 --> 00:05:19,733
+For proof, observe that expanding a vertex to Kp is equivalent to repeatedly expanding it to K2,
+
+42
+00:05:19,733 --> 00:05:23,450
+so it’s enough to prove that expanding a vertex to K2 preserves perfectness.
+
+43
+00:05:25,066 --> 00:05:28,466
+Let’s again use induction on the number of vertices in G.
+
+44
+00:05:28,466 --> 00:05:32,282
+The base case is expanding a single vertex to K2, which is perfect.
+
+45
+00:05:33,500 --> 00:05:42,433
+Now we have some graph G and a vertex v that we expand to v, v′, forming G′. We’ll examine two cases.
+
+46
+00:05:42,833 --> 00:05:47,683
+Case one is that expanding increases ω (obviously only by one).
+
+47
+00:05:47,683 --> 00:05:52,933
+This is fine, since we can now use an additional color on v′, so G′ is still perfect.
+
+48
+00:05:53,866 --> 00:05:57,432
+Case two is that expanding doesn’t increase ω.
+
+49
+00:05:57,433 --> 00:06:01,033
+In this case, let’s take a χ coloring of G.
+
+50
+00:06:01,033 --> 00:06:09,550
+Looking at the set of vertices with the same color as v, we know that this must be a vast independent set (since each clique contains all of the colors).
+
+51
+00:06:09,550 --> 00:06:15,017
+However, v is not a part of a maximum clique, because otherwise ω would have increased.
+
+52
+00:06:15,633 --> 00:06:24,800
+Removing all vertices of this color besides v will decrease ω by one and, by induction, give a χ − 1 coloring of the smaller graph.
+
+53
+00:06:24,800 --> 00:06:30,633
+Adding the vertices back using the removed color, including the not-yet-added v′ proves the second case.
+
+54
+00:06:31,766 --> 00:06:38,482
+Now we’ll finally prove the main theorem. It states that a graph G is perfect, if and only if Ḡ is perfect.
+
+55
+00:06:39,333 --> 00:06:46,483
+First, notice that although this is an equivalence, we only need to prove one implication, since the statement is symmetrical.
+
+56
+00:06:47,133 --> 00:06:53,733
+We’ll prove the implication by contradiction. Let’s take the smallest graph G⋆ that is perfect but Ḡ isn’t.
+
+57
+00:06:53,733 --> 00:07:00,750
+Because Ḡ isn’t perfect, it follows from lemma 1 that it has an induced subgraph H without a vast independent set.
+
+58
+00:07:01,316 --> 00:07:14,982
+Furthermore, it must be that H = Ḡ, because if H⋆ < Ḡ, then H̄ would be perfect (since H̄ < G⋆ and G⋆ is perfect).
+
+59
+00:07:14,983 --> 00:07:19,467
+This would, however, be a contradiction with the minimality of (G⋆,Ḡ).
+
+60
+00:07:20,500 --> 00:07:27,317
+We now know that Ḡ doesn’t have a vast independent set, meaning that each independent set misses at least one maximum clique.
+
+61
+00:07:27,316 --> 00:07:32,766
+Translated into the language of the graph G, each clique misses at least one maximum independent set.
+
+62
+00:07:33,550 --> 00:07:38,050
+Let’s list all of the cliques in G⋆, calling them Q1 to Qt.
+
+63
+00:07:38,050 --> 00:07:44,783
+From the previous observation, for each clique Ql, we have a maximum independent set Il, such that they are disjoint.
+
+64
+00:07:45,650 --> 00:07:50,633
+We’ll now do something that seems very strange, but is actually the core idea behind the proof.
+
+65
+00:07:50,633 --> 00:07:56,333
+For each vertex v in G⋆, let f(v) denote the number of the maximum independent sets that it’s in.
+
+66
+00:07:57,033 --> 00:08:02,417
+By expanding each vertex v to size f(v), we create a new graph G′⋆.
+
+67
+00:08:02,416 --> 00:08:09,732
+Now we know that G′⋆ is perfect, because G⋆ is perfect and any graph expanded from G⋆ is, using lemma 2, also perfect.
+
+68
+00:08:10,600 --> 00:08:17,800
+The rest of the proof is basically rearranging inequalities in order to show that χ(G′⋆) ≠ ω(G′⋆),
+
+69
+00:08:17,800 --> 00:08:21,100
+which would make G′⋆ not perfect, leading to a contradiction.
+
+70
+00:08:21,916 --> 00:08:24,699
+Let’s count the number of vertices of G′⋆.
+
+71
+00:08:24,700 --> 00:08:33,232
+Since the maximum independent sets from G⋆ don’t overlap in G′⋆ (from the way we expanded each vertex), it’s equal to t ⋅ α(G⋆).
+
+72
+00:08:33,716 --> 00:08:38,216
+Using this, we’ll calculate the lower bound for χ(G′⋆).
+
+73
+00:08:38,216 --> 00:08:46,166
+It must be greater than |V(G′⋆)|/α(G′⋆), because that is the most efficient use of the colors
+
+74
+00:08:46,166 --> 00:08:49,916
+(each color is not only an independent set, but also the largest one).
+
+75
+00:08:50,166 --> 00:08:59,366
+α(G′⋆) is, however, just α(G⋆), because expanding a vertex can’t increase the size of the maximum independent set.
+
+76
+00:09:00,033 --> 00:09:02,966
+Plugging the value for vertices and simplifying gives us t.
+
+77
+00:09:03,500 --> 00:09:07,417
+We’ll now calculate the upper bound for ω(G′⋆).
+
+78
+00:09:07,416 --> 00:09:10,649
+Let Q′ be the largest clique in G′⋆.
+
+79
+00:09:10,650 --> 00:09:14,983
+This clique must have been created from inflating some clique Q in G⋆.
+
+80
+00:09:14,983 --> 00:09:19,650
+Recall that each clique in G misses at least one maximum independent set.
+
+81
+00:09:19,650 --> 00:09:28,816
+This means, that ω(G′⋆) ≤ t − 1, because there can be at most one vertex for each independent set, except the one that we know it misses.
+
+82
+00:09:29,566 --> 00:09:35,566
+Combining those two inequalities, we get that ω(G′⋆) < χ(G′⋆),
+
+83
+00:09:35,566 --> 00:09:40,182
+meaning that G′⋆ is not perfect, reaching a contradiction and proving the theorem.
+
+84
+00:09:42,516 --> 00:09:47,166
+A stronger version of the theorem that we just proved is the Strong perfect graph theorem.
+
+85
+00:09:47,166 --> 00:09:54,532
+It states that a graph is perfect, if and only if it doesn’t contain an odd hole or an odd antihole greater than 3.
+
+86
+00:09:54,533 --> 00:09:59,400
+By hole, we mean an induced cycle and by antihole, we mean a complement to an induced cycle.
+
+87
+00:10:00,016 --> 00:10:07,649
+These two examples are, using this theorem, not perfect, since they each contain either a hole or an antihole of size 5.
+
+88
+00:10:08,366 --> 00:10:14,532
+We won’t be proving this theorem, since it took a 150-page paper released in 2002 to do so,
+
+89
+00:10:14,533 --> 00:10:21,983
+but we’ll observe that it immediately proves the Weak perfect graph theorem (from definition of a complement – holes become antiholes and vice versa).
 

@@ -3,8 +3,17 @@ The proof of the weak perfect graph theorem.
 ------------------
 
 Timetable:
-0:00 - <something>
-1:36 - <something else>
+0:00 - Introduction
+0:34 - Graph complement
+0:49 - Clique and independent set
+1:32 - Induced subgraph
+1:53 - Chromatic number
+2:08 - Perfect graph
+2:24 - Observations
+3:29 - Lemma 1
+4:55 - Lemma 2
+6:31 - Weak perfect graph theorem
+9:41 - Strong perfect graph theorem
 
 Source code:
 https://github.com/xiaoxiae/videos/tree/master/04-perfect-graphs

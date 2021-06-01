@@ -541,7 +541,7 @@ class Lemma1(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 1))
 
-        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if |each induced subgraph| contains an |independent set|, such that |each its maximum clique| contains a |vertex| from the set (|vast independent set|).", size=r"\footnotesize", splitBy="|")
+        duration, text = createHighlightedParagraph(r"A graph |$G$| is |perfect|, if and only if |$\forall H \leqslant G$| contains an |independent set|, such that |each maximum clique in $H$| contains a v|ertex f|rom this set (called a v|ast independent set)|..", size=r"\footnotesize", splitBy="|")
         text.next_to(title, 2 * DOWN)
 
         self.play(Write(text), run_time=duration)
@@ -1183,6 +1183,7 @@ class Observations(Scene):
         self.play(title.animate.shift(UP * 2.5))
 
         g1 = Tex(r"$\text{complete}^{\star}$").shift(LEFT * 4.7 + UP * 0.7)
+
         g2 = Tex(r"$\text{bipartite}^{\star}$").shift(LEFT * 1.7 + UP * 0.7)
 
         g3 = Tex(r"$\text{odd cycles}_{\scriptsize\ge 5}$").shift(RIGHT * 1.7 + UP * 0.7)

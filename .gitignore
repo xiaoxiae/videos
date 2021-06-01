@@ -1,7 +1,7 @@
 **/__pycache__
 **/media
 **/video
-**/audio
+**/audio*
 **/ignored
 
 *.pdf

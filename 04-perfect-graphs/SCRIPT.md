@@ -80,7 +80,7 @@ LEMMA 2
 
 **[ltwo5]:** Case two is that expanding doesn't increase $\omega$. In this case, let's take a $\chi$ coloring of $G$. Looking at the set of vertices with the same color as $v$, we know that this must be a vast independent set (since each clique contains all of the colors). However, $v$ is not a part of a maximum clique, because otherwise $\omega$ would have increased.
 
-**[*ltwo6]:** Removing all vertices of this color besides $v$ will decrease $\omega$ by one and, by induction, give a $\chi - 1$ coloring of the smaller graph. Adding the vertices back using the removed color, including the not-yet-added $v'$ proves the second case.
+**[ltwo6]:** Removing all vertices of this color besides $v$ will decrease $\omega$ by one and, by induction, give a $\chi - 1$ coloring of the smaller graph. Adding the vertices back using the removed color, including the not-yet-added $v'$ proves the second case.
 
 ---
 WEAK PERFECT GRAPH THEOREM
@@ -93,7 +93,7 @@ WEAK PERFECT GRAPH THEOREM
 
 **[tone3]:** We'll prove the implication by contradiction. Let's take the smallest graph $G_\star$ that is perfect but $\bar{G}$ isn't.
 
-**[tone4]:** Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Analogically, $G_\star$ has an induced subgraph $\bar{H}_\star$ Furthermore, it must be that $H = \bar{G}$, because if $H_\star < \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} < G_\star$ and $G_\star$ is perfect). This would, however, be a contradiction with the minimality of $(G_\star, \bar{G})$.
+**[tone4]:** Because $\bar{G}$ isn't perfect, it follows from lemma 1 that it has an induced subgraph $H$ without a vast independent set. Furthermore, it must be that $H = \bar{G}$, because if $H_\star < \bar{G}$, then $\bar{H}$ would be perfect (since $\bar{H} < G_\star$ and $G_\star$ is perfect). This would, however, be a contradiction with the minimality of $(G_\star, \bar{G})$.
 
 **[tone5]:** We now know that $\bar{G}$ doesn't have a vast independent set, meaning that each independent set misses at least one maximum clique. Translated into the language of the graph $G$, each clique misses at least one maximum independent set.
 
@@ -117,16 +117,16 @@ WEAK PERFECT GRAPH THEOREM
 
 **[tone15]:** We'll now calculate the upper bound for $\omega(G'_\star)$.
 
-**[*tone16]:** Let $Q'$ be the largest clique in $G'_\star$. This clique must have been created from inflating some clique $Q$ in $G_\star$. Recall that each clique in $G$ misses at least one maximum independent set. This means, that $\omega(G'_\star) \le t - 1$, because there can be at most one vertex for each independent set, except the one that we know it misses.
+**[tone16]:** Let $Q'$ be the largest clique in $G'_\star$. This clique must have been created from inflating some clique $Q$ in $G_\star$. Recall that each clique in $G$ misses at least one maximum independent set. This means, that $\omega(G'_\star) \le t - 1$, because there can be at most one vertex for each independent set, except the one that we know it misses.
 
-**[*tone17]:** Combining those two inequalities, we get that $\omega(G'_\star) < \chi(G'_\star)$, meaning that $G'_\star$ is not perfect, reaching a contradiction and proving the theorem.
+**[tone17]:** Combining those two inequalities, we get that $\omega(G'_\star) < \chi(G'_\star)$, meaning that $G'_\star$ is not perfect, reaching a contradiction and proving the theorem.
 
 ---
 STRONG PERFECT GRAPH THEOREM
 ---
 
 # Theorem2
-**[*ttwo1]:** A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if it doesn't contain an odd hole or an odd antihole greater than 3. By hole, we mean an induced cycle and by antihole, we mean a complement to an induced cycle.
+**[ttwo1]:** A stronger version of the theorem that we just proved is the Strong perfect graph theorem. It states that a graph is perfect, if and only if it doesn't contain an odd hole or an odd antihole greater than 3. By hole, we mean an induced cycle and by antihole, we mean a complement to an induced cycle.
 
 **[ttwo2]:** These two examples are, using this theorem, not perfect, since they each contain either a hole or an antihole of size 5.
 
