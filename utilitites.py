@@ -214,3 +214,11 @@ def get_maximum_clique(vertices, edges):
     status = model.solve(PULP_CBC_CMD(msg=False))
 
     return [inverse_mapping[i] for i in range(n) if variables[i].value()]
+
+def sgn(n):
+    if n < 0:
+        return -1
+    elif n > 0:
+        return 1
+    else:
+        return 0

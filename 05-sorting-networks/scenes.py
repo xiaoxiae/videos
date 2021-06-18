@@ -71,7 +71,7 @@ class SortingNetwork(VMobject):
             pos, text = self.comparator_layer_numbers[i]
             pos /= position
 
-            # labels will be below the layers of the comaprator
+            # labels will be below the layers of the comparator
             text.move_to(DOWN * (height / 2) * 1.3 + RIGHT * (-width / 2 + width * pos))
             self.comparator_layer_numbers[i] = (pos, text)
 
@@ -91,10 +91,6 @@ class SortingNetwork(VMobject):
 
                 a_circle = self.get_circle(comparator_circles_radius).move_to(a_pos)
                 b_circle = self.get_circle(comparator_circles_radius).move_to(b_pos)
-
-                #                    "": 0.25,
-                #    "max_stroke_width_to_length_ratio": 5,
-                #    "preserve_tip_size_when_scaling": True,
 
                 if a < b:
                     a_pos += DOWN * comparator_circles_radius * 0.95
@@ -225,7 +221,7 @@ class SortingNetwork(VMobject):
 
     def animate_optimization(self, other, canvas):
         """Animate the optimization from one network to another. Note that they must be
-        the same networks (same comparators)."""
+        the same networks (same comparators) so they only get shifted together."""
 
         self_comparators = []
         other_comparators = []
@@ -262,10 +258,16 @@ class SortingNetwork(VMobject):
                     )
 
     def animate_wires_swap(self, wires, canvas):
-        """Animate wires swapping."""
-        line_swaps = []
+        """Animate wires swapping. Note that the wires must not overlap."""
+        # difference between two lines
+        line_diff = self.lines[0].get_center() - self.lines[1].get_center()
+
+        animations = []
+        updater_removals = []
+
         for a, b in wires:
-            line_swaps += [
+            # swap lines and their circles
+            animations += [
                     self.lines[a].animate.move_to(self.lines[b]),
                     self.lines[b].animate.move_to(self.lines[a]),
                     self.starting_circles[a].animate.move_to(self.starting_circles[b]),
@@ -274,18 +276,37 @@ class SortingNetwork(VMobject):
                     self.ending_circles[b].animate.move_to(self.ending_circles[a]),
                     ]
 
-            # TODO: properly, this is very wrong
             for _, comparators, _ in self.comparators:
-                for aa, bb, c, d, e in comparators:
-                    new_e = type(e)(e.end, e.start)
-                    if min(a, b) == min(aa, bb) and max(a, b) == max(aa, bb):
-                        line_swaps += [
-                                c.animate.move_to(d),
-                                d.animate.move_to(c),
-                                Transform(e, new_e),
-                                ]
 
-        canvas.play(*line_swaps)
+                for c_pos, d_pos, c, d, e in comparators:
+                    def f(i, line):
+                        line2 = Line(i[0], i[1])
+
+                        if self.oriented:
+                            line2.add_tip(tip_length=0.2)
+
+                        line.become(line2)
+
+                    if c_pos == a: # c -> b
+                        animations += [c.animate.shift(line_diff * (c_pos - b))]
+
+                    if d_pos == a: # d -> b
+                        animations += [d.animate.shift(line_diff * (d_pos - b))]
+
+                    if c_pos == b: # c -> a
+                        animations += [c.animate.shift(line_diff * (c_pos - a))]
+
+                    if d_pos == b: # d -> a
+                        animations += [d.animate.shift(line_diff * (d_pos - a))]
+
+                    f = partial(f, (c, d))
+                    e.add_updater(f)
+                    updater_removals.append((e, f))
+
+        canvas.play(*animations)
+
+        for e, f in updater_removals:
+            e.remove_updater(f)
 
     @classmethod
     def BubbleSorter(cls, n, optimized=False, **kwargs):
@@ -318,7 +339,7 @@ class SortingNetwork(VMobject):
         # TODO: oriented
         network = []
 
-        # https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/BitonicSort.svg/1920px-BitonicSort.svg.png 
+        # https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/BitonicSort.svg/1920px-BitonicSort.svg.png
         # blue part
         for i in range(n):
             # orange and red parts
@@ -411,7 +432,7 @@ class SortingNetwork(VMobject):
 
         network = optimal_networks[n]
 
-        # de-optimize the network
+        # possibly de-optimize the network
         if not optimized:
             new_network = []
             for layer in network:
@@ -475,7 +496,6 @@ class Introduction(Scene):
         self.play(
             AnimationGroup(*[Indicate(comparator) for comparator in comparators], lag_ratio=0.07),
             )
-        self.remove(*comparators)
 
         sn.animate_sort(self)
 
@@ -486,20 +506,73 @@ class Introduction(Scene):
 
         layers = sn_optimized.get_layers()
         self.play(
-            *[layer.animate.set_color(rainbow_to_rgb(i / len(layers) * 3/10 + 0.2)) for i, layer in enumerate(layers)],
-            *[layer.animate.set_color(rainbow_to_rgb(i / len(layers) * 3/10 + 0.2)) for i, layer in enumerate(numbers)],
+            *[layer.animate.set_color(rainbow_to_rgb(i / len(layers))) for i, layer in enumerate(layers)],
+            *[layer.animate.set_color(rainbow_to_rgb(i / len(layers))) for i, layer in enumerate(numbers)],
         )
 
 class BubbleSort(Scene):
     @fade
     def construct(self):
+        title = Tex("\Large Bubble sort")
+
+        self.play(Write(title))
+        self.play(FadeOut(title))
+
         sn = SortingNetwork.BubbleSorter(5, width=7, height=3.5, optimized=False, oriented=True)
         sn_optimized = SortingNetwork.BubbleSorter(5, width=7, height=3.5, optimized=True)
 
         self.play(Write(sn))
 
-        #sn.animate_sort(self)
+        sn.animate_sort(self, rate_func=smooth, duration=4)
 
-        sn.animate_wires_swap([(0, 1), (2, 3)], self)
+        sn.animate_optimization(sn_optimized, self)
 
-        #sn.animate_optimization(sn_optimized, self)
+class Bitonic(Scene):
+    def construct(self):
+        title = Tex("\Large Bitonic sort")
+
+        self.play(Write(title))
+        self.play(FadeOut(title))
+
+    def construct(self):
+        f = lambda x: -abs((x + 2) % 4 - 2 - 2) - abs(-2 * ((x + 2) % 4 - 2  - 2) - 5) + 5
+
+        func = FunctionGraph(f, x_range = (-2, 2), fill_opacity=0, color=WHITE)
+
+        self.play(Write(func))
+
+        text = Tex("strictly bitonic")
+        text.next_to(func, DOWN).shift(DOWN * 0.2)
+        self.play(Write(text), run_time=1)
+
+        func2 = FunctionGraph(f, x_range = (-2, 2), fill_opacity=0, color=WHITE)
+        func2.shift(RIGHT * 2)
+        func2.set_color(DARK_GRAY)
+
+        func3 = FunctionGraph(f, x_range = (-2, 2), fill_opacity=0, color=WHITE)
+        func3.shift(LEFT * 2)
+        func3.set_color(DARK_GRAY)
+
+        self.play(
+                func.animate.shift(LEFT * 2),
+                )
+
+        # FUCK THIS
+
+        self.play(Write(func2))
+
+
+        self.add(func3)
+        func.set_color(DARK_GRAY)
+
+        start = func3.get_center()
+
+        def f(fan):
+            current = float((func3.get_center() - start)[0])
+            my = lambda x: -abs((x + 2) % 4 - 2 - 2) - abs(-2 * ((x + 2) % 4 - 2  - 2) - 5) + 5
+            fan_new = FunctionGraph(my, x_range = (-2 + current, 2 + current), fill_opacity=0, color=WHITE)
+            fan_new.move_to(fan)
+            fan.become(fan_new)
+
+        func3.add_updater(f)
+        self.play(func3.animate.shift(RIGHT * 4))
