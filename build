@@ -78,8 +78,8 @@ for scene in os.listdir(video_directory):
 
                     os.rename(original_path, changed_path)
 
-                    # save the last frames
-                    subprocess.Popen(["ffmpeg", "-sseof", "-3", "-i",  changed_path, "-update", "1", "-q:v", "1", "-y", image_path]).communicate()
+                    # save the first frame of each video
+                    subprocess.Popen(["ffmpeg", "-i",  changed_path, "-vf", '"select=eq(n\,0)"', "-vframes", "1", "-y", image_path]).communicate()
 
             os.remove(partial_file_path)
 
