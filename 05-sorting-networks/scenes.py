@@ -1,6 +1,5 @@
 from utilities import *
 
-
 class SortingNetwork(VMobject):
     def __init__(
             self,
@@ -257,6 +256,9 @@ class SortingNetwork(VMobject):
                     *[FadeIn(other.comparator_layer_numbers[i][1]) for i in range(self_label_count, other_label_count)],
                     )
 
+        self.comparators = other_comparators
+        self.comparator_layer_numbers = other.comparator_layer_numbers
+
     def animate_wires_swap(self, wires, canvas):
         """Animate wires swapping. Note that the wires must not overlap."""
         # difference between two lines
@@ -334,7 +336,7 @@ class SortingNetwork(VMobject):
         return SortingNetwork(network, n, **kwargs)
 
     @classmethod
-    def BitonicSorter(cls, n, oriented=False, **kwargs):
+    def BitonicSorter(cls, n, **kwargs):
         """Create a (possibly oriented) bitonic sort network of size 2**n."""
         # TODO: oriented
         network = []
@@ -366,6 +368,20 @@ class SortingNetwork(VMobject):
                             network[-1][l].append((k * size + l, k * size + l + size // 2))
 
         return SortingNetwork(network, (2 ** n), **kwargs)
+
+
+    @classmethod
+    def FromArray(cls, array, n, **kwargs):
+        """Create a sorting network from nested arrays of comparators. Example:
+        [
+            [[(0, 1), (2, 3)]],
+            [[(1, 3)], [(0, 2)]],
+            [[(1, 2)]],
+        ]
+        """
+
+        return SortingNetwork(array, n, **kwargs)
+
 
     @classmethod
     def OptimalSorter(cls, n, optimized=True, **kwargs):
@@ -430,8 +446,6 @@ class SortingNetwork(VMobject):
                 ],
             ]
 
-        network = optimal_networks[n]
-
         # possibly de-optimize the network
         if not optimized:
             new_network = []
@@ -440,9 +454,9 @@ class SortingNetwork(VMobject):
                     for c in comparator:
                         new_network.append([[c]])
 
-            return SortingNetwork(new_network, n, oriented=False, **kwargs)
+            return SortingNetwork(new_network, n, **kwargs)
         else:
-            return SortingNetwork(network, n, oriented=False, **kwargs)
+            return SortingNetwork(network, n, **kwargs)
 
     def get_comparators(self):
         """Return a list of VGroups of all comparators."""
@@ -510,6 +524,11 @@ class Introduction(Scene):
             *[layer.animate.set_color(rainbow_to_rgb(i / len(layers))) for i, layer in enumerate(numbers)],
         )
 
+class Introduction(Scene):
+    @fade
+    def construct(self):
+        sn = SortingNetwork.OptimalSorter(7, width=9, height=4.5, depth_labels=False, optimized=False)
+
 class BubbleSort(Scene):
     @fade
     def construct(self):
@@ -527,6 +546,7 @@ class BubbleSort(Scene):
 
         sn.animate_optimization(sn_optimized, self)
 
+
 class Bitonic(Scene):
     def construct(self):
         title = Tex("\Large Bitonic sort")
@@ -535,44 +555,59 @@ class Bitonic(Scene):
         self.play(FadeOut(title))
 
     def construct(self):
-        f = lambda x: -abs((x + 2) % 4 - 2 - 2) - abs(-2 * ((x + 2) % 4 - 2  - 2) - 5) + 5
+        f = lambda x: -abs(x - 2) - abs(-2 * (x - 2) - 5) + 5
+        r = (-2, 1.999)
 
-        func = FunctionGraph(f, x_range = (-2, 2), fill_opacity=0, color=WHITE)
+        seq_left = FunctionGraph(f, x_range = r, fill_opacity=0, color=WHITE)
 
-        self.play(Write(func))
+        self.play(Write(seq_left))
 
         text = Tex("strictly bitonic")
-        text.next_to(func, DOWN).shift(DOWN * 0.2)
+        text.next_to(seq_left, DOWN).shift(DOWN * 0.2)
         self.play(Write(text), run_time=1)
 
-        func2 = FunctionGraph(f, x_range = (-2, 2), fill_opacity=0, color=WHITE)
-        func2.shift(RIGHT * 2)
-        func2.set_color(DARK_GRAY)
+        text2 = Tex("bitonic")
+        text2.next_to(seq_left, DOWN).shift(DOWN * 0.2)
 
-        func3 = FunctionGraph(f, x_range = (-2, 2), fill_opacity=0, color=WHITE)
-        func3.shift(LEFT * 2)
-        func3.set_color(DARK_GRAY)
+        seq_right = FunctionGraph(f, x_range = r, fill_opacity=0, color=WHITE)
+        seq_right.shift(RIGHT * 2)
+        seq_right.set_color(DARK_GRAY)
 
+        self.play(seq_left.animate.shift(LEFT * 2))
         self.play(
-                func.animate.shift(LEFT * 2),
+                Write(seq_right),
+                FadeOut(text),
+                FadeIn(text2),
                 )
 
-        # FUCK THIS
 
-        self.play(Write(func2))
+        seq_left_changing = FunctionGraph(f, x_range = r, fill_opacity=0, color=WHITE)
+        seq_left_changing.shift(LEFT * 2)
+        self.add(seq_left_changing)
 
+        seq_right_changing = FunctionGraph(f, x_range = r, fill_opacity=0, color=WHITE)
+        seq_right_changing.shift(RIGHT * 2)
+        self.add(seq_right_changing)
 
-        self.add(func3)
-        func.set_color(DARK_GRAY)
+        seq_left.set_color(DARK_GRAY)
 
-        start = func3.get_center()
+        def tmp(x, y):
+            if x > y:
+                return (0, 0)
+            else:
+                return (x, y)
 
-        def f(fan):
-            current = float((func3.get_center() - start)[0])
-            my = lambda x: -abs((x + 2) % 4 - 2 - 2) - abs(-2 * ((x + 2) % 4 - 2  - 2) - 5) + 5
-            fan_new = FunctionGraph(my, x_range = (-2 + current, 2 + current), fill_opacity=0, color=WHITE)
-            fan_new.move_to(fan)
-            fan.become(fan_new)
+        def fc(obj, t):
+            ff = FunctionGraph(f, x_range = tmp(-2 + t * 4, 1.999), fill_opacity=0, color=WHITE)
+            ff.shift(LEFT * 2)
+            obj.become(ff)
 
-        func3.add_updater(f)
-        self.play(func3.animate.shift(RIGHT * 4))
+        def gc(obj, t):
+            ff = FunctionGraph(f, x_range = tmp(-2, 1.999 - (1 - t) * 4), fill_opacity=0, color=WHITE)
+            ff.shift(RIGHT * 2)
+            obj.become(ff)
+
+        self.play(
+                UpdateFromAlphaFunc(seq_left_changing, fc),
+                UpdateFromAlphaFunc(seq_right_changing, gc),
+                run_time=2)
