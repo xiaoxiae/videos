@@ -1,6 +1,11 @@
 #!/bin/bash
+# a simple script for recording a sentence and playing it back, with noise profile applied
 
-# a simple script for recording a sentence and playing it back
+# don't overwrite
+if test -f "$1.wav"; then
+	mv $1.wav .$1.wav.`date +"%s"`
+fi
+
 arecord -vv -fdat $1.wav
 sox $1.wav a.wav noisered record.noise-profile 0.3
 rm $1.wav
