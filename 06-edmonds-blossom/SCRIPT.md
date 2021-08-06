@@ -2,46 +2,41 @@
 INTRODUCTION
 ---
 
-In this video, we'll be describing the blossom algorithm for maximal matching in a graph, developed by Jack Edmonds.
+TODO: motivation, this sucks. Imagine you have a group of people,each having preferences regarding who they'd like to be matched with. Your task is to create as many pairs as possible while respecting the preferences (i. e. no two people will be matched).
 
-As a quick reminder: a graph consists of vertices that are connected by edges.
+You certainly could test all possible options, but this would, for larger groups of people, take quite a while. We need something better.
 
-A matching in a graph is a subset of edges, such that no two of them share a vertex. It is maximal if it contains the most edges possible (compared to other matchings for the given graph), and perfect, if each vertex is in some edge from the matching.
+In this video, we'll be describing the blossom algorithm for maximal matching in a graph, developed by Jack Edmonds in 1961.
 
-TODO: perfect -- odstranit z toho grafu ty problematické hrany
+---
 
-We'll call vertices that are not in the matching free vertices.
+Formally, a matching in a graph is a subset of edges, such that no two share a vertex. A matching is maximal if it contains the most edges possible (compared to other matchings for the given graph).
 
-The core idea behind the algorithm is an „alternating path.“ An alternating path in a graph is an alternating sequence of edges in the matching and edges not in the matching. We'll call an alternating path „free,“ if the first and the last vertex is free.
+We'll call vertices that are not in the matching exposed vertices.
 
-What is interesting about free alternating paths is that if a graph contains it, then its matching is not maximal, because we can switch the edges and improve the matching by 1. Another thing that will be helpful (but we don't be proving, since it's not all that interesting) is that if a graph **doesn't** contain it, then it **is** maximal.
+The core idea behind the algorithm are „augmenting paths.“ An augmenting path in a graph with some matching is an alternating sequence of edges in the matching and edges not in the matching, where the first and the last vertex is exposed.
 
-This means that we can repeatedly look for free alternatning paths, improve them and once there are no more, we know that we found a maximal matching.
+TODO: animace tohohle na nějakém grafu
+
+As the name suggests, augmenting paths can improve (or augment) the size of the current matching by 1 by switching the edges on the path. Also, if a graph **doesn't** contain an augmenting path, then the matching is maximal.
+
+Combining these two facts gives us the algorithm -- repeatedly look for augmenting paths and use them to improve the matching, until there are no more, at which point we know that the matching is maximal.
 
 ---
 TREE PERFECT MATCHING
 ---
 
-Let's think about how to find maximal matching in a tree (a graph without cycles).
+First, let's think about how to find augmenting paths in a tree (a graph without cycles). This will be pretty straight-forward -- run a BFS from some exposed vertex until we find another one.
 
-TODO: ukázat animaci nalevo strom, napravo né strom
-
-We'd like to repeatedly look for free alternating paths, so that we could switch their edges and improve the matching, until it's maximal (just like we described eariler).
-
-To do this a little more systematically, we'll build a forest of alternating paths from all free vertices and then look at all edges not in the pairing.
-
----
-BIPARTITE GRAPH PERFECT MATCHING
----
-
-- add cycles of even length to trees
-- show that it doesn't break anything
+TODO: animace
 
 ---
 GENERAL GRAPH MATCHING
 ---
 
-- cycles of odd length suck -- show problem
+Let's consider a general graph to see why our previous approach doesn't quite work. If we were to run a BFS from this vertex, 
+
 - introduce blossom
 - show that compressing it, finishing matching and uncompressing it doesn't break anything
-- visualize algorithm runtime
+
+- visualize algorithm runtime (left is graph, right is forest)

@@ -1,0 +1,5 @@
+- [ ] implementace blossom algoritmu a lesa v Pythonu
+- [ ] vizualizace -- nalevo graf, napravo les -- iterativní algoritmus
+	- barva toho, které vrcholy jsou už do lesa přidané (zelená)
+	- barva toho, když najdeme augmenting path (oranžová)
+	- označení, že jsme právě kontrahovali/liftnuli květ
