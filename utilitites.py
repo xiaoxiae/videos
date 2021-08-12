@@ -225,4 +225,4 @@ def sgn(n):
         return 0
 
 def edgesToVertices(edges):
-    return set([u for u, v in edges] + [v for u, v in edges])
+    return list(set([u for u, v in edges] + [v for u, v in edges]))

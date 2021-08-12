@@ -1,6 +1,7 @@
 from utilities import *
 from mm import *
 
+
 def visualizeBipariteBlossom(graph, pairing=[]):
     """Visualize the blossom algorithm for a bipartite graph."""
 
@@ -8,8 +9,10 @@ def visualizeBipariteBlossom(graph, pairing=[]):
 PAIRING_COLOR = YELLOW
 EXPOSED_COLOR = ORANGE
 AUGMENTING_COLOR = RED
+BFS_COLOR = BLUE
 
 MATCHED_WIDTH = 15
+
 
 def match_edge(mob, change_color=True):
     mob.set_stroke_width(MATCHED_WIDTH)
@@ -18,6 +21,7 @@ def match_edge(mob, change_color=True):
         mob.set_color(PAIRING_COLOR)
 
     return mob
+
 
 def unmatch_edge(mob, change_color=True):
     mob.set_stroke_width(4)
@@ -28,7 +32,7 @@ def unmatch_edge(mob, change_color=True):
     return mob
 
 
-def augment_path(self, g, path):
+def animate_augment_path(self, g, path):
     A = path
     AV = edgesToVertices(A)
 
@@ -39,8 +43,14 @@ def augment_path(self, g, path):
     )
 
     self.play(
-            *[ApplyFunction(lambda x: match_edge(x, change_color=False),g.edges[e]) for e in A[::2]],
-            *[ApplyFunction(lambda x: unmatch_edge(x, change_color=False),g.edges[e]) for e in A[1::2]],
+        *[
+            ApplyFunction(lambda x: match_edge(x, change_color=False), g.edges[e])
+            for e in A[::2]
+        ],
+        *[
+            ApplyFunction(lambda x: unmatch_edge(x, change_color=False), g.edges[e])
+            for e in A[1::2]
+        ],
     )
 
     self.play(
@@ -51,9 +61,37 @@ def augment_path(self, g, path):
     )
 
 
+def animate_correct_graph_color(self, g, M):
+    MV = edgesToVertices(M)
+
+    self.play(
+        *[g.edges[e].animate.set_color(WHITE) for e in g.edges if e not in M],
+        *[g.edges[e].animate.set_color(PAIRING_COLOR) for e in g.edges if e in M],
+        *[
+            g.vertices[v].animate.set_color(EXPOSED_COLOR)
+            for v in g.vertices
+            if v not in MV
+        ],
+        *[
+            g.vertices[v].animate.set_color(PAIRING_COLOR)
+            for v in g.vertices
+            if v in MV
+        ],
+    )
+
+
+def neighbours(v, edges):
+    t = []
+    for e in edges:
+        if v in e:
+            t.append(e)
+    return [a for a in edgesToVertices(t) if a != v]
+
+
 class Intro(Scene):
     def construct(self):
-        g = parse_graph("""
+        g = parse_graph(
+            """
 1 2 <6.603275758877981, 0.22200042158063704> <10.542340602049554, 5.0486231945767255>
 1 3 <6.603275758877981, 0.22200042158063704> <0.8751494485961517, 2.8894436903527834>
 2 4 <10.542340602049554, 5.0486231945767255> <8.316429210045438, 9.49508367004807>
@@ -69,7 +107,10 @@ class Intro(Scene):
 5 12 <5.320620964273308, -6.074692063436867> <11.495122080884329, -4.388454491563957>
 3 11 <0.8751494485961517, 2.8894436903527834> <0.4357598447196547, -3.4516057795938906>
 2 14 <10.542340602049554, 5.0486231945767255> <16.235759844719652, 1.2483942204061114>
-                """, s=0.13, t=0.13).scale(1.3)
+                """,
+            s=0.13,
+            t=0.13,
+        ).scale(1.3)
 
         self.play(Write(g))
 
@@ -77,7 +118,7 @@ class Intro(Scene):
         MV = edgesToVertices(M)
 
         self.play(
-            *[ApplyFunction(match_edge,g.edges[e]) for e in M],
+            *[ApplyFunction(match_edge, g.edges[e]) for e in M],
             *[g.vertices[v].animate.set_color(PAIRING_COLOR) for v, _ in M],
             *[g.vertices[v].animate.set_color(PAIRING_COLOR) for _, v in M],
         )
@@ -86,23 +127,40 @@ class Intro(Scene):
         MPV = edgesToVertices(MP)
 
         self.play(
-            *[ApplyFunction(match_edge,g.edges[e]) for e in MP if e not in M],
-            *[g.vertices[v].animate.set_color(PAIRING_COLOR) for v, _ in MP if v not in MV],
-            *[g.vertices[v].animate.set_color(PAIRING_COLOR) for _, v in MP if v not in MV],
-            *[ApplyFunction(unmatch_edge,g.edges[e]) for e in M if e not in MP],
+            *[ApplyFunction(match_edge, g.edges[e]) for e in MP if e not in M],
+            *[
+                g.vertices[v].animate.set_color(PAIRING_COLOR)
+                for v, _ in MP
+                if v not in MV
+            ],
+            *[
+                g.vertices[v].animate.set_color(PAIRING_COLOR)
+                for _, v in MP
+                if v not in MV
+            ],
+            *[ApplyFunction(unmatch_edge, g.edges[e]) for e in M if e not in MP],
             *[g.vertices[v].animate.set_color(WHITE) for v, _ in M if v not in MPV],
             *[g.vertices[v].animate.set_color(WHITE) for _, v in M if v not in MPV],
         )
 
         self.play(
-            *[Circumscribe(g.vertices[v], Circle, color=EXPOSED_COLOR) for v in g.vertices if v not in MPV],
-            *[g.vertices[v].animate.set_color(EXPOSED_COLOR) for v in g.vertices if v not in MPV],
+            *[
+                Circumscribe(g.vertices[v], Circle, color=EXPOSED_COLOR)
+                for v in g.vertices
+                if v not in MPV
+            ],
+            *[
+                g.vertices[v].animate.set_color(EXPOSED_COLOR)
+                for v in g.vertices
+                if v not in MPV
+            ],
         )
 
 
 class Core(Scene):
     def construct(self):
-        g = parse_graph("""
+        g = parse_graph(
+            """
 1 2 <10.402934501867037, 17.34415069651897> <16.203839106744862, 19.547491168818176>
 2 3 <16.203839106744862, 19.547491168818176> <22.178420402084758, 17.787256748775246> 
 3 4 <22.178420402084758, 17.787256748775246> <20.774348346247653, 23.755044257314765>
@@ -117,7 +175,10 @@ class Core(Scene):
 3 6 <22.178420402084758, 17.787256748775246> <28.449708119653423, 17.768804208250373>
 5 12 <27.05817492976113, 23.859707295924565> <33.0788344527837, 22.821541250821294>
 2 13 <16.203839106744862, 19.547491168818176> <12.52911329849324, 24.494238155627645>
-                """, s=0.13, t=0.13).scale(1.3)
+                """,
+            s=0.13,
+            t=0.13,
+        ).scale(1.3)
 
         self.play(Write(g))
 
@@ -125,20 +186,93 @@ class Core(Scene):
         MV = edgesToVertices(M)
 
         self.play(
-            *[ApplyFunction(match_edge,g.edges[e]) for e in M],
+            *[ApplyFunction(match_edge, g.edges[e]) for e in M],
             *[g.vertices[v].animate.set_color(PAIRING_COLOR) for v, _ in M],
             *[g.vertices[v].animate.set_color(PAIRING_COLOR) for _, v in M],
-            *[g.vertices[v].animate.set_color(EXPOSED_COLOR) for v in g.vertices if v not in MV],
+            *[
+                g.vertices[v].animate.set_color(EXPOSED_COLOR)
+                for v in g.vertices
+                if v not in MV
+            ],
         )
 
-        augment_path(self, g, [(8, 9), (5, 8), (4, 5), (2, 4), (1, 2)])
-        augment_path(self, g, [(10, 11), (6, 10), (3, 6)])
-        augment_path(self, g, [(5, 12), (4, 5), (4, 7)])
+        animate_augment_path(self, g, [(8, 9), (5, 8), (4, 5), (2, 4), (1, 2)])
+        animate_augment_path(self, g, [(10, 11), (6, 10), (3, 6)])
+        animate_augment_path(self, g, [(5, 12), (4, 5), (4, 7)])
+
+
+def edgeFromVertices(v, w, e):
+    if (v, w) in e:
+        return (v, w)
+    return (w, v)
+
+
+def animate_tree_algorithm_iteration(self, g, M):
+    MV = edgesToVertices(M)
+    exposed = [v for v in g.vertices if v not in MV]
+
+    shuffle(exposed)
+    shuffle(MV)
+
+    explored = set()
+
+    for v in exposed:
+        self.play(Circumscribe(g.vertices[v], Circle, color=BFS_COLOR))
+
+        queue = [(v, False, [])]
+
+        current_layer = []
+        previous_layer_length = 0
+        augmenting_path = None
+
+        while len(queue) != 0:
+            v, edge_type, path = queue.pop(0)
+            explored.add(v)
+
+            # if we've explored the current layer
+            if len(path) > previous_layer_length:
+                # animate it
+                self.play(
+                    *[g.vertices[v].animate.set_color(BFS_COLOR) for v in edgesToVertices(current_layer)],
+                    *[g.edges[e].animate.set_color(BFS_COLOR) for e in current_layer],
+                )
+
+                # if it also contains an augmenting path, then animate it
+                if augmenting_path is not None:
+                    # animate the augmenting path
+                    animate_augment_path(self, g, augmenting_path)
+
+                    # improve M
+                    for i in range(0, len(augmenting_path), 2):
+                        M.append(augmenting_path[i])
+                    for i in range(1, len(augmenting_path), 2):
+                        M.remove(augmenting_path[i])
+
+                    return True
+
+            for neighbour in neighbours(v, g.edges):
+                if neighbour in explored:
+                    continue
+
+                e = edgeFromVertices(v, neighbour, g.edges)
+
+                new_path = path + [e]
+
+                if neighbour not in MV and not edge_type:
+                    augmenting_path = new_path
+                    current_layer.append(e)
+
+                if edge_type and e in M or not edge_type and e not in M:
+                    queue.append((neighbour, not edge_type, new_path))
+                    current_layer.append(e)
+
+    return False
 
 
 class Tree(Scene):
     def construct(self):
-        g = parse_graph("""
+        g = parse_graph(
+            """
 1 2 <22.112572766007876, -2.5264304107833246> <25.67796210932871, 2.697892851581728>
 3 1 <28.55611115849213, -3.7428115450105133> <22.112572766007876, -2.5264304107833246>
 4 1 <15.428111442950147, -2.829960372608953> <22.112572766007876, -2.5264304107833246>
@@ -155,10 +289,23 @@ class Tree(Scene):
 13 15 <11.896071360485621, 2.430059482684668> <8.433034228381587, 7.599704780509387>
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
-                """, s=0.11, t=0.11).scale(1.3)
+                """,
+            s=0.11,
+            t=0.11,
+        ).scale(1.3)
 
         self.play(Write(g))
 
-        self.play(
-            *[g.vertices[v].animate.set_color(EXPOSED_COLOR) for v in g.vertices],
-        )
+        M = []
+
+        seed(2)
+
+        while True:
+            animate_correct_graph_color(self, g, M)
+
+            result = animate_tree_algorithm_iteration(self, g, M)
+
+            if not result:
+                break
+
+        animate_correct_graph_color(self, g, M)
