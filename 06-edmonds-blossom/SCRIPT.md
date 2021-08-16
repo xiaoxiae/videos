@@ -31,11 +31,11 @@ TREE PERFECT MATCHING
 ---
 
 # Tree
-First, let's think about how to find augmenting paths in a tree (a graph without cycles). This will be pretty straight-forward -- run a BFS from some exposed vertex until we find another one.
+First, let's think about how to find augmenting paths in a tree (a graph without cycles). This will be pretty straight-forward -- run a modified BFS from some exposed vertex until we find another one.
 
 Initially, all are exposed, since the pairing is empty.
 
-TODO: animace
+
 
 ---
 GENERAL GRAPH MATCHING

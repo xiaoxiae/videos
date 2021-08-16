@@ -32,17 +32,19 @@ def unmatch_edge(mob, change_color=True):
     return mob
 
 
-def animate_augment_path(self, g, path):
+def animate_augment_path(self, g, path, add_animations_first=None, add_animations_second=None):
     A = path
     AV = edgesToVertices(A)
 
     self.play(
+        *([] if add_animations_first is None else add_animations_first),
         *[g.edges[e].animate.set_color(AUGMENTING_COLOR) for e in A],
         *[g.vertices[v].animate.set_color(AUGMENTING_COLOR) for v, _ in A],
         *[g.vertices[v].animate.set_color(AUGMENTING_COLOR) for _, v in A],
     )
 
     self.play(
+        *([] if add_animations_second is None else add_animations_second),
         *[
             ApplyFunction(lambda x: match_edge(x, change_color=False), g.edges[e])
             for e in A[::2]
@@ -61,10 +63,11 @@ def animate_augment_path(self, g, path):
     )
 
 
-def animate_correct_graph_color(self, g, M):
+def animate_correct_graph_color(self, g, M, set_lines, code):
     MV = edgesToVertices(M)
 
     self.play(
+        *set_lines(self, code, [16], len(code.code_string.splitlines())),
         *[g.edges[e].animate.set_color(WHITE) for e in g.edges if e not in M],
         *[g.edges[e].animate.set_color(PAIRING_COLOR) for e in g.edges if e in M],
         *[
@@ -207,7 +210,7 @@ def edgeFromVertices(v, w, e):
     return (w, v)
 
 
-def animate_tree_algorithm_iteration(self, g, M):
+def animate_tree_algorithm_iteration(self, g, M, set_lines, code):
     MV = edgesToVertices(M)
     exposed = [v for v in g.vertices if v not in MV]
 
@@ -217,7 +220,11 @@ def animate_tree_algorithm_iteration(self, g, M):
     explored = set()
 
     for v in exposed:
-        self.play(Circumscribe(g.vertices[v], Circle, color=BFS_COLOR))
+        self.play(
+            Circumscribe(g.vertices[v], Circle, color=BFS_COLOR),
+            g.vertices[v].animate.set_color(BFS_COLOR),
+            *set_lines(self, code, [3], len(code.code_string.splitlines())),
+        )
 
         queue = [(v, False, [])]
 
@@ -235,12 +242,17 @@ def animate_tree_algorithm_iteration(self, g, M):
                 self.play(
                     *[g.vertices[v].animate.set_color(BFS_COLOR) for v in edgesToVertices(current_layer)],
                     *[g.edges[e].animate.set_color(BFS_COLOR) for e in current_layer],
+                    *set_lines(self, code, [4, 5, 6], len(code.code_string.splitlines())),
                 )
 
                 # if it also contains an augmenting path, then animate it
                 if augmenting_path is not None:
                     # animate the augmenting path
-                    animate_augment_path(self, g, augmenting_path)
+                    animate_augment_path(self, g, augmenting_path,
+                            add_animations_first=set_lines(self, code, [8], len(code.code_string.splitlines())),
+                            add_animations_second=set_lines(self, code, [9, 10], len(code.code_string.splitlines()), previous_lines=[8]))
+
+                    set_lines(self, code, [9, 10], len(code.code_string.splitlines()))
 
                     # improve M
                     for i in range(0, len(augmenting_path), 2):
@@ -266,6 +278,7 @@ def animate_tree_algorithm_iteration(self, g, M):
                     queue.append((neighbour, not edge_type, new_path))
                     current_layer.append(e)
 
+    self.play(*set_lines(self, code, [12], len(code.code_string.splitlines())))
     return False
 
 
@@ -290,22 +303,69 @@ class Tree(Scene):
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
                 """,
-            s=0.11,
-            t=0.11,
-        ).scale(1.3)
+            s=0.06,
+            t=0.07,
+        ).scale(1.3).shift(3.7 * RIGHT)
 
-        self.play(Write(g))
+        code_str = """def improve_matching(G):
+    \"\"\"Attempt to improve a matching in G.\"\"\"
+    for v in exposed_vertices(G):
+        # internally uses BFS to find alternating
+        # layers of edges in and not in matching
+        path = find_augmenting_path(v)
+
+        if path is not None:
+            switch_augmenting_path(path)
+            return True
+
+    return False
+
+
+while True:
+    if not improve_matching(G):
+        break"""
+
+        code = Code(code=code_str, font="Fira Mono", line_spacing=0.55, style="Monokai", language="python")
+        code.background_mobject[0].set_opacity(0)
+        code.scale(0.70).shift(2.6 * LEFT)
+
+        g.rotate_in_place(PI / 2)
+
+        self.play(Write(g), Write(code))
 
         M = []
+
+        def set_lines(self, code, lines, line_count, previous_lines=[]):
+            # by default, the code has all lines highligted
+            if previous_lines == []:
+                for i in range(line_count):
+                    previous_lines.append(i + 1)
+
+            # lines newly highlighted
+            new_lines = [l for l in lines if l not in previous_lines]
+
+            # lines that will disappear
+            dis_lines = [l for l in previous_lines if l not in lines]
+
+            new_lines_animation = [FadeIn(code.line_numbers[i - 1]) for i in new_lines]
+            dis_lines_animation = [FadeOut(code.line_numbers[i - 1]) for i in dis_lines]
+
+            while len(previous_lines) != 0:
+                previous_lines.pop()
+
+            for e in lines:
+                previous_lines.append(e)
+
+            return new_lines_animation + dis_lines_animation
 
         seed(2)
 
         while True:
-            animate_correct_graph_color(self, g, M)
+            animate_correct_graph_color(self, g, M, set_lines, code)
 
-            result = animate_tree_algorithm_iteration(self, g, M)
+            result = animate_tree_algorithm_iteration(self, g, M, set_lines, code)
 
             if not result:
                 break
 
-        animate_correct_graph_color(self, g, M)
+        animate_correct_graph_color(self, g, M, set_lines, code)
