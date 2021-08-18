@@ -111,6 +111,34 @@ def neighbours(v, edges):
     return [a for a in edgesToVertices(t) if a != v]
 
 
+class Kids(Scene):
+    def construct(self):
+        kids = [SVGMobject(f"kids/{i + 1}.svg").scale(0.5) for i in range(6)]
+
+        seed(3)
+        g = nx.generators.gnm_random_graph(6, 6)
+
+        g = Graph(list(g.nodes), list(g.edges))
+
+        C = 2.3
+        for i in range(6):
+            kids[i].shift(C * RIGHT * sin((PI * 2 / 6) * i + PI / 6) + C * UP * cos((PI * 2 / 6) * i + PI / 6))
+            g.vertices[i].move_to(kids[i].get_center())
+            g.vertices[i].scale(3)
+            g.vertices[i].set_opacity(0)
+
+        self.play(LaggedStart(*[Write(img) for img in kids], lag_ratio=0.2), run_time=1.5)
+
+        self.bring_to_back(g)
+
+        self.play(Write(g), run_time=2)
+
+        MP = get_maximal_matching(list(g.edges))
+        MPV = edgesToVertices(MP)
+
+        self.play(*[ApplyFunction(match_edge, g.edges[e]) for e in MP])
+
+
 class Intro(Scene):
     def construct(self):
         g = parse_graph(
