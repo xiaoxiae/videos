@@ -5,16 +5,16 @@ INTRODUCTION
 # Kids
 Imagine you're the head of a summer camp and your task is to group the attendees into pairs. To make the camp's next activity as enjoyable as possible for everyone, you told each attendee to write cards with names of people they'd like to be paired with. Given these cards, you'd now like to create a matching such that the amount of the people that wanted to be with one another is maximal.
 
-Given the cards, we can create a graph with edges between attendees that would like to be with one another (i. e. cards go both ways).
+Given the cards, we can create a graph with edges between attendees that would like to be with one another.
 
-To find the matching, you certainly could test all possible options, but this would, for larger groups, take quite a while. We need something better.
+To find the matching, you certainly could test all possible options, but this would, for larger groups, take quite a while.
 
-In this video, we'll be describing the blossom algorithm for maximal matching in a graph, developed by Jack Edmonds in 1961.
+In this video, we'll be describing the blossom algorithm for maximal matching in a graph, developed by Jack Edmonds in 1961, that can perform this task quite efficiently.
 
 ---
 
 # Intro
-Formally, a matching in a graph is a subset of edges, such that no two share a vertex. A matching is maximal if it contains the most edges possible (compared to other matchings for the given graph).
+Formally, a matching in a graph is a subset of edges, such that no two share a vertex. A matching is maximal if it contains the most edges possible compared to other matchings for the given graph.
 
 We'll call vertices that are not in the matching exposed vertices.
 
@@ -23,18 +23,16 @@ The core idea behind the algorithm are „augmenting paths.“ An augmenting pat
 
 On the graph, one such augmenting path is highlighted in red.
 
-As the name suggests, augmenting paths can improve (or augment) the size of the current matching by switching the edges on the path.
+As the name suggests, augmenting paths can improve (or augment) the size of the current matching. This can be done by switching the unmatched edges on the path with the matched ones.
 
-One thing to note is that if a graph **doesn't** contain an augmenting path, then the matching **is** maximal. This ensures that we're done when we run out of augmenting paths.
-
-Given that a graph doesn't contain an augmenting path if and only if it is maximal, we've essentially formulated our algorithm -- repeatedly look for augmenting paths, until there are none left, at which point the matching is maximal.
+One thing to note (that we won't be proving) is that a graph **doesn't** contain an augmenting path, if and only if the matching **is** maximal. This essentially gives us the algorithm -- repeatedly look for augmenting paths, until there are none left, at which point we know the matching is maximal.
 
 ---
 TREE PERFECT MATCHING
 ---
 
 # Tree
-First, let's think about how to find augmenting paths in a tree (a graph without cycles). This will be pretty straight-forward -- we'll run a modified BFS from exposed vertices.
+First, let's think about how to find augmenting paths in a tree (a graph without cycles). This will be pretty straight-forward -- we'll repeatedly run a modified BFS from exposed vertices.
 
 Initially, every vertex is exposed, since the pairing is empty.
 
@@ -47,13 +45,18 @@ GENERAL GRAPH MATCHING
 ---
 
 # Problem
-Let's consider a graph our algorithm won't quite work. Let's say we already found a partial matching and would like to further extend it. Running our algorithm here wouldn't work, since the augmenting path is longer than the shortest path and goes as follows.
+Although trees are a large family of graphs, most graphs that we would like to run the algorithm on likely won't be a tree, so let's consider a graph our algorithm will not work on.
 
-TODO: blossom
+Imagine we already found a partial matching and would like to further extend it. Running our algorithm here wouldn't work, since the augmenting path is longer than the shortest path.
 
-What we could, however, do, is „compress“ this blossom TODO
+The problem here is this part of the graph, called the blossom (hence the name of the algorithm). It consists of an odd cycle with alternating edges, and an alternating path ending in an exposed vertex.
 
-- introduce blossom
-- show that compressing it, finishing matching and uncompressing it doesn't break anything
+Our tree algorithm is still pretty neat and we would like to use it here too. What we'll do is the following:
+- first, „compress“ the blossom into a single vertex
+- second, find an augmenting path in this new graph and
+- third, „lift“ the path back to the original graph.
 
+Here, we're relying on the fact that we can always lift the path back, which we can't but we won't be proving (see the video description if you're interested).
+
+# Blossom
 - visualize algorithm runtime (left is graph, right is forest)

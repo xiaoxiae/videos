@@ -6,19 +6,23 @@ def visualizeBipariteBlossom(graph, pairing=[]):
     """Visualize the blossom algorithm for a bipartite graph."""
 
 
-PAIRING_COLOR = YELLOW
+MATCHING_COLOR = YELLOW
 EXPOSED_COLOR = ORANGE
 AUGMENTING_COLOR = RED
 BFS_COLOR = BLUE
 
+HIDDEN_COLOR = DARKER_GRAY
+
 MATCHED_WIDTH = 15
+
+GRAPH_SCALE = 1.3
 
 
 def match_edge(mob, change_color=True):
     mob.set_stroke_width(MATCHED_WIDTH)
 
     if change_color:
-        mob.set_color(PAIRING_COLOR)
+        mob.set_color(MATCHING_COLOR)
 
     return mob
 
@@ -32,9 +36,25 @@ def unmatch_edge(mob, change_color=True):
     return mob
 
 
-def animate_augment_path(self, g, path, add_animations_first=None, add_animations_second=None):
+def animate_augment_path(self, g, path, add_animations_first=None, add_animations_second=None, instant=False, switch=False):
     A = path
     AV = edgesToVertices(A)
+
+    offset = 0 if not switch else 1
+
+    if instant:
+        self.play(
+            *([] if add_animations_second is None else add_animations_second),
+            *[
+                ApplyFunction(lambda x: match_edge(x), g.edges[e])
+                for e in A[offset::2]
+            ],
+            *[
+                ApplyFunction(lambda x: unmatch_edge(x), g.edges[e])
+                for e in A[(offset+1)%2::2]
+            ],
+        )
+        return
 
     self.play(
         *([] if add_animations_first is None else add_animations_first),
@@ -47,36 +67,36 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
         *([] if add_animations_second is None else add_animations_second),
         *[
             ApplyFunction(lambda x: match_edge(x, change_color=False), g.edges[e])
-            for e in A[::2]
+            for e in A[offset::2]
         ],
         *[
             ApplyFunction(lambda x: unmatch_edge(x, change_color=False), g.edges[e])
-            for e in A[1::2]
+            for e in A[(offset+1)%2::2]
         ],
     )
 
     self.play(
-        *[g.edges[e].animate.set_color(PAIRING_COLOR) for e in A[::2]],
-        *[g.edges[e].animate.set_color(WHITE) for e in A[1::2]],
-        *[g.vertices[v].animate.set_color(PAIRING_COLOR) for v, _ in A[::2]],
-        *[g.vertices[v].animate.set_color(PAIRING_COLOR) for _, v in A[::2]],
+        *[g.edges[e].animate.set_color(MATCHING_COLOR) for e in A[offset::2]],
+        *[g.edges[e].animate.set_color(WHITE) for e in A[(offset+1)%2::2]],
+        *[g.vertices[v].animate.set_color(MATCHING_COLOR) for v, _ in A[offset::2]],
+        *[g.vertices[v].animate.set_color(MATCHING_COLOR) for _, v in A[offset::2]],
     )
 
 
-def animate_correct_graph_color(self, g, M, set_lines, code):
+def animate_correct_graph_color(self, g, M, set_lines=None, code=None):
     MV = edgesToVertices(M)
 
     self.play(
-        *set_lines(self, code, [16], len(code.code_string.splitlines())),
+        *([] if set_lines is None else set_lines(self, code, [16], len(code.code_string.splitlines()))),
         *[g.edges[e].animate.set_color(WHITE) for e in g.edges if e not in M],
-        *[g.edges[e].animate.set_color(PAIRING_COLOR) for e in g.edges if e in M],
+        *[g.edges[e].animate.set_color(MATCHING_COLOR) for e in g.edges if e in M],
         *[
             g.vertices[v].animate.set_color(EXPOSED_COLOR)
             for v in g.vertices
             if v not in MV
         ],
         *[
-            g.vertices[v].animate.set_color(PAIRING_COLOR)
+            g.vertices[v].animate.set_color(MATCHING_COLOR)
             for v in g.vertices
             if v in MV
         ],
@@ -113,7 +133,7 @@ class Intro(Scene):
                 """,
             s=0.13,
             t=0.13,
-        ).scale(1.3)
+        ).scale(GRAPH_SCALE)
 
         self.play(Write(g))
 
@@ -122,22 +142,22 @@ class Intro(Scene):
 
         self.play(
             *[ApplyFunction(match_edge, g.edges[e]) for e in M],
-            *[g.vertices[v].animate.set_color(PAIRING_COLOR) for v, _ in M],
-            *[g.vertices[v].animate.set_color(PAIRING_COLOR) for _, v in M],
+            *[g.vertices[v].animate.set_color(MATCHING_COLOR) for v, _ in M],
+            *[g.vertices[v].animate.set_color(MATCHING_COLOR) for _, v in M],
         )
 
-        MP = getMaximalPairing(list(g.edges))
+        MP = get_maximal_matching(list(g.edges))
         MPV = edgesToVertices(MP)
 
         self.play(
             *[ApplyFunction(match_edge, g.edges[e]) for e in MP if e not in M],
             *[
-                g.vertices[v].animate.set_color(PAIRING_COLOR)
+                g.vertices[v].animate.set_color(MATCHING_COLOR)
                 for v, _ in MP
                 if v not in MV
             ],
             *[
-                g.vertices[v].animate.set_color(PAIRING_COLOR)
+                g.vertices[v].animate.set_color(MATCHING_COLOR)
                 for _, v in MP
                 if v not in MV
             ],
@@ -181,7 +201,7 @@ class Core(Scene):
                 """,
             s=0.13,
             t=0.13,
-        ).scale(1.3)
+        ).scale(GRAPH_SCALE)
 
         self.play(Write(g))
 
@@ -190,8 +210,8 @@ class Core(Scene):
 
         self.play(
             *[ApplyFunction(match_edge, g.edges[e]) for e in M],
-            *[g.vertices[v].animate.set_color(PAIRING_COLOR) for v, _ in M],
-            *[g.vertices[v].animate.set_color(PAIRING_COLOR) for _, v in M],
+            *[g.vertices[v].animate.set_color(MATCHING_COLOR) for v, _ in M],
+            *[g.vertices[v].animate.set_color(MATCHING_COLOR) for _, v in M],
             *[
                 g.vertices[v].animate.set_color(EXPOSED_COLOR)
                 for v in g.vertices
@@ -305,7 +325,7 @@ class Tree(Scene):
                 """,
             s=0.06,
             t=0.07,
-        ).scale(1.3).shift(3.7 * RIGHT)
+        ).scale(GRAPH_SCALE).shift(3.7 * RIGHT)
 
         code_str = """def improve_matching(G):
     \"\"\"Attempt to improve a matching in G.\"\"\"
@@ -369,3 +389,128 @@ while True:
                 break
 
         animate_correct_graph_color(self, g, M, set_lines, code)
+
+class Problem(Scene):
+    def construct(self):
+        C = 1.3
+
+        g = parse_graph(
+            """
+1 2 <45.9217542503518, 30.268039362382353> <40.418193960422386, 27.255790801835087>
+2 3 <40.418193960422386, 27.255790801835087> <40.275304608904456, 21.00876563036128>
+3 4 <40.275304608904456, 21.00876563036128> <34.290257207802384, 19.319999132635935>
+4 5 <34.290257207802384, 19.319999132635935> <30.320308258664582, 24.016251087986912>
+5 6 <30.320308258664582, 24.016251087986912> <34.411741345002966, 28.722301776246766>
+2 6 <40.418193960422386, 27.255790801835087> <34.411741345002966, 28.722301776246766>
+1 7 <45.9217542503518, 30.268039362382353> <52.08682172920419, 30.518073800366004>
+3 8 <40.275304608904456, 21.00876563036128> <45.88376295063149, 23.472558301422573>
+3 9 <40.275304608904456, 21.00876563036128> <44.74231894798374, 16.725946411138796>
+                """,
+            s=0.13 / C,
+            t=-0.13 / C,
+        ).scale(GRAPH_SCALE * C)
+
+        self.play(Write(g))
+
+        M = [(1, 2), (3, 4), (5, 6)]
+        MV = edgesToVertices(M)
+        exposed = [v for v in g.vertices if v not in MV]
+
+        self.play(
+            *[ApplyFunction(match_edge, g.edges[e]) for e in M],
+            *[g.vertices[v].animate.set_color(MATCHING_COLOR) for v in edgesToVertices(M)],
+            *[g.vertices[v].animate.set_color(EXPOSED_COLOR) for v in exposed],
+        )
+
+        self.play(
+                g.vertices[7].animate.set_color(BFS_COLOR),
+                Circumscribe(g.vertices[7], Circle, color=EXPOSED_COLOR)
+                )
+
+        layers = [[(1, 7)], [(1, 2)], [(2, 3), (2, 6)], [(3, 4), (5, 6)]]
+
+        for current_layer in layers:
+            self.play(
+                *[g.vertices[v].animate.set_color(BFS_COLOR) for v in edgesToVertices(current_layer)],
+                *[g.edges[e].animate.set_color(BFS_COLOR) for e in current_layer],
+            )
+
+        animate_correct_graph_color(self, g, M)
+
+        animate_augment_path(self, g, [(1, 7), (1, 2), (2, 6), (5, 6), (4, 5), (3, 4), (3, 9)])
+
+        animate_augment_path(self, g, [(1, 7), (1, 2), (2, 6), (5, 6), (4, 5), (3, 4), (3, 9)],
+                instant=True, switch=True,
+                add_animations_second=[
+                    g.vertices[7].animate.set_color(EXPOSED_COLOR),
+                    g.vertices[8].animate.set_color(EXPOSED_COLOR),
+                    g.vertices[9].animate.set_color(EXPOSED_COLOR),
+                    ])
+
+        self.play(
+            g.vertices[8].animate.set_color(HIDDEN_COLOR),
+            g.vertices[9].animate.set_color(HIDDEN_COLOR),
+            g.edges[(3, 9)].animate.set_color(HIDDEN_COLOR),
+            g.edges[(3, 8)].animate.set_color(HIDDEN_COLOR),
+        )
+
+        self.play(
+            g.vertices[7].animate.set_color(HIDDEN_COLOR),
+            g.vertices[1].animate.set_color(HIDDEN_COLOR),
+            g.edges[(1, 7)].animate.set_color(HIDDEN_COLOR),
+            g.edges[(1, 2)].animate.set_color(HIDDEN_COLOR),
+        )
+
+        self.play(
+            g.vertices[3].animate.set_color(HIDDEN_COLOR),
+            g.vertices[4].animate.set_color(HIDDEN_COLOR),
+            g.vertices[5].animate.set_color(HIDDEN_COLOR),
+            g.vertices[6].animate.set_color(HIDDEN_COLOR),
+            g.edges[(2, 3)].animate.set_color(HIDDEN_COLOR),
+            g.edges[(2, 6)].animate.set_color(HIDDEN_COLOR),
+            g.edges[(3, 4)].animate.set_color(HIDDEN_COLOR),
+            g.edges[(4, 5)].animate.set_color(HIDDEN_COLOR),
+            g.edges[(5, 6)].animate.set_color(HIDDEN_COLOR),
+            g.vertices[7].animate.set_color(EXPOSED_COLOR),
+            g.vertices[1].animate.set_color(MATCHING_COLOR),
+            g.edges[(1, 7)].animate.set_color(WHITE),
+            g.edges[(1, 2)].animate.set_color(MATCHING_COLOR),
+        )
+
+        animate_correct_graph_color(self, g, M)
+
+        average = (g.vertices[2].get_center() \
+                + g.vertices[3].get_center() \
+                + g.vertices[4].get_center() \
+                + g.vertices[5].get_center() \
+                + g.vertices[6].get_center()) / 5
+
+        # fml
+        small_random = [1 + i / 10000 for i in range(5)]
+
+        original_positions = [
+            g.vertices[2].get_center(),
+            g.vertices[3].get_center(),
+            g.vertices[4].get_center(),
+            g.vertices[5].get_center(),
+            g.vertices[6].get_center(),
+        ]
+
+
+        self.play(
+            g.vertices[2].animate.move_to(average * small_random[0]),
+            g.vertices[3].animate.move_to(average * small_random[1]),
+            g.vertices[4].animate.move_to(average * small_random[2]),
+            g.vertices[5].animate.move_to(average * small_random[3]),
+            g.vertices[6].animate.move_to(average * small_random[4]),
+        )
+
+        animate_augment_path(self, g, [(1, 7), (1, 2), (2, 6), (5, 6), (4, 5), (3, 4), (3, 9)])
+
+        self.play(
+            g.vertices[2].animate.move_to(original_positions[0]),
+            g.vertices[3].animate.move_to(original_positions[1]),
+            g.vertices[4].animate.move_to(original_positions[2]),
+            g.vertices[5].animate.move_to(original_positions[3]),
+            g.vertices[6].animate.move_to(original_positions[4]),
+        )
