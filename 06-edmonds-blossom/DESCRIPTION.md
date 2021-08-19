@@ -19,6 +19,8 @@ ffmpeg (video): https://ffmpeg.org/
 arecord (audio): https://linux.die.net/man/1/arecord
 sox (audio): http://sox.sourceforge.net/
 
+Vector Magic (images): https://vectormagic.com/
+
 ------------------
 
 [CZ] My notes on Martin Koutecký's Combinatorics and Graphs lecture:

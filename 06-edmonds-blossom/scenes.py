@@ -2,8 +2,42 @@ from utilities import *
 from mm import *
 
 
-def visualizeBipariteBlossom(graph, pairing=[]):
-    """Visualize the blossom algorithm for a bipartite graph."""
+class MyBulletedList(Tex):
+    def __init__(
+        self,
+        *items,
+        buff=0.10,
+        dot_scale_factor=3,
+        tex_environment=None,
+        **kwargs,
+    ):
+        self.buff = buff
+        self.dot_scale_factor = dot_scale_factor
+        self.tex_environment = tex_environment
+        line_separated_items = [s + "\\\\" for s in items]
+        Tex.__init__(
+            self, *line_separated_items, tex_environment=tex_environment, **kwargs
+        )
+        for part in self:
+            dot = MathTex("\\cdot").scale(self.dot_scale_factor)
+            dot.next_to(part[0], LEFT, MED_SMALL_BUFF)
+            part.add_to_back(dot)
+        self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
+
+        for part, item in zip(self, items):
+            parts = item.split(r"$\mid$")
+            if len(parts) != 2:
+                continue
+
+            a, b = parts
+            text = Tex(a, r"$\mid$", b).move_to(part)
+            text[2].set_color(YELLOW),
+
+            dot = MathTex("\\cdot").scale(self.dot_scale_factor)
+            dot.next_to(text[0], LEFT, MED_SMALL_BUFF)
+            text.add_to_back(dot)
+
+            part.become(text)
 
 
 MATCHING_COLOR = YELLOW
@@ -112,6 +146,7 @@ def neighbours(v, edges):
 
 
 class Kids(Scene):
+    @fade
     def construct(self):
         kids = [SVGMobject(f"kids/{i + 1}.svg").scale(0.5) for i in range(6)]
 
@@ -139,7 +174,27 @@ class Kids(Scene):
         self.play(*[ApplyFunction(match_edge, g.edges[e]) for e in MP])
 
 
+class Edmonds(Scene):
+    @fade
+    def construct(self):
+        text = Tex("\huge Jack Edmonds").shift(LEFT * 2.7 + UP * 1)
+        image = SVGMobject("edmonds.svg").scale(4).shift(1.4 * DOWN + RIGHT * 4.25)
+
+        self.play(
+            Write(text),
+            Write(image),
+        )
+
+        l = MyBulletedList(
+                r"\footnotesize the blossom algorithm",
+                'P vs. NP (tractable problems)',
+                "linear programming, matroids")
+        l.next_to(text, DOWN, 0.6)
+
+        self.play(Write(l))
+
 class Intro(Scene):
+    @fade
     def construct(self):
         g = parse_graph(
             """
@@ -209,6 +264,7 @@ class Intro(Scene):
 
 
 class Core(Scene):
+    @fade
     def construct(self):
         g = parse_graph(
             """
@@ -229,9 +285,14 @@ class Core(Scene):
                 """,
             s=0.13,
             t=0.13,
-        ).scale(GRAPH_SCALE)
+        ).scale(GRAPH_SCALE).shift(DOWN)
 
-        self.play(Write(g))
+        text = Tex("\large augmenting paths").next_to(g, UP * 3)
+
+        self.play(
+            Write(text),
+            Write(g),
+            )
 
         M = [(5, 8), (6, 10), (2, 4)]
         MV = edgesToVertices(M)
@@ -248,6 +309,13 @@ class Core(Scene):
         )
 
         animate_augment_path(self, g, [(8, 9), (5, 8), (4, 5), (2, 4), (1, 2)])
+
+        self.play(text.animate.shift(UP * 0.2),
+                g.animate.shift(DOWN * 0.2))
+
+        text2 = Tex(r"\scriptsize \em doesn't contain augmenting paths $\Leftrightarrow$ matching is maximal").next_to(text, DOWN)
+        self.play(Write(text2))
+
         animate_augment_path(self, g, [(10, 11), (6, 10), (3, 6)])
         animate_augment_path(self, g, [(5, 12), (4, 5), (4, 7)])
 
@@ -331,6 +399,7 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code):
 
 
 class Tree(Scene):
+    @fade
     def construct(self):
         g = parse_graph(
             """
@@ -388,6 +457,7 @@ while True:
             if previous_lines == []:
                 for i in range(line_count):
                     previous_lines.append(i + 1)
+                    code.code.chars[i - 1].save_state()
 
             # lines newly highlighted
             new_lines = [l for l in lines if l not in previous_lines]
@@ -395,8 +465,13 @@ while True:
             # lines that will disappear
             dis_lines = [l for l in previous_lines if l not in lines]
 
-            new_lines_animation = [FadeIn(code.line_numbers[i - 1]) for i in new_lines]
-            dis_lines_animation = [FadeOut(code.line_numbers[i - 1]) for i in dis_lines]
+            for l in dis_lines:
+                code.code.chars[l - 1].save_state()
+
+            new_lines_animation = [FadeIn(code.line_numbers[i - 1]) for i in new_lines] + \
+                                  [code.code.chars[i - 1].animate.restore() for i in new_lines]
+            dis_lines_animation = [FadeOut(code.line_numbers[i - 1]) for i in dis_lines] + \
+                                  [code.code.chars[i - 1].animate.set_color(HIDDEN_COLOR) for i in dis_lines]
 
             while len(previous_lines) != 0:
                 previous_lines.pop()
@@ -419,6 +494,7 @@ while True:
         animate_correct_graph_color(self, g, M, set_lines, code)
 
 class Problem(Scene):
+    @fade
     def construct(self):
         C = 1.3
 

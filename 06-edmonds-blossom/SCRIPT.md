@@ -16,16 +16,16 @@ In this video, we'll be describing the blossom algorithm for maximal matching in
 # Intro
 Formally, a matching in a graph is a subset of edges, such that no two share a vertex. A matching is maximal if it contains the most edges possible compared to other matchings for the given graph.
 
-We'll call vertices that are not in the matching exposed vertices.
+We'll call vertices that are not in the matching exposed.
 
 # Core
 The core idea behind the algorithm are „augmenting paths.“ An augmenting path in a graph with some matching is an alternating sequence of edges in the matching and edges not in the matching, where the first and the last vertex is exposed.
 
-On the graph, one such augmenting path is highlighted in red.
-
 As the name suggests, augmenting paths can improve (or augment) the size of the current matching. This can be done by switching the unmatched edges on the path with the matched ones.
 
-One thing to note (that we won't be proving) is that a graph **doesn't** contain an augmenting path, if and only if the matching **is** maximal. This essentially gives us the algorithm -- repeatedly look for augmenting paths, until there are none left, at which point we know the matching is maximal.
+One thing to note (that we won't be proving) is that a graph **doesn't** contain an augmenting path, if and only if the matching **is** maximal.
+
+This essentially gives us the algorithm -- repeatedly look for augmenting paths, until there are none left, at which point we know the matching is maximal.
 
 ---
 TREE PERFECT MATCHING
