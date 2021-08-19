@@ -45,7 +45,7 @@ EXPOSED_COLOR = ORANGE
 AUGMENTING_COLOR = RED
 BFS_COLOR = BLUE
 
-HIDDEN_COLOR = DARKER_GRAY
+HIDDEN_COLOR = DARK_GRAY
 
 MATCHED_WIDTH = 15
 
@@ -71,6 +71,7 @@ def unmatch_edge(mob, change_color=True):
 
 
 def animate_augment_path(self, g, path, add_animations_first=None, add_animations_second=None, instant=False, switch=False):
+    """If animations is lambda, do them only here I don't know that I'm doing."""
     A = path
     AV = edgesToVertices(A)
 
@@ -78,7 +79,7 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
 
     if instant:
         self.play(
-            *([] if add_animations_second is None else add_animations_second),
+            *([] if add_animations_second is None else add_animations_second() if type(add_animations_second) is type(lambda: None) else add_animations_second),
             *[
                 ApplyFunction(lambda x: match_edge(x), g.edges[e])
                 for e in A[offset::2]
@@ -91,14 +92,14 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
         return
 
     self.play(
-        *([] if add_animations_first is None else add_animations_first),
+        *([] if add_animations_first is None else add_animations_first() if type(add_animations_first) is type(lambda: None) else add_animations_first),
         *[g.edges[e].animate.set_color(AUGMENTING_COLOR) for e in A],
         *[g.vertices[v].animate.set_color(AUGMENTING_COLOR) for v, _ in A],
         *[g.vertices[v].animate.set_color(AUGMENTING_COLOR) for _, v in A],
     )
 
     self.play(
-        *([] if add_animations_second is None else add_animations_second),
+        *([] if add_animations_second is None else add_animations_second() if type(add_animations_second) is type(lambda: None) else add_animations_second),
         *[
             ApplyFunction(lambda x: match_edge(x, change_color=False), g.edges[e])
             for e in A[offset::2]
@@ -148,21 +149,36 @@ def neighbours(v, edges):
 class Kids(Scene):
     @fade
     def construct(self):
-        kids = [SVGMobject(f"kids/{i + 1}.svg").scale(0.5) for i in range(6)]
 
-        seed(3)
+#        self.play(Write(Tex(r"\Large Alice \\ Bob \\ Carl \\ Dan \\ Ema \\ Febe", tex_template=TexTemplate(preamble=r"""\usepackage[T1]{fontenc}
+#\usepackage[utf8]{inputenc}
+#\usepackage{tcolorbox}
+#\usepackage{tgchorus}"""
+#            ))))
+
+        n = ["Alice", "Bob", "Carl", "Dan", "Ema", "Febe"]
+
+        kids = [SVGMobject(f"kids/{i + 1}.svg").scale(0.58) for i in range(6)]
+        names = [Tex(n[i], tex_template=TexTemplate(preamble=r"""\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{tcolorbox}
+\usepackage{tgchorus}""")).scale(0.8) for i in range(6)]
+
+        seed(4)
         g = nx.generators.gnm_random_graph(6, 6)
 
-        g = Graph(list(g.nodes), list(g.edges))
+        g = Graph(list(g.nodes), list(g.edges)).shift(RIGHT)
 
         C = 2.3
+        D = 3
         for i in range(6):
-            kids[i].shift(C * RIGHT * sin((PI * 2 / 6) * i + PI / 6) + C * UP * cos((PI * 2 / 6) * i + PI / 6))
+            kids[i].shift(D * RIGHT * abs(sin((PI * 2 / 6) * i - PI / 6)) ** 1.3 * sgn(sin((PI * 2 / 6) * i - PI / 6)) + C * UP * cos((PI * 2 / 6) * i - PI / 6))
             g.vertices[i].move_to(kids[i].get_center())
             g.vertices[i].scale(3)
             g.vertices[i].set_opacity(0)
+            names[i].next_to(kids[i], UP, 0.2)
 
-        self.play(LaggedStart(*[Write(img) for img in kids], lag_ratio=0.2), run_time=1.5)
+        self.play(LaggedStart(*([] + [a for b in zip([Write(img) for img in kids], [Write(name) for name in names]) for a in b]), lag_ratio=0.2), run_time=1.5)
 
         self.bring_to_back(g)
 
@@ -365,8 +381,9 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code):
                 if augmenting_path is not None:
                     # animate the augmenting path
                     animate_augment_path(self, g, augmenting_path,
-                            add_animations_first=set_lines(self, code, [8], len(code.code_string.splitlines())),
-                            add_animations_second=set_lines(self, code, [9, 10], len(code.code_string.splitlines()), previous_lines=[8]))
+                            add_animations_first=lambda: set_lines(self, code, [8], len(code.code_string.splitlines())),
+                            add_animations_second=lambda: set_lines(self, code, [9, 10], len(code.code_string.splitlines()),
+                                ))
 
                     set_lines(self, code, [9, 10], len(code.code_string.splitlines()))
 
