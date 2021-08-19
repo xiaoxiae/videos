@@ -2,6 +2,10 @@
 
 ------------------
 
+Proofs: [EN] http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Handouts/tarjan-blossom.pdf 
+- augmenting path <=> maximal matching: theorem 2.4
+- graph has an a.p. <=> compressed: theorem 2.9
+
 Timetable:
 0:00 - <something>
 1:36 - <something else>

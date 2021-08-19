@@ -19,7 +19,7 @@ The core idea behind the algorithm are „augmenting paths.“ An augmenting pat
 
 As the name suggests, augmenting paths can improve (or augment) the size of the current matching by switching the unmatched edges on the path with the matched ones.
 
-One thing to note (see the video description for proof) is that a graph **doesn't** contain an augmenting path, if and only if the matching **is** maximal.
+One thing to note is that a graph **doesn't** contain an augmenting path, if and only if the matching **is** maximal (see the description for proof).
 
 This essentially gives us the algorithm -- repeatedly look for augmenting paths, until there are none left, at which point we know the matching is maximal.
 
@@ -48,11 +48,11 @@ Imagine we already found a partial matching and would like to further extend it.
 The problem here is this part of the graph, called the blossom (hence the name of the algorithm). It consists of an odd cycle with alternating edges, and an alternating path ending in an exposed vertex.
 
 Our tree algorithm is still pretty neat and we would like to use it here too. What we'll do is the following:
-- first, „compress“ the blossom into a single vertex
+- first, „contract“ the blossom into a single vertex
 - second, find an augmenting path in this new graph and improve the maching
 - third, „lift“ the path back to the original graph.
 
-Here, we're relying on the fact that we can always lift the path back, which we won't be proving here (see the video description if you're interested).
+Here, we're relying on the fact that the graph has an augmenting path if and only if the contracted graph has an augmenting path (see the description for proof).
 
 # Blossom
 - visualize algorithm runtime (left is graph, right is forest)
