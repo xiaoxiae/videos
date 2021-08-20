@@ -15,7 +15,7 @@ Formally, a matching in a graph is a subset of edges, such that no two share a v
 We'll call vertices that are not in the matching exposed.
 
 # Core
-The core idea behind the algorithm are „augmenting paths.“ An augmenting path in a graph with some matching is an alternating sequence of edges in the matching and edges not in the matching, where the first and the last vertex is exposed.
+The core idea behind the algorithm are „augmenting paths.“ An augmenting path in a graph is an alternating sequence of edges in the matching and edges not in the matching, where the first and the last vertex is exposed.
 
 As the name suggests, augmenting paths can improve (or augment) the size of the current matching by switching the unmatched edges on the path with the matched ones.
 
@@ -45,7 +45,7 @@ Although trees are a large family of graphs, most graphs that we would like to r
 
 Imagine we already found a partial matching and would like to further extend it. Running our algorithm here wouldn't work, since the augmenting path is longer than the shortest path.
 
-The problem here is this part of the graph, called the blossom (hence the name of the algorithm). It consists of an odd cycle with alternating edges, and an alternating path ending in an exposed vertex.
+The problem here is this part of the graph. It consists of an odd cycle with alternating edges  (called the blossom, hence the name of the algorithm), and an alternating path ending in an exposed vertex (called the stem).
 
 Our tree algorithm is still pretty neat and we would like to use it here too. What we'll do is the following:
 - first, „contract“ the blossom into a single vertex

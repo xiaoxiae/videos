@@ -45,7 +45,7 @@ EXPOSED_COLOR = ORANGE
 AUGMENTING_COLOR = RED
 BFS_COLOR = BLUE
 
-HIDDEN_COLOR = DARK_GRAY
+HIDDEN_COLOR = DARKER_GRAY
 
 MATCHED_WIDTH = 15
 
@@ -118,10 +118,11 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
     )
 
 
-def animate_correct_graph_color(self, g, M, set_lines=None, code=None):
+def animate_correct_graph_color(self, g, M, set_lines=None, code=None, add_animations=[]):
     MV = edgesToVertices(M)
 
     self.play(
+        *add_animations,
         *([] if set_lines is None else set_lines(self, code, [16], len(code.code_string.splitlines()))),
         *[g.edges[e].animate.set_color(WHITE) for e in g.edges if e not in M],
         *[g.edges[e].animate.set_color(MATCHING_COLOR) for e in g.edges if e in M],
@@ -545,7 +546,7 @@ class Problem(Scene):
 
         self.play(
                 g.vertices[7].animate.set_color(BFS_COLOR),
-                Circumscribe(g.vertices[7], Circle, color=EXPOSED_COLOR)
+                Circumscribe(g.vertices[7], Circle, color=BFS_COLOR)
                 )
 
         layers = [[(1, 7)], [(1, 2)], [(2, 3), (2, 6)], [(3, 4), (5, 6)]]
@@ -575,11 +576,24 @@ class Problem(Scene):
             g.edges[(3, 8)].animate.set_color(HIDDEN_COLOR),
         )
 
+        average = (g.vertices[2].get_center() \
+                + g.vertices[3].get_center() \
+                + g.vertices[4].get_center() \
+                + g.vertices[5].get_center() \
+                + g.vertices[6].get_center()) / 5
+
+        blossom_text = Tex(r"blossom").move_to(average)
+        stem_text = Tex(r"stem").next_to(g.vertices[1], UP).shift(RIGHT * 0.3 + UP * 0.3)
+
         self.play(
             g.vertices[7].animate.set_color(HIDDEN_COLOR),
             g.vertices[1].animate.set_color(HIDDEN_COLOR),
             g.edges[(1, 7)].animate.set_color(HIDDEN_COLOR),
             g.edges[(1, 2)].animate.set_color(HIDDEN_COLOR),
+        )
+
+        self.play(
+            Write(blossom_text),
         )
 
         self.play(
@@ -592,22 +606,52 @@ class Problem(Scene):
             g.edges[(3, 4)].animate.set_color(HIDDEN_COLOR),
             g.edges[(4, 5)].animate.set_color(HIDDEN_COLOR),
             g.edges[(5, 6)].animate.set_color(HIDDEN_COLOR),
+            blossom_text.animate.set_color(HIDDEN_COLOR),
             g.vertices[7].animate.set_color(EXPOSED_COLOR),
             g.vertices[1].animate.set_color(MATCHING_COLOR),
             g.edges[(1, 7)].animate.set_color(WHITE),
             g.edges[(1, 2)].animate.set_color(MATCHING_COLOR),
         )
 
-        animate_correct_graph_color(self, g, M)
+        self.play(
+            Write(stem_text),
+        )
+
+        animate_correct_graph_color(self, g, M, add_animations=[blossom_text.animate.set_color(WHITE)])
+
+        self.play(
+            FadeOut(blossom_text),
+            FadeOut(stem_text),
+        )
+
+        self.play(
+            g.animate.shift(LEFT * 2),
+        )
+
+        parts = [
+            r"\small $1.\ $contract the blossomg\\ " + "\n",
+            r"\small $2.\ $find augmenting path\\ " + "\n",
+            r"\small $3.\ $improve the matching\\ " + "\n",
+            r"\small $4.\ $lift the path\\ "
+        ]
+
+        l = Tex(*parts)
+        l.arrange(DOWN, aligned_edge=LEFT).shift(RIGHT * 3.5 + UP * 0.4)
+
+        l[0][2:10].set_color(YELLOW)
+        l[0][20].set_color(BLACK)
+        l[1][2:6].set_color(YELLOW)
+        l[2][2:9].set_color(YELLOW)
+        l[3][2:6].set_color(YELLOW)
+
+        # fml
+        small_random = [1 + i / 10000 for i in range(5)]
 
         average = (g.vertices[2].get_center() \
                 + g.vertices[3].get_center() \
                 + g.vertices[4].get_center() \
                 + g.vertices[5].get_center() \
                 + g.vertices[6].get_center()) / 5
-
-        # fml
-        small_random = [1 + i / 10000 for i in range(5)]
 
         original_positions = [
             g.vertices[2].get_center(),
@@ -617,16 +661,19 @@ class Problem(Scene):
             g.vertices[6].get_center(),
         ]
 
-
         self.play(
             g.vertices[2].animate.move_to(average * small_random[0]),
             g.vertices[3].animate.move_to(average * small_random[1]),
             g.vertices[4].animate.move_to(average * small_random[2]),
             g.vertices[5].animate.move_to(average * small_random[3]),
             g.vertices[6].animate.move_to(average * small_random[4]),
+            Write(l[0]),
         )
 
-        animate_augment_path(self, g, [(1, 7), (1, 2), (2, 6), (5, 6), (4, 5), (3, 4), (3, 9)])
+        animate_augment_path(self, g, [(1, 7), (1, 2), (2, 6), (5, 6), (4, 5), (3, 4), (3, 9)],
+            add_animations_first=[Write(l[1])],
+            add_animations_second=[Write(l[2])],
+        )
 
         self.play(
             g.vertices[2].animate.move_to(original_positions[0]),
@@ -634,4 +681,17 @@ class Problem(Scene):
             g.vertices[4].animate.move_to(original_positions[2]),
             g.vertices[5].animate.move_to(original_positions[3]),
             g.vertices[6].animate.move_to(original_positions[4]),
+            Write(l[3]),
+            run_time=1.5,
+        )
+
+        self.play(
+                g.animate.shift(DOWN * 0.65),
+                l.animate.shift(DOWN * 0.55),
+                )
+
+        text2 = Tex(r"\scriptsize \em has augmenting path $\Leftrightarrow$ contracted graph has augmenting path ").shift(UP * 2.7)
+
+        self.play(
+            Write(text2)
         )
