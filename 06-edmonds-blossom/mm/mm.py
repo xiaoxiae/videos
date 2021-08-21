@@ -1,7 +1,7 @@
 from pulp import *
 
 
-def get_maximal_matching(edges):
+def get_maximum_matching(edges):
     vertices = set([u for u, v in edges] + [v for u, v in edges])
 
     n = len(vertices)
