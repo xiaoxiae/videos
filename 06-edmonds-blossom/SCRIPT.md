@@ -44,7 +44,7 @@ MAXIMUM TREE MATCHING
 
 **[t5]:** The algorithm then pick one exposed vertex at random and run the BFS. Here it successfully finds an alternating path, so it uses it to improve the matching and repeats.
 
-\centerline{\em průběh algoritmu}
+\centerline{\em průběh algoritmu (možná bude vypadat trochu jinak)}
 
 **[t6]:** Here is one interesting path that it finds and improves that neatly showcases the layers of the BFS.
 
@@ -61,32 +61,32 @@ MAXIMUM GENERAL GRAPH MATCHING
 
 **[p2]:** Imagine we already found some a matching that isn't yet maximum and would like to improve it. Running our algorithm here without any changes wouldn't work, since the augmenting path is not the shortest path from the exposed vertex and our algorithm doesn't find it.
 
-The problem here is this part of the graph. It consists of an odd cycle with alternating edges (called the blossom), and an alternating path ending in an exposed vertex (called the stem). 
+**[p3]:** The problem here is this part of the graph. It consists of an odd cycle with alternating edges (called the blossom), and an alternating path ending in an exposed vertex (called the stem). 
 
-To fix the problem, we'll avoid it -- when we come from the stem into the blossom, we'll do the following:
+**[p4]:** To fix the problem, we'll avoid it -- when we come from the stem into the blossom, we'll do the following:
 - first, we'll „contract“ the blossom into a single vertex
 - second, we'll find an augmenting path in this new graph
 - third, we'll improve the matching using this augmenting path and
 - fourth, we'll „lift“ the path back to the original graph
 
-Here, we are relying on the fact that the graph has an augmenting path if and only if the contracted graph has an augmenting path (TODO: see description for proof boxík).
+**[p5]:** Here, we are relying on the fact that the graph has an augmenting path if and only if the contracted graph has an augmenting path (TODO: see description for proof boxík).
 
 # Blossom
-Adding this contraction to our algorithm will be pretty straight-forward. Each time we add a new layer of edges, we'll check for blossoms. If found, we will contract the blossom, find the augmenting path in the new graph and then lift back.
+**[b1]:** Adding this contraction to our algorithm will be pretty straight-forward. Each time we add a new layer of edges, we'll check for blossoms. If found, we will contract the blossom, find the augmenting path in the new graph and then lift back.
 
 \centerline{\em průběh algoritmu}
 
-Here we can see the contraction in action.
+**[b2]:** Here we can see the contraction in action.
 
 \centerline{\em průběh algoritmu}
 
 # Overview
-Let's compare how fast our algorithm is, compared to a naive solution. For clarity, let $e$ be the number of edges and $v$ the number of vertices.
+**[o1]:** Let's compare how fast our algorithm is, compared to a naive solution. For clarity, let $e$ be the number of edges and $v$ the number of vertices.
 
-When testing all possible combinations, we have to check each subset of edges -- there are $2^e$ subsets (we can either choose an edge or not), so the naive algorithm is exponential.
+**[o2]:** When testing all possible combinations, we have to check each subset of edges -- there are $2^e$ subsets (we can either choose an edge or not), so the naive algorithm is exponential.
 
-On the other hand, an efficiently implemented blossom algorithm will run in $O(e v^2)$, which is polynomial.
+**[o3]:** On the other hand, an efficiently implemented blossom algorithm will run in $O(e v^2)$, which is polynomial.
 
 TODO: možná ještě nějaká animace k tomuhle?
 
-To understand why it runs in this time, let's briefly think about what it does. It improves the matching at most $v$-times, during which the entire graph is explored (taking time $e$), but we could recurse up to $v$-times by contracting blossoms. Multiplying this together giving us the aforementioned time complexity.
+**[o4]:** To understand why it runs in this time, let's briefly think about what it does. It improves the matching at most $v$-times, during which the entire graph is explored (taking time $e$), but we could recurse up to $v$-times by contracting blossoms. Multiplying this together giving us the aforementioned time complexity.

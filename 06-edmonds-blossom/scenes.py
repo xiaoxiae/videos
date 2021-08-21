@@ -1505,3 +1505,17 @@ class Overview(Scene):
                 break
 
         animate_correct_graph_color(self, g, M, lambda x, y, z: [], None)
+
+class Test(Scene):
+    @fade
+    def construct(self):
+        test = Tex(r"\footnotesize description – theorem 2.4")
+
+        frame = SurroundingRectangle(test, color=WHITE)
+
+        self.play(
+            Write(test, run_time=0.5),
+            Write(frame)
+        )
+
+
