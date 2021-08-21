@@ -1,5 +1,6 @@
 from pulp import *
 
+
 def get_maximal_matching(edges):
     vertices = set([u for u, v in edges] + [v for u, v in edges])
 
@@ -8,7 +9,7 @@ def get_maximal_matching(edges):
 
     model = LpProblem(sense=LpMaximize)
 
-    variables = {e: LpVariable(name=f"x_{e}", cat='Binary') for e in edges}
+    variables = {e: LpVariable(name=f"x_{e}", cat="Binary") for e in edges}
 
     for v in vertices:
         for a in edges:

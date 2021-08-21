@@ -1,5 +1,9 @@
 from utilities import *
-from mm import *
+
+import mm.mm
+
+from typing import Tuple, List
+from dataclasses import dataclass
 
 
 class MyBulletedList(Tex):
@@ -185,7 +189,7 @@ class Kids(Scene):
 
         self.play(Write(g), run_time=2)
 
-        MP = get_maximal_matching(list(g.edges))
+        MP = mm.mm.get_maximal_matching(list(g.edges))
         MPV = edgesToVertices(MP)
 
         self.play(*[ApplyFunction(match_edge, g.edges[e]) for e in MP])
@@ -246,7 +250,7 @@ class Intro(Scene):
             *[g.vertices[v].animate.set_color(MATCHING_COLOR) for _, v in M],
         )
 
-        MP = get_maximal_matching(list(g.edges))
+        MP = mm.mm.get_maximal_matching(list(g.edges))
         MPV = edgesToVertices(MP)
 
         self.play(
@@ -687,7 +691,7 @@ class Problem(Scene):
 
         self.play(
                 g.animate.shift(DOWN * 0.65),
-                l.animate.shift(DOWN * 0.55),
+                l.animate.shift(DOWN * 0.65),
                 )
 
         text2 = Tex(r"\scriptsize \em has augmenting path $\Leftrightarrow$ contracted graph has augmenting path ").shift(UP * 2.7)
@@ -695,3 +699,443 @@ class Problem(Scene):
         self.play(
             Write(text2)
         )
+
+#--------------------------------
+#--------------------------------
+#--------------------------------
+#--------------------------------
+#--------------------------------
+
+Vertex = int
+Edge = Tuple[Vertex, Vertex]
+MyGraph = Tuple[List[Vertex], List[Edge]]
+
+
+def neighbours_(v: Vertex, graph: MyGraph) -> List[Vertex]:
+    """Return the neighbours_ of the vertex v in the graph."""
+    return list(
+        set([a for a, b in graph[1] if b == v]).union(
+            set([b for a, b in graph[1] if a == v])
+        )
+    )
+
+
+def get_exposed_vertices(graph: MyGraph, matching: List[Edge]) -> List[Vertex]:
+    """Return the exposed vertices of the graph, given a matching."""
+    return [
+        v
+        for v in graph[0]
+        if v not in list(set([v for _, v in matching] + [v for v, _ in matching]))
+    ]
+
+
+def path_to_root(v, parent):
+    """Return the path to the root of the forest, given a vertex."""
+    path = []
+    while parent[v] != v:
+        path.append((v, parent[v]))
+        v = parent[v]
+    return path
+
+
+def reverse_tuples(l: List) -> List:
+    """[(0, 1), (2, 3)] -> [(1, 0), (3, 2)]."""
+    return list(map(lambda x: tuple(reversed(x)), l))
+
+
+def reverse_list(l: List) -> List:
+    """[0, 1, 2] -> [2, 1, 0]"""
+    return list(reversed(l))
+
+
+def get_blossom_edges(v: Vertex, w: Vertex, parent) -> List[Edge]:
+    """Get the path around the blossom, starting from the root."""
+    v_path = reverse_list(reverse_tuples(path_to_root(v, parent)))
+    w_path = reverse_list(reverse_tuples(path_to_root(w, parent)))
+
+    while len(v_path) != 0 and len(w_path) != 0 and v_path[0] == w_path[0]:
+        v_path.pop(0)
+        w_path.pop(0)
+
+    return v_path + [(v, w)] + reverse_list(reverse_tuples(w_path))
+
+
+def get_blossom_vertices(v: Vertex, w: Vertex, parent) -> List[Vertex]:
+    """Get the vertices of a blossom from the forest that ends in v, w.
+    It is guaranteed that the first vertex is the root."""
+    combined_path_vertices = [v for e in get_blossom_edges(v, w, parent) for v in e]
+
+    return [combined_path_vertices[0]] + list(
+        set(combined_path_vertices) - {combined_path_vertices[0]}
+    )
+
+
+def get_augmenting_blossom_path(v: Vertex, w: Vertex, edges: List[Edge]):
+    """Get the path around the blossom edges, with the root being v and exit point being w."""
+    if v == w:
+        return []
+
+    # first, try to go this way
+    cycle = edges + edges
+    s, e = -1, -1
+    path = []
+    for i, (a, b) in enumerate(cycle):
+        if a == v:
+            s = i
+
+        if s != -1:
+            path.append((a, b))
+
+        if b == w:
+            if len(path) % 2 == 0:
+                return path
+            break
+
+    # now try to go the other way
+    cycle = reverse_list(reverse_tuples(cycle))
+    s, e = -1, -1
+    path = []
+    for i, (a, b) in enumerate(cycle):
+        if a == v:
+            s = i
+
+        if s != -1:
+            path.append((a, b))
+
+        if b == w:
+            if len(path) % 2 == 0:
+                return path
+            break
+
+    print("This should not have happened, there is a bug somewhere.")
+    quit()
+
+
+def unfuk_path(path, context):
+    new_path = list(path)
+
+    for i in range(len(new_path)):
+        e = new_path[i]
+
+        # a bit of a hack since the edges are all messed up
+        if e not in context.graph.edges:
+            e = (e[1], e[0])
+
+        new_path[i] = e
+
+    return new_path
+
+
+def find_augmenting_path(graph: MyGraph, matching: List[Edge], context) -> List[Edge]:
+    """Find and return an augmenting path in the graph, or [] if there isn't one."""
+    # FOREST variables
+    parent = {}  # parent[v]... parent of v in the forest
+    root_node = {}  # root_node[v]... root node for v
+    layer = {}  # layer[v]... which layer is v in
+
+    # start with all exposed vertices as tree roots
+    queue = get_exposed_vertices(graph, matching)
+    marked = set(matching)
+
+    for v in queue:
+        parent[v] = v
+        root_node[v] = v
+        layer[v] = 0
+
+    # run a BFS to add the augmenting paths to the forest
+    while len(queue) != 0:
+        v = queue.pop(0)
+
+        # skip marked vertices
+        if v in marked:
+            continue
+
+        for w in neighbours_(v, graph):
+            if (v, w) in marked or (w, v) in marked:
+                continue
+
+            # add neighbours_ of w that are in the matching to the forest
+            if w not in layer:
+                # w is in the forest, so it is matched
+                parent[w] = v
+                layer[w] = layer[v] + 1
+                root_node[w] = root_node[v]
+
+                # find the one vertex it is matched with
+                for x in neighbours_(w, graph):
+                    if (w, x) in matching or (x, w) in matching:
+                        parent[x] = w
+                        layer[x] = layer[w] + 1
+                        root_node[x] = root_node[w]
+
+                        queue.append(x)
+            else:
+                if layer[w] % 2 == 0:
+                    if root_node[v] != root_node[w]:
+                        return (
+                            reverse_list(path_to_root(v, parent))
+                            + [(v, w)]
+                            + path_to_root(w, parent)
+                        )
+                    else:
+                        vertices = get_blossom_vertices(v, w, parent)
+                        root = vertices[0]
+
+                        # preserve the root as the new vertex
+                        new_vertices = list(set(graph[0]) - set(vertices[1:]))
+
+                        # transform all edges that previously went to the blossom to the new single vertex
+                        new_edges = [
+                            (
+                                a if a not in vertices else vertices[0],
+                                b if b not in vertices else vertices[0],
+                            )
+                            for a, b in graph[1]
+                        ]
+
+                        # remove loops and multi-edges
+                        new_edges = [(a, b) for a, b in new_edges if a != b]
+                        new_edges = [
+                            (a, b)
+                            for a, b in new_edges
+                            if (b, a) not in new_edges or b < a
+                        ]
+
+                        # remove removed edges from the matching
+                        new_matching = [
+                            (a, b)
+                            for a, b in matching
+                            if a not in vertices[1:] and b not in vertices[1:]
+                        ]
+                        new_graph = (new_vertices, new_edges)
+
+                        #---
+                        small_random = [1 + i / 10000 for i in range(len(vertices))]
+                        original_positions = [context.graph.vertices[v].get_center() for v in vertices]
+
+                        avg = sum(original_positions) / len(vertices)
+
+                        context.self.play(*[context.graph.vertices[v].animate.move_to(avg * small_random[i]) for i, v in enumerate(vertices)])
+                        #---
+
+                        # recursively find the augmenting path in the new graph
+                        path = find_augmenting_path(new_graph, new_matching, context)
+
+                        # if no path was found, no path lifting will be done
+                        if path == []:
+                            return []
+
+                        # find the edges that are connected to the compressed vertex
+                        edges_in_vertices = []
+                        for a, b in path:
+                            if a in vertices or b in vertices:
+                                edges_in_vertices.append((a, b))
+
+                        # if the path doesn't cross the blossom, simply return it
+                        if len(edges_in_vertices) == 0:
+                            return path
+
+                        # find the other vertex that the blossom is connected to
+                        # it enters through the root and must leave somewhere...
+                        enter_edge = None
+                        leave_edge = None
+                        leave_edge_match = None
+                        for a_orig, b_orig in edges_in_vertices:
+                            vertex = a_orig if a_orig != root else b_orig
+
+                            candidates = []
+
+                            for b, c in graph[1]:
+                                if (
+                                    b == vertex
+                                    and c in vertices
+                                    or c == vertex
+                                    and b in vertices
+                                ):
+                                    candidates.append((b, c))
+
+                            for a, b in candidates:
+                                if a == root or b == root and enter_edge is None:
+                                    enter_edge = (a if a != root else b, root)
+                                    break
+                            else:
+                                # doesn't matter... we can make any vertex work
+                                a, b = candidates[0]
+
+                                leave_edge_match = (a_orig, b_orig)
+                                leave_edge = (
+                                    a if a not in vertices else b,
+                                    a if a in vertices else b,
+                                )
+
+                        if leave_edge is None:
+                            return path
+
+                        blossom_path = get_augmenting_blossom_path(
+                            root, leave_edge[1], get_blossom_edges(v, w, parent)
+                        )
+
+                        i = path.index(leave_edge_match)
+
+                        # improve the matching by injecting the lifted path
+                        if i - 1 >= 0 and root in path[i]:
+                            reverse_list(blossom_path)
+
+                        new_path = path[:i] + blossom_path + [leave_edge] + path[i + 1 :] + [-1]
+
+                        #---
+                        animate_augment_path(context.self, context.graph, unfuk_path(new_path[:-1], context))
+                        context.self.play(*[context.graph.vertices[v].animate.move_to(original_positions[i]) for i, v in enumerate(vertices)])
+                        #---
+
+                        return new_path
+                else:
+                    pass  # do nothing!
+
+            marked.add((v, w))
+
+        marked.add(v)
+
+    return []
+
+
+def improve_matching(graph: MyGraph, matching: List[Edge], context) -> List[Edge]:
+    """Attempt to improve the given matching in the graph."""
+    path = find_augmenting_path(graph, matching, context)
+
+    improved_matching = list(matching)
+    already_animated = False
+    if path != []:
+        # hack to not augment twice
+        if path[-1] == -1:
+            path.pop()
+            already_animated = True
+
+        new_path = unfuk_path(path, context)
+
+        if not already_animated:
+            animate_augment_path(context.self, context.graph, new_path)
+
+        for i, e in enumerate(path):
+            # a bit of a hack since the edges are all messed up
+            if e not in graph[1]:
+                e = (e[1], e[0])
+
+            if i % 2 == 0:
+                improved_matching.append(e)
+            else:
+                improved_matching.remove(e)
+
+    return improved_matching
+
+
+
+def get_maximal_matching(graph: MyGraph, context) -> List[Edge]:
+    """Find the maximal matching in a graph."""
+    matching = []
+
+    animate_correct_graph_color(context.self, context.graph, [])
+    while True:
+        improved_matching = improve_matching(graph, matching, context)
+
+        if matching == improved_matching:
+            return matching
+
+        matching = improved_matching
+
+#--------------------------------
+#--------------------------------
+#--------------------------------
+#--------------------------------
+#--------------------------------
+
+class Blossom(Scene):
+    @fade
+    def construct(self):
+        @dataclass
+        class Context:
+            graph: MyGraph
+            self: Blossom
+
+        g = parse_graph(
+            """
+5 0 <-16.05615947107685, -12.504911246689693> <-14.446419714646854, -6.866013725874188>
+0 8 <-14.446419714646854, -6.866013725874188> <-16.42527207725241, -1.8140283988138854>
+12 0 <-19.64155534824222, -7.330631498406216> <-14.446419714646854, -6.866013725874188>
+1 3 <-4.698194206378598, 0.11011604485983129> <-10.209550409185647, -2.9552644219000106>
+1 10 <-4.698194206378598, 0.11011604485983129> <0.9003340177597777, -2.5845025309871477>
+3 2 <-10.209550409185647, -2.9552644219000106> <-10.670793355913192, -9.290296998392101>
+5 2 <-16.05615947107685, -12.504911246689693> <-10.670793355913192, -9.290296998392101>
+3 8 <-10.209550409185647, -2.9552644219000106> <-16.42527207725241, -1.8140283988138854>
+4 6 <-1.0383909201343497, -12.64149137008625> <-7.062170194186263, -14.061899786709596>
+4 7 <-1.0383909201343497, -12.64149137008625> <3.324971894939845, -8.293802236457113>
+4 11 <-1.0383909201343497, -12.64149137008625> <-3.3577054035744847, -6.997621303069259>
+12 5 <-19.64155534824222, -7.330631498406216> <-16.05615947107685, -12.504911246689693>
+7 9 <3.324971894939845, -8.293802236457113> <7.465014371318295, -3.8180621675279958>
+10 7 <0.9003340177597777, -2.5845025309871477> <3.324971894939845, -8.293802236457113>
+12 8 <-19.64155534824222, -7.330631498406216> <-16.42527207725241, -1.8140283988138854>
+8 13 <-16.42527207725241, -1.8140283988138854> <-12.470684295924984, 2.950307523065462>
+10 11 <0.9003340177597777, -2.5845025309871477> <-3.3577054035744847, -6.997621303069259>
+10 14 <0.9003340177597777, -2.5845025309871477> <5.227801852655065, 1.8530677198156864>
+                """,
+            s=0.115,
+            t=-0.09,
+        ).scale(GRAPH_SCALE * 1.3)
+
+        self.play(Write(g))
+
+        g_structure = ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [(0, 5), (0, 8), (0, 12), (1, 3), (1, 10), (2, 3), (2, 5), (3, 8), (4, 6), (4, 7), (4, 11), (5, 12), (7, 9), (7, 10), (8, 12), (8, 13), (10, 11), (10, 14)])
+
+        get_maximal_matching(g_structure, Context(g, self))
+
+
+class Fast(Scene):
+    @fade
+    def construct(self):
+        naive = Tex(r"\Large Naïve").shift(UP * 1.7 + LEFT * 3)
+        blossom = Tex(r"\Large Blossom").shift(UP * 2.7 + RIGHT * 2)
+
+        g_naive = parse_graph(
+            """
+1 2 <5.305295407371162, -9.00109716204681> <-0.6729840226655002, -10.4461242684385>
+3 2 <-0.8425669826207631, -16.51162542950073> <-0.6729840226655002, -10.4461242684385>
+3 4 <-0.8425669826207631, -16.51162542950073> <-6.220565179720084, -13.23694362201735>
+2 4 <-0.6729840226655002, -10.4461242684385> <-6.220565179720084, -13.23694362201735>
+4 5 <-6.220565179720084, -13.23694362201735> <-11.791437508380174, -10.273211500280336>
+4 6 <-6.220565179720084, -13.23694362201735> <-11.558874566262684, -16.33719898830283>
+5 6 <-11.791437508380174, -10.273211500280336> <-11.558874566262684, -16.33719898830283>
+4 7 <-6.220565179720084, -13.23694362201735> <-6.896308576133831, -7.119926197187177>
+3 8 <-0.8425669826207631, -16.51162542950073> <5.2015048653161315, -15.125611531890883>
+1 8 <5.305295407371162, -9.00109716204681> <5.2015048653161315, -15.125611531890883>
+5 9 <-11.791437508380174, -10.273211500280336> <-17.56869374575382, -12.311184072704405>
+5 10 <-11.791437508380174, -10.273211500280336> <-16.13459349493921, -5.841431825927536>
+2 11 <-0.6729840226655002, -10.4461242684385> <-1.826409248537547, -4.402336655405>
+                """,
+            s=0.13,
+            t=0.13,
+        ).scale(GRAPH_SCALE).shift(DOWN)
+
+        from itertools import chain, combinations
+
+        def powerset(iterable):
+            "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+            s = list(iterable)
+            return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+        good_subsets = []
+        for subset in powerset(g_naive.edges):
+            bad = False
+            for a, b in subset:
+                for c, d in subset:
+                    if (a, b) == (c, d):
+                        continue
+
+                    if a == c or a == d or b == c or b == d:
+                        bad = True
+
+            if bad:
+                continue
+
+            good_subsets.append(list(subset))
+
+        self.play(Write(naive))

@@ -7,13 +7,21 @@ Graph = Tuple[List[Vertex], List[Edge]]
 
 def neighbours(v: Vertex, graph: Graph) -> List[Vertex]:
     """Return the neighbours of the vertex v in the graph."""
-    return list(set([a for a, b in graph[1] if b == v]).union(set([b for a, b in graph[1] if a == v])))
+    return list(
+        set([a for a, b in graph[1] if b == v]).union(
+            set([b for a, b in graph[1] if a == v])
+        )
+    )
 
 
 def get_exposed_vertices(graph: Graph, matching: List[Edge]) -> List[Vertex]:
     """Return the exposed vertices of the graph, given a matching."""
-    return [v for v in graph[0] \
-            if v not in list(set([v for _, v in matching] + [v for v, _ in matching]))]
+    return [
+        v
+        for v in graph[0]
+        if v not in list(set([v for _, v in matching] + [v for v, _ in matching]))
+    ]
+
 
 def path_to_root(v, parent):
     """Return the path to the root of the forest, given a vertex."""
@@ -23,16 +31,19 @@ def path_to_root(v, parent):
         v = parent[v]
     return path
 
+
 def reverse_tuples(l: List) -> List:
     """[(0, 1), (2, 3)] -> [(1, 0), (3, 2)]."""
     return list(map(lambda x: tuple(reversed(x)), l))
+
 
 def reverse_list(l: List) -> List:
     """[0, 1, 2] -> [2, 1, 0]"""
     return list(reversed(l))
 
-def get_blossom_path(v: Vertex, w: Vertex, parent) -> Tuple[List[Edge], List[Edge]]:
-    """Return the two paths from the root of the blossom to the other end."""
+
+def get_blossom_edges(v: Vertex, w: Vertex, parent) -> List[Edge]:
+    """Get the path around the blossom, starting from the root."""
     v_path = reverse_list(reverse_tuples(path_to_root(v, parent)))
     w_path = reverse_list(reverse_tuples(path_to_root(w, parent)))
 
@@ -42,20 +53,24 @@ def get_blossom_path(v: Vertex, w: Vertex, parent) -> Tuple[List[Edge], List[Edg
 
     return v_path + [(v, w)] + reverse_list(reverse_tuples(w_path))
 
+
 def get_blossom_vertices(v: Vertex, w: Vertex, parent) -> List[Vertex]:
     """Get the vertices of a blossom from the forest that ends in v, w.
-    It is guaranteed that the first vertex is the first common predecessor of v, w (root)."""
-    combined_path_vertices = [v for e in get_blossom_path(v, w, parent) for v in e]
+    It is guaranteed that the first vertex is the root."""
+    combined_path_vertices = [v for e in get_blossom_edges(v, w, parent) for v in e]
 
-    return [combined_path_vertices[0]] + list(set(combined_path_vertices) - {combined_path_vertices[0]})
+    return [combined_path_vertices[0]] + list(
+        set(combined_path_vertices) - {combined_path_vertices[0]}
+    )
 
-def get_correct_blossom_edges(v: Vertex, w: Vertex, edges: List[Edge]):
-    """Get the correct blossom edges, with the root being v and exit point being w."""
+
+def get_augmenting_blossom_path(v: Vertex, w: Vertex, edges: List[Edge]):
+    """Get the path around the blossom edges, with the root being v and exit point being w."""
     if v == w:
         return []
 
+    # first, try to go this way
     cycle = edges + edges
-
     s, e = -1, -1
     path = []
     for i, (a, b) in enumerate(cycle):
@@ -70,8 +85,8 @@ def get_correct_blossom_edges(v: Vertex, w: Vertex, edges: List[Edge]):
                 return path
             break
 
+    # now try to go the other way
     cycle = reverse_list(reverse_tuples(cycle))
-
     s, e = -1, -1
     path = []
     for i, (a, b) in enumerate(cycle):
@@ -92,10 +107,10 @@ def get_correct_blossom_edges(v: Vertex, w: Vertex, edges: List[Edge]):
 
 def find_augmenting_path(graph: Graph, matching: List[Edge]) -> List[Edge]:
     """Find and return an augmenting path in the graph, or [] if there isn't one."""
-    # FOREST:
-    parent = {}     # parent[v]... parent of v in the forest
+    # FOREST variables
+    parent = {}  # parent[v]... parent of v in the forest
     root_node = {}  # root_node[v]... root node for v
-    layer = {}      # layer[v]... which layer is v in
+    layer = {}  # layer[v]... which layer is v in
 
     # start with all exposed vertices as tree roots
     queue = get_exposed_vertices(graph, matching)
@@ -136,57 +151,114 @@ def find_augmenting_path(graph: Graph, matching: List[Edge]) -> List[Edge]:
             else:
                 if layer[w] % 2 == 0:
                     if root_node[v] != root_node[w]:
-                        return reverse_list(path_to_root(v, parent)) + [(v, w)] + path_to_root(w, parent)
+                        return (
+                            reverse_list(path_to_root(v, parent))
+                            + [(v, w)]
+                            + path_to_root(w, parent)
+                        )
                     else:
                         vertices = get_blossom_vertices(v, w, parent)
+                        root = vertices[0]
 
                         # preserve the root as the new vertex
                         new_vertices = list(set(graph[0]) - set(vertices[1:]))
 
                         # transform all edges that previously went to the blossom to the new single vertex
                         new_edges = [
-                            (a if a not in vertices else vertices[0], b if b not in vertices else vertices[0])
+                            (
+                                a if a not in vertices else vertices[0],
+                                b if b not in vertices else vertices[0],
+                            )
                             for a, b in graph[1]
                         ]
 
                         # remove loops and multi-edges
                         new_edges = [(a, b) for a, b in new_edges if a != b]
-                        new_edges = [(a, b) for a, b in new_edges if (b, a) not in new_edges or b < a]
+                        new_edges = [
+                            (a, b)
+                            for a, b in new_edges
+                            if (b, a) not in new_edges or b < a
+                        ]
 
                         # remove removed edges from the matching
-                        new_matching = [(a, b) for a, b in matching if a not in vertices[1:] and b not in vertices[1:]]
+                        new_matching = [
+                            (a, b)
+                            for a, b in matching
+                            if a not in vertices[1:] and b not in vertices[1:]
+                        ]
                         new_graph = (new_vertices, new_edges)
 
+                        # recursively find the augmenting path in the new graph
                         path = find_augmenting_path(new_graph, new_matching)
 
                         # if no path was found, no path lifting will be done
                         if path == []:
                             return []
-                        else:
-                            edges_in_vertices = []
 
-                            for a, b in path:
-                                if a in vertices or b in vertices:
-                                    edges_in_vertices.append((a, b))
+                        # find the edges that are connected to the compressed vertex
+                        edges_in_vertices = []
+                        for a, b in path:
+                            if a in vertices or b in vertices:
+                                edges_in_vertices.append((a, b))
 
-                            # if the path doesn't cross the blossom, simply return it
-                            if len(edges_in_vertices) == 0:
-                                return path
+                        # if the path doesn't cross the blossom, simply return it
+                        if len(edges_in_vertices) == 0:
+                            return path
 
-                            path = get_blossom_path(v, w, parent)
+                        # find the other vertex that the blossom is connected to
+                        # it enters through the root and must leave somewhere...
+                        enter_edge = None
+                        leave_edge = None
+                        leave_edge_match = None
+                        for a_orig, b_orig in edges_in_vertices:
+                            vertex = a_orig if a_orig != root else b_orig
 
-                            # find the other vertex that the blossom is connected to
-                            # it enters through the root and must leave somewhere...
-                            #for edge in edges_in_vertices:
+                            candidates = []
 
-                            # TODO: find the vertex where the path leaves
-                            # they're both actually in the path
+                            for b, c in graph[1]:
+                                if (
+                                    b == vertex
+                                    and c in vertices
+                                    or c == vertex
+                                    and b in vertices
+                                ):
+                                    candidates.append((b, c))
 
-                            # improve the matching by injecting the lifted path
-                            # TODO: fix the vertices on the replaced path
-                            # print(get_correct_blossom_edges(11, 3, path))
+                            for a, b in candidates:
+                                if a == root or b == root and enter_edge is None:
+                                    enter_edge = (a if a != root else b, root)
+                                    break
+                            else:
+                                # doesn't matter... we can make any vertex work
+                                a, b = candidates[0]
 
+                                leave_edge_match = (a_orig, b_orig)
+                                leave_edge = (
+                                    a if a not in vertices else b,
+                                    a if a in vertices else b,
+                                )
+
+                        if leave_edge is None:
+                            return path
+
+                        if leave_edge is not None and enter_edge is not None:
+                            print(graph)
+                            print("NICE")
+                            for a, b in graph[1]:
+                                print(a, b)
                             quit()
+
+                        blossom_path = get_augmenting_blossom_path(
+                            root, leave_edge[1], get_blossom_edges(v, w, parent)
+                        )
+
+                        i = path.index(leave_edge_match)
+
+                        # improve the matching by injecting the lifted path
+                        if i - 1 >= 0 and root in path[i]:
+                            reverse_list(blossom_path)
+
+                        return path[:i] + blossom_path + [leave_edge] + path[i + 1 :]
                 else:
                     pass  # do nothing!
 
@@ -201,10 +273,6 @@ def improve_matching(graph: Graph, matching: List[Edge]) -> List[Edge]:
     """Attempt to improve the given matching in the graph."""
     path = find_augmenting_path(graph, matching)
 
-    # TODO: debug, remove
-    if path == [-1]:
-        return [-1]
-
     improved_matching = list(matching)
     if path != []:
         for i, e in enumerate(path):
@@ -217,7 +285,6 @@ def improve_matching(graph: Graph, matching: List[Edge]) -> List[Edge]:
             else:
                 improved_matching.remove(e)
 
-
     return improved_matching
 
 
@@ -228,14 +295,7 @@ def get_maximal_matching(graph: Graph) -> List[Edge]:
     while True:
         improved_matching = improve_matching(graph, matching)
 
-        # TODO: debug, remove
-        if improved_matching == [-1]:
-            return [-1]
-
         if matching == improved_matching:
             return matching
 
         matching = improved_matching
-
-g = ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [(1, 2), (1, 7), (2, 10), (3, 7), (3, 9), (3, 11), (5, 8), (9, 11), (10, 14)])
-print(get_maximal_matching(g))
