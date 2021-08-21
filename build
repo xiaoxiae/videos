@@ -49,9 +49,9 @@ if not arguments.no_manim:
         if os.path.exists(video_directory):
             shutil.rmtree(video_directory)
 
-        subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-aq{arguments.quality}"]).communicate()
+        subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-aq{arguments.quality}", "--disable_caching"]).communicate()
     else:
-        subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", arguments.scene]).communicate()
+        subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", "--disable_caching", arguments.scene]).communicate()
 
 # rename to [1..n].mp4
 for scene in os.listdir(video_directory):
