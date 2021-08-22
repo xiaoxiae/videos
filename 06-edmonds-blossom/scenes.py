@@ -283,7 +283,7 @@ class Intro(Scene):
 2 14 <10.542340602049554, 5.0486231945767255> <16.235759844719652, 1.2483942204061114>
                 """,
             s=0.12 / NODE_SCALE,
-            t=0.10 / NODE_SCALE,
+            t=-0.10 / NODE_SCALE,
         ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN * 0.8)
 
         text = Tex("\large definitions").next_to(g, UP * 3)
@@ -403,7 +403,7 @@ class Core(Scene):
 
         text2 = Tex(r"\scriptsize \em contains an augmenting path $\Leftrightarrow$ matching is not maximum$^{\ast}$").next_to(text, DOWN)
 
-        box = Tex(r"$\ast$ video description – theorem 2.4").scale(0.5).align_on_border(UP + RIGHT)
+        box = Tex(r"$\ast$ proof in description – theorem 2.4").scale(0.5).align_on_border(UP + RIGHT)
         frame = SurroundingRectangle(box, color=WHITE, stroke_width=2)
 
         self.play(Write(text2))
@@ -532,8 +532,8 @@ class Tree(Scene):
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
                 """,
-            s=0.06,
-            t=0.07,
+            s=0.05,
+            t=0.06,
         ).scale(GRAPH_SCALE * NODE_SCALE).shift(3.7 * RIGHT)
         g_new_positions.rotate_in_place(-PI / 2)
 
@@ -556,8 +556,8 @@ class Tree(Scene):
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
                 """,
-            s=0.11,
-            t=0.11,
+            s=0.09,
+            t=0.09,
         ).scale(GRAPH_SCALE * NODE_SCALE)
 
         code_str = """def find_augmenting_path(v):
@@ -848,7 +848,7 @@ class Problem(Scene):
 
         text2 = Tex(r"\scriptsize \em has augmenting path $\Leftrightarrow$ contracted graph has augmenting path$^{\ast}$").shift(UP * 2.6)
 
-        box = Tex(r"$\ast$ video description – theorem 2.9").scale(0.5).align_on_border(UP + RIGHT)
+        box = Tex(r"$\ast$ proof in description – theorem 2.9").scale(0.5).align_on_border(UP + RIGHT)
         frame = SurroundingRectangle(box, color=WHITE, stroke_width=2)
 
         self.play(Write(text2))
@@ -1315,7 +1315,7 @@ while True:
             for l in dis_lines:
                 code.code.chars[l - 1].save_state()
 
-            new_lines_animation = [code.line_numbers[i - 1].animate.set_color(HIDDEN_COLOR) for i in new_lines] + \
+            new_lines_animation = [code.line_numbers[i - 1].animate.set_color(WHITE) for i in new_lines] + \
                                   [code.code.chars[i - 1].animate.restore() for i in new_lines]
             dis_lines_animation = [code.line_numbers[i - 1].animate.set_color(HIDDEN_COLOR) for i in dis_lines] + \
                                   [code.code.chars[i - 1].animate.set_color(HIDDEN_COLOR) for i in dis_lines]
@@ -1375,6 +1375,12 @@ while True:
             ("B", [(8, 13)]),
             ("A", [(14, 10), (10, 1), (1, 3), (3, 2), (2, 5), (5, 0), (0, 12), (12, 8), (8, 13)]),
             ("U", [0, 8, 12]),
+            ("I", 6),
+            ("B", [(6, 4)]),
+            ("BO", [(4, 11)]),
+            ("B", [(11, 10)]),
+            ("BO", [(14, 10)]),
+            ("R", None),
         ]
 
         fk = (12, 5)
@@ -1480,7 +1486,7 @@ class Overview(Scene):
 2 11 <-0.6729840226655002, -10.4461242684385> <-1.826409248537547, -4.402336655405>
                 """,
             s=0.08 / NODE_SCALE,
-            t=0.08 / NODE_SCALE,
+            t=-0.08 / NODE_SCALE,
         ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN)
 
         g_blossom = parse_graph(
@@ -1499,8 +1505,8 @@ class Overview(Scene):
 5 10 <-11.791437508380174, -10.273211500280336> <-16.13459349493921, -5.841431825927536>
 2 11 <-0.6729840226655002, -10.4461242684385> <-1.826409248537547, -4.402336655405>
                 """,
-            s=-0.08 / NODE_SCALE,
-            t=0.08 / NODE_SCALE,
+            s=0.08 / NODE_SCALE,
+            t=-0.08 / NODE_SCALE,
         ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN)
 
         from itertools import chain, combinations
@@ -1566,7 +1572,7 @@ class Overview(Scene):
         while True:
             animate_correct_graph_color(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime)
 
-            result = animate_tree_algorithm_iteration(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime)
+            result = animate_tree_algorithm_iteration(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime, no_code=True)
 
             if not result:
                 break
