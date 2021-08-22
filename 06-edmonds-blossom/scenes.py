@@ -54,7 +54,18 @@ HIDDEN_COLOR = DARK_GRAY
 MATCHED_WIDTH = 15
 
 GRAPH_SCALE = 1.3
+NODE_SCALE = 1.25
 
+
+def match_vertex(mob, where=None, width=50):
+    mob.set_stroke_width(width)
+    mob.move_to(where)
+    return mob
+
+def unmatch_vertex(mob, where=None, width=4):
+    mob.set_stroke_width(width)
+    mob.move_to(where)
+    return mob
 
 def match_edge(mob, change_color=True, width=MATCHED_WIDTH):
     mob.set_stroke_width(width)
@@ -63,7 +74,6 @@ def match_edge(mob, change_color=True, width=MATCHED_WIDTH):
         mob.set_color(MATCHING_COLOR)
 
     return mob
-
 
 def unmatch_edge(mob, change_color=True):
     mob.set_stroke_width(4)
@@ -74,14 +84,14 @@ def unmatch_edge(mob, change_color=True):
     return mob
 
 
-def animate_augment_path(self, g, path, add_animations_first=None, add_animations_second=None, instant=False, switch=False):
+def animate_augment_path(self, g, path, add_animations_first=None, add_animations_between=None, add_animations_second=None, instant=False, switch=False, run_time=None):
     """If animations is lambda, do them only here I don't know that I'm doing."""
     A = path
     AV = edgesToVertices(A)
 
     offset = 0 if not switch else 1
 
-    # instantly switches the path (with correct coloring) -- no messing with red color
+    # instantly switches the path (with correct coloring)
     if instant:
         self.play(
             *([] if add_animations_second is None else add_animations_second() if type(add_animations_second) is type(lambda: None) else add_animations_second),
@@ -93,6 +103,7 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
                 ApplyFunction(lambda x: unmatch_edge(x), g.edges[e])
                 for e in A[(offset+1)%2::2]
             ],
+            **(dict() if run_time is None else {"run_time": run_time})
         )
         return
 
@@ -101,7 +112,14 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
         *[g.edges[e].animate.set_color(AUGMENTING_COLOR) for e in A],
         *[g.vertices[v].animate.set_color(AUGMENTING_COLOR) for v, _ in A],
         *[g.vertices[v].animate.set_color(AUGMENTING_COLOR) for _, v in A],
+        **(dict() if run_time is None else {"run_time": run_time})
     )
+
+    if add_animations_between is not None:
+        self.play(
+                *add_animations_between,
+                **(dict() if run_time is None else {"run_time": run_time})
+                )
 
     self.play(
         *([] if add_animations_second is None else add_animations_second() if type(add_animations_second) is type(lambda: None) else add_animations_second),
@@ -113,6 +131,7 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
             ApplyFunction(lambda x: unmatch_edge(x, change_color=False), g.edges[e])
             for e in A[(offset+1)%2::2]
         ],
+        **(dict() if run_time is None else {"run_time": run_time})
     )
 
     self.play(
@@ -120,10 +139,11 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
         *[g.edges[e].animate.set_color(WHITE) for e in A[(offset+1)%2::2]],
         *[g.vertices[v].animate.set_color(MATCHING_COLOR) for v, _ in A[offset::2]],
         *[g.vertices[v].animate.set_color(MATCHING_COLOR) for _, v in A[offset::2]],
+        **(dict() if run_time is None else {"run_time": run_time})
     )
 
 
-def animate_correct_graph_color(self, g, M, set_lines=None, code=None, add_animations=[]):
+def animate_correct_graph_color(self, g, M, set_lines=None, code=None, add_animations=[], run_time=None):
     MV = edgesToVertices(M)
 
     self.play(
@@ -141,6 +161,7 @@ def animate_correct_graph_color(self, g, M, set_lines=None, code=None, add_anima
             for v in g.vertices
             if v in MV
         ],
+        **(dict() if run_time is None else {"run_time": run_time})
     )
 
 
@@ -269,9 +290,9 @@ class Intro(Scene):
 3 11 <0.8751494485961517, 2.8894436903527834> <0.4357598447196547, -3.4516057795938906>
 2 14 <10.542340602049554, 5.0486231945767255> <16.235759844719652, 1.2483942204061114>
                 """,
-            s=0.12,
-            t=0.10,
-        ).scale(GRAPH_SCALE).shift(DOWN * 0.8)
+            s=0.12 / NODE_SCALE,
+            t=0.10 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN * 0.8)
 
         text = Tex("\large definitions").next_to(g, UP * 3)
 
@@ -354,9 +375,9 @@ class Core(Scene):
 5 12 <27.05817492976113, 23.859707295924565> <33.0788344527837, 22.821541250821294>
 2 13 <16.203839106744862, 19.547491168818176> <12.52911329849324, 24.494238155627645>
                 """,
-            s=0.13,
-            t=0.13,
-        ).scale(GRAPH_SCALE).shift(DOWN)
+            s=0.13 / NODE_SCALE,
+            t=0.13 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN)
 
         text = Tex("\large augmenting paths").next_to(g, UP * 3)
 
@@ -379,13 +400,26 @@ class Core(Scene):
             ],
         )
 
-        animate_augment_path(self, g, [(8, 9), (5, 8), (4, 5), (2, 4), (1, 2)])
+        animate_augment_path(self, g, [(8, 9), (5, 8), (4, 5), (2, 4), (1, 2)],
+                add_animations_between=[
+                    Circumscribe(g.vertices[9], Circle, color=AUGMENTING_COLOR),
+                    Circumscribe(g.vertices[1], Circle, color=AUGMENTING_COLOR),
+                    ])
 
         self.play(text.animate.shift(UP * 0.2),
                 g.animate.shift(DOWN * 0.2))
 
-        text2 = Tex(r"\scriptsize \em contains an augmenting path $\Leftrightarrow$ matching is not maximum").next_to(text, DOWN)
+        text2 = Tex(r"\scriptsize \em contains an augmenting path $\Leftrightarrow$ matching is not maximum$^{\ast}$").next_to(text, DOWN)
+
+        box = Tex(r"$\ast$ description – theorem 2.4").scale(0.5).align_on_border(UP + RIGHT)
+        frame = SurroundingRectangle(box, color=WHITE, stroke_width=2)
+
         self.play(Write(text2))
+
+        self.play(
+            Write(box, run_time=0.7),
+            Write(frame)
+        )
 
         animate_augment_path(self, g, [(10, 11), (6, 10), (3, 6)])
         animate_augment_path(self, g, [(5, 12), (4, 5), (4, 7)])
@@ -397,7 +431,7 @@ def edgeFromVertices(v, w, e):
     return (w, v)
 
 
-def animate_tree_algorithm_iteration(self, g, M, set_lines, code):
+def animate_tree_algorithm_iteration(self, g, M, set_lines, code, run_time=None):
     MV = edgesToVertices(M)
     exposed = [v for v in g.vertices if v not in MV]
 
@@ -408,9 +442,11 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code):
 
     for v in exposed:
         self.play(
-            Circumscribe(g.vertices[v], Circle, color=BFS_COLOR),
+            # HACK, since cirsumscribe is animated poorly
+            *([Circumscribe(g.vertices[v], Circle, color=BFS_COLOR)] if run_time is None else []),
             g.vertices[v].animate.set_color(BFS_COLOR),
             *set_lines(self, code, [14]),
+            **(dict() if run_time is None else {"run_time": run_time})
         )
 
         queue = [(v, False, [])]
@@ -430,6 +466,7 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code):
                     *[g.vertices[v].animate.set_color(BFS_COLOR) for v in edgesToVertices(current_layer)],
                     *[g.edges[e].animate.set_color(BFS_COLOR) for e in current_layer],
                     *set_lines(self, code, [4 if previous_layer_length % 2 == 0 else 9]),
+                    **(dict() if run_time is None else {"run_time": run_time})
                 )
 
                 # if it also contains an augmenting path, then animate it
@@ -437,8 +474,8 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code):
                     # animate the augmenting path
                     animate_augment_path(self, g, augmenting_path,
                             add_animations_first=lambda: set_lines(self, code, [6, 7]),
-                            add_animations_second=lambda: set_lines(self, code, [17, 18, 19],
-                                ))
+                            add_animations_second=lambda: set_lines(self, code, [17, 18, 19]),
+                            run_time=run_time)
 
                     # dirty hack alert!
                     set_lines(self, code, [17, 18, 19])
@@ -494,9 +531,9 @@ class Tree(Scene):
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
                 """,
-            s=0.06,
-            t=0.07,
-        ).scale(GRAPH_SCALE).shift(3.7 * RIGHT)
+            s=0.06 / NODE_SCALE,
+            t=0.07 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE).shift(3.7 * RIGHT)
         g_new_positions.rotate_in_place(-PI / 2)
 
         g = parse_graph(
@@ -518,9 +555,9 @@ class Tree(Scene):
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
                 """,
-            s=0.11,
-            t=0.11,
-        ).scale(GRAPH_SCALE)
+            s=0.11 / NODE_SCALE,
+            t=0.11 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE)
 
         code_str = """def find_augmenting_path(v):
     bfs.start_from_vertex(v)
@@ -621,8 +658,6 @@ while True:
 class Problem(Scene):
     @fade
     def construct(self):
-        C = 1.3
-
         g = parse_graph(
             """
 1 2 <45.9217542503518, 30.268039362382353> <40.418193960422386, 27.255790801835087>
@@ -635,9 +670,9 @@ class Problem(Scene):
 3 8 <40.275304608904456, 21.00876563036128> <45.88376295063149, 23.472558301422573>
 3 9 <40.275304608904456, 21.00876563036128> <44.74231894798374, 16.725946411138796>
                 """,
-            s=0.13 / C,
-            t=-0.13 / C,
-        ).scale(GRAPH_SCALE * C)
+            s=0.13 / NODE_SCALE,
+            t=-0.13 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE)
 
         self.play(Write(g))
 
@@ -656,7 +691,7 @@ class Problem(Scene):
                 Circumscribe(g.vertices[7], Circle, color=BFS_COLOR)
                 )
 
-        layers = [[(1, 7)], [(1, 2)], [(2, 3), (2, 6)], [(3, 4), (5, 6)]]
+        layers = [[(1, 7)], [(1, 2)], [(2, 3), (2, 6)], [(3, 4), (5, 6)], [(4, 5)]]
 
         for current_layer in layers:
             self.play(
@@ -732,6 +767,16 @@ class Problem(Scene):
             g.animate.shift(LEFT * 2),
         )
 
+        layers = [[(1, 7)], [(1, 2)], [(2, 3), (2, 6)], [(3, 4), (5, 6)], [(4, 5)]]
+
+        for current_layer in layers:
+            self.play(
+                *[g.vertices[v].animate.set_color(BFS_COLOR) for v in edgesToVertices(current_layer)],
+                *[g.edges[e].animate.set_color(BFS_COLOR) for e in current_layer],
+                run_time=0.3,
+            )
+
+
         parts = [
             r"\small $1.\ $contract the blossomg\\ " + "\n",
             r"\small $2.\ $find augmenting path\\ " + "\n",
@@ -742,11 +787,11 @@ class Problem(Scene):
         l = Tex(*parts)
         l.arrange(DOWN, aligned_edge=LEFT).shift(RIGHT * 3.5 + UP * 0.4)
 
-        l[0][2:10].set_color(YELLOW)
+        #l[0][2:10].set_color(YELLOW)
         l[0][20].set_color(BLACK)
-        l[1][2:6].set_color(YELLOW)
-        l[2][2:9].set_color(YELLOW)
-        l[3][2:6].set_color(YELLOW)
+        #l[1][2:6].set_color(YELLOW)
+        #l[2][2:9].set_color(YELLOW)
+        #l[3][2:6].set_color(YELLOW)
 
         # fml
         small_random = [1 + i / 10000 for i in range(5)]
@@ -765,14 +810,17 @@ class Problem(Scene):
             g.vertices[6].get_center(),
         ]
 
+
         self.play(
-            g.vertices[2].animate.move_to(average * small_random[0]),
-            g.vertices[3].animate.move_to(average * small_random[1]),
-            g.vertices[4].animate.move_to(average * small_random[2]),
-            g.vertices[5].animate.move_to(average * small_random[3]),
-            g.vertices[6].animate.move_to(average * small_random[4]),
+            ApplyFunction(lambda x: match_vertex(x, where=average * small_random[0]), g.vertices[2]),
+            ApplyFunction(lambda x: match_vertex(x, where=average * small_random[1]), g.vertices[3]),
+            ApplyFunction(lambda x: match_vertex(x, where=average * small_random[2]), g.vertices[4]),
+            ApplyFunction(lambda x: match_vertex(x, where=average * small_random[3]), g.vertices[5]),
+            ApplyFunction(lambda x: match_vertex(x, where=average * small_random[4]), g.vertices[6]),
             Write(l[0]),
         )
+
+        animate_correct_graph_color(self, g, M)
 
         animate_augment_path(self, g, [(1, 7), (1, 2), (2, 6), (5, 6), (4, 5), (3, 4), (3, 9)],
             add_animations_first=[Write(l[1])],
@@ -780,24 +828,29 @@ class Problem(Scene):
         )
 
         self.play(
-            g.vertices[2].animate.move_to(original_positions[0]),
-            g.vertices[3].animate.move_to(original_positions[1]),
-            g.vertices[4].animate.move_to(original_positions[2]),
-            g.vertices[5].animate.move_to(original_positions[3]),
-            g.vertices[6].animate.move_to(original_positions[4]),
+            ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[0]), g.vertices[2]),
+            ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[1]), g.vertices[3]),
+            ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[2]), g.vertices[4]),
+            ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[3]), g.vertices[5]),
+            ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[4]), g.vertices[6]),
             Write(l[3]),
-            run_time=1.5,
         )
 
         self.play(
-                g.animate.shift(DOWN * 0.65),
-                l.animate.shift(DOWN * 0.65),
+                g.animate.shift(DOWN * 0.75),
+                l.animate.shift(DOWN * 0.75),
                 )
 
-        text2 = Tex(r"\scriptsize \em has augmenting path $\Leftrightarrow$ contracted graph has augmenting path ").shift(UP * 2.7)
+        text2 = Tex(r"\scriptsize \em has augmenting path $\Leftrightarrow$ contracted graph has augmenting path$^{\ast}$").shift(UP * 2.6)
+
+        box = Tex(r"$\ast$ description – theorem 2.9").scale(0.5).align_on_border(UP + RIGHT)
+        frame = SurroundingRectangle(box, color=WHITE, stroke_width=2)
+
+        self.play(Write(text2))
 
         self.play(
-            Write(text2)
+            Write(box, run_time=0.7),
+            Write(frame)
         )
 
 #--------------------------------
@@ -1189,9 +1242,9 @@ class Blossom(Scene):
 10 11 <0.9003340177597777, -2.5845025309871477> <-3.3577054035744847, -6.997621303069259>
 10 14 <0.9003340177597777, -2.5845025309871477> <5.227801852655065, 1.8530677198156864>
                 """,
-            s=0.065,
-            t=-0.06,
-        ).scale(GRAPH_SCALE * 1.3).rotate_in_place(-PI / 2).shift(3.4 * RIGHT)
+            s=0.065 / NODE_SCALE,
+            t=-0.06 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE).rotate_in_place(-PI / 2).shift(3.4 * RIGHT)
 
         code_str = """def find_augmenting_path(v):
     bfs.start_from_vertex(v)
@@ -1290,6 +1343,7 @@ while True:
         self.play(*set_lines(self, code, [i + 1 for i in range(len(code.code))]))
 
         operations = [
+            ("R", None),
             ("I", 8),
             ("B", [(8, 0), (8, 12), (8, 3), (8, 13)]),
             ("A", [(8, 12)]),
@@ -1318,6 +1372,13 @@ while True:
             ("B", [(0, 8), (0, 12)]),
             ("BO", [(8, 12)]),
             ("C", [0, 8, 12]),
+            ("R", None),
+            ("B", [(14, 10)]),
+            ("BO", [(1, 10)]),
+            ("B", [(1, 3)]),
+            ("BO", [(3, 2)]),
+            ("B", [(2, 5)]),
+            ("BO", [(5, 0), (0, 8), (0, 12), (8, 12)]),
             ("B", [(8, 13)]),
             ("A", [(14, 10), (10, 1), (1, 3), (3, 2), (2, 5), (5, 0), (0, 12), (12, 8), (8, 13)]),
             ("U", [0, 8, 12]),
@@ -1326,9 +1387,10 @@ while True:
         fk = (12, 5)
         g.add_to_back(g.edges[fk if fk in g.edges else (fk[1], fk[0])])
 
-        animate_correct_graph_color(self, g, M)
-
         for operation, argument in operations:
+            if operation == "R":
+                animate_correct_graph_color(self, g, M)
+
             if operation == "I":
                 self.play(
                     Circumscribe(g.vertices[argument], Circle, color=BFS_COLOR),
@@ -1388,12 +1450,12 @@ class Overview(Scene):
     @fade
     def construct(self):
         naive = Tex(r"Naïve").shift(UP * 1.7 + LEFT * 3.35)
-        naive_o = Tex("– $\mathcal{O}(2^{|E|})$")
-        naive_o_combined = Tex("Naïve – $\mathcal{O}(2^{|E|})$").move_to(naive.get_center())
+        naive_o = Tex("– $\mathcal{O}(2^{e})$")
+        naive_o_combined = Tex("Naïve – $\mathcal{O}(2^{e})$").move_to(naive.get_center())
 
         blossom = Tex(r"Blossom").shift(UP * 1.7 + RIGHT * 3.35)
-        blossom_o = Tex("– $\mathcal{O}(|E| |V|^2)$")
-        blossom_o_combined = Tex("Blossom – $\mathcal{O}(|E| |V|^2)$").move_to(blossom.get_center())
+        blossom_o = Tex("– $\mathcal{O}(e \cdot v^2)$")
+        blossom_o_combined = Tex("Blossom – $\mathcal{O}(e \cdot v^2)$").move_to(blossom.get_center())
 
         g_naive = parse_graph(
             """
@@ -1411,9 +1473,9 @@ class Overview(Scene):
 5 10 <-11.791437508380174, -10.273211500280336> <-16.13459349493921, -5.841431825927536>
 2 11 <-0.6729840226655002, -10.4461242684385> <-1.826409248537547, -4.402336655405>
                 """,
-            s=0.07,
-            t=0.08,
-        ).scale(GRAPH_SCALE).shift(DOWN)
+            s=0.07 / NODE_SCALE,
+            t=0.08 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN)
 
         g_blossom = parse_graph(
             """
@@ -1431,9 +1493,9 @@ class Overview(Scene):
 5 10 <-11.791437508380174, -10.273211500280336> <-16.13459349493921, -5.841431825927536>
 2 11 <-0.6729840226655002, -10.4461242684385> <-1.826409248537547, -4.402336655405>
                 """,
-            s=-0.08,
-            t=0.08,
-        ).scale(GRAPH_SCALE).shift(DOWN)
+            s=-0.08 / NODE_SCALE,
+            t=0.08 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN)
 
         from itertools import chain, combinations
 
@@ -1462,6 +1524,8 @@ class Overview(Scene):
 
         self.play(Write(naive), Write(g_naive))
 
+        animation_runtime = 0.06
+
         for subset in good_subsets:
             g = g_naive
             self.play(
@@ -1475,8 +1539,10 @@ class Overview(Scene):
                 ],
                 *[g.vertices[v].animate.set_color(MATCHING_COLOR) for v in edgesToVertices(subset)],
                 *[g.vertices[v].animate.set_color(EXPOSED_COLOR) for v in g.vertices if v not in edgesToVertices(subset)],
-                run_time=0.05
+                run_time=animation_runtime
             )
+
+        animation_runtime *= 3
 
         diff = (-naive[0][0].get_center() + naive_o_combined[0][0].get_center())
 
@@ -1487,35 +1553,32 @@ class Overview(Scene):
         g_blossom.next_to(blossom, DOWN, 0.8)
         self.play(Write(blossom), Write(g_blossom))
 
-
         diff = (-blossom[0][0].get_center() + blossom_o_combined[0][0].get_center())
+
+        g = g_blossom
+        M = []
+        while True:
+            animate_correct_graph_color(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime)
+
+            result = animate_tree_algorithm_iteration(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime)
+
+            if not result:
+                break
+
+        animate_correct_graph_color(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime)
 
         self.play(blossom.animate.shift(diff))
         blossom_o.next_to(blossom, RIGHT)
         self.play(Write(blossom_o))
 
-        g = g_blossom
-        M = []
-        while True:
-            animate_correct_graph_color(self, g, M, lambda x, y, z: [], None)
-
-            result = animate_tree_algorithm_iteration(self, g, M, lambda x, y, z: [], None)
-
-            if not result:
-                break
-
-        animate_correct_graph_color(self, g, M, lambda x, y, z: [], None)
-
-class Test(Scene):
-    @fade
-    def construct(self):
-        test = Tex(r"\footnotesize description – theorem 2.4")
-
-        frame = SurroundingRectangle(test, color=WHITE)
-
-        self.play(
-            Write(test, run_time=0.5),
-            Write(frame)
-        )
-
-
+#class Test(Scene):
+#    @fade
+#    def construct(self):
+#        test = Tex(r"\footnotesize description – theorem 2.4")
+#
+#        frame = SurroundingRectangle(test, color=WHITE)
+#
+#        self.play(
+#            Write(test, run_time=0.5),
+#            Write(frame)
+#        )
