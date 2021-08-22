@@ -284,7 +284,7 @@ class Intro(Scene):
                 """,
             s=0.12 / NODE_SCALE,
             t=-0.10 / NODE_SCALE,
-        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN * 0.8)
+        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN * 0.5)
 
         text = Tex("\large definitions").next_to(g, UP * 3)
 
@@ -367,8 +367,8 @@ class Core(Scene):
 5 12 <27.05817492976113, 23.859707295924565> <33.0788344527837, 22.821541250821294>
 2 13 <16.203839106744862, 19.547491168818176> <12.52911329849324, 24.494238155627645>
                 """,
-            s=0.13 / NODE_SCALE,
-            t=-0.13 / NODE_SCALE,
+            s=0.12 / NODE_SCALE,
+            t=-0.12 / NODE_SCALE,
         ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN * 0.65)
 
         text = Tex("\large augmenting paths").next_to(g, UP * 3)
@@ -1380,6 +1380,7 @@ while True:
             ("BO", [(4, 11)]),
             ("B", [(11, 10)]),
             ("BO", [(14, 10)]),
+            ("Q", None),
             ("R", None),
         ]
 
@@ -1453,9 +1454,10 @@ while True:
                     *set_lines(self, code, [9]),
                 )
 
-        self.play(*set_lines(self, code, [17]), run_time=SHORT_CODE_PAUSE)
-        self.play(*set_lines(self, code, [27]), run_time=SHORT_CODE_PAUSE)
-        self.play(*set_lines(self, code, [31]), run_time=SHORT_CODE_PAUSE)
+            if operation == "Q":
+                self.play(*set_lines(self, code, [17]), run_time=SHORT_CODE_PAUSE)
+                self.play(*set_lines(self, code, [27]), run_time=SHORT_CODE_PAUSE)
+                self.play(*set_lines(self, code, [31]), run_time=SHORT_CODE_PAUSE)
 
 
 class Overview(Scene):
@@ -1536,6 +1538,9 @@ class Overview(Scene):
 
         self.play(Write(naive), Write(g_naive))
 
+        g_blossom.next_to(blossom, DOWN, 0.8)
+        self.play(Write(blossom), Write(g_blossom))
+
         animation_runtime = 0.06
 
         for subset in good_subsets:
@@ -1562,9 +1567,6 @@ class Overview(Scene):
         naive_o.next_to(naive, RIGHT)
         self.play(Write(naive_o))
 
-        g_blossom.next_to(blossom, DOWN, 0.8)
-        self.play(Write(blossom), Write(g_blossom))
-
         diff = (-blossom[0][0].get_center() + blossom_o_combined[0][0].get_center())
 
         g = g_blossom
@@ -1582,6 +1584,23 @@ class Overview(Scene):
         self.play(blossom.animate.shift(diff))
         blossom_o.next_to(blossom, RIGHT)
         self.play(Write(blossom_o))
+
+class Title(Scene):
+    @fade
+    def construct(self):
+        text = Tex(r"\Large The Blossom algorithm").scale(1.3)
+        i = 5
+        text[0][i].set_color(BLACK)
+
+        S = 1.2
+
+        self.play(
+            LaggedStart(
+                Write(text.scale(S)),
+                Write(SVGMobject("flower.svg").scale(0.225).move_to(text[0][i]).shift(LEFT * 0.02).scale(S), run_time=0.3),
+                lag_ratio=0.2,
+            )
+        )
 
 class Outro(Scene):
     @fade

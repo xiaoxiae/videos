@@ -16,7 +16,7 @@ DEFINITIONS
 # Intro
 **[i1]:** Formally, a graph consists of vertices connected by edges. A matching in a graph is a subset of edges, such that no two share a vertex.
 
-**[i2]:** A matching is maximum if it contains the most edges possible compared to other matchings for the given graph. We'll call vertices that are not in the matching exposed.
+**[i2]:** A matching is maximum if it contains the most edges possible compared to other matchings for the given graph. Also, we'll call vertices that are not in the matching exposed.
 
 ---
 CORE IDEA
@@ -36,40 +36,41 @@ MAXIMUM TREE MATCHING
 # Tree
 **[t1]:** First, let's think about how to find augmenting paths in a tree (a graph without cycles). This is pretty straight-forward -- we'll run a breadth-first-search (or BFS for short) from exposed vertices, alternating between adding matched and unmatched edges.
 
-**[t2]:** The rest of the algorithm just repeatedly improves the matching using augmenting paths and terminates when there aren't any remaining. To better understand how this all works, it will be best to see an example.
+**[t2]:** The rest of the algorithm repeatedly improves the matching using augmenting paths and terminates when there aren't any remaining. To better understand how this all works, it will be best to see an example.
 
 **[t3]:** Initially, every vertex is exposed, since the matching is empty.
 
 **[t4]:** The algorithm then picks one exposed vertex at random and run the BFS. Here it successfully finds an augmenting path, so it uses it to improve the matching and repeats.
 
-**[t5]:** We'll fast-forward a bit until some larger augmenting path is found.
+**[t5]:** Let's fast-forward a bit until some larger augmenting path is found.
 
-**[t5]:** Here is one interesting path that it finds that neatly showcases the BFS.
+**[t6]:** Here is a longer path that the algorithm finds that neatly showcases the alternating edges.
 
-**[t6]:** Finally, once no augmenting path is found, the algorithm terminates.
+**[t7]:** Finally, once no augmenting path is found, the algorithm terminates.
 
 ---
 MAXIMUM GENERAL GRAPH MATCHING
 ---
 
 # Problem
-**[p1]:** Although trees are a large family of graphs, we'd like our algorithm to work on all of them, so let's consider a graph our algorithm will not work on.
+**[p1]:** Although trees are a large family of graphs, we'd like our algorithm to work on all of them, so let's look at a graph our algorithm will not work on.
 
-**[p2]:** Imagine we already found some matching that isn't yet maximum and would like to improve it. Running our algorithm without any changes wouldn't work here, since the augmenting path is not the shortest path and is therefore not found.
+**[p2]:** Imagine we already found some matching that isn't yet maximum and would like to improve it. Running the algorithm here wouldn't work, since the augmenting path is longer than the shortest path and is therefore not found.
 
 **[p3]:** The problem here is this part of the graph. It consists of an odd cycle with alternating edges called the blossom, hence the name of the algorithm, and an alternating path ending in an exposed vertex called the stem.
 
 **[p4]:** To fix the problem, we'll avoid it -- when we come from the stem into the blossom, we'll do the following:
 
+**[p5]:**
 - first, we'll „contract“ the blossom into a single vertex
 - second, we'll find an augmenting path in this new graph
 - third, we'll improve the matching using this augmenting path and
 - fourth, we'll „lift“ the path back to the original graph
 
-**[p5]:** Here, we are relying on the fact that the graph has an augmenting path if and only if the contracted graph has an augmenting path.
+**[p6]:** Here, we are relying on the fact that the graph has an augmenting path if and only if the contracted graph has an augmenting path.
 
 # Blossom
-**[b1]:** Adding this operation to our algorithm will be pretty straight-forward. Each time we add a new layer unmatched edges, we'll check for blossoms. If found, we will contract the blossom, find the augmenting path in the new graph and then lift back.
+**[b1]:** Adding this operation to our algorithm will be pretty straight-forward. Each time we add unmatched edges, we'll check for blossoms. If found, we will contract the blossom, find the augmenting path in the new graph and then lift back.
 
 **[b2]:** The rest of the algorithm hasn't changed at all. As you can see, it does exactly what it did before, so we'll again fast-forward a bit until something interesting happens.
 
