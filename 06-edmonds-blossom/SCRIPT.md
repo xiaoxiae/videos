@@ -33,8 +33,6 @@ CORE IDEA
 MAXIMUM TREE MATCHING
 ---
 
-TODO: animace mezikroků
-
 # Tree
 **[t1]:** First, let's think about how to find augmenting paths in a tree (a graph without cycles). This is pretty straight-forward -- we'll run a breadth-first-search (BFS for short) from exposed vertices, alternating between adding edges not in the matching and edges in the matching.
 

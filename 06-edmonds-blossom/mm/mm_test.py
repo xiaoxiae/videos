@@ -3,12 +3,12 @@ import mm_blossom
 
 from networkx import generators, algorithms
 
-sizes = [15]
+sizes = [20]
 iterations = 5
 p = 0.1
 
 from random import seed
-seed(1)
+seed(2)
 
 while True:
     for n in sizes:
@@ -18,8 +18,8 @@ while True:
             if not algorithms.components.is_connected(g):
                 continue
 
-            a_result = mm.get_maximal_matching(g.edges)
-            b_result = mm_blossom.get_maximal_matching((list(g.nodes), list(g.edges)))
+            a_result = mm.get_maximum_matching(g.edges)
+            b_result = mm_blossom.get_maximum_matching((list(g.nodes), list(g.edges)))
 
             if len(a_result) != len(b_result):
                 print(len(a_result), len(b_result))

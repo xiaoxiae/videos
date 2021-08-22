@@ -288,8 +288,8 @@ def improve_matching(graph: Graph, matching: List[Edge]) -> List[Edge]:
     return improved_matching
 
 
-def get_maximal_matching(graph: Graph) -> List[Edge]:
-    """Find the maximal matching in a graph."""
+def get_maximum_matching(graph: Graph) -> List[Edge]:
+    """Find the maximum matching in a graph."""
     matching = []
 
     while True:

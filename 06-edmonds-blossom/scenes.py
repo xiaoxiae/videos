@@ -56,6 +56,7 @@ MATCHED_WIDTH = 15
 GRAPH_SCALE = 1.3
 NODE_SCALE = 1.25
 
+SHORT_CODE_PAUSE = 1
 
 def match_vertex(mob, where=None, width=50):
     mob.set_stroke_width(width)
@@ -177,29 +178,20 @@ class Kids(Scene):
     @fade
     def construct(self):
 
-#        self.play(Write(Tex(r"\Large Alice \\ Bob \\ Carl \\ Dan \\ Ema \\ Febe", tex_template=TexTemplate(preamble=r"""\usepackage[T1]{fontenc}
-#\usepackage[utf8]{inputenc}
-#\usepackage{tcolorbox}
-#\usepackage{tgchorus}"""
-#            ))))
-
         n = ["Alice", "Bob", "Carl", "Dan", "Ema", "Febe"]
 
         kids = [SVGMobject(f"kids/{i + 1}.svg").scale(0.58) for i in range(6)]
-        names = [Tex(n[i], tex_template=TexTemplate(preamble=r"""\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{tcolorbox}
-\usepackage{tgchorus}""")).scale(0.8) for i in range(6)]
+        names = [Tex(n[i]).scale(0.8) for i in range(6)]
 
         seed(4)
         g = nx.generators.gnm_random_graph(6, 6)
 
-        g = Graph(list(g.nodes), list(g.edges)).shift(RIGHT)
+        g = Graph(list(g.nodes), list(g.edges))
 
         C = 2.3
         D = 3
         for i in range(6):
-            kids[i].shift(D * RIGHT * abs(sin((PI * 2 / 6) * i - PI / 6)) ** 1.3 * sgn(sin((PI * 2 / 6) * i - PI / 6)) + C * UP * cos((PI * 2 / 6) * i - PI / 6))
+            kids[i].shift(D * RIGHT * abs(sin((PI * 2 / 6) * i - PI / 6)) ** 1.3 * sgn(sin((PI * 2 / 6) * i - PI / 6)) + C * UP * cos((PI * 2 / 6) * i - PI / 6)).shift(DOWN * 0.3)
             g.vertices[i].move_to(kids[i].get_center())
             g.vertices[i].scale(3)
             g.vertices[i].set_opacity(0)
@@ -376,8 +368,8 @@ class Core(Scene):
 2 13 <16.203839106744862, 19.547491168818176> <12.52911329849324, 24.494238155627645>
                 """,
             s=0.13 / NODE_SCALE,
-            t=0.13 / NODE_SCALE,
-        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN)
+            t=-0.13 / NODE_SCALE,
+        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN * 0.65)
 
         text = Tex("\large augmenting paths").next_to(g, UP * 3)
 
@@ -411,7 +403,7 @@ class Core(Scene):
 
         text2 = Tex(r"\scriptsize \em contains an augmenting path $\Leftrightarrow$ matching is not maximum$^{\ast}$").next_to(text, DOWN)
 
-        box = Tex(r"$\ast$ description – theorem 2.4").scale(0.5).align_on_border(UP + RIGHT)
+        box = Tex(r"$\ast$ video description – theorem 2.4").scale(0.5).align_on_border(UP + RIGHT)
         frame = SurroundingRectangle(box, color=WHITE, stroke_width=2)
 
         self.play(Write(text2))
@@ -431,7 +423,7 @@ def edgeFromVertices(v, w, e):
     return (w, v)
 
 
-def animate_tree_algorithm_iteration(self, g, M, set_lines, code, run_time=None):
+def animate_tree_algorithm_iteration(self, g, M, set_lines, code, run_time=None, no_code=False):
     MV = edgesToVertices(M)
     exposed = [v for v in g.vertices if v not in MV]
 
@@ -449,6 +441,11 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code, run_time=None)
             **(dict() if run_time is None else {"run_time": run_time})
         )
 
+        if not no_code:
+            self.play(*set_lines(self, code, [15]), run_time=SHORT_CODE_PAUSE)
+            self.play(*set_lines(self, code, [2]), run_time=SHORT_CODE_PAUSE)
+            self.play(*set_lines(self, code, [3]), run_time=SHORT_CODE_PAUSE)
+
         queue = [(v, False, [])]
 
         current_layer = []
@@ -461,12 +458,12 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code, run_time=None)
 
             # if we've explored the current layer
             if len(path) > previous_layer_length:
+
                 # animate it
                 self.play(
                     *[g.vertices[v].animate.set_color(BFS_COLOR) for v in edgesToVertices(current_layer)],
                     *[g.edges[e].animate.set_color(BFS_COLOR) for e in current_layer],
-                    *set_lines(self, code, [4 if previous_layer_length % 2 == 0 else 9]),
-                    **(dict() if run_time is None else {"run_time": run_time})
+                    *set_lines(self, code, [4 if previous_layer_length % 2 == 0 else 9]), **(dict() if run_time is None else {"run_time": run_time})
                 )
 
                 # if it also contains an augmenting path, then animate it
@@ -506,6 +503,10 @@ def animate_tree_algorithm_iteration(self, g, M, set_lines, code, run_time=None)
                     queue.append((neighbour, not edge_type, new_path))
                     current_layer.append(e)
 
+    if not no_code:
+        self.play(*set_lines(self, code, [11]), run_time=SHORT_CODE_PAUSE)
+        self.play(*set_lines(self, code, [21]), run_time=SHORT_CODE_PAUSE)
+        self.play(*set_lines(self, code, [25]), run_time=SHORT_CODE_PAUSE)
     return False
 
 
@@ -531,8 +532,8 @@ class Tree(Scene):
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
                 """,
-            s=0.06 / NODE_SCALE,
-            t=0.07 / NODE_SCALE,
+            s=0.06,
+            t=0.07,
         ).scale(GRAPH_SCALE * NODE_SCALE).shift(3.7 * RIGHT)
         g_new_positions.rotate_in_place(-PI / 2)
 
@@ -555,8 +556,8 @@ class Tree(Scene):
 5 16 <8.976964571929539, -3.0504356092202367> <3.6702917967931405, 0.23588429272754086>
 17 12 <17.000076691912383, 8.77194474648056> <19.316663589836477, 3.048818090535028>
                 """,
-            s=0.11 / NODE_SCALE,
-            t=0.11 / NODE_SCALE,
+            s=0.11,
+            t=0.11,
         ).scale(GRAPH_SCALE * NODE_SCALE)
 
         code_str = """def find_augmenting_path(v):
@@ -597,6 +598,9 @@ while True:
 
         code.shift(UP * len(code.code) * c / 2)
 
+        frame = SurroundingRectangle(code, color=WHITE, stroke_width=2)
+        frame.round_corners(0.2).shift(DOWN * 0.1)
+
         self.play(Write(g))
 
         self.play(
@@ -604,7 +608,7 @@ while True:
             run_time=1.5
         )
 
-        self.play(Write(code))
+        self.play(Write(code), Write(frame))
 
         M = []
 
@@ -637,7 +641,7 @@ while True:
 
             return new_lines_animation + dis_lines_animation
 
-        seed(2)
+        seed(3)
 
         self.play(*set_lines(self, code, [i + 1 for i in range(11)]))
 
@@ -653,7 +657,8 @@ while True:
             if not result:
                 break
 
-        animate_correct_graph_color(self, g, M, set_lines, code)
+        animate_correct_graph_color(self, g, M, lambda x, y, z: [], None)
+
 
 class Problem(Scene):
     @fade
@@ -670,8 +675,8 @@ class Problem(Scene):
 3 8 <40.275304608904456, 21.00876563036128> <45.88376295063149, 23.472558301422573>
 3 9 <40.275304608904456, 21.00876563036128> <44.74231894798374, 16.725946411138796>
                 """,
-            s=0.13 / NODE_SCALE,
-            t=-0.13 / NODE_SCALE,
+            s=0.1,
+            t=-0.1,
         ).scale(GRAPH_SCALE * NODE_SCALE)
 
         self.play(Write(g))
@@ -763,10 +768,6 @@ class Problem(Scene):
             FadeOut(stem_text),
         )
 
-        self.play(
-            g.animate.shift(LEFT * 2),
-        )
-
         layers = [[(1, 7)], [(1, 2)], [(2, 3), (2, 6)], [(3, 4), (5, 6)], [(4, 5)]]
 
         for current_layer in layers:
@@ -775,6 +776,10 @@ class Problem(Scene):
                 *[g.edges[e].animate.set_color(BFS_COLOR) for e in current_layer],
                 run_time=0.3,
             )
+
+        self.play(
+            g.animate.shift(LEFT * 2),
+        )
 
 
         parts = [
@@ -843,14 +848,15 @@ class Problem(Scene):
 
         text2 = Tex(r"\scriptsize \em has augmenting path $\Leftrightarrow$ contracted graph has augmenting path$^{\ast}$").shift(UP * 2.6)
 
-        box = Tex(r"$\ast$ description – theorem 2.9").scale(0.5).align_on_border(UP + RIGHT)
+        box = Tex(r"$\ast$ video description – theorem 2.9").scale(0.5).align_on_border(UP + RIGHT)
         frame = SurroundingRectangle(box, color=WHITE, stroke_width=2)
 
         self.play(Write(text2))
 
         self.play(
             Write(box, run_time=0.7),
-            Write(frame)
+            Write(frame),
+            run_time=1,
         )
 
 #--------------------------------
@@ -1028,9 +1034,6 @@ def find_augmenting_path(graph: MyGraph, matching: List[Edge], context) -> List[
             else:
                 if layer[w] % 2 == 0:
                     if root_node[v] != root_node[w]:
-                        # TODO: animate the entire tree
-                        print(sibling)
-
                         return (
                             reverse_list(path_to_root(v, parent))
                             + [(v, w)]
@@ -1195,7 +1198,6 @@ def get_maximum_matching(graph: MyGraph, context) -> List[Edge]:
 
     animate_correct_graph_color(context.self, context.graph, [])
     while True:
-        #context.self.play(*context.set_lines(context.self, context.code, [30]))
         improved_matching = improve_matching(graph, matching, context)
 
         if matching == improved_matching:
@@ -1242,9 +1244,9 @@ class Blossom(Scene):
 10 11 <0.9003340177597777, -2.5845025309871477> <-3.3577054035744847, -6.997621303069259>
 10 14 <0.9003340177597777, -2.5845025309871477> <5.227801852655065, 1.8530677198156864>
                 """,
-            s=0.065 / NODE_SCALE,
-            t=-0.06 / NODE_SCALE,
-        ).scale(GRAPH_SCALE * NODE_SCALE).rotate_in_place(-PI / 2).shift(3.4 * RIGHT)
+            s=0.065,
+            t=-0.070,
+        ).scale(GRAPH_SCALE * NODE_SCALE).rotate_in_place(-PI / 2).shift(3.3 * RIGHT)
 
         code_str = """def find_augmenting_path(v):
     bfs.start_from_vertex(v)
@@ -1280,7 +1282,7 @@ while True:
 
         code = Code(code=code_str, font="Fira Mono", line_spacing=0, style="Monokai", language="python")
         code.background_mobject[0].set_opacity(0)
-        code.scale(0.55).shift(2.6 * LEFT)
+        code.scale(0.55).shift(2.8 * LEFT)
 
         c = 0.075
 
@@ -1290,7 +1292,10 @@ while True:
 
         code.shift(UP * len(code.code) * c / 2)
 
-        self.play(Write(code), Write(g))
+        frame = SurroundingRectangle(code, color=WHITE, stroke_width=2)
+        frame.round_corners(0.2).shift(DOWN * 0.1)
+
+        self.play(Write(code), Write(g), Write(frame))
 
         M = []
 
@@ -1323,22 +1328,9 @@ while True:
 
             return new_lines_animation + dis_lines_animation
 
-        #g_structure = ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [(0, 5), (0, 8), (0, 12), (1, 3), (1, 10), (2, 3), (2, 5), (3, 8), (4, 6), (4, 7), (4, 11), (5, 12), (7, 9), (7, 10), (8, 12), (8, 13), (10, 11), (10, 14)])
-
-        #get_maximum_matching(g_structure, Context(g, self, code, set_lines))
-
         # I ran out of time making the algorithm general, so this is a simulated run
         # :C
-
-        self.play(*set_lines(self, code, [4]))
-
-        self.play(*set_lines(self, code, [6]))
-
-        self.play(*set_lines(self, code, [7]))
-
-        self.play(*set_lines(self, code, [8]))
-
-        self.play(*set_lines(self, code, [9]))
+        self.play(*set_lines(self, code, [6, 7, 8, 9]))
 
         self.play(*set_lines(self, code, [i + 1 for i in range(len(code.code))]))
 
@@ -1373,6 +1365,7 @@ while True:
             ("BO", [(8, 12)]),
             ("C", [0, 8, 12]),
             ("R", None),
+            ("I", 14),
             ("B", [(14, 10)]),
             ("BO", [(1, 10)]),
             ("B", [(1, 3)]),
@@ -1395,8 +1388,12 @@ while True:
                 self.play(
                     Circumscribe(g.vertices[argument], Circle, color=BFS_COLOR),
                     g.vertices[argument].animate.set_color(BFS_COLOR),
-                    *set_lines(self, code, [2]),
+                    *set_lines(self, code, [20]),
                 )
+
+                self.play(*set_lines(self, code, [21]))
+                self.play(*set_lines(self, code, [2]))
+                self.play(*set_lines(self, code, [3]))
 
             if operation[0] == "B":
                 self.play(
@@ -1434,16 +1431,25 @@ while True:
                 original_positions = [g.vertices[v].get_center() for v in argument]
 
                 self.play(
-                    *[g.vertices[v].animate.move_to(average * small_random[i]) for i, v in enumerate(argument)],
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[0]), g.vertices[0]),
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[1]), g.vertices[8]),
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[2]), g.vertices[12]),
                     *set_lines(self, code, [6, 7]),
                 )
 
+                self.play(*set_lines(self, code, [8]))
+
             if operation == "U":
                 self.play(
-                    *[g.vertices[v].animate.move_to(original_positions[i]) for i, v in enumerate(original_vertices)],
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[0]), g.vertices[0]),
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[1]), g.vertices[8]),
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[2]), g.vertices[12]),
                     *set_lines(self, code, [9]),
                 )
 
+        self.play(*set_lines(self, code, [17]), run_time=SHORT_CODE_PAUSE)
+        self.play(*set_lines(self, code, [27]), run_time=SHORT_CODE_PAUSE)
+        self.play(*set_lines(self, code, [31]), run_time=SHORT_CODE_PAUSE)
 
 
 class Overview(Scene):
@@ -1473,7 +1479,7 @@ class Overview(Scene):
 5 10 <-11.791437508380174, -10.273211500280336> <-16.13459349493921, -5.841431825927536>
 2 11 <-0.6729840226655002, -10.4461242684385> <-1.826409248537547, -4.402336655405>
                 """,
-            s=0.07 / NODE_SCALE,
+            s=0.08 / NODE_SCALE,
             t=0.08 / NODE_SCALE,
         ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN)
 
@@ -1571,14 +1577,174 @@ class Overview(Scene):
         blossom_o.next_to(blossom, RIGHT)
         self.play(Write(blossom_o))
 
-#class Test(Scene):
-#    @fade
-#    def construct(self):
-#        test = Tex(r"\footnotesize description – theorem 2.4")
-#
-#        frame = SurroundingRectangle(test, color=WHITE)
-#
-#        self.play(
-#            Write(test, run_time=0.5),
-#            Write(frame)
-#        )
+class Outro(Scene):
+    @fade
+    def construct(self):
+        g = parse_graph(
+            """
+0 1 <16.41082561017643, 4.667526176613917> <10.84069307855083, 7.503968161787933>
+1 15 <10.84069307855083, 7.503968161787933> <4.541887477921455, 8.254448675626461>
+2 5 <-1.196230366996346, 5.4090795936312865> <-6.619254653629823, 1.7609337636785525>
+2 10 <-1.196230366996346, 5.4090795936312865> <3.816531484644093, 1.7352935181536813>
+15 2 <4.541887477921455, 8.254448675626461> <-1.196230366996346, 5.4090795936312865>
+3 14 <15.86879364092038, -9.39849234273218> <9.939049668936683, -11.536515478495724>
+4 6 <-0.6313440444305729, -6.6657958940717155> <5.039718780660546, -4.2902764515477605>
+4 7 <-0.6313440444305729, -6.6657958940717155> <-6.4928860212702615, -4.787834235204335>
+4 9 <-0.6313440444305729, -6.6657958940717155> <-1.7957609981445226, -0.806513806341758>
+5 7 <-6.619254653629823, 1.7609337636785525> <-6.4928860212702615, -4.787834235204335>
+5 8 <-6.619254653629823, 1.7609337636785525> <-10.651125829909375, 6.550841780969295>
+5 16 <-6.619254653629823, 1.7609337636785525> <-11.785738650858029, -1.5835479095931102>
+10 6 <3.816531484644093, 1.7352935181536813> <5.039718780660546, -4.2902764515477605>
+6 12 <5.039718780660546, -4.2902764515477605> <11.059397566311196, -5.512977312597954>
+7 9 <-6.4928860212702615, -4.787834235204335> <-1.7957609981445226, -0.806513806341758>
+7 11 <-6.4928860212702615, -4.787834235204335> <-12.098487635168565, -7.615515657229979>
+7 16 <-6.4928860212702615, -4.787834235204335> <-11.785738650858029, -1.5835479095931102>
+7 19 <-6.4928860212702615, -4.787834235204335> <-2.8286604281628853, -10.234945141734263>
+10 9 <3.816531484644093, 1.7352935181536813> <-1.7957609981445226, -0.806513806341758>
+10 18 <3.816531484644093, 1.7352935181536813> <10.072341264393968, 1.4997616137359333>
+16 11 <-11.785738650858029, -1.5835479095931102> <-12.098487635168565, -7.615515657229979>
+12 17 <11.059397566311196, -5.512977312597954> <15.546018749458295, -1.4101212844618582>
+14 13 <9.939049668936683, -11.536515478495724> <3.5146419854002207, -11.66621030177497>
+19 13 <-2.8286604281628853, -10.234945141734263> <3.5146419854002207, -11.66621030177497>
+18 17 <10.072341264393968, 1.4997616137359333> <15.546018749458295, -1.4101212844618582>
+                """,
+            s=0.09,
+            t=-0.08,
+        ).scale(GRAPH_SCALE * NODE_SCALE)
+
+        @dataclass
+        class Context:
+            graph: MyGraph
+            self: Outro
+
+        self.play(Write(g))
+
+        g_structure = ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], [(0, 1), (1, 15), (2, 5), (2, 10), (2, 15), (3, 14), (4, 6), (4, 7), (4, 9), (5, 7), (5, 8), (5, 16), (6, 10), (6, 12), (7, 9), (7, 11), (7, 16), (7, 19), (9, 10), (10, 18), (11, 16), (12, 17), (13, 14), (13, 19), (17, 18)])
+
+        operations = [
+            ("R", None),
+            ("I", 0),
+            ("B", [(0, 1)]),
+            ("A", [(0, 1)]),
+            ("I", 2),
+            ("B", [(2, 10), (2, 15), (2, 5)]),
+            ("A", [(2, 10)]),
+            ("I", 14),
+            ("B", [(14, 3), (14, 13)]),
+            ("A", [(14, 3)]),
+            ("I", 9),
+            ("B", [(9, 10), (9, 7), (9, 4)]),
+            ("A", [(9, 4)]),
+            ("I", 5),
+            ("B", [(5, 8), (5, 16), (5, 2), (5, 7)]),
+            ("A", [(5, 8)]),
+            ("I", 12),
+            ("B", [(12, 6), (12, 17)]),
+            ("A", [(6, 12)]),
+            ("I", 7),
+            ("B", [(7, 4), (7, 9), (7, 11), (7, 5), (7, 16), (7, 19)]),
+            ("A", [(16, 7)]),
+            ("I", 11),
+            ("B", [(11, 7), (11, 16), (7, 16)]),
+            ("C", [11, 7, 16]),
+            ("R", None),
+            ("I", 11),
+            ("B", [(16, 5), (7, 9), (7, 4), (7, 19)]),
+            ("A", [(11, 16), (16, 7), (7, 19)]),
+            ("U", [11, 7, 16]),
+            ("I", 17),
+            ("B", [(17, 18), (17, 12)]),
+            ("A", [(17, 18)]),
+            ("I", 13),
+            ("B", [(13, 14), (13, 19)]),
+            ("BO", [(19, 7)]),
+            ("B", [(7, 4), (7, 9), (7, 5), (7, 16), (7, 11)]),
+            ("BO", [(5, 8), (4, 9), (11, 16)]),
+            ("CC", [7, 4, 9]),
+            ("R", None),
+            ("I", 15),
+            ("B", [(15, 2), (15, 1)]),
+            ("BO", [(2, 10), (1, 0)]),
+            ("B", [(10, 9), (10, 18), (10, 6), (9, 4), (4, 7)]),
+            ("BO", [(6, 12), (18, 17), (7, 19)]),
+            ("B", [(12, 17), (19, 13)]),
+            ("A", [(15, 2), (2, 10), (10, 9), (9, 4), (4, 7), (7, 19), (19, 13)]),
+            ("UU", [7, 4, 9]),
+            ("R", None),
+        ]
+
+        g.add_to_back(g.vertices[7])
+        g.add_to_back(g.vertices[16])
+
+        M = []
+
+        for operation, argument in operations:
+            if operation == "R":
+                animate_correct_graph_color(self, g, M)
+
+            if operation == "I":
+                self.play(
+                    Circumscribe(g.vertices[argument], Circle, color=BFS_COLOR),
+                    g.vertices[argument].animate.set_color(BFS_COLOR),
+                )
+
+            if operation[0] == "B":
+                self.play(
+                    *[g.vertices[v].animate.set_color(BFS_COLOR) for v in edgesToVertices(argument)],
+                    *[g.edges[e if e in g.edges else (e[1], e[0])].animate.set_color(BFS_COLOR) for e in argument],
+                )
+
+            if operation == "A":
+                augmenting_path =[(e if e in g.edges else (e[1], e[0])) for e in argument]
+
+                animate_augment_path(self, g, augmenting_path)
+
+                # improve M
+                for i in range(0, len(augmenting_path), 2):
+                    M.append(augmenting_path[i])
+                for i in range(1, len(augmenting_path), 2):
+                    M.remove(augmenting_path[i])
+
+                animate_correct_graph_color(self, g, M)
+
+            if operation == "C":
+                small_random = [1 + i / 10000 for i in range(len(argument))]
+
+                average = sum(g.vertices[v].get_center() for v in argument) / len(argument)
+
+                original_vertices = argument
+                original_positions = [g.vertices[v].get_center() for v in argument]
+
+                self.play(
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[0]), g.vertices[11]),
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[1]), g.vertices[7]),
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[2]), g.vertices[16]),
+                )
+
+            if operation == "CC":
+                small_random = [1 + i / 10000 for i in range(len(argument))]
+
+                average = sum(g.vertices[v].get_center() for v in argument) / len(argument)
+
+                original_vertices = argument
+                original_positions = [g.vertices[v].get_center() for v in argument]
+
+                self.play(
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[0]), g.vertices[7]),
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[1]), g.vertices[4]),
+                    ApplyFunction(lambda x: match_vertex(x, where=average * small_random[2]), g.vertices[9]),
+                )
+
+            if operation == "U":
+                self.play(
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[0]), g.vertices[11]),
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[1]), g.vertices[7]),
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[2]), g.vertices[16]),
+                )
+
+            if operation == "UU":
+                self.play(
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[0]), g.vertices[7]),
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[1]), g.vertices[4]),
+                    ApplyFunction(lambda x: unmatch_vertex(x, where=original_positions[2]), g.vertices[9]),
+                )
