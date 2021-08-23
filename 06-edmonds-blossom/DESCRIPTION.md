@@ -3,8 +3,8 @@ An overview of the Blossom algorithm for maximum graph matching.
 ------------------
 
 Proofs: [EN] http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Handouts/tarjan-blossom.pdf
-- augmenting path <=> maximal matching: theorem 2.4
-- graph has an a.p. <=> compressed: theorem 2.9
+- graph has an a.p. if and only if the matching is not maximal: theorem 2.4
+- graph has an a.p. if and only if compressed graph has an a.p.: theorem 2.9
 
 Timetable:
 0:00 - Introduction

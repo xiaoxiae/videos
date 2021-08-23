@@ -144,11 +144,11 @@ def animate_augment_path(self, g, path, add_animations_first=None, add_animation
     )
 
 
-def animate_correct_graph_color(self, g, M, set_lines=None, code=None, add_animations=[], run_time=None):
+def animate_correct_graph_color(self, g, M, set_lines=None, code=None, add_animations=None, run_time=None):
     MV = edgesToVertices(M)
 
     self.play(
-        *add_animations,
+        *([] if add_animations is None else add_animations() if type(add_animations) is type(lambda: None) else add_animations),
         *([] if set_lines is None else set_lines(self, code, [24])),
         *[g.edges[e].animate.set_color(WHITE) for e in g.edges if e not in M],
         *[g.edges[e].animate.set_color(MATCHING_COLOR) for e in g.edges if e in M],
@@ -657,7 +657,7 @@ while True:
             if not result:
                 break
 
-        animate_correct_graph_color(self, g, M, lambda x, y, z: [], None)
+        animate_correct_graph_color(self, g, M, lambda x, y, z: [], None, add_animations=lambda: set_lines(self, code, [i + 1 for i in range(len(code.code))]))
 
 
 class Problem(Scene):
@@ -1381,7 +1381,7 @@ while True:
             ("B", [(11, 10)]),
             ("BO", [(14, 10)]),
             ("Q", None),
-            ("R", None),
+            ("RR", None),
         ]
 
         fk = (12, 5)
@@ -1390,6 +1390,9 @@ while True:
         for operation, argument in operations:
             if operation == "R":
                 animate_correct_graph_color(self, g, M)
+
+            if operation == "RR":
+                animate_correct_graph_color(self, g, M, lambda x, y, z: [], None, add_animations=lambda: set_lines(self, code, [i + 1 for i in range(len(code.code))]))
 
             if operation == "I":
                 self.play(

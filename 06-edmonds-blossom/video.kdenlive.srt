@@ -228,5 +228,5 @@ which is polynomial and exponentially better than the naive solution.
 
 58
 00:05:41,066 --> 00:05:46,282
-But, if there are only 6 attendees of your summer camp, you can probably do it by hand.
+But, if there are only 6 attendees of your summer camp, you can probably do it by hand.
 
