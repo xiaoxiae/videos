@@ -1571,8 +1571,13 @@ class Overview(Scene):
 
         g = g_blossom
         M = []
+        i = 0
         while True:
-            animate_correct_graph_color(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime)
+            if i == 0:
+                animate_correct_graph_color(self, g, M, lambda x, y, z: [], None)
+                i += 1
+            else:
+                animate_correct_graph_color(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime)
 
             result = animate_tree_algorithm_iteration(self, g, M, lambda x, y, z: [], None, run_time=animation_runtime, no_code=True)
 

@@ -1,4 +1,233 @@
 1
-00:00:02,783 --> 00:00:07,783
-Subtitles!
+00:00:02,915 --> 00:00:08,048
+Imagine you’re the head of a summer camp and your task is to group the attendees into pairs.
+
+2
+00:00:08,050 --> 00:00:14,050
+To make it as fair as possible, you told each attendee to write cards with names of people they’d like to be paired with.
+
+3
+00:00:14,050 --> 00:00:19,600
+Given these cards, you’d now like to find a matching (which, in this case, means the same thing as pairing)
+
+4
+00:00:19,600 --> 00:00:23,200
+such that the amount of people that wanted to be with one another is maximum.
+
+5
+00:00:23,900 --> 00:00:28,900
+You certainly could test all possible combinations, but this would, for larger groups, take quite a while.
+
+6
+00:00:30,333 --> 00:00:35,550
+In this video, we’ll be describing the much faster blossom algorithm for maximum matching in a graph,
+
+7
+00:00:35,550 --> 00:00:40,116
+developed by Jack Edmonds – a pioneer in many fields of computer science.
+
+8
+00:00:41,199 --> 00:00:45,550
+Formally, a graph consists of vertices connected by edges.
+
+9
+00:00:45,550 --> 00:00:49,616
+A matching in a graph is a subset of edges, such that no two share a vertex.
+
+10
+00:00:50,616 --> 00:00:57,033
+A matching is maximum if it contains the most edges possible compared to other matchings for the given graph.
+
+11
+00:00:57,033 --> 00:01:00,699
+Also, we’ll call vertices that are not in the matching exposed.
+
+12
+00:01:02,116 --> 00:01:05,766
+The core idea behind the algorithm are „augmenting paths.“
+
+13
+00:01:05,766 --> 00:01:13,000
+An augmenting path in a graph is an alternating sequence of matched and unmatched edges, where the first and the last vertex is exposed.
+
+14
+00:01:13,649 --> 00:01:17,949
+As the name suggests, augmenting paths can improve (or augment)
+
+15
+00:01:17,950 --> 00:01:22,350
+the size of the current matching by switching the matched and unmatched edges.
+
+16
+00:01:22,350 --> 00:01:26,766
+As you can see, the matching is still valid, but its size increased by 1.
+
+17
+00:01:27,366 --> 00:01:32,750
+One thing to note is that a graph contains an augmenting path, if and only if the matching is not maximum.
+
+18
+00:01:33,616 --> 00:01:37,583
+This means that we can repeatedly improve the matching using augmenting paths,
+
+19
+00:01:37,583 --> 00:01:41,183
+until there are none left, at which point we know the matching is maximum.
+
+20
+00:01:42,933 --> 00:01:45,250
+Let’s think about how to find augmenting paths in a tree.
+
+21
+00:01:46,733 --> 00:01:51,733
+This is pretty straight-forward – we’ll run a breadth-first-search (or BFS for short)
+
+22
+00:01:51,733 --> 00:01:56,216
+from exposed vertices, alternating between adding matched and unmatched edges.
+
+23
+00:01:56,950 --> 00:02:02,750
+The rest of the algorithm repeatedly improves the matching using augmenting paths and terminates when there aren’t any remaining.
+
+24
+00:02:03,949 --> 00:02:08,265
+To better understand how this all works, it will be best to see an example.
+
+25
+00:02:08,265 --> 00:02:12,750
+Initially, every vertex is exposed, since the matching is empty.
+
+26
+00:02:12,750 --> 00:02:16,666
+The algorithm then picks one exposed vertex at random and run the BFS.
+
+27
+00:02:19,266 --> 00:02:25,700
+Here it successfully finds an augmenting path, so it uses it to improve the matching and repeats.
+
+28
+00:02:28,600 --> 00:02:31,799
+Let’s fast-forward a bit until some larger augmenting path is found.
+
+29
+00:02:37,100 --> 00:02:41,917
+Here is a longer path that the algorithm finds that neatly showcases the alternating edges.
+
+30
+00:02:51,500 --> 00:02:55,533
+Finally, once no augmenting path is found, the algorithm terminates.
+
+31
+00:02:57,866 --> 00:03:05,950
+Although trees are a large family of graphs, we’d like our algorithm to work on all of them, so let’s look at a graph our algorithm will not work on.
+
+32
+00:03:06,716 --> 00:03:12,016
+Imagine we already found some matching that isn’t yet maximum and would like to improve it.
+
+33
+00:03:12,016 --> 00:03:17,950
+Running the algorithm here wouldn’t work, since the augmenting path is longer than the  shortest path and is therefore not found.
+
+34
+00:03:19,100 --> 00:03:21,683
+The problem here is this part of the graph.
+
+35
+00:03:21,683 --> 00:03:31,650
+It consists of an odd cycle with alternating edges called the blossom, hence the name of the algorithm, and an alternating path ending in an exposed vertex called the stem.
+
+36
+00:03:33,550 --> 00:03:39,383
+To fix the problem, we’ll avoid it – when we come from the stem into the blossom, we’ll do the following:
+
+37
+00:03:40,166 --> 00:03:43,166
+1.  we’ll  „contract“ the blossom into a single vertex
+
+38
+00:03:45,083 --> 00:03:47,700
+2.  we’ll  find an augmenting path in this new graph
+
+39
+00:03:49,316 --> 00:03:52,400
+3.  we’ll  improve the matching using this augmenting path
+
+40
+00:03:53,866 --> 00:03:57,250
+and 4.  we’ll „lift“ the path back to the original graph
+
+41
+00:03:58,350 --> 00:04:04,400
+Here, we are relying on the fact that the graph has an augmenting path if and only if the contracted graph has an augmenting path.
+
+42
+00:04:06,516 --> 00:04:09,683
+Adding this operation to our algorithm will be pretty straight-forward.
+
+43
+00:04:10,600 --> 00:04:13,633
+Each time we add unmatched edges, we’ll check for blossoms.
+
+44
+00:04:14,516 --> 00:04:20,466
+If found, we will contract the blossom, find the augmenting path in the new graph and then lift back.
+
+45
+00:04:21,783 --> 00:04:30,166
+The rest of the algorithm hasn’t changed at all. As you can see, it does exactly what it did before, so we’ll again fast-forward a bit until something interesting happens.
+
+46
+00:04:40,183 --> 00:04:42,133
+Here we can see the contraction in action.
+
+47
+00:04:42,800 --> 00:04:48,366
+Once it finds the blossom, it contracts it, runs the algorithm again on the smaller graph,
+
+48
+00:04:48,366 --> 00:04:53,133
+finds the augmenting path, improves the matching and then lifts back.
+
+49
+00:04:54,800 --> 00:04:58,733
+After this, it terminates, since there are no more augmenting paths.
+
+50
+00:04:59,733 --> 00:05:08,433
+Let’s compare how fast our algorithm is to a naive solution. For clarity, let e be the number of edges and v the number of vertices.
+
+51
+00:05:08,433 --> 00:05:13,283
+When testing all possible combinations, we have to check each subset of edges.
+
+52
+00:05:13,283 --> 00:05:19,800
+The number of subsets is 2^e (each edge either is in a subset or not), so the naive algorithm is exponential.
+
+53
+00:05:20,883 --> 00:05:25,400
+As for the blossom algorithm: it improves the matching at most v-times,
+
+54
+00:05:25,400 --> 00:05:29,250
+during which the entire graph is explored (taking time e)
+
+55
+00:05:29,250 --> 00:05:31,316
+but we could contract up to v-times.
+
+56
+00:05:32,416 --> 00:05:36,716
+Multiplying this together gives us the time complexity ev^2
+
+57
+00:05:36,716 --> 00:05:40,333
+which is polynomial and exponentially better than the naive solution.
+
+58
+00:05:40,850 --> 00:05:46,066
+But, if there are only 6 attendees of your summer camp, you can
+probably do it by hand.
 

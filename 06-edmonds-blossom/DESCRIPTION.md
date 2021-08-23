@@ -7,14 +7,20 @@ Proofs: [EN] http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Handouts/tarja
 - graph has an a.p. <=> compressed: theorem 2.9
 
 Timetable:
-0:00 - <something>
-1:36 - <something else>
+0:00 - Introduction
+0:41 - Definitions
+1:02 - Augmenting paths
+1:42 - Maximum tree matching
+3:06 - Blossoms
+4:06 - Maximum general graph matching
+4:59 - Overview
+5:46 - Outro
 
 Source code:
 https://github.com/xiaoxiae/videos/tree/master/06-edmonds-blossom
 
 Music:
-<credit the music used>
+Maisie Dreamer by Blue Dot Sessions: https://app.sessions.blue/browse/track/31458
 
 Software used:
 Manim (animations): https://github.com/ManimCommunity/manim/

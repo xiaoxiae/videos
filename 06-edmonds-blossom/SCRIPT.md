@@ -34,7 +34,7 @@ MAXIMUM TREE MATCHING
 ---
 
 # Tree
-**[t1]:** First, let's think about how to find augmenting paths in a tree (a graph without cycles). This is pretty straight-forward -- we'll run a breadth-first-search (or BFS for short) from exposed vertices, alternating between adding matched and unmatched edges.
+**[t1]:** Let's think about how to find augmenting paths in a tree. This is pretty straight-forward -- we'll run a breadth-first-search (or BFS for short) from exposed vertices, alternating between adding matched and unmatched edges.
 
 **[t2]:** The rest of the algorithm repeatedly improves the matching using augmenting paths and terminates when there aren't any remaining. To better understand how this all works, it will be best to see an example.
 
@@ -62,10 +62,11 @@ MAXIMUM GENERAL GRAPH MATCHING
 **[p4]:** To fix the problem, we'll avoid it -- when we come from the stem into the blossom, we'll do the following:
 
 **[p5]:**
-- first, we'll „contract“ the blossom into a single vertex
-- second, we'll find an augmenting path in this new graph
-- third, we'll improve the matching using this augmenting path and
-- fourth, we'll „lift“ the path back to the original graph
+
+1. we'll „contract“ the blossom into a single vertex
+2. we'll find an augmenting path in this new graph
+3. we'll improve the matching using this augmenting path and
+4. we'll „lift“ the path back to the original graph
 
 **[p6]:** Here, we are relying on the fact that the graph has an augmenting path if and only if the contracted graph has an augmenting path.
 
