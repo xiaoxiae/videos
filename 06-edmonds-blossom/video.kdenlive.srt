@@ -64,7 +64,7 @@ As you can see, the matching is still valid, but its size increased by 1.
 
 17
 00:01:27,366 --> 00:01:32,750
-One thing to note is that a graph contains an augmenting path, if and only if the matching is not maximum.
+One thing to note is that a graph contains an augmenting path, if and only if the matching is not maximum.
 
 18
 00:01:33,616 --> 00:01:37,583
@@ -91,11 +91,11 @@ from exposed vertices, alternating between adding matched and unmatched edges.
 The rest of the algorithm repeatedly improves the matching using augmenting paths and terminates when there aren’t any remaining.
 
 24
-00:02:03,949 --> 00:02:08,265
+00:02:03,949 --> 00:02:08,264
 To better understand how this all works, it will be best to see an example.
 
 25
-00:02:08,265 --> 00:02:12,750
+00:02:08,264 --> 00:02:12,750
 Initially, every vertex is exposed, since the matching is empty.
 
 26
@@ -120,7 +120,7 @@ Finally, once no augmenting path is found, the algorithm terminates.
 
 31
 00:02:57,866 --> 00:03:05,950
-Although trees are a large family of graphs, we’d like our algorithm to work on all of them, so let’s look at a graph our algorithm will not work on.
+Although trees are a large family of graphs, we’d like our algorithm to work on all of them, so let’s look at a graph our algorithm will not work on.
 
 32
 00:03:06,716 --> 00:03:12,016
@@ -128,7 +128,7 @@ Imagine we already found some matching that isn’t yet maximum and would like t
 
 33
 00:03:12,016 --> 00:03:17,950
-Running the algorithm here wouldn’t work, since the augmenting path is longer than the  shortest path and is therefore not found.
+Running the algorithm here wouldn’t work, since the augmenting path is longer than the shortest path and is therefore not found.
 
 34
 00:03:19,100 --> 00:03:21,683
@@ -144,19 +144,19 @@ To fix the problem, we’ll avoid it – when we come from the stem into the blo
 
 37
 00:03:40,166 --> 00:03:43,166
-1.  we’ll  „contract“ the blossom into a single vertex
+1. we’ll „contract“ the blossom into a single vertex
 
 38
 00:03:45,083 --> 00:03:47,700
-2.  we’ll  find an augmenting path in this new graph
+2. we’ll find an augmenting path in this new graph
 
 39
 00:03:49,316 --> 00:03:52,400
-3.  we’ll  improve the matching using this augmenting path
+3. we’ll improve the matching using this augmenting path
 
 40
 00:03:53,866 --> 00:03:57,250
-and 4.  we’ll „lift“ the path back to the original graph
+and 4. we’ll „lift“ the path back to the original graph
 
 41
 00:03:58,350 --> 00:04:04,400
@@ -195,39 +195,38 @@ finds the augmenting path, improves the matching and then lifts back.
 After this, it terminates, since there are no more augmenting paths.
 
 50
-00:04:59,733 --> 00:05:08,433
+00:05:00,250 --> 00:05:08,950
 Let’s compare how fast our algorithm is to a naive solution. For clarity, let e be the number of edges and v the number of vertices.
 
 51
-00:05:08,433 --> 00:05:13,283
+00:05:08,950 --> 00:05:13,800
 When testing all possible combinations, we have to check each subset of edges.
 
 52
-00:05:13,283 --> 00:05:19,800
+00:05:13,800 --> 00:05:20,317
 The number of subsets is 2^e (each edge either is in a subset or not), so the naive algorithm is exponential.
 
 53
-00:05:20,883 --> 00:05:25,400
+00:05:21,400 --> 00:05:25,917
 As for the blossom algorithm: it improves the matching at most v-times,
 
 54
-00:05:25,400 --> 00:05:29,250
+00:05:25,916 --> 00:05:29,766
 during which the entire graph is explored (taking time e)
 
 55
-00:05:29,250 --> 00:05:31,316
+00:05:29,766 --> 00:05:31,832
 but we could contract up to v-times.
 
 56
-00:05:32,416 --> 00:05:36,716
+00:05:32,633 --> 00:05:36,933
 Multiplying this together gives us the time complexity ev^2
 
 57
-00:05:36,716 --> 00:05:40,333
+00:05:36,933 --> 00:05:40,550
 which is polynomial and exponentially better than the naive solution.
 
 58
-00:05:40,850 --> 00:05:46,066
-But, if there are only 6 attendees of your summer camp, you can
-probably do it by hand.
+00:05:41,066 --> 00:05:46,282
+But, if there are only 6 attendees of your summer camp, you can probably do it by hand.
 

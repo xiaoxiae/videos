@@ -1463,11 +1463,11 @@ while True:
 class Overview(Scene):
     @fade
     def construct(self):
-        naive = Tex(r"Naïve").shift(UP * 1.7 + LEFT * 3.35)
+        naive = Tex(r"Naïve").shift(UP * 1.7 + RIGHT * 3.35)
         naive_o = Tex("– $\mathcal{O}(2^{e})$")
         naive_o_combined = Tex("Naïve – $\mathcal{O}(2^{e})$").move_to(naive.get_center())
 
-        blossom = Tex(r"Blossom").shift(UP * 1.7 + RIGHT * 3.35)
+        blossom = Tex(r"Blossom").shift(UP * 1.7 + LEFT * 3.35)
         blossom_o = Tex("– $\mathcal{O}(e \cdot v^2)$")
         blossom_o_combined = Tex("Blossom – $\mathcal{O}(e \cdot v^2)$").move_to(blossom.get_center())
 
@@ -1534,12 +1534,11 @@ class Overview(Scene):
 
             good_subsets.append(list(subset))
 
-        g_naive.next_to(naive, DOWN, 0.8)
-
-        self.play(Write(naive), Write(g_naive))
-
         g_blossom.next_to(blossom, DOWN, 0.8)
         self.play(Write(blossom), Write(g_blossom))
+
+        g_naive.next_to(naive, DOWN, 0.8)
+        self.play(Write(naive), Write(g_naive))
 
         animation_runtime = 0.06
 

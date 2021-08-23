@@ -35,8 +35,11 @@ sox (audio): http://sox.sourceforge.net/
 [CZ] My notes on Martin Koutecký's Combinatorics and Graphs lecture:
 https://slama.dev/lecture-notes/kombinatorika-a-grafy-ii/
 
+[EN] Sketchy Notes on Edmonds’ Incredible Shrinking Blossom
+http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Handouts/tarjan-blossom.pdf
+
 [EN] Amy Shoemaker and Sagar Vare's report on the blossom algorithm:
-https://web.stanford.edu/~rezab/classes/cme323/S16/projects_reports/shoemaker_vare.pdf 
+https://web.stanford.edu/~rezab/classes/cme323/S16/projects_reports/shoemaker_vare.pdf
 
 [EN] Blossom algorithm on Wikipedia:
 https://en.wikipedia.org/wiki/Blossom_algorithm
