@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# encodes using h264 and downscales to 1080p and 720p
+ffmpeg -i "video.mp4" -vcodec libx264 -crf 28 "2160p.mp4"
+ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 28 -s "1920x1080" "1080p.mp4"
+ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 28 -s "1280x720" "720p.mp4"

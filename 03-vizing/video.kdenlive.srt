@@ -1,144 +1,144 @@
 1
-0:00:03,333 --> 0:00:11,050
+00:00:03,333 --> 00:00:11,050
 In this video, we'll be proving Vizing's theorem, which puts an upper and lower bound on the number of colors needed to edge-color a graph.
 
 2
-0:00:13,416 --> 0:00:18,350
+00:00:13,416 --> 00:00:18,350
 An edge coloring is valid, if no vertex contains edges of the same color. For example, this is a valid edge coloring, while this is not.
 
 3
-0:00:18,350 --> 0:00:22,500
+00:00:18,350 --> 00:00:22,500
 For example, this is a valid edge coloring, while this is not.
 
 4
-0:00:24,783 --> 0:00:34,833
+00:00:24,783 --> 00:00:34,833
 The theorem states that the number of colors chi' needed to edge-color a graph is between the maximum degree of the graph Delta(G) and the maximum degree of the graph plus one.
 
 5
-0:00:35,750 --> 0:00:44,366
+00:00:35,750 --> 00:00:44,366
 As a reminder, the degree of a vertex is the number of edges containing it, and the maximum degree of the graph is the maximum degree of its vertices.
 
 6
-0:00:46,216 --> 0:00:52,883
+00:00:46,216 --> 00:00:52,883
 Let's look at an example graph. We can use 3 colors to color its edges, which also happens to be its maximum degree.
 
 7
-0:00:52,883 --> 0:01:01,266
+00:00:52,883 --> 00:01:01,266
 However, adding additional two edges like so doesn't change the maximum degree, but increases the number of colors needed by one.
 
 8
-0:01:02,483 --> 0:01:10,800
+00:01:02,483 --> 00:01:10,800
 Proving the lower bound is simple. Looking at a vertex with degree Delta(G), we obviously need as many colors as the number of its edges.
 
 9
-0:01:12,483 --> 0:01:16,700
+00:01:12,483 --> 00:01:16,700
 Before proving the upper bound, let's make a quick observation that will be useful during the proof.
 
 10
-0:01:17,216 --> 0:01:22,516
+00:01:17,216 --> 00:01:22,516
 When we have Delta(G) + 1 colors, each vertex of the graph has at least one free color.
 
 11
-0:01:22,516 --> 0:01:25,866
+00:01:22,516 --> 00:01:25,866
 By free, we mean that the vertex doesn't have an edge of this color.
 
 12
-0:01:26,383 --> 0:01:31,016
+00:01:26,383 --> 00:01:31,016
 This makes sense, because we have one more color than the maximum degree of the graph.
 
 13
-0:01:31,550 --> 0:01:40,100
+00:01:31,550 --> 00:01:40,100
 Additionally, if an adjacent vertex also has this free color, they can switch the free color and the color of the edge between them, without breaking the coloring.
 
 14
-0:01:42,166 --> 0:01:44,566
+00:01:42,166 --> 00:01:44,566
 We'll prove the upper bound constructively.
 
 15
-0:01:44,566 --> 0:01:51,050
+00:01:44,566 --> 00:01:51,050
 Let's assume that we have some partial coloring of G using Delta(G) + 1 colors, and want to color some edge (x, y).
 
 16
-0:01:51,600 --> 0:01:55,833
+00:01:51,600 --> 00:01:55,833
 From the previous observation, we know that x has some free color. If y has the same free color, then we can color the edge (x, y) using it.
 
 17
-0:01:55,833 --> 0:02:00,616
+00:01:55,833 --> 00:02:00,616
 If y has the same free color, then we can color the edge (x, y) using it.
 
 18
-0:02:01,416 --> 0:02:09,916
+00:02:01,416 --> 00:02:09,916
 If x doesn't have this free color, there must be an edge with this color from x to some other vertex, which also has some free color.
 
 19
-0:02:10,616 --> 0:02:15,516
+00:02:10,616 --> 00:02:15,516
 This chain can go on a bit, but eventually, one of two things will happen.
 
 20
-0:02:16,133 --> 0:02:21,450
+00:02:16,133 --> 00:02:21,450
 Case one is that the free color of the last vertex in the chain is the free color of x.
 
 21
-0:02:21,450 --> 0:02:25,400
+00:02:21,450 --> 00:02:25,400
 In this case, we'll go back the chain and change colors.
 
 22
-0:02:25,400 --> 0:02:29,866
+00:02:25,400 --> 00:02:29,866
 This frees up the color for x that we needed to color (x, y) and we're done.
 
 23
-0:02:31,200 --> 0:02:37,866
+00:02:31,200 --> 00:02:37,866
 Case two is that the free color of the last vertex is a color of an edge from x that we've seen before.
 
 24
-0:02:37,866 --> 0:02:42,183
+00:02:37,866 --> 00:02:42,183
 This is unfortunate, since we're now stuck in a loop and can't use the previous trick.
 
 25
-0:02:43,266 --> 0:02:50,700
+00:02:43,266 --> 00:02:50,700
 In this case, we'll take the longest path from v of alternating free colors of x and u, and switch the colors on this path.
 
 26
-0:02:50,700 --> 0:02:52,283
+00:02:50,700 --> 00:02:52,283
 We're doing this to get rid of the loop.
 
 27
-0:02:53,216 --> 0:02:59,333
+00:02:53,216 --> 00:02:59,333
 However, since this path can end up pretty much anywhere, we'll again have to consider two possibilities.
 
 28
-0:03:00,650 --> 0:03:05,950
+00:03:00,650 --> 00:03:05,950
 The first is that the path ends in the vertex right before v, let's call it w.
 
 29
-0:03:05,950 --> 0:03:12,050
+00:03:05,950 --> 00:03:12,050
 Notice that by switching, we reduced the problem to case 1, only with blue and red reversed.
 
 30
-0:03:15,466 --> 0:03:18,766
+00:03:15,466 --> 00:03:18,766
 The second is that the path doesn't end in w.
 
 31
-0:03:19,533 --> 0:03:26,566
+00:03:19,533 --> 00:03:26,566
 This is even better, since x and w now have the same color and we again reduced the problem to case 1.
 
 32
-0:03:29,716 --> 0:03:36,633
+00:03:29,716 --> 00:03:36,633
 It's also good to realize that the switch operation doesn't break the coloring, since we would then have a neat, but invalid proof.
 
 33
-0:03:37,316 --> 0:03:44,233
+00:03:37,316 --> 00:03:44,233
 For vertices other than the first and the last, nothing happens, since they still have edges of the same colors.
 
 34
-0:03:44,233 --> 0:03:49,433
+00:03:44,233 --> 00:03:49,433
 For x, the free color was red to begin with, so it just turns blue.
 
 35
-0:03:49,433 --> 0:03:58,383
+00:03:49,433 --> 00:03:58,383
 For the ending vertex, we'll make the observation that either red or blue must have been free, because otherwise the path that we took wasn't the longest.
 
 36
-0:03:59,800 --> 0:04:08,833
+00:03:59,800 --> 00:04:08,833
 Combining the lower and upper bound, we see that no matter what, we can always color any graph using either Delta(G) or Delta(G) + 1 colors.
 

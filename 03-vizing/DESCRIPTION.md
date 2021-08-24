@@ -1,4 +1,4 @@
-A visual proof of Vizing's theorem about graph edge coloring.
+A proof of Vizing's theorem about graph edge coloring.
 
 ------------------
 
