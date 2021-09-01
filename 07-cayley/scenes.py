@@ -166,12 +166,16 @@ def orient_from_root(g, root):
 
             g.edges[(v, w) if (v, w) in g.edges else (w, v)].become(a)
 
-def add_edge_numbering(graph, scale=0.8, shift_coefficient=0.3):
+def add_edge_numbering(graph, scale=0.8, shift_coefficient=0.3, numbers=None, return_only=False):
+    if not numbers:
+        numbers = [i + 1 for i in range(len(graph.edges))]
+        shuffle(numbers)
 
-    numbers = [i + 1 for i in range(len(graph.edges))]
-    shuffle(numbers)
+    if not return_only:
+        graph.edge_numbers = {}
+    else:
+        numbers_tex = []
 
-    graph.edge_numbers = {}
     for i, (v, w) in enumerate(graph.edges):
         number = Tex(str(numbers[i])).scale(scale)
 
@@ -186,8 +190,15 @@ def add_edge_numbering(graph, scale=0.8, shift_coefficient=0.3):
         delta[0], delta[1] = delta[1], -delta[0]
 
         number.move_to(center).shift(delta * shift_coefficient)
-        graph.add(number)
-        graph.edge_numbers[(v, w)] = number
+
+        if not return_only:
+            graph.add(number)
+            graph.edge_numbers[(v, w)] = number
+        else:
+            numbers_tex.append(number)
+
+    if return_only:
+        return numbers_tex
 
 
 class Proof(Scene):
@@ -195,21 +206,21 @@ class Proof(Scene):
     def construct(self):
         title = Tex("\Large Double counting")
 
-        #self.play(Write(title))
-        #self.play(title.animate.shift(UP * 1.2))
+        self.play(Write(title))
+        self.play(title.animate.shift(UP * 1.2))
 
         text = Tex("\parbox{23em}{The number of ","oriented trees"," on ","$n$"," vertices that have a ","root"," and some ","numbering of edges"," – ",r"$\tau(n)$",".}")
         highlightText(text)
 
         text.next_to(title, DOWN * 2)
 
-        #self.play(Write(text))
+        self.play(Write(text), run_time=2)
 
-        #self.play(FadeOut(title))
-        #self.play(text.animate.align_on_border(UP))
+        self.play(FadeOut(title))
+        self.play(text.animate.align_on_border(UP))
 
         l = Line(LEFT * 8, RIGHT * 8).next_to(text, DOWN).shift(DOWN * 0.15)
-        #self.play(Write(l))
+        self.play(Write(l))
 
         DOWN_C = 1.03
 
@@ -233,37 +244,106 @@ class Proof(Scene):
         orient_from_root(g2, 5)
         add_edge_numbering(g2)
 
-        #self.play(Write(g1), Write(g2))
-        #self.play(Circumscribe(g1.vertices[2], Circle, color=HIGHLIGHT_COLOR), Circumscribe(g2.vertices[5], Circle, color=HIGHLIGHT_COLOR))
+        self.play(Write(g1), Write(g2))
 
-        #self.play(FadeOut(g1), FadeOut(g2))
+        self.play(FadeOut(g1), FadeOut(g2))
+
+        OFFSET = RIGHT * 2.9
+        OFFSET2 = LEFT * 5.3
+
+        text_1 = Tex(r"$\tau(n)$").shift(DOWN * DOWN_C + OFFSET2)
+        text_2 = Tex(r"$= \kappa(n)$").next_to(text_1, RIGHT)
+        text_3d = Tex(r"$\cdot$").next_to(text_2, RIGHT)
+        text_3 = Tex(r"$n$").next_to(text_3d, RIGHT)
+        text_4d = Tex(r"$\cdot$").next_to(text_3, RIGHT)
+        text_4 = Tex(r"$(n-1)!$").next_to(text_4d, RIGHT)
 
         n = 6
         g3 = Graph([i for i in range(n)],
                 [(i, j) for i in range(n) for j in range(n) if i < j],
-                layout="circular", layout_scale=0.6).scale(GRAPH_SCALE).shift(DOWN * DOWN_C)
+                layout="circular", layout_scale=0.6).scale(GRAPH_SCALE).shift(DOWN * DOWN_C + OFFSET)
+
+        g_under = Graph([i for i in range(n)],
+                [(i, j) for i in range(n) for j in range(n) if i < j],
+                layout="circular", layout_scale=0.6).scale(GRAPH_SCALE).shift(DOWN * DOWN_C + OFFSET)
+        for e in g_under.edges:
+            g_under.edges[e].set_color(HIDDEN_COLOR)
+        for v in g_under.vertices:
+            g_under.vertices[v].set_color(HIDDEN_COLOR)
 
         seed(31)
+        previous_edges = g3.edges
         edges = get_random_spanning_tree(g3.vertices, g3.edges)
+
+        prev_edges = g3.edges
+        self.play(Write(g3), Write(text_1))
+
+        self.add(g_under)
+        self.add(g3)
+
+        seed(43)
+
+        m = 5
+        for i in range(m):
+            if i == m - 1:
+                edges = [(0, 1), (0, 5), (1, 4), (3, 4), (2, 3)]
+                edges = [((a, b) if (a, b) in g3.edges else (b, a)) for a, b in edges]
+            else:
+                edges = get_random_spanning_tree(g3.vertices, g3.edges)
+
+            self.play(
+                *[g3.edges[e].animate.set_opacity(1) for e in edges if e not in prev_edges],
+                *[g3.edges[e].animate.set_opacity(0) for e in prev_edges if e not in edges],
+            )
+
+            prev_edges = edges
+
         strip_graph(g3, edges)
 
-        self.play(Write(g3))
+        self.play(Write(text_2))
+        self.play(FadeOut(g_under))
 
         g_prev = None
         for root in range(n):
             g_curr = Graph([i for i in range(n)],
                     [(i, j) for i in range(n) for j in range(n) if i < j],
-                    layout="circular", layout_scale=0.6).scale(GRAPH_SCALE).shift(DOWN * DOWN_C)
+                    layout="circular", layout_scale=0.6).scale(GRAPH_SCALE).shift(DOWN * DOWN_C + OFFSET)
 
             strip_graph(g_curr, edges)
             orient_from_root(g_curr, root)
 
-            # TODO: smoother
             self.play(
                 FadeIn(g_curr),
                 *([] if g_prev is None else [FadeOut(g_prev)]),
-                run_time=0.5,
+                run_time=0.7,
             )
 
             g_prev = g_curr
 
+        prev_numbers = add_edge_numbering(g_curr, return_only=True)
+
+        self.play(Write(text_3), Write(text_3d))
+        self.play(*[Write(n) for n in prev_numbers])
+
+        count = len(list(permutations([i + 1 for i in range(len(g_curr.edges))])))
+        for i, p in enumerate(permutations([i + 1 for i in range(len(g_curr.edges))])):
+            start = [0.5, 0.5, 0.4, 0.3, 0.15, 0.08]
+            waits = start + [0.004] * count * 2
+
+            numbers = add_edge_numbering(g_curr, numbers=p, return_only=True)
+            #self.play(*[Transform(a, b) for a, b in zip(prev_numbers, numbers)], run_time=waits[i])
+
+        self.play(Write(text_4), Write(text_4d))
+
+        delta = UP * 2.4 + LEFT * 0.9
+        self.play(
+            *[FadeOut(n) for n in prev_numbers],
+            FadeOut(g_curr),
+            FadeOut(g3),
+            text_1.animate.shift(delta),
+            text_2.animate.shift(delta),
+            text_3.animate.shift(delta),
+            text_3d.animate.shift(delta),
+            text_4.animate.shift(delta),
+            text_4d.animate.shift(delta),
+        )

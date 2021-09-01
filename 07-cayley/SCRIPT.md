@@ -25,19 +25,23 @@ PROOF
 
 As I've mentioned earlier, the proof technique that we'll be using is double counting. This involves, as the name suggests, counting some quantity in two different ways.
 
-For this proof, we'll be counting the number of oriented trees on $n$ vertices that have a root and some numbering of edges. Let's call this quantity $\Tau$.
+For this proof, we'll be counting the number of oriented trees on $n$ vertices that have a root and some numbering of edges. Let's call this quantity $\tau$.
 
-Here are two examples of what the trees could look like. The root is highlighted in yellow, with all edges pointing towards it.
+Here are two examples of what the trees could look like.
 
-The first way to count will be using Cayley's formula, which itself equals the number of trees on $n$ vertices. Additionally, there are $n$ ways to select the root and $(n-1)!$ ways to select the edge numbering, bringing the total to $\kappa(n) \cdot n \cdot (n-1)!$.
+The first way to count will be using Cayley's formula, which by itself equals the number of trees on $n$ vertices. Additionally, there are $n$ ways to select the root and $(n-1)!$ ways to select the edge numbering, bringing the total to $\kappa(n) \cdot n \cdot (n-1)!$.
 
-The other way will be constructive -- imagine we're building the tree by adding edges between vertices. Let's say we've already added $k$ of them, so the graph might look like this.
+The other way will be constructive. Imagine we're building the tree by adding oriented edges between the vertices.
 
-It is made up of components that all have individual roots.
+Let's say we've already added $k$ of them, so the graph looks like this. It is made up of components that all have individual roots.
 
 Looking at the graph, we can make two observations about the edge we're about to add:
 
-1. it can't be between two vertices of a single component, as it would create a cycle
-2. it has to lead from the root of a component, because otherwise the edges wouldn't point towards the root
+1. it has to lead from the root of a component, because otherwise the edges wouldn't point towards the root
+2. it can't be between two vertices of a single component, as it would create a cycle
 
-Putting this together: there are $n - k - 1$ components (every edge combines two components into one) and therefore $n - k - 1$ ways to pick where the edge will start. 
+Putting this together, let's count the number of ways we can add an edge at each step.
+
+The edge can end in any vertex, of which there are $n$. When it comes to start, we know it has to start from root of some component as to not break the orientation (observation 1). Additionally, it can't start in the vertex where it ends, so from the $n - k$ components, one is reserved, bringing the total to $n - k - 1$.
+
+To build the entire tree, $n - 1$ arrows must be added, resulting in the following formula.
