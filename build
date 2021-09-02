@@ -3,14 +3,18 @@
 """A script for building all of the files to be put together."""
 import subprocess
 import shutil
+from glob import glob
 import os
-
-video_directory = "video"
 
 import argparse
 import datetime
 import os
 
+import soundfile as sf
+import pyloudnorm as pyln
+
+video_directory = "video"
+audio_directory = "audio"
 
 parser = argparse.ArgumentParser(
     description="A script for building files for the video."
@@ -23,10 +27,18 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "-n", "--no-manim",
+    "--no-manim",
     dest="no_manim",
     action="store_true",
-    help="don't actually run Manim, just do the video post-processing",
+    help="don't run Manim, just do the video post-processing",
+    default=False,
+)
+
+parser.add_argument(
+    "--no-sound-normalization",
+    dest="no_sound_normalization",
+    action="store_true",
+    help="don't normalize sound",
     default=False,
 )
 
@@ -52,6 +64,23 @@ if not arguments.no_manim:
         subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-aq{arguments.quality}", "--disable_caching"]).communicate()
     else:
         subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", "--disable_caching", arguments.scene]).communicate()
+
+# (possibly) normalize audio
+if not arguments.no_sound_normalization:
+    raw_directory = os.path.join(audio_directory, "raw")
+    normalized_directory = os.path.join(audio_directory, "normalized")
+
+    for path in glob(os.path.abspath(os.path.join(raw_directory, "*.wav"))):
+        name = os.path.basename(path)
+
+        data, rate = sf.read(path)
+
+        meter = pyln.Meter(rate)
+        loudness = meter.integrated_loudness(data)
+
+        loudness_normalized_audio = pyln.normalize.loudness(data, loudness, -32.0)
+
+        sf.write(os.path.join(normalized_directory, name), loudness_normalized_audio, rate)
 
 # rename to [1..n].mp4
 for scene in os.listdir(video_directory):
@@ -82,4 +111,3 @@ for scene in os.listdir(video_directory):
                     subprocess.Popen(["ffmpeg", "-i",  changed_path, "-vf", 'select=eq(n\,0)', "-vframes", "1", "-y", image_path]).communicate()
 
             os.remove(partial_file_path)
-
