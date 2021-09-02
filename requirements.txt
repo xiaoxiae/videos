@@ -1,0 +1,3 @@
+pyloudnorm
+pysoundfile
+manim
