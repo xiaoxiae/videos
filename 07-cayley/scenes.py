@@ -25,9 +25,103 @@ def strip_graph(g, edges):
             g.remove(g.edges[e])
             del g.edges[e]
 
+class Motivation(Scene):
+    @fade
+    def construct(self):
+        n_max = 8
+
+        g = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.7).scale(GRAPH_SCALE)
+
+        g_background = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.7).scale(GRAPH_SCALE)
+
+        n_max = 7
+
+        g2 = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.5).scale(GRAPH_SCALE)
+
+        g2_background = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.5).scale(GRAPH_SCALE)
+
+        n_max = 5
+
+        g3 = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.3).scale(GRAPH_SCALE)
+
+        g3_background = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.3).scale(GRAPH_SCALE)
+
+        for e in g_background.edges:
+            g_background.edges[e].set_color(HIDDEN_COLOR)
+        for v in g_background.vertices:
+            g_background.vertices[v].set_color(HIDDEN_COLOR)
+
+        for e in g2_background.edges:
+            g2_background.edges[e].set_color(HIDDEN_COLOR)
+        for v in g2_background.vertices:
+            g2_background.vertices[v].set_color(HIDDEN_COLOR)
+
+        for e in g3_background.edges:
+            g3_background.edges[e].set_color(HIDDEN_COLOR)
+        for v in g3_background.vertices:
+            g3_background.vertices[v].set_color(HIDDEN_COLOR)
+
+        g.shift(LEFT * 2.5)
+        g_background.shift(LEFT * 2.5)
+
+        g2.shift(RIGHT * 2.7 + UP * 1.5)
+        g2_background.shift(RIGHT * 2.7 + UP * 1.5)
+
+        g3.shift(RIGHT * 2.7 + DOWN * 2)
+        g3_background.shift(RIGHT * 2.7 + DOWN * 2)
+
+        self.play(
+                Write(g),
+                Write(g2),
+                Write(g3),
+                )
+
+        self.add(g_background)
+        self.add(g)
+        self.add(g2_background)
+        self.add(g2)
+        self.add(g3_background)
+        self.add(g3)
+
+        seed(2)
+        st1 = list(yield_spanning_trees(g.vertices, g.edges))
+        st2 = list(yield_spanning_trees(g2.vertices, g.edges))
+        st3 = list(yield_spanning_trees(g3.vertices, g.edges))
+        shuffle(st1)
+        shuffle(st2)
+        shuffle(st3)
+
+        for s1, s2, s3 in list(zip(st1, st2, st3))[:10]:
+            self.play(
+                *[g.edges[e].animate.set_opacity(0) for e in g.edges if e not in s1],
+                *[g.edges[e].animate.set_opacity(1) for e in s1],
+                *[g2.edges[e].animate.set_opacity(0) for e in g2.edges if e not in s2],
+                *[g2.edges[e].animate.set_opacity(1) for e in s2],
+                *[g3.edges[e].animate.set_opacity(0) for e in g3.edges if e not in s3],
+                *[g3.edges[e].animate.set_opacity(1) for e in s3],
+            )
+
+
 class Definitions(Scene):
     @fade
     def construct(self):
+        title = Tex("\Large Definitions")
+
+        self.play(Write(title))
+        self.play(FadeOut(title))
+
         n_min = 4
         n_max = 7 + 1
 
@@ -36,7 +130,7 @@ class Definitions(Scene):
             layout="circular", layout_scale=0.7).scale(GRAPH_SCALE)
             for n in range(n_min, n_max)]
 
-        layout_graph_texts = [Tex(f"$K_{n}$").shift(UP * 2.05 + RIGHT * 2.4).scale(1.3) for n in range(n_min, n_max)]
+        layout_graph_texts = [Tex(f"$K_{n}$").next_to(layout_graphs[n-n_min].vertices[1], RIGHT).shift(RIGHT * (3 / n)).scale(1.3) for n in range(n_min, n_max)]
 
         g = Graph([i for i in range(n_max-1)],
             [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j]).scale(GRAPH_SCALE)
@@ -110,9 +204,9 @@ class Formula(Scene):
             text.animate.shift(UP * 1.3)
         )
 
-        a = Graph([0, 1, 2], [(0, 1), (1, 2)], layout="circular", labels=True, layout_scale=0.8).scale(1.25).shift(DOWN * 1.6).shift(LEFT * 4)
-        b = Graph([0, 1, 2], [(1, 2), (2, 0)], layout="circular", labels=True, layout_scale=0.8).scale(1.25).shift(DOWN * 1.6)
-        c = Graph([0, 1, 2], [(2, 0), (0, 1)], layout="circular", labels=True, layout_scale=0.8).scale(1.25).shift(DOWN * 1.6).shift(RIGHT * 4)
+        a = Graph([0, 1, 2], [(0, 1), (1, 2)], layout="circular", layout_scale=0.35).scale(GRAPH_SCALE).shift(DOWN * 1.6).shift(LEFT * 4)
+        b = Graph([0, 1, 2], [(1, 2), (2, 0)], layout="circular", layout_scale=0.35).scale(GRAPH_SCALE).shift(DOWN * 1.6)
+        c = Graph([0, 1, 2], [(2, 0), (0, 1)], layout="circular", layout_scale=0.35).scale(GRAPH_SCALE).shift(DOWN * 1.6).shift(RIGHT * 4)
 
         ne1 = Tex(r"\large$\ne$").move_to((a.get_center() + b.get_center()) / 2)
         ne2 = Tex(r"\large$\ne$").move_to((b.get_center() + c.get_center()) / 2)
@@ -144,14 +238,15 @@ def create_oriented_edge(g, v, w):
     return Arrow(center + delta * c, center - delta * c, max_tip_length_to_length_ratio=30, buff=0)
 
 
-def orient_from_root(g, root):
+def orient_from_root(g, root, no_set_color = False):
     queue = [root]
     explored = set([root])
     e = []
 
     g.clear_updaters()
 
-    g.vertices[root].set_color(HIGHLIGHT_COLOR)
+    if not no_set_color:
+        g.vertices[root].set_color(HIGHLIGHT_COLOR)
 
     while len(queue) != 0:
         current = queue.pop(0)
@@ -200,7 +295,7 @@ def create_edge_number(g, v, w, i, scale=0.8, shift_coefficient=0.3, side=False)
 
 def add_edge_numbering(graph, numbers=None, return_only=False):
     if not numbers:
-        numbers = [i + 1 for i in range(len(graph.edges))]
+        numbers = [i for i in range(len(graph.edges))]
         shuffle(numbers)
 
     if not return_only:
@@ -229,7 +324,7 @@ class Proof(Scene):
         self.play(Write(title))
         self.play(title.animate.shift(UP * 1.2))
 
-        text = Tex("\parbox{23em}{The number of ","oriented trees"," on ","$n$"," vertices that have a ","root"," and some ","numbering of edges"," – ",r"$\tau(n)$",".}")
+        text = Tex("\parbox{23em}{The number of ","oriented trees"," on ","$n$"," vertices that have a ","root"," and some ","numbering of edges"," (denoted ",r"$\tau(n)$",").}")
         highlightText(text)
 
         text.next_to(title, DOWN * 2)
@@ -303,7 +398,7 @@ class Proof(Scene):
 
         seed(43)
 
-        m = 5
+        m = 3
         for i in range(m):
             if i == m - 1:
                 edges = [(0, 1), (0, 5), (1, 4), (3, 4), (2, 3)]
@@ -332,7 +427,7 @@ class Proof(Scene):
 
             strip_graph(g_curr, edges)
 
-            eee = orient_from_root(g_curr, root)
+            eee = orient_from_root(g_curr, root, no_set_color = True)
 
             def unfuk(v, w, g):
                 return g.edges[(v, w) if (v, w) in g.edges else (w, v)]
@@ -359,10 +454,10 @@ class Proof(Scene):
         self.play(Write(text_3), Write(text_3d))
         self.play(*[Write(n) for n in prev_numbers])
 
-        count = len(list(permutations([i + 1 for i in range(len(g_curr.edges))])))
-        for i, p in enumerate(permutations([i + 1 for i in range(len(g_curr.edges))])):
+        count = len(list(permutations([i for i in range(len(g_curr.edges))])))
+        for i, p in enumerate(permutations([i for i in range(len(g_curr.edges))])):
             start = [0.5, 0.5, 0.4, 0.3, 0.15, 0.08]
-            waits = start + [0.004] * count * 2
+            waits = start + [0.008] * count * 2
 
             numbers = add_edge_numbering(g_curr, numbers=p, return_only=True)
             self.play(*[Transform(a, b) for a, b in zip(prev_numbers, numbers)], run_time=waits[i])
@@ -382,7 +477,7 @@ class Proof(Scene):
             FadeOut(text_4d),
         )
 
-        n = 7
+        n = 6
         g4 = Graph([i for i in range(n)],
                 [],
                 layout="circular", layout_scale=0.6).scale(GRAPH_SCALE).shift(DOWN * DOWN_C)
@@ -424,7 +519,7 @@ class Proof(Scene):
                 )
 
         parts = [
-            r"\small $1.\ $start in component's root\\ " + "\n",
+            r"\small $1.\ $must start in a root\\ " + "\n",
             r"\small $2.\ $can't be in a single component\\ "
         ]
 
@@ -454,6 +549,15 @@ class Proof(Scene):
                 FadeOut(edge),
                 g4.vertices[5].animate.set_color(HIGHLIGHT_COLOR),
                 )
+
+        kth = Tex("$k = 3$").next_to(g4, UP).shift(DOWN * 0.2)
+
+        D =  0.4
+        self.play(g4.animate.shift(DOWN * D),
+                *[e.animate.shift(DOWN * D) for e in edges],
+                *[e.animate.shift(DOWN * D) for e in numbers],
+                )
+        self.play(Write(kth))
 
         self.play(
                 l[0].animate.shift(UP * 1.6),
@@ -485,8 +589,41 @@ class Proof(Scene):
 
         self.play(Write(l2[0]))
         self.play(Write(l3[0]))
+
+        for v in g4.vertices:
+            g4.vertices[v].save_state()
+
+        self.play(
+                l3[0].animate.set_color(BLUE),
+                *[g4.vertices[v].animate.set_color(BLUE) for v in g4.vertices]
+                )
+
+        sel = 2
+        self.play(
+                *[g4.vertices[v].animate.restore() for v in g4.vertices if v != sel],
+                )
+
+        self.play(Circumscribe(l[0], color=WHITE, run_time=1, stroke_width=3))
+        self.play(Circumscribe(l[1], color=WHITE, run_time=1, stroke_width=3))
+
         self.play(Write(l2[1]))
         self.play(Write(l3[1]))
+
+        a = create_oriented_edge(g4, 1, sel).set_color(GREEN)
+        an = create_edge_number(g4, 1, sel, 3)
+        b = create_oriented_edge(g4, 5, sel).set_color(GREEN)
+        bn = create_edge_number(g4, 5, sel, 3, side=True)
+
+        self.play(
+                l3[1].animate.set_color(GREEN),
+                g4.vertices[1].animate.set_color(GREEN),
+                g4.vertices[5].animate.set_color(GREEN),
+                )
+
+        self.play(  Write(a),   Write(an), run_time=1)
+        self.play(FadeOut(a), FadeOut(an), run_time=1)
+        self.play(  Write(b),   Write(bn), run_time=1)
+        self.play(FadeOut(b), FadeOut(bn), run_time=1)
 
         self.play(FadeOut(l2))
 
@@ -549,11 +686,18 @@ class Proof(Scene):
         fac = Tex(r"\small $(n - 1)!$")
         fac.move_to(p).shift(RIGHT * 0.5 + DOWN * 0.072)
 
+        medfac = Tex(r"\small $(n - 1) \cdot \ldots \cdot 1$")
+        medfac.move_to(fac).align_to(fac, LEFT)
+
         combine = VMobject()
         combine.add(p)
         combine.add(l3[1])
         combine.add(lp)
         combine.add(rp)
+
+        self.play(
+            Transform(combine, medfac)
+        )
 
         self.play(
             Transform(combine, fac)
@@ -586,6 +730,7 @@ class Proof(Scene):
             LaggedStart(
                 AnimationGroup(
                     FadeOut(l),
+                    FadeOut(kth),
                     *[FadeOut(e) for e in edges],
                     *[FadeOut(e) for e in numbers],
                     FadeOut(g4),
@@ -642,4 +787,40 @@ class Proof(Scene):
         o.add(text_2)
         o.add(nto)
 
-        self.play(Circumscribe(o, color=WHITE))
+        self.play(Circumscribe(o, color=WHITE, run_time=1, stroke_width=3))
+
+class Outro(Scene):
+    @fade
+    def construct(self):
+        n_max = 9
+
+        g = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.7).scale(GRAPH_SCALE)
+
+        g_background = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.7).scale(GRAPH_SCALE)
+
+        for e in g_background.edges:
+            g_background.edges[e].set_color(HIDDEN_COLOR)
+        for v in g_background.vertices:
+            g_background.vertices[v].set_color(HIDDEN_COLOR)
+
+        self.play(
+                Write(g),
+                )
+
+        self.add(g_background)
+        self.add(g)
+
+        seed(2)
+        st1 = list(yield_spanning_trees(g.vertices, g.edges))
+        shuffle(st1)
+
+        for s1 in st1[:12]:
+            self.play(
+                *[g.edges[e].animate.set_opacity(0) for e in g.edges if e not in s1],
+                *[g.edges[e].animate.set_opacity(1) for e in s1],
+            )
+

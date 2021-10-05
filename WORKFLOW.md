@@ -37,6 +37,7 @@ My internal workflow document, so I don't forget to do something when I'm creati
 - add a link to the new video to:
 	- my website (`videos.py` script)
 	- this repository's `README.md`
+- place the video (named `video.mp4`) to the export folder, along with a thumbnail (named `thumbnail.png`)
 
 ### Useful Kdenlive shortuts
 

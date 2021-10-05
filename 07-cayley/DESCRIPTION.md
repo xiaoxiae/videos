@@ -10,7 +10,7 @@ Source code:
 https://github.com/xiaoxiae/videos/tree/master/07-cayley
 
 Music:
-<credit the music used>
+- Maisie Dreamer by Blue Dot Sessions: https://app.sessions.blue/browse/track/31458
 
 Software used:
 Manim (animations): https://github.com/ManimCommunity/manim/
@@ -22,5 +22,5 @@ sox (audio): http://sox.sourceforge.net/
 
 ------------------
 
-[LANGUAGE] Person's Thing I used to make the video:
-https://url.com
+[CZ] My notes on Martin Koutecký's Combinatorics and Graphs 1 lecture:
+https://slama.dev/lecture-notes/kombinatorika-a-grafy-i/
