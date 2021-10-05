@@ -32,7 +32,7 @@ sox (audio): http://sox.sourceforge.net/
 
 ------------------
 
-[CZ] My notes on Martin Koutecký's Combinatorics and Graphs lecture:
+[CZ] My notes on Martin Koutecký's Combinatorics and Graphs 2 lecture:
 https://slama.dev/lecture-notes/kombinatorika-a-grafy-ii/
 
 [EN] Sketchy Notes on Edmonds’ Incredible Shrinking Blossom
