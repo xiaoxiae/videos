@@ -34,10 +34,26 @@ My internal workflow document, so I don't forget to do something when I'm creati
 
 ## Post-export
 - update `DESCRIPTION.md` timestamps
+- place the video (named `video.mp4`) to the `export` folder, along with a thumbnail (named `thumbnail.png`) and run `encode/`
+
+## YouTube upload
+1. step:
+	- name
+	- description
+	- miniature
+	- playlist
+	- "show more":
+		- language (english)
+2. step:
+	- final screen - import from the previous video
+	- subtitles: from file
+4. step:
+	- make the video public
+
+## Post-YouTube upload
 - add a link to the new video to:
 	- my website (`videos.py` script)
 	- this repository's `README.md`
-- place the video (named `video.mp4`) to the export folder, along with a thumbnail (named `thumbnail.png`)
 
 ### Useful Kdenlive shortuts
 
