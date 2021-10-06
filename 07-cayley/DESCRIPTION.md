@@ -3,8 +3,11 @@ A short video about an elegant proof of the number of spanning trees of a comple
 ------------------
 
 Timetable:
-0:00 - <something>
-1:36 - <something else>
+0:00 - Introduction
+0:13 - Definitions
+0:34 - Statement
+1:03 - Proof
+3:37 - Outro
 
 Source code:
 https://github.com/xiaoxiae/videos/tree/master/07-cayley

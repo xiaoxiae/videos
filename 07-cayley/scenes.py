@@ -329,7 +329,7 @@ class Proof(Scene):
 
         text.next_to(title, DOWN * 2)
 
-        self.play(Write(text), run_time=2)
+        self.play(Write(text), run_time=4)
 
         self.play(FadeOut(title))
         self.play(text.animate.align_on_border(UP))

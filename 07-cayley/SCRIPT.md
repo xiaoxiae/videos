@@ -11,7 +11,7 @@ INTRODUCTION
 **[d2]:** A spanning tree in a graph is a subgraph that is a tree and includes all vertices of the original graph. A good way to think of it is that it's the smallest subgraph that keeps the graph connected.
 
 ---
-PROBLEM STATEMENT
+FORMULA STATEMENT
 ---
 
 # Formula
@@ -47,3 +47,7 @@ PROOF
 **[p12]:** Here, we can take the $n$ out, becoming $n^{n - 1}$. As for the product itself, notice that this is just $(n-1) \cdot (n-2) \cdot \ldots \cdot 1$, which equals $(n - 1)!$
 
 **[p13]:** Using the previous way to count, we can simplify, divide by $n$ and we're done.
+
+---
+OUTRO
+---
