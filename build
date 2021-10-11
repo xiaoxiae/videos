@@ -3,15 +3,14 @@
 """A script for building all of the files to be put together."""
 import subprocess
 import shutil
-from glob import glob
 import os
-
 import argparse
-import datetime
-import os
 
 import soundfile as sf
 import pyloudnorm as pyln
+
+from glob import glob
+
 
 video_directory = "video"
 audio_directory = "audio"
