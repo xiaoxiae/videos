@@ -24,3 +24,6 @@ sox (audio): http://sox.sourceforge.net/
 
 [LANGUAGE] Person's Thing I used to make the video:
 https://url.com
+
+TODO: kouteckého kombagra
+https://en.wikipedia.org/wiki/Tutte_polynomial
