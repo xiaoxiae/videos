@@ -4,7 +4,6 @@ from math import *
 from random import *
 from yaml import *
 from pulp import *
-from typing import *
 from functools import *
 from itertools import *
 import networkx as nx
@@ -112,7 +111,7 @@ def get_independent_set(edges, one_indexing=False):
     status = model.solve(PULP_CBC_CMD(msg=False))
     return [i + 1 for i in range(n) if int(variables[i].value()) == 1]
 
-def parse_graph(graph, s=0.13, t=0.13):
+def parse_graph(graph, s=0.13, t=0.13, scale=2):
     """Parse a graph in a format like this:
     ---
     1 2 <9.118072543948081, 4.650124351556167> <15.236742443226104, 4.832736111387815>
@@ -152,7 +151,7 @@ def parse_graph(graph, s=0.13, t=0.13):
     for i in lt:
         lt[i] = ((lt[i][0] - lt_avg_x) * s, (lt[i][1] - lt_avg_y) * t, 0)
 
-    return Graph(sorted(list(vertices)), edges, layout=lt).scale(2)
+    return Graph(sorted(list(vertices)), edges, layout=lt).scale(scale)
 
 def hsv_to_rgb(h, s, v):
     """HSV to RGB (normalized from 0 to 1)"""
