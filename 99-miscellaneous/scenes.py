@@ -2,7 +2,7 @@ from manim import *
 
 class Logo(Scene):
     def construct(self):
-        t = SVGMobject("logo-t.svg").scale(2).set_color_by_gradient((WHITE, WHITE, GRAY, GRAY))
+        t = SVGMobject("logo-t.svg").scale(2).set_color_by_gradient((WHITE, WHITE, GRAY, DARK_GRAY))
         s = SVGMobject("logo-s.svg").scale(2)
 
         self.play(
@@ -11,7 +11,7 @@ class Logo(Scene):
             run_time = 2
         )
 
-        self.wait(0.3)
+        self.wait(1)
 
         self.play(
             FadeOut(t),
