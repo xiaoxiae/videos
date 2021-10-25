@@ -17,20 +17,17 @@ Let's start simple: this is a graph. It consists of vertices connected by edges.
 
 The graph can either be connected, consisting of a single component, or not connected, consisting of multiple components. We'll also define $c(G)$ as the number of components. As you can see, $c(G)$ of this graph is $3$.
 
-For a connected graph, we define its spanning tree as the smallest subset of edges that keeps the graph connected. Also, each spanning tree contains $|V| - 1$ edges (feel free to pause here and think about why this is the case).
+--- nový graf
 
-TODO: opět stejný graf, ale znázornit spanning tree
+For a connected graph, we define its spanning tree as the smallest subgraph that keeps the graph connected. We'll call the number of edges in a graph's spanning tree its **rank** (denoted $r(G)$). For a connected graph, this is equal to $|V| - 1$ (feel free to pause here and think about why).
 
-The two most important definitions for this video are rank and nullity.
+We can generalize the concept of a spanning tree for graphs that are not connected by considering the spanning trees of each individual component. Here, the rank of the graph will be $r(G) = |V| - c(G)$. This is because splitting the graph into more components decreases the number of edges in the spanning trees by one.
 
-The rank of a given set of edges is defined as $r(E) = |V| - c(G)$. Although this number seems arbitrary, it actually counts the total number of edges the spanning trees of each component.
-
-TODO: tohle lépe
-This should intuitively make sense, since each component's spanning tree contains $|V| - 1$ edges ($V$ here is , and since there are $c(G)$ components, the total number of edges sum up to $|V| - c(G)$.
-
-Similarly, the nullity of a given set of edges, defined as $n(E) = |E| - r(E)$ is the number of edges that are not in the spanning trees. This should again make sense, since it's just the number of all edges minus the ones in the spanning trees.
+Similarly, the nullity of a given set of edges, defined as $n(G) = |E| - r(G)$ is the number of edges that are not in the spanning trees. We can think of it as the opposite of rank. This should again make sense, since it's just the number of all edges minus the ones in the spanning trees.
 
 TODO: animace označující ty množiny na nějakém grafu o více komponentách (konkrétně si uvědomit, že to jsou doplňky)
+
+Notice that we defined rank and nulity in a way that we can think about a rank or nulity of a set of edges, not just the entire graph.
 
 With this out of the way, we can define the Tutte polynomial as being the following:
 
