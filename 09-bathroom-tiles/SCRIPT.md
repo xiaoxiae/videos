@@ -13,19 +13,31 @@ We'll picture the wall as a rectangle of width $w$ and height $h$ that we want t
 
 For the tiling to make sense, we want the adjacent tiles' colors to match. We'll also make it so that each side of the wall has some color that again must match the tiles it's adjacent to.
 
-Now say we have some finite set of tile types and the colors of the wall. We can use as many tiles of each type as we want to create a tiling, but we can't rotate them. The question is: can we create a tiling that satisfies the requirements?
+Now say we have some finite set of tile types and the colors of the wall. The question is: can we create a tiling that satisfies the requirements? (TODO: question mark) Note that we can use as many tiles of each type as we want, but we cannot rotate them.
 
-TODO: animace toho setu a vedle toho stěny
+For this example, it is pretty clear that we can. However, we couldn't if the walls were just a little bit different.
 
-For some cases, it is pretty obvious that we either can or can't. Yet for others, it is not as clear.
+TODO: animation for different color
 
-TODO: animace toho, pro které je to jasné a pro které ne, a pro které je to nejasné (například sudý počet jedné barvy)
+TODO: indexes of the tiles from the set (1, 2, 3) so I can talk about them
 
-What we just described is the programming model that we'll be using. We'll reserve the top side for input, which will be some finite sequence of colors. Our program will then be a finite set of tile types that we can use. Our program will **accept** the input if there exists a valid tiling of some non-zero height, and **reject** it if there's none.
+What we just described is the programming model that we'll be using. We'll reserve the top side for input, which will be some finite sequence of colors. Our program will then be a finite set of tile types that we can use. It will **accept** the input if there exists a valid tiling of some non-zero height, and **reject** it if there's none.
 
-But enough theory, let's see an example.
+TODO: animation of text describing the programming model:
 
-Let's say we want to write a program (i. e. create a tile set) that accepts the input only if it contains all red or blue colors, but not both combined.
+```
+Input:   colors on the top of the wall
+Program: finite set of tile types
+Output:  **accept** if $\exists$ valid tiling, otherwise **reject**
+```
+
+But enough theory, let's see some examples of programs.
+
+For example, this program will accept the input, if and only if it is of even length. It's pretty obvious why -- we have to start with TODO, and then we can either end with TODO, or repeat...
+
+A slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is even. Notice that we replaced some of the colors with characters, and will sometimes do so, because it makes the program more readable.
+
+Let's say we want to write a program (i. e. create a tile set) that accepts the input if and only if it contains all red or blue colors, but not both combined.
 
 TODO:
 - reference to automatons

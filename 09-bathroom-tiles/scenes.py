@@ -108,7 +108,10 @@ class Wall(VMobject):
 
         self.color_objects = VGroup()
 
-        for i, (color, direction) in enumerate(zip(colors, [RIGHT, UP, LEFT, DOWN])):
+        self.w = width
+        self.h = height
+
+        for i, (color, direction) in enumerate(zip(colors, Tile.DIRECTIONS)):
             # yeah, not pretty
             # I was tired and didn't want to think
             c = 0.4  # outer offset
@@ -161,15 +164,15 @@ class Wall(VMobject):
             else:
                 side = Polygon(*pos).set_stroke(WHITE)
                 if is_hex_color(color):
-                    self.color_objects.add_to_back(side.set_fill(color, 1))
+                    self.color_objects.add(side.set_fill(color, 1))
                 else:
-                    self.color_objects.add_to_back(side)
+                    self.color_objects.add(side)
 
                     text = Tex(color) \
                         .scale(Tile.TEXT_SCALE * self.size) \
                         .move_to(side)
 
-                    self.color_objects.add_to_back(text)
+                    self.color_objects.add(text)
 
         self.add(self.color_objects)
 
@@ -242,14 +245,10 @@ class TileSet(VMobject):
         self.add(self.braces)
 
 
-
-
-
 class WriteReverse(Write):
     """A special write for a tile and wall (since we want the animation to be reversed)."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, reverse=True)
-
 
 
 class Intro(Scene):
@@ -335,10 +334,28 @@ class Intro(Scene):
         self.play(*[FadeOut(o) for o in self.mobjects])
 
 
+def pasting_animations(tile, wall, positions, speed=0.07):
+    # TODO: return the tile objects so they can be added to the wall
+
+    def DelayedTransform(x, y, t):
+        return Transform(x, y, run_time = 1 + t, rate_func=lambda a: smooth(a if t == 0 else (0 if a < t else (a - t) / (1 - t))))
+
+    n = len(positions)
+
+    from_tiles = [tile.copy() for _ in range(n)]
+    to_tiles = [tile.copy().move_to(wall.index_to_position(*position)) for position in positions]
+
+    return [DelayedTransform(from_tiles[i], to_tiles[i], speed * (n - i - 1)) for i in range(n)]
+
+
 class TileSetExample(Scene):
     def construct(self):
-        seed(2)
-        tiles = [Tile([choice(REDUCED_PALETTE) for _ in range(4)]) for _ in range(5)]
+        self.next_section()
+        tiles = [
+                Tile([REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[0], REDUCED_PALETTE[1]]),
+                Tile([REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[1]]),
+                Tile([REDUCED_PALETTE[0], REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[1]]),
+                ]
 
         tiles = VGroup(*tiles)
         tiles.arrange_in_grid(rows=1)
@@ -355,7 +372,7 @@ class TileSetExample(Scene):
                     lag_ratio=0.5
                 )
 
-        tileTypes = Tex("Tile Types $=$").shift(LEFT * 3)
+        tileTypes = Tex("Tile Types $=$").shift(LEFT * 1)
 
         tileset_with_text = VGroup(tileTypes, tileset)
 
@@ -378,14 +395,19 @@ class TileSetExample(Scene):
             )
         )
 
-        tile_dots = [Dot().set_opacity(0).move_to(tiles[-1]) for _ in range(h)]
-        tile_copies = [tiles[-1].copy().move_to(wall.index_to_position(-1, i)) for i in range(h)]
-
         self.play(
-            AnimationGroup(
-                *[FadeTransform(tile_dots[i], tile_copies[i]) for i in range(h)],
-                lag_ratio=0.2,
-            )
+            *pasting_animations(tiles[-1], wall, [(-1, i) for i in range(h)]),
+            *pasting_animations(tiles[0], wall, [(0, i) for i in range(h)]),
         )
 
-        self.wait(3)
+        from_tile_wrong = tiles[-1].copy()
+        to_tile_wrong = tiles[-1].copy().move_to(wall.index_to_position(4, i)).rotate(-PI / 2)
+
+        self.play(Transform(from_tile_wrong, to_tile_wrong))
+
+        self.play(FadeOut(from_tile_wrong))
+
+        self.play(*pasting_animations(tiles[1], wall, [(i, j) for i in reversed(range(1, w - 1)) for j in reversed(range(h))], speed=0.03))
+
+        self.play(wall.get_color_object_in_direction(UP).animate.set_fill(REDUCED_PALETTE[0]))
+        print(len(wall.color_objects))
