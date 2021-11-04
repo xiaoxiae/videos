@@ -13,23 +13,11 @@ We'll picture the wall as a rectangle of width $w$ and height $h$ that we want t
 
 For the tiling to make sense, we want the adjacent tiles' colors to match. We'll also make it so that each side of the wall has some color that again must match the tiles it's adjacent to.
 
-Now say we have some finite set of tile types and the colors of the wall. The question is: can we create a tiling that satisfies the requirements? (TODO: question mark) Note that we can use as many tiles of each type as we want, but we cannot rotate them.
+Now say we have some finite set of tile types and the colors of the wall. The question is: can we create a tiling that satisfies the requirements? Note that we can use as many tiles of each type as we want, but we cannot rotate them.
 
-For this example, it is pretty clear that we can. However, we couldn't if the walls were just a little bit different.
+For this example, it is pretty clear that we can. However, if we were to change the top side like so, it would no longer be possible, since the top row couldn't be filled with any tiles.
 
-TODO: animation for different color
-
-TODO: indexes of the tiles from the set (1, 2, 3) so I can talk about them
-
-What we just described is the programming model that we'll be using. We'll reserve the top side for input, which will be some finite sequence of colors. Our program will then be a finite set of tile types that we can use. It will **accept** the input if there exists a valid tiling of some non-zero height, and **reject** it if there's none.
-
-TODO: animation of text describing the programming model:
-
-```
-Input:   colors on the top of the wall
-Program: finite set of tile types
-Output:  **accept** if $\exists$ valid tiling, otherwise **reject**
-```
+What we just described is the programming model that we'll be using. We'll reserve the top side for input, which will be some finite sequence of colors, and leave others arbitrary. Our program will be a finite set of tile types that we can use. The program will **accept** the input if there exists a valid tiling of some non-zero height, and **reject** it if there's none.
 
 But enough theory, let's see some examples of programs.
 
