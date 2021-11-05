@@ -278,11 +278,140 @@ class TileSet(VMobject):
             lag_ratio=0.2,
         )
 
+def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
+    def at(x, y):
+        return wallarray[y + 1][x + 1]
+
+    def set(x, y, tile):
+        wallarray[y + 1][x + 1] = tile
+
+    # if we're past (on the very right tile)
+    if i == w:
+        # check if the tile on the left is ok
+        if at(i - 1, j).get_color_in_direction(RIGHT) != at(i, j).get_color_in_direction(LEFT):
+            return
+
+        if j == h - 1:
+            return wallarray
+
+        i = 0
+        j += 1
+
+    for tile in tileset.tiles:
+        if at(i, j - 1).get_color_in_direction(DOWN) != tile.get_color_in_direction(UP):
+            continue
+
+        if at(i - 1, j).get_color_in_direction(RIGHT) != tile.get_color_in_direction(LEFT):
+            continue
+
+        # if we're last row
+        if j == h - 1:
+            if at(i, j + 1).get_color_in_direction(UP) != tile.get_color_in_direction(DOWN):
+                continue
+
+        set(i, j, tile)
+        result = find_tiling_recursive(i + 1, j, tileset, wallarray, w, h)
+        if result is not None:
+            return result
+        set(i, j, None)
+
+
+def find_tiling(tileset: List[Tile], wall: Wall, max_height = 1):
+    """Find if there exists a tiling of maximal height for a given wall."""
+    w = wall.w
+    for h in range(1, max_height + 1):
+        wallarray = [[None] * (w + 2) for _ in range(h + 2)]
+
+        for i in range(1, w + 1):
+            wallarray[0][i] = Tile([None, None, None, wall.input[i - 1]])
+
+        for i in range(1, w + 1):
+            wallarray[-1][i] = Tile([None, wall.get_color_in_direction(DOWN), None, None])
+
+        for i in range(1, h + 1):
+            wallarray[i][-1] = Tile([None, None, wall.get_color_in_direction(RIGHT), None])
+
+        for i in range(1, h + 1):
+            wallarray[i][0] = Tile([wall.get_color_in_direction(LEFT), None, None, None])
+
+        result = find_tiling_recursive(0, 0, tileset, wallarray, w, h)
+
+        if result is not None:
+            wall = Wall(wall.colors, wall.input, height=h)
+
+            for x in range(w):
+                for y in range(h):
+                    wall.add_tile(result[y + 1][x + 1], x, y, copy=True)
+
+            return wall
+
 
 class WriteReverse(Write):
     """A special write for a tile and wall (since we want the animation to be reversed)."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, reverse=True)
+
+
+examples = {
+    "even_size": (
+        Wall([PALETTE[1], None, PALETTE[1], PALETTE[1]], height=1, input="111111"),
+        TileSet(
+            Tile([PALETTE[2], "1", PALETTE[1], PALETTE[1]]),
+            Tile([PALETTE[3], "1", PALETTE[2], PALETTE[1]]),
+            Tile([PALETTE[2], "1", PALETTE[3], PALETTE[1]]),
+            Tile([PALETTE[1], "1", PALETTE[2], PALETTE[1]]),
+        ),
+    ),
+    "parentheses": (
+        Wall([BLACK, None, BLACK, BLACK], input="(()()(()))"),
+        TileSet(
+            Tile([PALETTE[1], "(", BLACK, BLACK]),
+            Tile([BLACK, "(", BLACK, PALETTE[1]]),
+            Tile([PALETTE[1], BLACK, PALETTE[1], BLACK]),
+            Tile([BLACK, PALETTE[1], BLACK, PALETTE[1]]),
+            Tile([BLACK, ")", BLACK, PALETTE[0]]),
+            Tile([BLACK, PALETTE[0], BLACK, PALETTE[0]]),
+            Tile([PALETTE[1], PALETTE[1], BLACK, BLACK]),
+            Tile([BLACK, PALETTE[0], PALETTE[1], BLACK]),
+            Tile([BLACK, ")", PALETTE[1], BLACK]),
+        ),
+    ),
+    "parentheses_log": (
+        Wall([PALETTE[1], None, PALETTE[0], BLACK], input="(()())()"),
+        TileSet(
+            Tile([1, "(", PALETTE[0], BLACK]),
+            Tile([BLACK, BLACK, PALETTE[0], BLACK]),
+            Tile([0, "(", 1, "+"]),
+            Tile([1, "(", 0, BLACK]),
+            Tile([1, "+", BLACK, BLACK]),
+            Tile([1, BLACK, 1, BLACK]),
+            Tile([0, ")", 1, BLACK]),
+            Tile([PALETTE[1], ")", 1, BLACK]),
+            Tile([1, ")", 0, "-"]),
+            Tile([0, "-", 1, BLACK]),
+            Tile([BLACK, "-", 1, BLACK]),
+            Tile([PALETTE[1], BLACK, BLACK, BLACK]),
+            Tile([BLACK, BLACK, BLACK, BLACK]),
+        ),
+    ),
+    "palindrome": (
+        Wall([PALETTE[0], None, PALETTE[1], BLACK], input="10100101"),
+        TileSet(
+            Tile([RED, "1", PALETTE[1], BLACK]),
+            Tile([PALETTE[0], "1", RED, BLACK]),
+            Tile([RED, "1", RED, "1"]),
+            Tile([RED, "0", RED, "0"]),
+            Tile([PALETTE[0], BLACK, PALETTE[0], BLACK]),
+            Tile([PALETTE[1], BLACK, PALETTE[1], BLACK]),
+            Tile([BLUE, "0", PALETTE[1], BLACK]),
+            Tile([PALETTE[0], "0", BLUE, BLACK]),
+            Tile([BLUE, "1", BLUE, "1"]),
+            Tile([BLUE, "0", BLUE, "0"]),
+            Tile([PALETTE[0], "0", PALETTE[1], BLACK]),
+            Tile([PALETTE[0], "1", PALETTE[1], BLACK]),
+        ),
+    ),
+}
 
 
 class Intro(Scene):
@@ -492,10 +621,10 @@ class ProgrammingModel(Scene):
 
         self.play(AnimationGroup(Write(text[0][0]), Write(text[1][0]), Write(text[2][0]), lag_ratio=0.15))
 
-        wall = Wall(PALETTE, input=[1, 0, 0, 1, 0], height = 1).shift(DOWN * 2).scale(tile_scale)
+        wall, ts = examples["even_size"]
+        wall = wall.shift(DOWN * 2).scale(tile_scale)
 
-        seed(0)
-        ts = TileSet(*[Tile([(choice(PALETTE) if i != 1 else randint(0, 1)) for i in range(4)]) for _ in range(4)]).scale(tile_scale)
+        ts = ts.scale(tile_scale)
 
         self.play(Write(text[0][1]), Write(wall))
 
@@ -509,3 +638,19 @@ class ProgrammingModel(Scene):
         self.play(ts.animateWrite(), Write(text[1][1]))
 
         self.play(Write(text[2][1]))
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(title),
+                    *[FadeOut(text[i][j]) for i in range(len(text)) for j in range(len(text[0]))]
+                ),
+                AnimationGroup(
+                    ts.animate.move_to(ORIGIN).shift(UP * 1.5).scale(1.3),
+                    wall.animate.move_to(ORIGIN).shift(DOWN * 1.5).scale(1.3),
+                    lag_ratio=0.5,
+                ),
+                lag_ratio=0.5,
+            ),
+            run_time=2,
+        )
