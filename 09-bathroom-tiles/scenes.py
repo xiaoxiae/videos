@@ -15,6 +15,11 @@ class Tile(VMobject):
     TEXT_OFFSET = 1/3.5
     DIRECTIONS = [RIGHT, UP, LEFT, DOWN]
 
+    def __str__(self):
+        return f"Tile({self.colors})"
+
+    __repr__ = __str__
+
     def __init__(self, colors, size=1):
         colors = list(map(str, colors))
 
@@ -92,6 +97,8 @@ class Wall(VMobject):
         if input is not None:
             width = len(input)
 
+        self.input = input
+
         width *= size
         height *= size
 
@@ -149,10 +156,12 @@ class Wall(VMobject):
                 ]
 
             if (direction == UP).all() and input is not None:
+                g = VGroup()
+
                 for i in range(len(input) + 1):
                     c = (0.25 if i in (0, len(input)) else 0.5) * self.size
                     line = Line(start=[-width / 2 + i * self.size, height / 2, 0], end=[-width / 2 + i * self.size, height / 2 + c, 0])
-                    self.add(line)
+                    g.add(line)
 
                     if i < len(input):
                         p = [-width / 2 + (i + 0.5) * self.size, height / 2, 0]
@@ -162,19 +171,25 @@ class Wall(VMobject):
                             .move_to(p) \
                             .align_to(p, DOWN) \
                             .shift(UP * Tile.TEXT_OFFSET / 2)  # 2 is an eyeball magic constant
-                        self.add(text)
+                        g.add(text)
+
+                self.color_objects.add(g)
             else:
+                g = VGroup()
+
                 side = Polygon(*pos).set_stroke(WHITE)
                 if is_hex_color(color):
-                    self.color_objects.add(side.set_fill(color, 1))
+                    g.add(side.set_fill(color, 1))
                 else:
-                    self.color_objects.add(side)
+                    g.add(side)
 
                     text = Tex(color) \
                         .scale(Tile.TEXT_SCALE * self.size) \
                         .move_to(side)
 
-                    self.color_objects.add(text)
+                    g.add(text)
+
+                self.color_objects.add(g)
 
         self.add(self.color_objects)
 
@@ -215,8 +230,13 @@ class Wall(VMobject):
 
         return self.tile_position_dictionary[(x, y)]
 
-    get_color_in_direction = Tile.get_color_in_direction
     get_color_object_in_direction = Tile.get_color_object_in_direction
+
+    def get_color_in_direction(self, direction):
+        if (direction == UP).all() and self.input is not None:
+            return self.input
+        else:
+            return Tile.get_color_in_direction(self, direction)
 
 
 class TileSet(VMobject):
