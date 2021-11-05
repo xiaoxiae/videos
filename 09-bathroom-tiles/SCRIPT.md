@@ -7,7 +7,6 @@ So you're taking a shower. In front of you, you see bathroom tiles that neatly f
 
 Well, as it turns out, they can!
 
-
 # Definitions
 We'll picture the wall as a rectangle of width $w$ and height $h$ that we want to entirely fill with square tiles of size $1$. Each tile will have 4 sides with some colors.
 
@@ -21,11 +20,24 @@ What we just described is the programming model that we'll be using. We'll reser
 
 But enough theory, let's see some examples of programs.
 
+
+# Examples
 For example, this program will accept the input, if and only if it is of even length. It's pretty obvious why -- we have to start with TODO, and then we can either end with TODO, or repeat...
 
-A slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is even. Notice that we replaced some of the colors with characters, and will sometimes do so, because it makes the program more readable.
+A slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three.
 
 Let's say we want to write a program (i. e. create a tile set) that accepts the input if and only if it contains all red or blue colors, but not both combined.
+
+
+# Complexity
+For regular programming models, a reasonable way to measure time complexity of a given problem is to count how the number of operations depend on the size of the input. For our programming model, this doesn't really make sense, since the filling either exists or it doesn't -- we're not doing any operations.
+
+What we'll do here instead is measure how the number of layers depend on the size of the input. However, since we haven't really seen problems requiring more than one layer, let's look at one.
+
+Create a program that accepts the input, if and only if it contains parentheses that are balanced (meaning that for each opening one, there is a closing one to the right).
+
+Here, it should intuitively make sense that we need more than one layers to remember, how many parentheses we've seen already.
+
 
 TODO:
 - reference to automatons
