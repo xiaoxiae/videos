@@ -1,18 +1,22 @@
 from utilities import *
 from string import digits
 
-PALETTE = ["#b91e2f","#f68828","#cdd190","#122f30"]
+PALETTE = ["#b91e2f", "#f68828", "#cdd190", "#122f30"]
 REDUCED_PALETTE = PALETTE[:2]
 
 
 def is_hex_color(str):
     """Yeah I know, this is not pretty."""
-    return len(str) == 7 and str.startswith("#") and all([c in digits + "abcdef" for c in str.lower()[1:]])
+    return (
+        len(str) == 7
+        and str.startswith("#")
+        and all([c in digits + "abcdef" for c in str.lower()[1:]])
+    )
 
 
 class Tile(VMobject):
     TEXT_SCALE = 0.6
-    TEXT_OFFSET = 1/3.5
+    TEXT_OFFSET = 1 / 3.5
     DIRECTIONS = [RIGHT, UP, LEFT, DOWN]
 
     def __str__(self):
@@ -33,8 +37,20 @@ class Tile(VMobject):
         self.colors = colors
 
         self.cross = VGroup()
-        self.cross.add(Line(start=(UP + RIGHT) * self.size / 2, end=(DOWN + LEFT) * self.size / 2, stroke_width=1))
-        self.cross.add(Line(end=(DOWN + RIGHT) * self.size / 2, start=(UP + LEFT) * self.size / 2, stroke_width=1))
+        self.cross.add(
+            Line(
+                start=(UP + RIGHT) * self.size / 2,
+                end=(DOWN + LEFT) * self.size / 2,
+                stroke_width=1,
+            )
+        )
+        self.cross.add(
+            Line(
+                end=(DOWN + RIGHT) * self.size / 2,
+                start=(UP + LEFT) * self.size / 2,
+                stroke_width=1,
+            )
+        )
 
         self.add(self.cross)
 
@@ -68,9 +84,11 @@ class Tile(VMobject):
             else:
                 self.color_objects.add(triangle)
         else:
-            text = Tex(color) \
-                .scale(Tile.TEXT_SCALE * self.size) \
+            text = (
+                Tex(color)
+                .scale(Tile.TEXT_SCALE * self.size)
                 .shift(direction * self.size * Tile.TEXT_OFFSET)
+            )
 
             if not new:
                 self.color_objects[i] = text
@@ -88,10 +106,25 @@ class Tile(VMobject):
             if (direction == d).all():
                 return self.color_objects[i]
 
+    def animateWrite(self):
+        return AnimationGroup(
+            Write(self.border),
+            Write(self.cross),
+            AnimationGroup(
+                Write(self.get_color_object_in_direction(LEFT)),
+                Write(self.get_color_object_in_direction(UP)),
+                Write(self.get_color_object_in_direction(RIGHT)),
+                Write(self.get_color_object_in_direction(DOWN)),
+            ),
+            lag_ratio=0.2,
+        )
+
 
 class Wall(VMobject):
     def __init__(self, colors, input=None, width=3, height=5, size=1):
         super().__init__()
+
+        colors = list(map(str, colors))
 
         # input overwrites the width
         if input is not None:
@@ -158,19 +191,30 @@ class Wall(VMobject):
             if (direction == UP).all() and input is not None:
                 g = VGroup()
 
+                self.input_colors = []
+                self.input_lines = []
+
                 for i in range(len(input) + 1):
                     c = (0.25 if i in (0, len(input)) else 0.5) * self.size
-                    line = Line(start=[-width / 2 + i * self.size, height / 2, 0], end=[-width / 2 + i * self.size, height / 2 + c, 0])
+                    line = Line(
+                        start=[-width / 2 + i * self.size, height / 2, 0],
+                        end=[-width / 2 + i * self.size, height / 2 + c, 0],
+                    )
+
                     g.add(line)
+                    self.input_lines.append(line)
 
                     if i < len(input):
                         p = [-width / 2 + (i + 0.5) * self.size, height / 2, 0]
 
-                        text = Tex(input[i]) \
-                            .scale(Tile.TEXT_SCALE * self.size) \
-                            .move_to(p) \
-                            .align_to(p, DOWN) \
-                            .shift(UP * Tile.TEXT_OFFSET / 2)  # 2 is an eyeball magic constant
+                        text = (
+                            Tex(input[i])
+                            .scale(Tile.TEXT_SCALE * self.size)
+                            .move_to(p)
+                            .align_to(p, DOWN)
+                            .shift(UP * Tile.TEXT_OFFSET / 2)
+                        )  # 2 is an eyeball magic constant
+                        self.input_colors.append(text)
                         g.add(text)
 
                 self.color_objects.add(g)
@@ -183,9 +227,7 @@ class Wall(VMobject):
                 else:
                     g.add(side)
 
-                    text = Tex(color) \
-                        .scale(Tile.TEXT_SCALE * self.size) \
-                        .move_to(side)
+                    text = Tex(color).scale(Tile.TEXT_SCALE * self.size).move_to(side)
 
                     g.add(text)
 
@@ -200,10 +242,12 @@ class Wall(VMobject):
     def index_to_position(self, x, y):
         x, y = self.to_positive_coordinates(x, y)
 
-        return Square(self.size) \
-                .align_to(self.border, UP + LEFT) \
-                .shift([x * self.size, -y * self.size, 0]) \
-                .get_center()
+        return (
+            Square(self.size)
+            .align_to(self.border, UP + LEFT)
+            .shift([x * self.size, -y * self.size, 0])
+            .get_center()
+        )
 
     def add_tiles(self, tiles, positions, **kwargs):
         for t, p in zip(tiles, positions):
@@ -238,19 +282,46 @@ class Wall(VMobject):
         else:
             return Tile.get_color_in_direction(self, direction)
 
+    def animateWrite(self):
+        return AnimationGroup(
+            AnimationGroup(*[t.animateWrite() for t in self.tiles], lag_ratio=0.1),
+            Write(self.border),
+            AnimationGroup(
+                Write(self.get_color_object_in_direction(LEFT)),
+                Write(self.get_color_object_in_direction(UP))
+                if self.input is None
+                else AnimationGroup(
+                    AnimationGroup(
+                        *[Write(c) for c in self.input_colors], lag_ratio=0.04
+                    ),
+                    AnimationGroup(
+                        *[FadeIn(l) for l in self.input_lines], lag_ratio=0.04
+                    ),
+                    lag_ratio=0.3,
+                ),
+                Write(self.get_color_object_in_direction(RIGHT)),
+                Write(self.get_color_object_in_direction(DOWN)),
+            ),
+            lag_ratio=0.2,
+        )
+
 
 class TileSet(VMobject):
-    def __init__(self, *tiles):
+    def __init__(self, *tiles, rows=1):
         super().__init__()
 
         self.tiles = VGroup(*tiles)
-        self.tiles.arrange_in_grid(rows=1, buff=0.6)
+        self.tiles.arrange_in_grid(rows=rows, buff=0.6)
 
         self.commas = VGroup()
 
         n = len(tiles)
         for i in range(n - 1):
-            self.commas.add(Tex("\Large $,$").next_to(self.tiles[i], DOWN + RIGHT, buff=0).shift(UP * 0.07 + RIGHT * 0.1))
+            self.commas.add(
+                Tex("\Large $,$")
+                .next_to(self.tiles[i], DOWN + RIGHT, buff=0)
+                .shift(UP * 0.07 + RIGHT * 0.1)
+            )
 
         brace_offset = -0.25
         self.braces = VGroup(
@@ -272,11 +343,18 @@ class TileSet(VMobject):
 
     def animateWrite(self):
         return AnimationGroup(
-            AnimationGroup(*[Write(t) for t in self.tiles], lag_ratio=0.1),
+            AnimationGroup(*[t.animateWrite() for t in self.tiles], lag_ratio=0.1),
             Write(self.commas),
             Write(self.braces),
             lag_ratio=0.2,
         )
+
+    def __getitem__(self, i):
+        return self.tiles[i]
+
+    def __len__(self):
+        return len(self.tiles)
+
 
 def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
     def at(x, y):
@@ -288,7 +366,9 @@ def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
     # if we're past (on the very right tile)
     if i == w:
         # check if the tile on the left is ok
-        if at(i - 1, j).get_color_in_direction(RIGHT) != at(i, j).get_color_in_direction(LEFT):
+        if at(i - 1, j).get_color_in_direction(RIGHT) != at(
+            i, j
+        ).get_color_in_direction(LEFT):
             return
 
         if j == h - 1:
@@ -301,12 +381,16 @@ def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
         if at(i, j - 1).get_color_in_direction(DOWN) != tile.get_color_in_direction(UP):
             continue
 
-        if at(i - 1, j).get_color_in_direction(RIGHT) != tile.get_color_in_direction(LEFT):
+        if at(i - 1, j).get_color_in_direction(RIGHT) != tile.get_color_in_direction(
+            LEFT
+        ):
             continue
 
         # if we're last row
         if j == h - 1:
-            if at(i, j + 1).get_color_in_direction(UP) != tile.get_color_in_direction(DOWN):
+            if at(i, j + 1).get_color_in_direction(UP) != tile.get_color_in_direction(
+                DOWN
+            ):
                 continue
 
         set(i, j, tile)
@@ -316,7 +400,7 @@ def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
         set(i, j, None)
 
 
-def find_tiling(tileset: List[Tile], wall: Wall, max_height = 1):
+def find_tiling(tileset: List[Tile], wall: Wall, max_height=1):
     """Find if there exists a tiling of maximal height for a given wall."""
     w = wall.w
     for h in range(1, max_height + 1):
@@ -326,13 +410,19 @@ def find_tiling(tileset: List[Tile], wall: Wall, max_height = 1):
             wallarray[0][i] = Tile([None, None, None, wall.input[i - 1]])
 
         for i in range(1, w + 1):
-            wallarray[-1][i] = Tile([None, wall.get_color_in_direction(DOWN), None, None])
+            wallarray[-1][i] = Tile(
+                [None, wall.get_color_in_direction(DOWN), None, None]
+            )
 
         for i in range(1, h + 1):
-            wallarray[i][-1] = Tile([None, None, wall.get_color_in_direction(RIGHT), None])
+            wallarray[i][-1] = Tile(
+                [None, None, wall.get_color_in_direction(RIGHT), None]
+            )
 
         for i in range(1, h + 1):
-            wallarray[i][0] = Tile([wall.get_color_in_direction(LEFT), None, None, None])
+            wallarray[i][0] = Tile(
+                [wall.get_color_in_direction(LEFT), None, None, None]
+            )
 
         result = find_tiling_recursive(0, 0, tileset, wallarray, w, h)
 
@@ -348,18 +438,28 @@ def find_tiling(tileset: List[Tile], wall: Wall, max_height = 1):
 
 class WriteReverse(Write):
     """A special write for a tile and wall (since we want the animation to be reversed)."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, reverse=True)
 
 
 examples = {
     "even_size": (
-        Wall([PALETTE[1], None, PALETTE[1], PALETTE[1]], height=1, input="111111"),
+        Wall([PALETTE[1], None, PALETTE[1], PALETTE[0]], height=1, input="111111"),
         TileSet(
-            Tile([PALETTE[2], "1", PALETTE[1], PALETTE[1]]),
-            Tile([PALETTE[3], "1", PALETTE[2], PALETTE[1]]),
-            Tile([PALETTE[2], "1", PALETTE[3], PALETTE[1]]),
-            Tile([PALETTE[1], "1", PALETTE[2], PALETTE[1]]),
+            Tile([PALETTE[2], 1, PALETTE[1], PALETTE[0]]),
+            Tile([PALETTE[1], 1, PALETTE[2], PALETTE[0]]),
+        ),
+    ),
+    "divby3": (
+        Wall([0, None, 0, PALETTE[0]], height=1, input="1010010"),
+        TileSet(
+            Tile([0, 0, 0, PALETTE[0]]),
+            Tile([1, 0, 1, PALETTE[0]]),
+            Tile([2, 0, 2, PALETTE[0]]),
+            Tile([1, 1, 0, PALETTE[0]]),
+            Tile([2, 1, 1, PALETTE[0]]),
+            Tile([0, 1, 2, PALETTE[0]]),
         ),
     ),
     "parentheses": (
@@ -377,7 +477,7 @@ examples = {
         ),
     ),
     "parentheses_log": (
-        Wall([PALETTE[1], None, PALETTE[0], BLACK], input="(()())()"),
+        Wall([PALETTE[1], None, PALETTE[0], BLACK], input="(((())))"),
         TileSet(
             Tile([1, "(", PALETTE[0], BLACK]),
             Tile([BLACK, BLACK, PALETTE[0], BLACK]),
@@ -385,12 +485,16 @@ examples = {
             Tile([1, "(", 0, BLACK]),
             Tile([1, "+", BLACK, BLACK]),
             Tile([1, BLACK, 1, BLACK]),
+            Tile([0, BLACK, 0, BLACK]),
+            Tile([BLACK, BLACK, 0, BLACK]),
             Tile([0, ")", 1, BLACK]),
-            Tile([PALETTE[1], ")", 1, BLACK]),
             Tile([1, ")", 0, "-"]),
+            Tile([PALETTE[1], ")", 1, BLACK]),
             Tile([0, "-", 1, BLACK]),
+            Tile([1, "-", 0, "-"]),
             Tile([BLACK, "-", 1, BLACK]),
             Tile([PALETTE[1], BLACK, BLACK, BLACK]),
+            Tile([PALETTE[1], BLACK, 0, BLACK]),
             Tile([BLACK, BLACK, BLACK, BLACK]),
         ),
     ),
@@ -421,10 +525,12 @@ class Intro(Scene):
 
         wall = Wall(PALETTE, width=w, height=h)
 
-        bl = BraceBetweenPoints([-w/2, h/2, 0], [-w/2, -h/2, 0])
+        bl = BraceBetweenPoints([-w / 2, h / 2, 0], [-w / 2, -h / 2, 0])
         blt = Tex("\\footnotesize h").next_to(bl, LEFT * 0.5)
 
-        bu = BraceBetweenPoints([-w/2, h/2, 0], [w/2, h/2, 0], direction=UP).scale([-1, 1, 0])
+        bu = BraceBetweenPoints(
+            [-w / 2, h / 2, 0], [w / 2, h / 2, 0], direction=UP
+        ).scale([-1, 1, 0])
         but = Tex("\\footnotesize w").next_to(bu, UP * 0.5)
 
         self.play(Write(wall.border))
@@ -432,13 +538,18 @@ class Intro(Scene):
         self.play(Write(bu), Write(but))
         self.play(Write(bl), Write(blt))
 
-        tiles = [[Tile([choice(PALETTE) for _ in range(4)]) for _ in range(w)] for _ in range(h)]
+        tiles = [
+            [Tile([choice(PALETTE) for _ in range(4)]) for _ in range(w)]
+            for _ in range(h)
+        ]
 
         for i in range(w):
             for j in range(h):
                 wall.add_tile(tiles[j][i], i, j)
 
-        self.play(AnimationGroup(*[FadeIn(t.border) for t in wall.tiles], lag_ratio=0.01))
+        self.play(
+            AnimationGroup(*[FadeIn(t.border) for t in wall.tiles], lag_ratio=0.01)
+        )
 
         for t in wall.tiles:
             for c in t.color_objects:
@@ -448,20 +559,24 @@ class Intro(Scene):
         self.play(
             *[t.border.animate.set_color(WHITE) for t in wall.tiles],
             *[Write(t.cross) for t in wall.tiles],
-            *[Write(t.color_objects) for t in wall.tiles],
+            *[Write(t.color_objects) for t in [wall.tiles.get_color_in_direction(dir) for dir in [LEFT, UP, RIGHT, DOWN]]],
         )
 
         # color rows + columns
         changes = {}
         seed(1)
-        for count, (i1, i2) in enumerate(zip((range(w-1), range(w)), (range(h), range(h-1)))):
+        for count, (i1, i2) in enumerate(
+            zip((range(w - 1), range(w)), (range(h), range(h - 1)))
+        ):
             for i in i1:
                 for j in i2:
                     p1, p2 = (i, j), (i + 1, j) if not count else (i, j + 1)
                     d1, d2 = (RIGHT, LEFT) if not count else (DOWN, UP)
 
-                    c1, c2 = tiles[p1[1]][p1[0]].get_color_in_direction(d1), tiles[p2[1]][p2[0]].get_color_in_direction(d2)
-                    new_color=choice([c1, c2])
+                    c1, c2 = tiles[p1[1]][p1[0]].get_color_in_direction(d1), tiles[
+                        p2[1]
+                    ][p2[0]].get_color_in_direction(d2)
+                    new_color = choice([c1, c2])
 
                     if p1 not in changes:
                         changes[p1] = tiles[p1[1]][p1[0]].animate
@@ -471,7 +586,13 @@ class Intro(Scene):
                         changes[p2] = tiles[p2[1]][p2[0]].animate
                     changes[p2].set_color_in_direction(new_color, d2)
         self.play(*changes.values())
-        self.play(AnimationGroup(FadeOut(VGroup(bl, blt, bu, but)), FadeIn(wall.color_objects), lag_ratio=0.4))
+        self.play(
+            AnimationGroup(
+                FadeOut(VGroup(bl, blt, bu, but)),
+                FadeIn(wall.color_objects),
+                lag_ratio=0.4,
+            )
+        )
 
         changes = {}
 
@@ -486,36 +607,77 @@ class Intro(Scene):
                     else:
                         i, j = x, y
 
-                    if tiles[j][i].get_color_in_direction(direction) != wall.get_color_in_direction(direction):
+                    if tiles[j][i].get_color_in_direction(
+                        direction
+                    ) != wall.get_color_in_direction(direction):
 
                         if (i, j) not in changes:
                             changes[(i, j)] = tiles[j][i].animate
-                        changes[(i, j)].set_color_in_direction(wall.get_color_in_direction(direction), direction)
+                        changes[(i, j)].set_color_in_direction(
+                            wall.get_color_in_direction(direction), direction
+                        )
 
         self.play(*changes.values())
 
         self.play(*[FadeOut(o) for o in self.mobjects])
 
 
-def pasting_animations(tile, wall, positions, speed=0.07):
+def animate_tile_pasting(tile, wall, positions, speed=0.07):
     def DelayedTransform(x, y, t):
-        return Transform(x, y, run_time = 1 + t, rate_func=lambda a: smooth(a if t == 0 else (0 if a < t else (a - t) / (1 - t))))
+        return Transform(
+            x,
+            y,
+            run_time=1 + t,
+            rate_func=lambda a: smooth(
+                a if t == 0 else (0 if a < t else (a - t) / (1 - t))
+            ),
+        )
 
     n = len(positions)
 
     from_tiles = [tile.copy() for _ in range(n)]
-    to_tiles = [tile.copy().move_to(wall.index_to_position(*position)) for position in positions]
+    to_tiles = [
+        tile.copy().move_to(wall.index_to_position(*position)) for position in positions
+    ]
 
-    return [DelayedTransform(from_tiles[i], to_tiles[i], speed * (n - i - 1)) for i in range(n)], from_tiles, positions
+    return (
+        [
+            DelayedTransform(from_tiles[i], to_tiles[i], speed * (n - i - 1))
+            for i in range(n)
+        ],
+        from_tiles,
+        positions,
+    )
 
 
 class TileSetExample(Scene):
     def construct(self):
         tiles = [
-                Tile([REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[0], REDUCED_PALETTE[1]]),
-                Tile([REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[1]]),
-                Tile([REDUCED_PALETTE[0], REDUCED_PALETTE[1], REDUCED_PALETTE[1], REDUCED_PALETTE[1]]),
+            Tile(
+                [
+                    REDUCED_PALETTE[1],
+                    REDUCED_PALETTE[1],
+                    REDUCED_PALETTE[0],
+                    REDUCED_PALETTE[1],
                 ]
+            ),
+            Tile(
+                [
+                    REDUCED_PALETTE[1],
+                    REDUCED_PALETTE[1],
+                    REDUCED_PALETTE[1],
+                    REDUCED_PALETTE[1],
+                ]
+            ),
+            Tile(
+                [
+                    REDUCED_PALETTE[0],
+                    REDUCED_PALETTE[1],
+                    REDUCED_PALETTE[1],
+                    REDUCED_PALETTE[1],
+                ]
+            ),
+        ]
 
         tiles = VGroup(*tiles)
         tiles.arrange_in_grid(rows=1)
@@ -530,7 +692,9 @@ class TileSetExample(Scene):
 
         self.play(
             FadeIn(tileTypes),
-            tileset_with_text.animate.arrange_in_grid(rows=1, buff=0.23).move_to([0, 0, 0])
+            tileset_with_text.animate.arrange_in_grid(rows=1, buff=0.23).move_to(
+                [0, 0, 0]
+            ),
         )
 
         w = 8
@@ -542,7 +706,7 @@ class TileSetExample(Scene):
         self.play(
             AnimationGroup(
                 tileset_with_text.animate.shift(UP * 2.3),
-                Write(wall),
+                wall.animateWrite(),
                 lag_ratio=0.6,
             )
         )
@@ -552,8 +716,12 @@ class TileSetExample(Scene):
         self.play(Write(question))
         self.play(FadeOut(question))
 
-        animations1, tiles1, positions1 = pasting_animations(tiles[-1], wall, [(-1, i) for i in range(h)])
-        animations2, tiles2, positions2 = pasting_animations(tiles[0], wall, [(0, i) for i in range(h)])
+        animations1, tiles1, positions1 = animate_tile_pasting(
+            tiles[-1], wall, [(-1, i) for i in range(h)]
+        )
+        animations2, tiles2, positions2 = animate_tile_pasting(
+            tiles[0], wall, [(0, i) for i in range(h)]
+        )
 
         self.play(*animations1, *animations2)
 
@@ -561,31 +729,47 @@ class TileSetExample(Scene):
         wall.add_tiles(tiles2, positions2)
 
         from_tile_wrong = tiles[-1].copy()
-        to_tile_wrong = tiles[-1].copy().move_to(wall.index_to_position(4, i)).rotate(-PI / 2)
+        to_tile_wrong = (
+            tiles[-1].copy().move_to(wall.index_to_position(4, i)).rotate(-PI / 2)
+        )
 
         cross = VGroup()
         r1 = Rectangle(width=0.2, height=3.3).set_fill(RED, 1).scale(0.5).rotate(PI / 4)
-        r2 = Rectangle(width=0.2, height=3.3).set_fill(RED, 1).scale(0.5).rotate(-PI / 4)
-        cross.add(Union(r1, r2).set_stroke("#8b0000", 1.5).set_fill(RED, 1).move_to(to_tile_wrong))
+        r2 = (
+            Rectangle(width=0.2, height=3.3).set_fill(RED, 1).scale(0.5).rotate(-PI / 4)
+        )
+        cross.add(
+            Union(r1, r2)
+            .set_stroke("#8b0000", 1.5)
+            .set_fill(RED, 1)
+            .move_to(to_tile_wrong)
+        )
 
         self.play(Transform(from_tile_wrong, to_tile_wrong))
 
         self.play(FadeIn(cross), from_tile_wrong.animate.set_opacity(0.2))
         self.play(FadeOut(from_tile_wrong), FadeOut(cross))
 
-        animations, tiles, positions = pasting_animations(tiles[1], wall, [(i, j) for i in reversed(range(1, w - 1)) for j in reversed(range(h))], speed=0.03)
+        animations, tiles, positions = animate_tile_pasting(
+            tiles[1],
+            wall,
+            [(i, j) for i in reversed(range(1, w - 1)) for j in reversed(range(h))],
+            speed=0.03,
+        )
 
         self.play(*animations)
 
         wall.add_tiles(tiles, positions)
 
-        self.play(wall.get_color_object_in_direction(UP).animate.set_fill(REDUCED_PALETTE[0]))
+        self.play(
+            wall.get_color_object_in_direction(UP).animate.set_fill(REDUCED_PALETTE[0])
+        )
 
         self.play(*[FadeOut(wall.get_tile(i, 0)) for i in range(wall.w)])
 
 
 class HighlightedTex(Tex):
-    def __init__(self, text, sep='|', color=YELLOW):
+    def __init__(self, text, sep="|", color=YELLOW):
         super().__init__(*[s for s in text.split(sep) if len(s) != 0])
 
         for i in range(0 if text[0] == sep else 1, len(self), 2):
@@ -593,6 +777,7 @@ class HighlightedTex(Tex):
 
 
 class ProgrammingModel(Scene):
+    @fade
     def construct(self):
         title = Tex("\Large Programming model")
 
@@ -602,12 +787,17 @@ class ProgrammingModel(Scene):
         text = [
             (Tex("Input:"), HighlightedTex("|colors| on the |top side| of the wall")),
             (Tex("Program:"), HighlightedTex("finite set of |tile types|")),
-            (Tex("Output:"), HighlightedTex("|accept| if there exists valid tiling, else |reject|")),
+            (
+                Tex("Output:"),
+                HighlightedTex("|accept| if there exists valid tiling, else |reject|"),
+            ),
         ]
 
         text_scale = 0.85
         for i in range(len(text)):
-            text[i][0].scale(text_scale).next_to(text[i-1][0], DOWN).align_to(text[i-1][0], RIGHT)
+            text[i][0].scale(text_scale).next_to(text[i - 1][0], DOWN).align_to(
+                text[i - 1][0], RIGHT
+            )
             text[i][1].scale(text_scale).next_to(text[i][0], RIGHT)
 
         g = VGroup()
@@ -617,16 +807,22 @@ class ProgrammingModel(Scene):
 
         g.move_to(ORIGIN).shift(UP * 0.7)
 
-        tile_scale = 0.8
+        tile_scale = 1
 
-        self.play(AnimationGroup(Write(text[0][0]), Write(text[1][0]), Write(text[2][0]), lag_ratio=0.15))
+        self.play(
+            AnimationGroup(
+                Write(text[0][0]), Write(text[1][0]), Write(text[2][0]), lag_ratio=0.15
+            )
+        )
 
         wall, ts = examples["even_size"]
         wall = wall.shift(DOWN * 2).scale(tile_scale)
 
         ts = ts.scale(tile_scale)
 
-        self.play(Write(text[0][1]), Write(wall))
+        self.play(Write(text[0][1]), wall.animateWrite())
+
+        # TODO: leave others arbitrary (show the colors)
 
         ts.next_to(wall, RIGHT, buff=1)
 
@@ -637,20 +833,151 @@ class ProgrammingModel(Scene):
 
         self.play(ts.animateWrite(), Write(text[1][1]))
 
+        # TODO: slower run time
         self.play(Write(text[2][1]))
 
         self.play(
             AnimationGroup(
                 AnimationGroup(
                     FadeOut(title),
-                    *[FadeOut(text[i][j]) for i in range(len(text)) for j in range(len(text[0]))]
+                    *[
+                        FadeOut(text[i][j])
+                        for i in range(len(text))
+                        for j in range(len(text[0]))
+                    ],
                 ),
                 AnimationGroup(
-                    ts.animate.move_to(ORIGIN).shift(UP * 1.5).scale(1.3),
-                    wall.animate.move_to(ORIGIN).shift(DOWN * 1.5).scale(1.3),
-                    lag_ratio=0.5,
+                    ts.animate.move_to(ORIGIN).shift(UP * 1.5),
+                    wall.animate.move_to(ORIGIN).shift(DOWN * 1.5),
                 ),
                 lag_ratio=0.5,
             ),
             run_time=2,
+        )
+
+        for i in range(wall.w):
+            animations, _, _ = animate_tile_pasting(ts[i % 2], wall, [(i, 0)])
+            self.play(*animations)
+
+        # TODO: show if it was odd
+
+
+class PartialFlash(AnimationGroup):
+    def __init__(
+        self,
+        point: np.ndarray,
+        start_angle=0,
+        end_angle=TAU,
+        line_length: float = 0.3,
+        num_lines: int = 6,
+        flash_radius: float = 0.9,
+        line_stroke_width: int = 2,
+        color: str = YELLOW,
+        time_width: float = 1,
+        run_time: float = 1.0,
+        **kwargs,
+    ) -> None:
+        self.point = point.get_center()
+        self.color = color
+        self.line_length = line_length
+        self.num_lines = num_lines
+        self.flash_radius = flash_radius
+        self.line_stroke_width = line_stroke_width
+        self.run_time = run_time
+        self.time_width = time_width
+        self.animation_config = kwargs
+        self.start_angle = start_angle
+        self.end_angle = end_angle
+
+        self.lines = self.create_lines()
+        animations = self.create_line_anims()
+        super().__init__(*animations, group=self.lines)
+
+    def create_lines(self) -> VGroup:
+        lines = VGroup()
+        for angle in np.arange(
+            self.start_angle,
+            self.end_angle + ((self.end_angle - self.start_angle) / self.num_lines) / 2,
+            (self.end_angle - self.start_angle) / self.num_lines,
+        ):
+            print(angle)
+            line = Line(self.point, self.point + self.line_length * RIGHT)
+            line.shift((self.flash_radius) * RIGHT)
+            line.rotate(angle, about_point=self.point)
+            lines.add(line)
+        lines.set_color(self.color)
+        lines.set_stroke(width=self.line_stroke_width)
+        return lines
+
+    def create_line_anims(self) -> Iterable["ShowPassingFlash"]:
+        return [
+            ShowPassingFlash(
+                line,
+                time_width=self.time_width,
+                run_time=self.run_time,
+                **self.animation_config,
+            )
+            for line in self.lines
+        ]
+
+
+class AdvancedExample(Scene):
+    @fade
+    def construct(self):
+        wall, tileset = examples["divby3"]
+
+        # TODO: zezelenání když je to přijmutý
+
+        tileset.move_to(ORIGIN).shift(UP * 1.5)
+        wall.move_to(ORIGIN).shift(DOWN * 1.5)
+
+        self.play(tileset.animateWrite(), wall.animateWrite())
+
+        self.play(
+            AnimationGroup(
+                Circumscribe(tileset[0], color=WHITE),
+                Circumscribe(tileset[1], color=WHITE),
+                Circumscribe(tileset[2], color=WHITE),
+                lag_ratio=0.0,
+            )
+        )
+
+        self.play(
+            AnimationGroup(
+                Circumscribe(tileset[3], color=WHITE),
+                Circumscribe(tileset[4], color=WHITE),
+                Circumscribe(tileset[5], color=WHITE),
+                lag_ratio=0.0,
+            )
+        )
+
+        for tile, positions in [
+            (3, [(0, 0)]),
+            (1, [(1, 0)]),
+            (4, [(2, 0)]),
+            (2, [(3, 0), (4, 0)]),
+            (-1, [(5, 0)]),
+            (0, [(6, 0)]),
+        ]:
+            animations, tiles, positions = animate_tile_pasting(
+                tileset[tile], wall, positions
+            )
+            self.play(*animations)
+            wall.add_tiles(tiles, positions)
+
+        self.play(
+            wall.animate.set_stroke(GREEN),
+            *[tile.animate.set_stroke(GREEN) for tile in wall.tiles],
+            PartialFlash(
+                Dot().next_to(wall, LEFT).shift(RIGHT * 0.8),
+                start_angle=PI / 2,
+                end_angle=(PI / 2) * 3,
+                color=GREEN,
+            ),
+            PartialFlash(
+                Dot().next_to(wall, RIGHT).shift(LEFT * 0.8),
+                start_angle=-PI / 2,
+                end_angle=PI / 2,
+                color=GREEN,
+            ),
         )

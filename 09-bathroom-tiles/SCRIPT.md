@@ -18,15 +18,15 @@ For this example, it is pretty clear that we can. However, if we were to change 
 
 What we just described is the programming model that we'll be using. We'll reserve the top side for input, which will be some finite sequence of colors, and leave others arbitrary. Our program will be a finite set of tile types that we can use. The program will **accept** the input if there exists a valid tiling of some non-zero height, and **reject** it if there's none.
 
-But enough theory, let's see some examples of programs.
+But enough theory, let's look at an example.
 
 
 # Examples
-For example, this program will accept the input, if and only if it is of even length. It's pretty obvious why -- we have to start with TODO, and then we can either end with TODO, or repeat...
+The following program will accept the input, if and only has even length. It should be pretty obvious why -- we have to start with the first tile and then alternate. Since we have to end with the second tile, the input length must be even.
 
-A slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three.
+A slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three. The main idea here is to remember, how many ones we've seen so far.
 
-Let's say we want to write a program (i. e. create a tile set) that accepts the input if and only if it contains all red or blue colors, but not both combined.
+We start with 0, and must end with 0 (since the counter will reset at 3). When the input contains a zero, we carry over the number. When it contains a one, we increment and loop back to 0 when we reach 2.
 
 
 # Complexity
