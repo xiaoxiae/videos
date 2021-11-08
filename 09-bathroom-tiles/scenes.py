@@ -4,6 +4,8 @@ from string import digits
 PALETTE = ["#b91e2f", "#f68828", "#cdd190", "#122f30"]
 REDUCED_PALETTE = PALETTE[:2]
 
+SUCCESS_COLOR = "#5A9B5A"
+
 
 def is_hex_color(str):
     """Yeah I know, this is not pretty."""
@@ -108,7 +110,6 @@ class Tile(VMobject):
 
     def animateWrite(self):
         return AnimationGroup(
-            Write(self.border),
             Write(self.cross),
             AnimationGroup(
                 Write(self.get_color_object_in_direction(LEFT)),
@@ -116,6 +117,7 @@ class Tile(VMobject):
                 Write(self.get_color_object_in_direction(RIGHT)),
                 Write(self.get_color_object_in_direction(DOWN)),
             ),
+            Write(self.border),
             lag_ratio=0.2,
         )
 
@@ -559,7 +561,7 @@ class Intro(Scene):
         self.play(
             *[t.border.animate.set_color(WHITE) for t in wall.tiles],
             *[Write(t.cross) for t in wall.tiles],
-            *[Write(t.color_objects) for t in [wall.tiles.get_color_in_direction(dir) for dir in [LEFT, UP, RIGHT, DOWN]]],
+            *[Write(t.color_objects) for t in wall.tiles],
         )
 
         # color rows + columns
@@ -776,6 +778,64 @@ class HighlightedTex(Tex):
             self[i].set_color(YELLOW)
 
 
+class PartialFlash(AnimationGroup):
+    def __init__(
+        self,
+        point: np.ndarray,
+        start_angle=0,
+        end_angle=TAU,
+        line_length: float = 0.3,
+        num_lines: int = 6,
+        flash_radius: float = 0.9,
+        line_stroke_width: int = 2,
+        color: str = YELLOW,
+        time_width: float = 1,
+        run_time: float = 1.0,
+        **kwargs,
+    ) -> None:
+        self.point = point.get_center()
+        self.color = color
+        self.line_length = line_length
+        self.num_lines = num_lines
+        self.flash_radius = flash_radius
+        self.line_stroke_width = line_stroke_width
+        self.run_time = run_time
+        self.time_width = time_width
+        self.animation_config = kwargs
+        self.start_angle = start_angle
+        self.end_angle = end_angle
+
+        self.lines = self.create_lines()
+        animations = self.create_line_anims()
+        super().__init__(*animations, group=self.lines)
+
+    def create_lines(self) -> VGroup:
+        lines = VGroup()
+        for angle in np.arange(
+            self.start_angle,
+            self.end_angle + ((self.end_angle - self.start_angle) / self.num_lines) / 2,
+            (self.end_angle - self.start_angle) / self.num_lines,
+        ):
+            line = Line(self.point, self.point + self.line_length * RIGHT)
+            line.shift((self.flash_radius) * RIGHT)
+            line.rotate(angle, about_point=self.point)
+            lines.add(line)
+        lines.set_color(self.color)
+        lines.set_stroke(width=self.line_stroke_width)
+        return lines
+
+    def create_line_anims(self) -> Iterable["ShowPassingFlash"]:
+        return [
+            ShowPassingFlash(
+                line,
+                time_width=self.time_width,
+                run_time=self.run_time,
+                **self.animation_config,
+            )
+            for line in self.lines
+        ]
+
+
 class ProgrammingModel(Scene):
     @fade
     def construct(self):
@@ -856,69 +916,29 @@ class ProgrammingModel(Scene):
         )
 
         for i in range(wall.w):
-            animations, _, _ = animate_tile_pasting(ts[i % 2], wall, [(i, 0)])
+            animations, tiles, positions = animate_tile_pasting(
+                ts[i % 2], wall, [(i, 0)]
+            )
             self.play(*animations)
+            wall.add_tiles(tiles, positions)
+
+        self.play(
+            wall.animate.set_stroke(SUCCESS_COLOR).set_shadow(0.5),
+            PartialFlash(
+                Dot().next_to(wall, LEFT).shift(RIGHT * 0.8),
+                start_angle=PI / 2,
+                end_angle=(PI / 2) * 3,
+                color=SUCCESS_COLOR,
+            ),
+            PartialFlash(
+                Dot().next_to(wall, RIGHT).shift(LEFT * 0.8),
+                start_angle=-PI / 2,
+                end_angle=PI / 2,
+                color=SUCCESS_COLOR,
+            ),
+        )
 
         # TODO: show if it was odd
-
-
-class PartialFlash(AnimationGroup):
-    def __init__(
-        self,
-        point: np.ndarray,
-        start_angle=0,
-        end_angle=TAU,
-        line_length: float = 0.3,
-        num_lines: int = 6,
-        flash_radius: float = 0.9,
-        line_stroke_width: int = 2,
-        color: str = YELLOW,
-        time_width: float = 1,
-        run_time: float = 1.0,
-        **kwargs,
-    ) -> None:
-        self.point = point.get_center()
-        self.color = color
-        self.line_length = line_length
-        self.num_lines = num_lines
-        self.flash_radius = flash_radius
-        self.line_stroke_width = line_stroke_width
-        self.run_time = run_time
-        self.time_width = time_width
-        self.animation_config = kwargs
-        self.start_angle = start_angle
-        self.end_angle = end_angle
-
-        self.lines = self.create_lines()
-        animations = self.create_line_anims()
-        super().__init__(*animations, group=self.lines)
-
-    def create_lines(self) -> VGroup:
-        lines = VGroup()
-        for angle in np.arange(
-            self.start_angle,
-            self.end_angle + ((self.end_angle - self.start_angle) / self.num_lines) / 2,
-            (self.end_angle - self.start_angle) / self.num_lines,
-        ):
-            print(angle)
-            line = Line(self.point, self.point + self.line_length * RIGHT)
-            line.shift((self.flash_radius) * RIGHT)
-            line.rotate(angle, about_point=self.point)
-            lines.add(line)
-        lines.set_color(self.color)
-        lines.set_stroke(width=self.line_stroke_width)
-        return lines
-
-    def create_line_anims(self) -> Iterable["ShowPassingFlash"]:
-        return [
-            ShowPassingFlash(
-                line,
-                time_width=self.time_width,
-                run_time=self.run_time,
-                **self.animation_config,
-            )
-            for line in self.lines
-        ]
 
 
 class AdvancedExample(Scene):
@@ -926,28 +946,44 @@ class AdvancedExample(Scene):
     def construct(self):
         wall, tileset = examples["divby3"]
 
-        # TODO: zezelenání když je to přijmutý
-
         tileset.move_to(ORIGIN).shift(UP * 1.5)
         wall.move_to(ORIGIN).shift(DOWN * 1.5)
 
         self.play(tileset.animateWrite(), wall.animateWrite())
 
-        self.play(
-            AnimationGroup(
-                Circumscribe(tileset[0], color=WHITE),
-                Circumscribe(tileset[1], color=WHITE),
-                Circumscribe(tileset[2], color=WHITE),
-                lag_ratio=0.0,
-            )
-        )
+        brace_offset = 0.25
+
+        b = BraceBetweenPoints(
+            Point().next_to(tileset[0], UP + LEFT, buff=0).get_center(),
+            Point().next_to(tileset[2], UP + RIGHT, buff=0).get_center(),
+            direction=UP,
+            color=GRAY,
+        ).scale([-1, 1, 1])
+
+        bl = Tex(f"\small carry", color=GRAY).next_to(b, UP)
 
         self.play(
             AnimationGroup(
-                Circumscribe(tileset[3], color=WHITE),
-                Circumscribe(tileset[4], color=WHITE),
-                Circumscribe(tileset[5], color=WHITE),
-                lag_ratio=0.0,
+                Write(b),
+                Write(bl, run_time=0.9),
+                lag_ratio=0.3,
+            )
+        )
+
+        b = BraceBetweenPoints(
+            Point().next_to(tileset[3], UP + LEFT, buff=0).get_center(),
+            Point().next_to(tileset[5], UP + RIGHT, buff=0).get_center(),
+            direction=UP,
+            color=GRAY,
+        ).scale([-1, 1, 1])
+
+        bl = Tex(f"\small increment", color=GRAY).next_to(b, UP)
+
+        self.play(
+            AnimationGroup(
+                Write(b),
+                Write(bl, run_time=0.9),
+                lag_ratio=0.3,
             )
         )
 
@@ -955,7 +991,7 @@ class AdvancedExample(Scene):
             (3, [(0, 0)]),
             (1, [(1, 0)]),
             (4, [(2, 0)]),
-            (2, [(3, 0), (4, 0)]),
+            (2, [(4, 0), (3, 0)]),
             (-1, [(5, 0)]),
             (0, [(6, 0)]),
         ]:
@@ -965,19 +1001,20 @@ class AdvancedExample(Scene):
             self.play(*animations)
             wall.add_tiles(tiles, positions)
 
+            # TODO: animate that it matches the input
+
         self.play(
-            wall.animate.set_stroke(GREEN),
-            *[tile.animate.set_stroke(GREEN) for tile in wall.tiles],
+            wall.animate.set_stroke(SUCCESS_COLOR),
             PartialFlash(
                 Dot().next_to(wall, LEFT).shift(RIGHT * 0.8),
                 start_angle=PI / 2,
                 end_angle=(PI / 2) * 3,
-                color=GREEN,
+                color=SUCCESS_COLOR,
             ),
             PartialFlash(
                 Dot().next_to(wall, RIGHT).shift(LEFT * 0.8),
                 start_angle=-PI / 2,
                 end_angle=PI / 2,
-                color=GREEN,
+                color=SUCCESS_COLOR,
             ),
         )

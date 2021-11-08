@@ -26,7 +26,9 @@ The following program will accept the input, if and only has even length. It sho
 
 A slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three. The main idea here is to remember, how many ones we've seen so far.
 
-We start with 0, and must end with 0 (since the counter will reset at 3). When the input contains a zero, we carry over the number. When it contains a one, we increment and loop back to 0 when we reach 2.
+
+# TODO: indicate start and end 0
+We start with 0, and must also end with 0, since the counter loops around at 3 (TODO: animace pod tilema). When the input contains a zero, we carry over the number, since it doesn't change the number of ones. When it does contain a one, we increment by one.
 
 
 # Complexity
@@ -41,8 +43,4 @@ Here, it should intuitively make sense that we need more than one layers to reme
 
 TODO:
 - reference to automatons
-- complexity by height
 - computational power
-- variations (triangles, hexagons)
-- 
-
