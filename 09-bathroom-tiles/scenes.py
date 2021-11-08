@@ -1,6 +1,8 @@
 from utilities import *
 from string import digits
 
+import manimpango
+
 PALETTE = ["#b91e2f", "#f68828", "#cdd190", "#122f30"]
 REDUCED_PALETTE = PALETTE[:2]
 
@@ -518,6 +520,54 @@ examples = {
         ),
     ),
 }
+
+
+class Motivation(Scene):
+    @fade
+    def construct(self):
+        p1 = SVGMobject("pillar.svg").scale(2.8).shift(LEFT * 4.6)
+        p2 = SVGMobject("pillar.svg").scale(2.8).shift(RIGHT * 4.6)
+
+        ft = Text("Eureka!", font="Gelio Pasteli").scale(2)
+
+        # TODO: when
+        archimedes = Text("– Archimedes (212 BC)", font="Gelio Pasteli").scale(0.7).next_to(ft, DOWN).align_to(ft, RIGHT)
+
+        g = VGroup(ft, archimedes).move_to(ORIGIN)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    Write(p1),
+                    Write(p2),
+                ),
+                AnimationGroup(
+                    Write(ft, run_time=1.3),
+                    Write(archimedes),
+                    lag_ratio=0.8,
+                ),
+                lag_ratio=0.3,
+            ),
+            run_time=3
+        )
+
+        offset = 1.2
+
+        ft2 = Text("Bathroom tiles!").scale(1.0).shift(DOWN * offset)
+        tom = Text("- Tom (now)").scale(0.6).next_to(ft2, DOWN).align_to(ft2, RIGHT)
+
+        g2 = VGroup(ft2, tom)
+        g2.move_to(ORIGIN).shift(DOWN * offset)
+
+        self.play(g.animate.shift(UP * offset))
+
+        self.play(
+            AnimationGroup(
+                Write(ft2, run_time=1.3),
+                Write(tom),
+                lag_ratio=0.8,
+            )
+        )
 
 
 class Intro(Scene):
