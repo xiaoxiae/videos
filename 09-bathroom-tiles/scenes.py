@@ -6,7 +6,12 @@ import manimpango
 PALETTE = ["#b91e2f", "#f68828", "#cdd190", "#122f30"]
 REDUCED_PALETTE = PALETTE[:2]
 
-SUCCESS_COLOR = "#5A9B5A"
+SUCCESS_COLOR = WHITE
+
+DIRECTIONS = [RIGHT, UP, LEFT, DOWN]
+
+NOTES_SCALE = 0.8
+NOTES_COLOR = GRAY
 
 
 def is_hex_color(str):
@@ -18,10 +23,73 @@ def is_hex_color(str):
     )
 
 
+def get_item_by_direction(items, direction):
+    for i, d in enumerate(DIRECTIONS):
+        if (direction == d).all():
+            return items[i]
+
+
+class PartialFlash(AnimationGroup):
+    def __init__(
+        self,
+        point: np.ndarray,
+        start_angle=0,
+        end_angle=TAU,
+        line_length: float = 0.3,
+        num_lines: int = 6,
+        flash_radius: float = 0.9,
+        line_stroke_width: int = 2,
+        color: str = YELLOW,
+        time_width: float = 1,
+        run_time: float = 1.0,
+        **kwargs,
+    ) -> None:
+        self.point = point.get_center()
+        self.color = color
+        self.line_length = line_length
+        self.num_lines = num_lines
+        self.flash_radius = flash_radius
+        self.line_stroke_width = line_stroke_width
+        self.run_time = run_time
+        self.time_width = time_width
+        self.animation_config = kwargs
+        self.start_angle = start_angle
+        self.end_angle = end_angle
+
+        self.lines = self.create_lines()
+        animations = self.create_line_anims()
+        super().__init__(*animations, group=self.lines)
+
+    def create_lines(self) -> VGroup:
+        lines = VGroup()
+        for angle in np.arange(
+            self.start_angle,
+            self.end_angle + ((self.end_angle - self.start_angle) / self.num_lines) / 2,
+            (self.end_angle - self.start_angle) / self.num_lines,
+        ):
+            line = Line(self.point, self.point + self.line_length * RIGHT)
+            line.shift((self.flash_radius) * RIGHT)
+            line.rotate(angle, about_point=self.point)
+            lines.add(line)
+        lines.set_color(self.color)
+        lines.set_stroke(width=self.line_stroke_width)
+        return lines
+
+    def create_line_anims(self) -> Iterable["ShowPassingFlash"]:
+        return [
+            ShowPassingFlash(
+                line,
+                time_width=self.time_width,
+                run_time=self.run_time,
+                **self.animation_config,
+            )
+            for line in self.lines
+        ]
+
+
 class Tile(VMobject):
     TEXT_SCALE = 0.6
-    TEXT_OFFSET = 1 / 3.5
-    DIRECTIONS = [RIGHT, UP, LEFT, DOWN]
+    TEXT_OFFSET = 1 / 3.35
 
     def __str__(self):
         return f"Tile({self.colors})"
@@ -59,18 +127,18 @@ class Tile(VMobject):
         self.add(self.cross)
 
         self.color_objects = VGroup()
-        for color, direction in zip(colors, Tile.DIRECTIONS):
-            self.set_color_in_direction(color, direction, new=True)
+        for color, direction in zip(colors, DIRECTIONS):
+            self.set_color_in_direction(color, direction)
 
         self.add_to_back(self.color_objects)
 
-    def set_color_in_direction(self, color, direction, new=False):
-        for i, d in enumerate(Tile.DIRECTIONS):
+    def set_color_in_direction(self, color, direction):
+        # sets d
+        for i, d in enumerate(DIRECTIONS):
             if (direction == d).all():
                 break
 
-        if not new:
-            self.colors[i] = color
+        self.colors[i] = color
 
         triangle = Polygon(
             np.array([self.size / 2 + self.get_x(), self.size / 2 + self.get_y(), 0]),
@@ -83,10 +151,7 @@ class Tile(VMobject):
         if is_hex_color(color):
             triangle.set_fill(color, 1)
 
-            if not new:
-                self.color_objects[i] = triangle
-            else:
-                self.color_objects.add(triangle)
+            self.color_objects.add(triangle)
         else:
             text = (
                 Tex(color)
@@ -94,21 +159,13 @@ class Tile(VMobject):
                 .shift(direction * self.size * Tile.TEXT_OFFSET)
             )
 
-            if not new:
-                self.color_objects[i] = text
-            else:
-                self.color_objects.add(text)
+            self.color_objects.add(text)
 
     def get_color_in_direction(self, direction):
-        for i, d in enumerate(Tile.DIRECTIONS):
-            if (direction == d).all():
-                return self.colors[i]
+        return get_item_by_direction(self.colors, direction)
 
     def get_color_object_in_direction(self, direction):
-        """Return the color object in the given direction."""
-        for i, d in enumerate(Tile.DIRECTIONS):
-            if (direction == d).all():
-                return self.color_objects[i]
+        return get_item_by_direction(self.color_objects, direction)
 
     def animateWrite(self):
         return AnimationGroup(
@@ -153,11 +210,12 @@ class Wall(VMobject):
         self.colors = colors
 
         self.color_objects = VGroup()
+        self.color_object_characters = []
 
         self.w = width
         self.h = height
 
-        for i, (color, direction) in enumerate(zip(colors, Tile.DIRECTIONS)):
+        for i, (color, direction) in enumerate(zip(colors, DIRECTIONS)):
             # yeah, not pretty
             # I was tired and didn't want to think
             c = 0.4  # outer offset
@@ -197,6 +255,7 @@ class Wall(VMobject):
 
                 self.input_colors = []
                 self.input_lines = []
+                self.color_object_characters.append([])
 
                 for i in range(len(input) + 1):
                     c = (0.25 if i in (0, len(input)) else 0.5) * self.size
@@ -217,8 +276,11 @@ class Wall(VMobject):
                             .move_to(p)
                             .align_to(p, DOWN)
                             .shift(UP * Tile.TEXT_OFFSET / 2)
-                        )  # 2 is an eyeball magic constant
+                        )
+
                         self.input_colors.append(text)
+                        self.color_object_characters[-1].append(text)
+
                         g.add(text)
 
                 self.color_objects.add(g)
@@ -228,12 +290,14 @@ class Wall(VMobject):
                 side = Polygon(*pos).set_stroke(WHITE)
                 if is_hex_color(color):
                     g.add(side.set_fill(color, 1))
+                    self.color_object_characters.append(None)
                 else:
                     g.add(side)
 
                     text = Tex(color).scale(Tile.TEXT_SCALE * self.size).move_to(side)
 
                     g.add(text)
+                    self.color_object_characters.append(text)
 
                 self.color_objects.add(g)
 
@@ -243,7 +307,7 @@ class Wall(VMobject):
         """Done so we can use -1."""
         return int(x % self.border.width), int(y % self.border.height)
 
-    def index_to_position(self, x, y):
+    def get_tile_position(self, x, y):
         x, y = self.to_positive_coordinates(x, y)
 
         return (
@@ -263,7 +327,7 @@ class Wall(VMobject):
         if copy:
             tile = tile.copy()
 
-        tile.move_to(self.index_to_position(x, y))
+        tile.move_to(self.get_tile_position(x, y))
 
         self.tiles.add(tile)
 
@@ -278,13 +342,17 @@ class Wall(VMobject):
 
         return self.tile_position_dictionary[(x, y)]
 
-    get_color_object_in_direction = Tile.get_color_object_in_direction
+    def get_color_object_in_direction(self, direction):
+        return get_item_by_direction(self.color_objects, direction)
 
     def get_color_in_direction(self, direction):
         if (direction == UP).all() and self.input is not None:
             return self.input
         else:
-            return Tile.get_color_in_direction(self, direction)
+            return get_item_by_direction(self.color, direction)
+
+    def get_color_object_characters_in_direction(self, direction):
+        return get_item_by_direction(self.color_object_characters, direction)
 
     def animateWrite(self):
         return AnimationGroup(
@@ -308,6 +376,23 @@ class Wall(VMobject):
             ),
             lag_ratio=0.2,
         )
+
+    def animateFillFlash(self):
+        c = PI / 6
+        return [
+            PartialFlash(
+                Dot().next_to(self, LEFT).shift(RIGHT * 0.8),
+                start_angle=PI / 2 + c,
+                end_angle=(PI / 2) * 3 - c,
+                color=SUCCESS_COLOR,
+            ),
+            PartialFlash(
+                Dot().next_to(self, RIGHT).shift(LEFT * 0.8),
+                start_angle=-PI / 2 + c,
+                end_angle=PI / 2 - c,
+                color=SUCCESS_COLOR,
+            ),
+        ]
 
 
 class TileSet(VMobject):
@@ -358,6 +443,9 @@ class TileSet(VMobject):
 
     def __len__(self):
         return len(self.tiles)
+
+    def __iter__(self):
+        return iter(self.tiles)
 
 
 def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
@@ -456,7 +544,7 @@ examples = {
         ),
     ),
     "divby3": (
-        Wall([0, None, 0, PALETTE[0]], height=1, input="1010010"),
+        Wall([0, None, 0, PALETTE[0]], height=1, input="10110111"),
         TileSet(
             Tile([0, 0, 0, PALETTE[0]]),
             Tile([1, 0, 1, PALETTE[0]]),
@@ -530,7 +618,6 @@ class Motivation(Scene):
 
         ft = Text("Eureka!", font="Gelio Pasteli").scale(2)
 
-        # TODO: when
         archimedes = (
             Text("– Archimedes", font="Gelio Pasteli")
             .scale(0.7)
@@ -709,12 +796,12 @@ class Intro(MovingCameraScene):
         self.play(*changes.values())
 
 
-def animate_tile_pasting(tile, wall, positions, speed=0.07):
+def animate_tile_pasting(tile, wall, positions, speed=0.07, run_time=1.2):
     def DelayedTransform(x, y, t):
         return Transform(
             x,
             y,
-            run_time=1 + t,
+            run_time=run_time + t,
             rate_func=lambda a: smooth(
                 a if t == 0 else (0 if a < t else (a - t) / (1 - t))
             ),
@@ -724,7 +811,7 @@ def animate_tile_pasting(tile, wall, positions, speed=0.07):
 
     from_tiles = [tile.copy() for _ in range(n)]
     to_tiles = [
-        tile.copy().move_to(wall.index_to_position(*position)) for position in positions
+        tile.copy().move_to(wall.get_tile_position(*position)) for position in positions
     ]
 
     return (
@@ -815,7 +902,7 @@ class TileSetExample(Scene):
 
         from_tile_wrong = tiles[-1].copy()
         to_tile_wrong = (
-            tiles[-1].copy().move_to(wall.index_to_position(4, i)).rotate(-PI / 2)
+            tiles[-1].copy().move_to(wall.get_tile_position(4, i)).rotate(-PI / 2)
         )
 
         cross = VGroup()
@@ -859,64 +946,6 @@ class HighlightedTex(Tex):
 
         for i in range(0 if text[0] == sep else 1, len(self), 2):
             self[i].set_color(YELLOW)
-
-
-class PartialFlash(AnimationGroup):
-    def __init__(
-        self,
-        point: np.ndarray,
-        start_angle=0,
-        end_angle=TAU,
-        line_length: float = 0.3,
-        num_lines: int = 6,
-        flash_radius: float = 0.9,
-        line_stroke_width: int = 2,
-        color: str = YELLOW,
-        time_width: float = 1,
-        run_time: float = 1.0,
-        **kwargs,
-    ) -> None:
-        self.point = point.get_center()
-        self.color = color
-        self.line_length = line_length
-        self.num_lines = num_lines
-        self.flash_radius = flash_radius
-        self.line_stroke_width = line_stroke_width
-        self.run_time = run_time
-        self.time_width = time_width
-        self.animation_config = kwargs
-        self.start_angle = start_angle
-        self.end_angle = end_angle
-
-        self.lines = self.create_lines()
-        animations = self.create_line_anims()
-        super().__init__(*animations, group=self.lines)
-
-    def create_lines(self) -> VGroup:
-        lines = VGroup()
-        for angle in np.arange(
-            self.start_angle,
-            self.end_angle + ((self.end_angle - self.start_angle) / self.num_lines) / 2,
-            (self.end_angle - self.start_angle) / self.num_lines,
-        ):
-            line = Line(self.point, self.point + self.line_length * RIGHT)
-            line.shift((self.flash_radius) * RIGHT)
-            line.rotate(angle, about_point=self.point)
-            lines.add(line)
-        lines.set_color(self.color)
-        lines.set_stroke(width=self.line_stroke_width)
-        return lines
-
-    def create_line_anims(self) -> Iterable["ShowPassingFlash"]:
-        return [
-            ShowPassingFlash(
-                line,
-                time_width=self.time_width,
-                run_time=self.run_time,
-                **self.animation_config,
-            )
-            for line in self.lines
-        ]
 
 
 class ProgrammingModel(Scene):
@@ -965,8 +994,6 @@ class ProgrammingModel(Scene):
 
         self.play(Write(text[0][1]), wall.animateWrite())
 
-        # TODO: leave others arbitrary (show the colors)
-
         ts.next_to(wall, RIGHT, buff=1)
 
         g = VGroup(ts, wall)
@@ -976,8 +1003,7 @@ class ProgrammingModel(Scene):
 
         self.play(ts.animateWrite(), Write(text[1][1]))
 
-        # TODO: slower run time
-        self.play(Write(text[2][1]))
+        self.play(Write(text[2][1]), run_time=3)
 
         self.play(
             AnimationGroup(
@@ -998,28 +1024,23 @@ class ProgrammingModel(Scene):
             run_time=2,
         )
 
-        for i in range(wall.w):
+        # TODO: task message
+
+        for i in range(wall.w // 2):
             animations, tiles, positions = animate_tile_pasting(
                 ts[i % 2], wall, [(i, 0)]
             )
-            self.play(*animations)
-            wall.add_tiles(tiles, positions)
+            animations2, tiles2, positions2 = animate_tile_pasting(
+                ts[(i + 1) % 2], wall, [(wall.w - i - 1, 0)]
+            )
+            self.play(*animations, *animations2)
 
-        self.play(
-            wall.animate.set_stroke(SUCCESS_COLOR).set_shadow(0.5),
-            PartialFlash(
-                Dot().next_to(wall, LEFT).shift(RIGHT * 0.8),
-                start_angle=PI / 2,
-                end_angle=(PI / 2) * 3,
-                color=SUCCESS_COLOR,
-            ),
-            PartialFlash(
-                Dot().next_to(wall, RIGHT).shift(LEFT * 0.8),
-                start_angle=-PI / 2,
-                end_angle=PI / 2,
-                color=SUCCESS_COLOR,
-            ),
-        )
+            self.wait(0.3)
+
+            wall.add_tiles(tiles, positions)
+            wall.add_tiles(tiles2, positions2)
+
+        self.play(wall.animate.set_stroke(SUCCESS_COLOR), *wall.animateFillFlash())
 
         # TODO: show if it was odd
 
@@ -1034,70 +1055,111 @@ class AdvancedExample(Scene):
 
         self.play(tileset.animateWrite(), wall.animateWrite())
 
+        nums = [
+            Tex(str(wall.input[: i + 1].count("1")), color=NOTES_COLOR)
+            .scale(NOTES_SCALE)
+            .next_to(wall.get_color_object_characters_in_direction(UP)[i], UP)
+            for i in range(len(wall.input))
+            if wall.input[i] != "0"
+        ]
+
+        self.play(
+            AnimationGroup(
+                *([Write(n) for n in nums]),
+                lag_ratio=0.1,
+                run_time=1.5,
+            ),
+        )
+
+        nums_transformed = [
+            Tex(str((i + 1) % 3), color=NOTES_COLOR).scale(NOTES_SCALE).move_to(nums[i])
+            for i in range(len(nums))
+        ]
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    *[n.animate.set_opacity(0).shift(UP * 0.3) for n in nums[2:]],
+                    lag_ratio=0.1,
+                    run_time=1.5,
+                ),
+                AnimationGroup(
+                    *[Write(n) for n in nums_transformed[2:]],
+                    lag_ratio=0.1,
+                    run_time=1.5,
+                ),
+                lag_ratio=0.3,
+            )
+        )
+
         brace_offset = 0.25
+        for i, (text, start, end) in enumerate(
+            [
+                ("carry", tileset[0], tileset[2]),
+                ("increment", tileset[3], tileset[5]),
+            ]
+        ):
+            b = BraceBetweenPoints(
+                Point().next_to(start, UP + LEFT, buff=0).get_center(),
+                Point().next_to(end, UP + RIGHT, buff=0).get_center(),
+                direction=UP,
+                color=NOTES_COLOR,
+            ).scale([-1, NOTES_SCALE, 1])
 
-        b = BraceBetweenPoints(
-            Point().next_to(tileset[0], UP + LEFT, buff=0).get_center(),
-            Point().next_to(tileset[2], UP + RIGHT, buff=0).get_center(),
-            direction=UP,
-            color=GRAY,
-        ).scale([-1, 1, 1])
-
-        bl = Tex(f"\small carry", color=GRAY).next_to(b, UP)
-
-        self.play(
-            AnimationGroup(
-                Write(b),
-                Write(bl, run_time=0.9),
-                lag_ratio=0.3,
+            bl = (
+                Tex(text, color=NOTES_COLOR)
+                .next_to(b, UP)
+                .scale(NOTES_SCALE)
+                .shift(DOWN * 0.1)
             )
-        )
 
-        b = BraceBetweenPoints(
-            Point().next_to(tileset[3], UP + LEFT, buff=0).get_center(),
-            Point().next_to(tileset[5], UP + RIGHT, buff=0).get_center(),
-            direction=UP,
-            color=GRAY,
-        ).scale([-1, 1, 1])
-
-        bl = Tex(f"\small increment", color=GRAY).next_to(b, UP)
-
-        self.play(
-            AnimationGroup(
-                Write(b),
-                Write(bl, run_time=0.9),
-                lag_ratio=0.3,
+            self.play(
+                AnimationGroup(
+                    Write(b, run_time=1.5),
+                    Write(bl),
+                    lag_ratio=0.3,
+                )
             )
-        )
+
+            self.play(
+                AnimationGroup(
+                    *[
+                        AnimationGroup(
+                            Indicate(
+                                t.get_color_object_in_direction(LEFT),
+                                color=WHITE,
+                                scale_factor=1.4,
+                            ),
+                            Indicate(
+                                t.get_color_object_in_direction(RIGHT),
+                                color=WHITE,
+                                scale_factor=1.4,
+                            ),
+                            lag_ratio=0.1,
+                        )
+                        for t in tileset
+                    ][i * 3 : (i + 1) * 3],
+                    lag_ratio=0.65,
+                )
+            )
 
         for tile, positions in [
             (3, [(0, 0)]),
             (1, [(1, 0)]),
             (4, [(2, 0)]),
-            (2, [(4, 0), (3, 0)]),
-            (-1, [(5, 0)]),
-            (0, [(6, 0)]),
+            (5, [(3, 0)]),
+            (0, [(4, 0)]),
+            (3, [(5, 0)]),
+            (4, [(6, 0)]),
+            (5, [(7, 0)]),
         ]:
             animations, tiles, positions = animate_tile_pasting(
                 tileset[tile], wall, positions
             )
             self.play(*animations)
+            self.wait(0.3)
             wall.add_tiles(tiles, positions)
 
             # TODO: animate that it matches the input
 
-        self.play(
-            wall.animate.set_stroke(SUCCESS_COLOR),
-            PartialFlash(
-                Dot().next_to(wall, LEFT).shift(RIGHT * 0.8),
-                start_angle=PI / 2,
-                end_angle=(PI / 2) * 3,
-                color=SUCCESS_COLOR,
-            ),
-            PartialFlash(
-                Dot().next_to(wall, RIGHT).shift(LEFT * 0.8),
-                start_angle=-PI / 2,
-                end_angle=PI / 2,
-                color=SUCCESS_COLOR,
-            ),
-        )
+        self.play(wall.animate.set_stroke(SUCCESS_COLOR), *wall.animateFillFlash())

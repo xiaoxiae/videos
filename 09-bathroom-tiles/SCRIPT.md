@@ -5,10 +5,10 @@ FIRST SECTION NAME
 # Intro
 Since the time of ancient Greeks, the best ideas were born in the bathroom -- just ask Archimedes. However, since laptops and moisture don't get along very well, we'll have to come up with another way of writing code.
 
-The solution: bathroom tiles.
+The solution: bathroom tiles!
 
 # Definitions
-We'll picture the wall as a rectangle of width $w$ and height $h$ that we want to entirely fill with square tiles of size $1$. Each tile will have 4 sides with some colors.
+We'll picture the bathroom wall as a rectangle of width $w$ and height $h$ that we want to entirely fill with square tiles of size $1$. Each tile will have 4 sides with some colors.
 
 For the tiling to make sense, we want the adjacent tiles' colors to match. We'll also make it so that each side of the wall has some color that again must match the tiles it's adjacent to.
 
@@ -22,12 +22,11 @@ But enough definitions, let's look at an example.
 
 
 # Examples
-TODO: task (write it explicitly)
-The following program will accept the input, if and only if it has even length. It should be pretty obvious why -- we have to start with the first tile (TODO: highlight left side) and then alternate. Since we can only end with the second tile (TODO: highlight side), the input length must be even (TODO: zkrátím a ukážu,že to nejde).
+The following program will accept the input, if and only if it has even length. It should be pretty obvious why -- we have to start with the first tile and end with the second tile. Then we again have to add the tiles like so. Since we're always adding tiles by two to end up with matching sides, the input length must be even.
 
-Another, slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three.
+Another, slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three. The main idea here is to keep track of how many ones we've seen so far when filling from the left. When counting, we'll loop back to 0 when the count reaches 3.
 
-The main idea here is to keep track of how many ones we've seen so far when filling from the left. We start with 0, and must end with a number divisible by 3. TODO: ffs this is a weird paragraph (TODO: under tiles animation 0 1 2 0 1 2 ...). When the input contains a zero, we carry over the number. When it contains a one, we increment (TODO: změním jedničku).
+The tiles are divided into two groups: when the input contains a zero, we carry over the number of threes. When it contains a one, we increment (and possibly loop back).
 
 
 # Time complexity (TODO)
@@ -44,5 +43,5 @@ Here, it should intuitively make sense that we need more than one layer to remem
 
 # Computational power (TODO)
 
-TODO:
+- Turing
 - reference to automatons
