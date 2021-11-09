@@ -1060,7 +1060,6 @@ class AdvancedExample(Scene):
             .scale(NOTES_SCALE)
             .next_to(wall.get_color_object_characters_in_direction(UP)[i], UP)
             for i in range(len(wall.input))
-            if wall.input[i] != "0"
         ]
 
         self.play(
@@ -1072,19 +1071,20 @@ class AdvancedExample(Scene):
         )
 
         nums_transformed = [
-            Tex(str((i + 1) % 3), color=NOTES_COLOR).scale(NOTES_SCALE).move_to(nums[i])
+            Tex(str(wall.input[: i + 1].count("1") % 3), color=NOTES_COLOR)
+            .scale(NOTES_SCALE).move_to(nums[i])
             for i in range(len(nums))
         ]
 
         self.play(
             AnimationGroup(
                 AnimationGroup(
-                    *[n.animate.set_opacity(0).shift(UP * 0.3) for n in nums[2:]],
+                    *[n.animate.set_opacity(0).shift(UP * 0.3) for n in nums[3:]],
                     lag_ratio=0.1,
                     run_time=1.5,
                 ),
                 AnimationGroup(
-                    *[Write(n) for n in nums_transformed[2:]],
+                    *[Write(n) for n in nums_transformed[3:]],
                     lag_ratio=0.1,
                     run_time=1.5,
                 ),

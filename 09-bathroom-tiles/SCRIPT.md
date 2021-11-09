@@ -24,9 +24,13 @@ But enough definitions, let's look at an example.
 # Examples
 The following program will accept the input, if and only if it has even length. It should be pretty obvious why -- we have to start with the first tile and end with the second tile. Then we again have to add the tiles like so. Since we're always adding tiles by two to end up with matching sides, the input length must be even.
 
-Another, slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three. The main idea here is to keep track of how many ones we've seen so far when filling from the left. When counting, we'll loop back to 0 when the count reaches 3.
+Another, slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones in the input is divisible by three. The idea is to count how many ones we've seen, when filling from the left. When counting, we'll loop back to 0 when the count reaches 3.
 
 The tiles are divided into two groups: when the input contains a zero, we carry over the number of threes. When it contains a one, we increment (and possibly loop back).
+
+Starting from the left, let's try and find a tiling.
+
+As you can see, it exists. This makes sense, since there are 6 ones in the input, which is indeed divisible by three.
 
 
 # Time complexity (TODO)
