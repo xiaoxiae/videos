@@ -8,11 +8,11 @@ Since the time of ancient Greeks, the best ideas were born in the bathroom -- ju
 The solution: bathroom tiles.
 
 # Definitions
-We'll picture the wall as a rectangle of width $w$ and height $h$ that we want to entirely fill with square tiles of size $1$. Each tile will have 4 sides with some colors (TODO: zoom animace na jednu tu kacličku).
+We'll picture the wall as a rectangle of width $w$ and height $h$ that we want to entirely fill with square tiles of size $1$. Each tile will have 4 sides with some colors.
 
 For the tiling to make sense, we want the adjacent tiles' colors to match. We'll also make it so that each side of the wall has some color that again must match the tiles it's adjacent to.
 
-Now say we have some finite set of tile types and the colors of the wall. The question is: can we create a tiling that satisfies the requirements? Note that we can use as many tiles of each type as we want, but we cannot rotate them (TODO: špatná pozice).
+Now say we have some finite set of tile types and the colors of the wall. The question is: can we create a tiling that satisfies the requirements? Note that we can use as many tiles of each type as we want, but we cannot rotate them.
 
 For this example, it is pretty clear that we can. However, if we were to change the top side like so, it would no longer be possible, since the top row couldn't be filled with any tiles.
 

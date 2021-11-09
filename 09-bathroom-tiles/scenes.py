@@ -525,13 +525,18 @@ examples = {
 class Motivation(Scene):
     @fade
     def construct(self):
-        p1 = SVGMobject("pillar.svg").scale(2.8).shift(LEFT * 4.6)
-        p2 = SVGMobject("pillar.svg").scale(2.8).shift(RIGHT * 4.6)
+        p1 = SVGMobject("pillar.svg").scale(2.8).shift(LEFT * 4.8)
+        p2 = SVGMobject("pillar.svg").scale(2.8).shift(RIGHT * 4.8)
 
         ft = Text("Eureka!", font="Gelio Pasteli").scale(2)
 
         # TODO: when
-        archimedes = Text("– Archimedes (212 BC)", font="Gelio Pasteli").scale(0.7).next_to(ft, DOWN).align_to(ft, RIGHT)
+        archimedes = (
+            Text("– Archimedes", font="Gelio Pasteli")
+            .scale(0.7)
+            .next_to(ft, DOWN)
+            .align_to(ft, RIGHT)
+        )
 
         g = VGroup(ft, archimedes).move_to(ORIGIN)
 
@@ -548,13 +553,13 @@ class Motivation(Scene):
                 ),
                 lag_ratio=0.3,
             ),
-            run_time=3
+            run_time=3,
         )
 
         offset = 1.2
 
         ft2 = Text("Bathroom tiles!").scale(1.0).shift(DOWN * offset)
-        tom = Text("- Tom (now)").scale(0.6).next_to(ft2, DOWN).align_to(ft2, RIGHT)
+        tom = Text("- Tom").scale(0.6).next_to(ft2, DOWN).align_to(ft2, RIGHT)
 
         g2 = VGroup(ft2, tom)
         g2.move_to(ORIGIN).shift(DOWN * offset)
@@ -570,9 +575,10 @@ class Motivation(Scene):
         )
 
 
-class Intro(Scene):
+class Intro(MovingCameraScene):
+    @fade
     def construct(self):
-        w = 8
+        w = 9
         h = 5
 
         wall = Wall(PALETTE, width=w, height=h)
@@ -590,6 +596,7 @@ class Intro(Scene):
         self.play(Write(bu), Write(but))
         self.play(Write(bl), Write(blt))
 
+        seed(0)
         tiles = [
             [Tile([choice(PALETTE) for _ in range(4)]) for _ in range(w)]
             for _ in range(h)
@@ -603,15 +610,45 @@ class Intro(Scene):
             AnimationGroup(*[FadeIn(t.border) for t in wall.tiles], lag_ratio=0.01)
         )
 
+        tile = wall.get_tile(w // 2, h // 2)
+        zoom_ratio = 0.2
+
+        self.play(
+            self.camera.frame.animate.scale(zoom_ratio).move_to(tile),
+            rate_func=smooth,
+            run_time=1.5,
+        )
+
+        self.play(AnimationGroup(Write(tile.cross), lag_ratio=0.3))
+
+        self.bring_to_front(tile.border)
+
+        for c in tile.color_objects:
+            self.bring_to_back(c)
+        self.bring_to_front(tile)
+
+        self.play(
+            *[
+                FadeIn(tile.get_color_object_in_direction(d))
+                for d in [LEFT, UP, RIGHT, DOWN]
+            ],
+            tile.border.animate.set_color(WHITE),
+        )
+
         for t in wall.tiles:
             for c in t.color_objects:
                 self.bring_to_back(c)
             self.bring_to_front(t)
 
         self.play(
-            *[t.border.animate.set_color(WHITE) for t in wall.tiles],
-            *[Write(t.cross) for t in wall.tiles],
-            *[Write(t.color_objects) for t in wall.tiles],
+            AnimationGroup(
+                self.camera.frame.animate.scale(1 / zoom_ratio).move_to(ORIGIN),
+                rate_func=smooth,
+                run_time=1.5,
+            ),
+            *[t.border.animate.set_color(WHITE) for t in wall.tiles if t is not tile],
+            *[Write(t.cross) for t in wall.tiles if t is not tile],
+            *[Write(t.color_objects) for t in wall.tiles if t is not tile],
         )
 
         # color rows + columns
@@ -671,8 +708,6 @@ class Intro(Scene):
 
         self.play(*changes.values())
 
-        self.play(*[FadeOut(o) for o in self.mobjects])
-
 
 def animate_tile_pasting(tile, wall, positions, speed=0.07):
     def DelayedTransform(x, y, t):
@@ -703,6 +738,7 @@ def animate_tile_pasting(tile, wall, positions, speed=0.07):
 
 
 class TileSetExample(Scene):
+    @fade
     def construct(self):
         tiles = [
             Tile(
@@ -736,17 +772,14 @@ class TileSetExample(Scene):
 
         tileset = TileSet(*tiles)
 
-        self.play(tileset.animateWrite())
-
         tileTypes = Tex("Tile Types $=$").shift(LEFT * 1)
 
         tileset_with_text = VGroup(tileTypes, tileset)
 
+        tileset_with_text.arrange_in_grid(rows=1, buff=0.23).move_to([0, 0, 0])
+
         self.play(
-            FadeIn(tileTypes),
-            tileset_with_text.animate.arrange_in_grid(rows=1, buff=0.23).move_to(
-                [0, 0, 0]
-            ),
+            AnimationGroup(Write(tileTypes), tileset.animateWrite(), lag_ratio=0.6)
         )
 
         w = 8
