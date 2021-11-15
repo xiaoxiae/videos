@@ -11,6 +11,10 @@ DIRECTIONS = [RIGHT, UP, LEFT, DOWN]
 NOTES_SCALE = 0.8
 NOTES_COLOR = GRAY
 
+QUESTION_MARK_SCALE = 3
+
+INDICATE_SCALE = 1.5
+
 
 def is_hex_color(str):
     """Yeah I know, this is not pretty."""
@@ -21,7 +25,7 @@ def is_hex_color(str):
     )
 
 
-def get_text_speed(text, speed_by_char=0.12):
+def get_text_speed(text, speed_by_char=0.095):
     return len("".join(text.split())) * speed_by_char
 
 
@@ -477,7 +481,7 @@ class TileSet(VMobject):
 
 
 def IndicateColorCharacter(char):
-    return Indicate(char, color=YELLOW, scale=1.5)
+    return Indicate(char, color=YELLOW, scale=INDICATE_SCALE)
 
 
 def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
@@ -617,7 +621,8 @@ examples = {
     "parentheses": (
         Wall([PALETTE[3], None, PALETTE[3], PALETTE[3]], input="(()())()", height=2),
         TileSet(
-            Tile([PALETTE[1], "(", PALETTE[3], PALETTE[3]]),
+            Tile([PALETTE[2], "(", PALETTE[3], PALETTE[3]]),
+            Tile([PALETTE[3], ")", PALETTE[2], PALETTE[3]]),
             Tile([PALETTE[3], "(", PALETTE[3], PALETTE[1]]),
             Tile([PALETTE[3], PALETTE[1], PALETTE[3], PALETTE[1]]),
             Tile([PALETTE[1], PALETTE[3], PALETTE[1], PALETTE[3]]),
@@ -625,7 +630,6 @@ examples = {
             Tile([PALETTE[3], PALETTE[0], PALETTE[1], PALETTE[3]]),
             Tile([PALETTE[3], PALETTE[0], PALETTE[3], PALETTE[0]]),
             Tile([PALETTE[3], ")", PALETTE[3], PALETTE[0]]),
-            Tile([PALETTE[3], ")", PALETTE[1], PALETTE[3]]),
             Tile([PALETTE[3], PALETTE[3], PALETTE[3], PALETTE[3]]),
         ),
     ),
@@ -690,13 +694,13 @@ class FadeOutDirection(Transform):
         target = self.obj.copy().shift(self.dir * self.move_factor).set_opacity(0)
         return target
 
+
 def FadeOutUp(obj, *args, **kwargs):
     return FadeOutDirection(obj, UP, *args, **kwargs)
 
 
 def FadeOutDown(obj, *args, **kwargs):
     return FadeOutDirection(obj, DOWN, *args, **kwargs)
-
 
 
 class FadeInDirection(Transform):
@@ -1031,7 +1035,7 @@ class Motivation(MovingCameraScene):
             AnimationGroup(MoveToTarget(wall), tileset.animateWrite(), lag_ratio=0.8),
         )
 
-        question = Tex("?").scale(3).move_to(wall)
+        question = Tex("?").scale(QUESTION_MARK_SCALE).move_to(wall)
 
         self.play(Write(question))
         self.play(FadeOutUp(question))
@@ -1108,7 +1112,6 @@ TILESET_OFFSET = UP * 0.7
 class ProgrammingModel(Scene):
     @fade
     def construct(self):
-
         title = Tex("\Large Programming model")
 
         self.play(FadeInUp(title))
@@ -1146,27 +1149,27 @@ class ProgrammingModel(Scene):
             g.add(text[i][1])
         g.move_to(ORIGIN).shift(UP * 0.7)
 
-        wall, ts = examples["even_size"]
+        wall, tileset = examples["even_size"]
         wall = wall.shift(DOWN * 2)
 
         self.play(WriteText(text[0][0]))
 
         self.play(WriteText(text[0][1]), wall.animateWrite())
 
-        ts.next_to(wall, RIGHT, buff=1)
+        tileset.next_to(wall, RIGHT, buff=1)
 
-        g = VGroup(ts, wall)
+        g = VGroup(tileset, wall)
 
         self.play(wall.animate.set_x(wall.get_x() - g.get_x()))
 
-        ts.next_to(wall, RIGHT, buff=1)
+        tileset.next_to(wall, RIGHT, buff=1)
 
         self.play(WriteText(text[1][0]))
 
         self.play(
             WriteText(text[1][1]),
             AnimationGroup(
-                ts.animateWrite(),
+                tileset.animateWrite(),
                 AnimationGroup(
                     wall.get_color_object_in_direction(LEFT).animate.set_fill(
                         PALETTE[1]
@@ -1197,7 +1200,7 @@ class ProgrammingModel(Scene):
                     ],
                 ),
                 AnimationGroup(
-                    ts.animate.move_to(ORIGIN).shift(TILESET_OFFSET),
+                    tileset.animate.move_to(ORIGIN).shift(TILESET_OFFSET),
                     wall.animate.move_to(ORIGIN).shift(WALL_OFFSET),
                 ),
                 lag_ratio=0.0,
@@ -1210,7 +1213,7 @@ class ProgrammingModel(Scene):
                 r"{\bf Task:} |accept| input \(\Leftrightarrow\) it has even length",
                 color=GREEN,
             )
-            .next_to(ts, UP)
+            .next_to(tileset, UP)
             .shift(TASK_OFFSET)
         )
 
@@ -1218,14 +1221,17 @@ class ProgrammingModel(Scene):
 
         for i in range(wall.w // 2):
             animations, tiles, positions = animate_tile_pasting(
-                ts[i % 2], wall, [(i, 0)]
+                tileset[i % 2], wall, [(i, 0)]
             )
             animations2, tiles2, positions2 = animate_tile_pasting(
-                ts[(i + 1) % 2], wall, [(wall.w - i - 1, 0)]
+                tileset[(i + 1) % 2], wall, [(wall.w - i - 1, 0)]
             )
             self.play(*animations, *animations2)
 
-            self.wait(0.3)
+            if i != wall.w // 2 - 1:
+                self.play(
+                    Swap(tileset[0], tileset[1], path_arc=160 * DEGREES, run_time=1.25)
+                )
 
             wall.add_tiles(tiles, positions)
             wall.add_tiles(tiles2, positions2)
@@ -1233,7 +1239,7 @@ class ProgrammingModel(Scene):
         self.play(*wall.animateFillFlash())
 
         wall_old = wall
-        tileset_old = ts
+        tileset_old = tileset
         task_old = task
 
         wall, tileset = examples["divby3"]
@@ -1277,7 +1283,7 @@ class ProgrammingModel(Scene):
                     for i in range(len(wall.input))
                     if wall.input[i] == "1"
                 ],
-                lag_ratio=0.05,
+                lag_ratio=0.08,
             )
         )
 
@@ -1389,12 +1395,25 @@ class ProgrammingModel(Scene):
             self.play(
                 IndicateColorCharacter(tiles[0].get_color_object_in_direction(RIGHT)),
                 IndicateColorCharacter((nums if i < 3 else nums_transformed)[i]),
-                run_time=1 - (i / wall.w) * 0.5
+                run_time=1 - (i / wall.w) * 0.5,
             )
 
             wall.add_tiles(tiles, positions)
 
         self.play(*wall.animateFillFlash())
+
+        self.play(
+            AnimationGroup(
+                *[
+                    IndicateColorCharacter(
+                        wall.get_color_object_characters_in_direction(UP)[i]
+                    )
+                    for i in range(len(wall.input))
+                    if wall.input[i] == "1"
+                ],
+                lag_ratio=0.08,
+            )
+        )
 
         self.play(
             FadeOutUp(wall),
@@ -1406,6 +1425,7 @@ class ProgrammingModel(Scene):
 
 class TimeComplexity(Scene):
     def construct(self):
+        self.next_section(skip_animations=True)
         title = Tex("\Large Time Complexity")
 
         self.play(FadeInUp(title))
@@ -1420,7 +1440,7 @@ class TimeComplexity(Scene):
             .shift(DOWN * 0.2)
         )
 
-        for i, j in ((0, 7), (15, 27), (35, 54), (64, 80)):
+        for i, j in ((0, 7), (15, 27), (35, 42), (64, 80)):
             traditional_text[0][i:j].set_color(YELLOW)
 
         traditional_group = VGroup(traditional, traditional_text)
@@ -1429,14 +1449,14 @@ class TimeComplexity(Scene):
         bathroom = Tex("Bathroom model")
         bathroom_text = (
             HighlightedTex(
-                "\parbox{15em}{Minimum number of layers needed to accept the input, based on the size of the input.}"
+                "\parbox{15em}{Minimum number of rows needed to accept the input, based on the size of the input.}"
             )
             .scale(0.7)
             .next_to(bathroom, DOWN)
             .shift(DOWN * 0.2)
         )
 
-        for i, j in ((0, 7), (15, 21), (29, 44), (54, 75)):
+        for i, j in ((0, 7), (15, 19), (27, 33), (52, 73)):
             bathroom_text[0][i:j].set_color(YELLOW)
 
         bathroom_group = VGroup(bathroom, bathroom_text)
@@ -1451,7 +1471,6 @@ class TimeComplexity(Scene):
         )
 
         self.play(Write(traditional_text, run_time=3))
-
 
         traditional_examples = (
             Tex(
@@ -1487,7 +1506,21 @@ class TimeComplexity(Scene):
         self.play(FadeInUp(traditional_examples[0][0:n]))
         self.play(FadeInUp(traditional_examples[0][n:]))
 
-        self.play(Write(bathroom_text, run_time=3))
+        question = (
+            Tex("?")
+            .scale(QUESTION_MARK_SCALE)
+            .move_to(VGroup(bathroom_text, *bathroom_examples))
+        )
+
+        self.play(Write(question))
+
+        self.play(
+            AnimationGroup(
+                FadeOutDown(question),
+                Write(bathroom_text, run_time=3),
+                lag_ratio=0.3,
+            )
+        )
 
         n = 16
         self.play(
@@ -1498,11 +1531,27 @@ class TimeComplexity(Scene):
             )
         )
 
-        # TODO: fadeout
+        self.next_section()
+
+        self.play(
+            *[
+                FadeOutUp(c)
+                for c in [
+                    title,
+                    bathroom,
+                    traditional,
+                    bathroom_text,
+                    traditional_text,
+                    bathroom_examples,
+                    traditional_examples,
+                ]
+            ]
+        )
 
 
 class ParenthesesExample(Scene):
     def construct(self):
+        self.next_section(skip_animations=True)
 
         task = HighlightedTex(
             r"{\bf Task:} |accept| input \(\Leftrightarrow\) parentheses are balanced",
@@ -1520,7 +1569,9 @@ class ParenthesesExample(Scene):
             )
         )
 
-        def BracketBetweenPoints(p1, p2, direction=UP, color=WHITE, width=0.06, height=0.22, **kwargs):
+        def BracketBetweenPoints(
+            p1, p2, direction=UP, color=WHITE, width=0.06, height=0.22, **kwargs
+        ):
             w = width
             h = height
 
@@ -1540,7 +1591,7 @@ class ParenthesesExample(Scene):
                 Dot().next_to(parentheses[0][0], DOWN, buff=0.1).get_center(),
                 Dot().next_to(parentheses[0][5], DOWN, buff=0.1).get_center(),
                 direction=DOWN,
-                height=0.45,
+                height=0.43,
                 color=GRAY,
             ).scale(0.95),
             BracketBetweenPoints(
@@ -1548,19 +1599,19 @@ class ParenthesesExample(Scene):
                 Dot().next_to(parentheses[0][2], DOWN, buff=0.1).get_center(),
                 direction=DOWN,
                 color=GRAY,
-            ).scale(0.85),
+            ).scale(0.78),
             BracketBetweenPoints(
                 Dot().next_to(parentheses[0][3], DOWN, buff=0.1).get_center(),
                 Dot().next_to(parentheses[0][4], DOWN, buff=0.1).get_center(),
                 direction=DOWN,
                 color=GRAY,
-            ).scale(0.85),
+            ).scale(0.78),
             BracketBetweenPoints(
                 Dot().next_to(parentheses[0][6], DOWN, buff=0.1).get_center(),
                 Dot().next_to(parentheses[0][7], DOWN, buff=0.1).get_center(),
                 direction=DOWN,
                 color=GRAY,
-            ).scale(0.85),
+            ).scale(0.78),
         ]
 
         self.play(
@@ -1579,9 +1630,10 @@ class ParenthesesExample(Scene):
         tileset.move_to(ORIGIN).shift(TILESET_OFFSET).shift(UP * 0.5)
         wall.move_to(ORIGIN).shift(WALL_OFFSET * 0.8)
 
-
         for i in range(len(wall.input)):
-            wall.get_color_object_in_direction(UP).remove(wall.get_color_object_characters_in_direction(UP)[i])
+            wall.get_color_object_in_direction(UP).remove(
+                wall.get_color_object_characters_in_direction(UP)[i]
+            )
 
         self.play(
             AnimationGroup(
@@ -1592,9 +1644,15 @@ class ParenthesesExample(Scene):
                         FadeOutUp(braces[1], move_factor=0.1),
                         FadeOutUp(braces[2], move_factor=0.1),
                         FadeOutUp(braces[3], move_factor=0.1),
-                        run_time=0.5
+                        run_time=0.5,
                     ),
-                    *[Transform(parentheses[0][i], wall.get_color_object_characters_in_direction(UP)[i].copy()) for i in range(len(wall.input))],
+                    *[
+                        Transform(
+                            parentheses[0][i],
+                            wall.get_color_object_characters_in_direction(UP)[i].copy(),
+                        )
+                        for i in range(len(wall.input))
+                    ],
                     run_time=1,
                 ),
                 AnimationGroup(
@@ -1606,16 +1664,157 @@ class ParenthesesExample(Scene):
             )
         )
 
-        tileset.scale(1/tileset_scale)
+        tileset.scale(1 / tileset_scale)
 
         result_wall = find_tiling(tileset, wall, max_height=2)
 
         for i in range(wall.w):
-            for j in range(wall.w):
+            for j in range(wall.h):
                 wall.add_tile(result_wall.get_tile(i, j), i, j, copy=True)
 
         tileset.scale(tileset_scale)
 
-        self.play(AnimationGroup(*[t.animateWrite() for t in wall.tiles], lag_ratio=0.01))
+        self.play(
+            AnimationGroup(*[t.animateWrite() for t in wall.tiles], lag_ratio=0.01)
+        )
 
         self.play(*wall.animateFillFlash())
+
+        for i in range(wall.w):
+            for j in range(wall.h):
+                wall.remove_tile(result_wall.get_tile(i, j))
+
+        fade_coefficient = 0.8
+        parentheses_coefficient = 0.085
+
+        shift = 0.5
+
+        def highlight_parentheses(indexes, prev_indexes=[[]]):
+            if prev_indexes == [[]]:
+                for i in range(wall.w):
+                    parentheses[0][i].scale(INDICATE_SCALE).shift(
+                        UP * parentheses_coefficient
+                        + (ORIGIN if i in indexes else DOWN * shift)
+                    )
+                    parentheses[0][i].save_state()
+                    parentheses[0][i].scale(1 / INDICATE_SCALE).shift(
+                        DOWN * parentheses_coefficient
+                        + (ORIGIN if i in indexes else UP * shift)
+                    )
+
+            for i in range(wall.w):
+                if i in prev_indexes[0]:
+                    parentheses[0][i].save_state()
+
+            result = AnimationGroup(
+                *[
+                    (
+                        parentheses[0][i].animate.restore()
+                        if i in indexes and i not in prev_indexes[0]
+                        else (
+                            parentheses[0][i]
+                            .animate.scale(1 / INDICATE_SCALE)
+                            .shift(DOWN * parentheses_coefficient)
+                        ).fade(fade_coefficient)
+                        if i not in indexes and i in prev_indexes[0]
+                        else parentheses[0][i].animate.fade(fade_coefficient)
+                    )
+                    for i in range(wall.w)
+                ]
+            )
+
+            prev_indexes[0] = indexes
+
+            return result
+
+        def highlight_tiles(indexes, cache=[[[]]]):
+            first = False
+            if cache == [[[]]]:
+                first = True
+                cache[0] = [(i, j) for i in range(wall.w) for j in range(wall.h)]
+
+            for i in range(wall.w):
+                for j in range(wall.h):
+                    if (i, j) in cache[0]:
+                        if first:
+                            wall.shift(ORIGIN if (i, j) in indexes else DOWN * shift)
+
+                        wall.get_tile(i, j).save_state()
+
+                        if first:
+                            wall.shift(ORIGIN if (i, j) in indexes else UP * shift)
+
+            result = AnimationGroup(
+                *[
+                    wall.get_tile(i, j).animate.fade(fade_coefficient)
+                    if (i, j) not in indexes and (i, j) in cache[0]
+                    else wall.get_tile(i, j).animate.restore()
+                    if (i, j) in indexes
+                    else wall.get_tile(i, j).animate.fade(0)
+                    for i in range(wall.w)
+                    for j in range(wall.h)
+                ],
+                run_time=0.75,
+            )
+
+            cache[0] = indexes
+
+            return result
+
+        self.next_section()
+
+        self.play(highlight_parentheses([0, 5]))
+
+        self.play(highlight_tiles([(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 0)]))
+
+        brace_offset = 0.25
+        bs = []
+        for i, (text, start, end) in enumerate(
+            [
+                ("single", tileset[0], tileset[1]),
+                ("opening", tileset[2], tileset[2]), # TODO: here; combine opening and closing
+                ("path creation", tileset[3], tileset[7]),
+                ("closing", tileset[8], tileset[8]),
+                ("fill", tileset[9], tileset[9]),
+            ]
+        ):
+            b = BraceBetweenPoints(
+                Point().next_to(start, UP + LEFT, buff=0).get_center(),
+                Point().next_to(end, UP + RIGHT, buff=0).get_center(),
+                direction=UP,
+                color=NOTES_COLOR,
+            ).scale([-1, NOTES_SCALE, 1])
+
+            bl = (
+                Tex(text, color=NOTES_COLOR)
+                .next_to(b, UP)
+                .scale(NOTES_SCALE)
+                .shift(DOWN * 0.1)
+            )
+
+            bs += [b, bl]
+
+            if i == 4:
+                bl.shift(UP * 0.08)
+
+            if i == 0:
+                b.shift(DOWN * shift)
+                bl.shift(DOWN * shift)
+                self.play(
+                    task.animate.shift(UP * shift / 2),
+                    parentheses.animate.shift(DOWN * shift),
+                    wall.animate.shift(DOWN * shift),
+                    tileset.animate.shift(DOWN * shift),
+                    FadeInUp(b, move_factor=0.1),
+                    FadeInUp(bl, move_factor=0.1),
+                )
+
+                self.play(
+                    highlight_parentheses([1, 2, 3, 4, 6, 7]),
+                    highlight_tiles([(2, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]),
+                )
+
+            else:
+                self.play(FadeInUp(b), FadeInUp(bl))
+
+        self.next_section(skip_animations=True)
