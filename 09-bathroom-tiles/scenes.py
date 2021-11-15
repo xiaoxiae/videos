@@ -1425,7 +1425,6 @@ class ProgrammingModel(Scene):
 
 class TimeComplexity(Scene):
     def construct(self):
-        self.next_section(skip_animations=True)
         title = Tex("\Large Time Complexity")
 
         self.play(FadeInUp(title))
@@ -1531,7 +1530,6 @@ class TimeComplexity(Scene):
             )
         )
 
-        self.next_section()
 
         self.play(
             *[
