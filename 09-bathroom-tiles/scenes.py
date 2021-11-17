@@ -362,8 +362,6 @@ class Wall(VMobject):
 
         self.tiles.add(tile)
 
-        # TODO: sort by tile position dictionary!
-
         self.tile_position_dictionary[(x, y)] = tile
 
         return tile
@@ -1091,6 +1089,8 @@ class Motivation(MovingCameraScene):
 
         self.play(*animations)
 
+        self.play(*wall.animateFillFlash())
+
         wall.add_tiles(tiles, positions)
 
         self.play(
@@ -1530,7 +1530,6 @@ class TimeComplexity(Scene):
             )
         )
 
-
         self.play(
             *[
                 FadeOutUp(c)
@@ -1549,6 +1548,7 @@ class TimeComplexity(Scene):
 
 class ParenthesesExample(Scene):
     def construct(self):
+
         self.next_section(skip_animations=True)
 
         task = HighlightedTex(
@@ -1685,7 +1685,7 @@ class ParenthesesExample(Scene):
         fade_coefficient = 0.8
         parentheses_coefficient = 0.085
 
-        shift = 0.5
+        shift = 0.43
 
         def highlight_parentheses(indexes, prev_indexes=[[]]):
             if prev_indexes == [[]]:
@@ -1716,6 +1716,8 @@ class ParenthesesExample(Scene):
                         ).fade(fade_coefficient)
                         if i not in indexes and i in prev_indexes[0]
                         else parentheses[0][i].animate.fade(fade_coefficient)
+                        if prev_indexes == [[]]
+                        else parentheses[0][i].animate.fade(0)
                     )
                     for i in range(wall.w)
                 ]
@@ -1759,60 +1761,144 @@ class ParenthesesExample(Scene):
 
             return result
 
-        self.next_section()
+        p_copy = parentheses.copy().shift(DOWN * shift)
 
         self.play(highlight_parentheses([0, 5]))
 
-        self.play(highlight_tiles([(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 0)]))
+        self.play(
+            highlight_tiles(
+                [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 0)]
+            )
+        )
 
         brace_offset = 0.25
         bs = []
         for i, (text, start, end) in enumerate(
             [
                 ("single", tileset[0], tileset[1]),
-                ("opening", tileset[2], tileset[2]), # TODO: here; combine opening and closing
+                (
+                    ["opening", "closing"],
+                    [tileset[2], tileset[8]],
+                    [tileset[2], tileset[8]],
+                ),
                 ("path creation", tileset[3], tileset[7]),
-                ("closing", tileset[8], tileset[8]),
                 ("fill", tileset[9], tileset[9]),
             ]
         ):
-            b = BraceBetweenPoints(
-                Point().next_to(start, UP + LEFT, buff=0).get_center(),
-                Point().next_to(end, UP + RIGHT, buff=0).get_center(),
-                direction=UP,
-                color=NOTES_COLOR,
-            ).scale([-1, NOTES_SCALE, 1])
 
-            bl = (
-                Tex(text, color=NOTES_COLOR)
-                .next_to(b, UP)
-                .scale(NOTES_SCALE)
-                .shift(DOWN * 0.1)
-            )
+            def get_b_local(t, s, e):
+                b = BraceBetweenPoints(
+                    Point().next_to(s, UP + LEFT, buff=0).get_center(),
+                    Point().next_to(e, UP + RIGHT, buff=0).get_center(),
+                    direction=UP,
+                    color=NOTES_COLOR,
+                ).scale([-1, NOTES_SCALE, 1])
 
-            bs += [b, bl]
+                return [
+                    b,
+                    Tex(t, color=NOTES_COLOR)
+                    .next_to(b, UP)
+                    .scale(NOTES_SCALE)
+                    .shift(DOWN * 0.1),
+                ]
 
-            if i == 4:
-                bl.shift(UP * 0.08)
+            b_local = []
+
+            if type(text) is list:
+                for t, s, e in zip(text, start, end):
+                    b_local += get_b_local(t, s, e)
+            else:
+                b_local = get_b_local(text, start, end)
+
+            bs += b_local
+
+            additional = []
+
+            if i == 3:
+                b_local[-1].shift(UP * 0.08)
+
+                additional += [highlight_tiles([(6, 1), (7, 1)])]
+                additional += [highlight_parentheses([])]
+
+            if i == 1:
+                additional += [highlight_tiles([(0, 0), (5, 0)])]
+                additional += [highlight_parentheses((0, 5))]
+
+            if i == 2:
+                additional += [
+                    highlight_tiles(
+                        [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 0)]
+                    )
+                ]
 
             if i == 0:
-                b.shift(DOWN * shift)
-                bl.shift(DOWN * shift)
+                for b in b_local:
+                    b.shift(DOWN * shift)
+
                 self.play(
                     task.animate.shift(UP * shift / 2),
                     parentheses.animate.shift(DOWN * shift),
                     wall.animate.shift(DOWN * shift),
                     tileset.animate.shift(DOWN * shift),
-                    FadeInUp(b, move_factor=0.1),
-                    FadeInUp(bl, move_factor=0.1),
                 )
 
                 self.play(
+                    *[FadeInUp(b, move_factor=0.1) for b in b_local],
                     highlight_parentheses([1, 2, 3, 4, 6, 7]),
                     highlight_tiles([(2, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]),
                 )
 
             else:
-                self.play(FadeInUp(b), FadeInUp(bl))
+                self.play(*[FadeInUp(b) for b in b_local], *additional)
+
+        self.play(
+            highlight_tiles([(i, j) for i in range(wall.w) for j in range(wall.h)]),
+            Transform(parentheses, p_copy),
+        )
+
+        wall.save_state()
+        tileset.save_state()
+
+        self.play(
+            wall.get_tile(5, 0)
+            .get_color_object_in_direction(DOWN)
+            .animate.set_fill(PALETTE[1]),
+            wall.get_tile(5, 1)
+            .get_color_object_in_direction(UP)
+            .animate.set_fill(PALETTE[1]),
+            tileset[6].get_color_object_in_direction(UP).animate.set_fill(PALETTE[1]),
+            tileset[7].get_color_object_in_direction(UP).animate.set_fill(PALETTE[1]),
+            tileset[7].get_color_object_in_direction(DOWN).animate.set_fill(PALETTE[1]),
+            tileset[8].get_color_object_in_direction(DOWN).animate.set_fill(PALETTE[1]),
+        )
+
+        self.play(
+            wall.animate.restore(),
+            tileset.animate.restore(),
+            Rotate(parentheses[0][5]),
+            Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP)),
+        )
+
+        self.next_section()
+
+        self.play(*[FadeOutUp(b) for b in bs])
+
+        no2 = Tex("$n / 2$").next_to(task, DOWN)
+        no2dot = Tex("$n / 2 \cdot 1$").next_to(task, DOWN)
+        no2o = Tex(r"time complexity: $\mathcal{O}(n)$").next_to(task, DOWN).align_to(task[1][0], LEFT)
+
+        self.play(Write(no2))
+        self.play(TransformMatchingShapes(no2, no2dot))
+        self.play(TransformMatchingShapes(no2dot, no2o))
 
         self.next_section(skip_animations=True)
+
+
+class Automata(Scene):
+    def construct(self):
+        pass
+
+
+class ComputationalPower(Scene):
+    def construct(self):
+        pass
