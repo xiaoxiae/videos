@@ -93,6 +93,50 @@ class PartialFlash(AnimationGroup):
         ]
 
 
+class Wiggle(Animation):
+    def __init__(
+        self,
+        mobject: "Mobject",
+        scale_value: float = INDICATE_SCALE,
+        rotation_angle: float = 0.02 * TAU,
+        n_wiggles: int = 3,
+        scale_about_point: Optional[np.ndarray] = None,
+        rotate_about_point: Optional[np.ndarray] = None,
+        run_time: float = 1.5,
+        **kwargs,
+    ) -> None:
+        self.scale_value = scale_value
+        self.rotation_angle = rotation_angle
+        self.n_wiggles = n_wiggles
+        self.scale_about_point = scale_about_point
+        self.rotate_about_point = rotate_about_point
+        super().__init__(mobject, run_time=run_time, **kwargs)
+
+    def get_scale_about_point(self) -> np.ndarray:
+        if self.scale_about_point is None:
+            return self.mobject.get_center()
+
+    def get_rotate_about_point(self) -> np.ndarray:
+        if self.rotate_about_point is None:
+            return self.mobject.get_center()
+
+    def interpolate_submobject(
+        self,
+        submobject: "Mobject",
+        starting_submobject: "Mobject",
+        alpha: float,
+    ) -> None:
+        submobject.points[:, :] = starting_submobject.points
+        submobject.scale(
+            interpolate(1, self.scale_value, there_and_back_with_pause(alpha)),
+            about_point=self.get_scale_about_point(),
+        )
+        submobject.rotate(
+            wiggle(alpha, self.n_wiggles) * self.rotation_angle,
+            about_point=self.get_rotate_about_point(),
+        )
+
+
 class Tile(VMobject):
     TEXT_SCALE = 0.6
     TEXT_OFFSET = 1 / 3.35
@@ -950,13 +994,6 @@ class Motivation(MovingCameraScene):
                         changes[p2] = tiles[p2[1]][p2[0]].animate
                     changes[p2].set_color_in_direction(new_color, d2)
         self.play(*changes.values())
-        self.play(
-            AnimationGroup(
-                FadeOut(VGroup(bl, blt, bu, but)),
-                Write(wall.color_objects),
-                lag_ratio=0.6,
-            )
-        )
 
         changes = {}
 
@@ -981,7 +1018,14 @@ class Motivation(MovingCameraScene):
                             wall.get_color_in_direction(direction), direction
                         )
 
-        self.play(*changes.values())
+        self.play(
+            AnimationGroup(
+                FadeOut(VGroup(bl, blt, bu, but)),
+                Write(wall.color_objects),
+                AnimationGroup(*changes.values()),
+                lag_ratio=0.6,
+            )
+        )
 
         tiles = [
             Tile(
@@ -1351,6 +1395,17 @@ class ProgrammingModel(Scene):
             bs += [b, bl]
 
             self.play(
+                *[
+                    Wiggle(
+                        t.get_color_object_in_direction(UP),
+                        run_time=2.5,
+                        n_wiggles=5,
+                    )
+                    for t in tileset
+                ][i * 3 : (i + 1) * 3]
+            )
+
+            self.play(
                 FadeInUp(b),
                 FadeInUp(bl)
                 if i == 1
@@ -1361,17 +1416,17 @@ class ProgrammingModel(Scene):
                 AnimationGroup(
                     *[
                         AnimationGroup(
-                            IndicateColorCharacter(
-                                t.get_color_object_in_direction(LEFT)
+                            Wiggle(
+                                t.get_color_object_in_direction(LEFT),
                             ),
-                            IndicateColorCharacter(
-                                t.get_color_object_in_direction(RIGHT)
+                            Wiggle(
+                                t.get_color_object_in_direction(RIGHT),
                             ),
                             lag_ratio=0.1,
                         )
                         for t in tileset
                     ][i * 3 : (i + 1) * 3],
-                    lag_ratio=0.65,
+                    lag_ratio=0.35,
                 )
             )
 
@@ -1393,9 +1448,9 @@ class ProgrammingModel(Scene):
 
             self.play(*animations, run_time=1 - (i / wall.w) * 0.5)
             self.play(
-                IndicateColorCharacter(tiles[0].get_color_object_in_direction(RIGHT)),
-                IndicateColorCharacter((nums if i < 3 else nums_transformed)[i]),
-                run_time=1 - (i / wall.w) * 0.5,
+                Wiggle(tiles[0].get_color_object_in_direction(RIGHT)),
+                Wiggle((nums if i < 3 else nums_transformed)[i]),
+                run_time=1.5,
             )
 
             wall.add_tiles(tiles, positions)
@@ -1405,7 +1460,7 @@ class ProgrammingModel(Scene):
         self.play(
             AnimationGroup(
                 *[
-                    IndicateColorCharacter(
+                    Wiggle(
                         wall.get_color_object_characters_in_direction(UP)[i]
                     )
                     for i in range(len(wall.input))
@@ -1548,9 +1603,6 @@ class TimeComplexity(Scene):
 
 class ParenthesesExample(Scene):
     def construct(self):
-
-        self.next_section(skip_animations=True)
-
         task = HighlightedTex(
             r"{\bf Task:} |accept| input \(\Leftrightarrow\) parentheses are balanced",
             color=GREEN,
@@ -1873,25 +1925,31 @@ class ParenthesesExample(Scene):
         )
 
         self.play(
-            wall.animate.restore(),
-            tileset.animate.restore(),
             Rotate(parentheses[0][5]),
             Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP)),
         )
 
-        self.next_section()
+        self.play(
+            wall.animate.restore(),
+            tileset.animate.restore(),
+            Rotate(parentheses[0][5], angle=-PI),
+            Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP), angle=-PI),
+        )
 
         self.play(*[FadeOutUp(b) for b in bs])
 
-        no2 = Tex("$n / 2$").next_to(task, DOWN)
-        no2dot = Tex("$n / 2 \cdot 1$").next_to(task, DOWN)
-        no2o = Tex(r"time complexity: $\mathcal{O}(n)$").next_to(task, DOWN).align_to(task[1][0], LEFT)
+        no2 = Tex(r"$\frac{1}{2}n$").next_to(task, DOWN)
+        no2dot = Tex(r"$1 \cdot \frac{1}{2}n$").next_to(task, DOWN)
+        no2o = (
+            Tex(r"time complexity: $\mathcal{O}(n)$")
+            .next_to(task, DOWN)
+            .align_to(task[1][0], LEFT)
+        )
 
         self.play(Write(no2))
         self.play(TransformMatchingShapes(no2, no2dot))
         self.play(TransformMatchingShapes(no2dot, no2o))
 
-        self.next_section(skip_animations=True)
 
 
 class Automata(Scene):
