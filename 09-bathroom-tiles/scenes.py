@@ -15,6 +15,8 @@ QUESTION_MARK_SCALE = 3
 
 INDICATE_SCALE = 1.5
 
+FADE_COEFFICIENT = 0.85
+
 
 def is_hex_color(str):
     """Yeah I know, this is not pretty."""
@@ -287,31 +289,47 @@ class Wall(VMobject):
         # I was tired and didn't want to think
         if (direction == UP).all():
             pos = [
-                np.array([self.w / 2, self.h / 2 + d, 0]),
-                np.array([self.w / 2 - c, self.h / 2 + c, 0]),
-                np.array([-self.w / 2 + c, self.h / 2 + c, 0]),
-                np.array([-self.w / 2, self.h / 2 + d, 0]),
+                np.array([(self.w / 2) * self.size, (self.h / 2 + d) * self.size, 0]),
+                np.array(
+                    [(self.w / 2 - c) * self.size, (self.h / 2 + c) * self.size, 0]
+                ),
+                np.array(
+                    [(-self.w / 2 + c) * self.size, (self.h / 2 + c) * self.size, 0]
+                ),
+                np.array([(-self.w / 2) * self.size, (self.h / 2 + d) * self.size, 0]),
             ]
         if (direction == DOWN).all():
             pos = [
-                np.array([self.w / 2, -self.h / 2 - d, 0]),
-                np.array([self.w / 2 - c, -self.h / 2 - c, 0]),
-                np.array([-self.w / 2 + c, -self.h / 2 - c, 0]),
-                np.array([-self.w / 2, -self.h / 2 - d, 0]),
+                np.array([(self.w / 2) * self.size, (-self.h / 2 - d) * self.size, 0]),
+                np.array(
+                    [(self.w / 2 - c) * self.size, (-self.h / 2 - c) * self.size, 0]
+                ),
+                np.array(
+                    [(-self.w / 2 + c) * self.size, (-self.h / 2 - c) * self.size, 0]
+                ),
+                np.array([(-self.w / 2) * self.size, (-self.h / 2 - d) * self.size, 0]),
             ]
         if (direction == LEFT).all():
             pos = [
-                np.array([-self.w / 2 - d, self.h / 2, 0]),
-                np.array([-self.w / 2 - c, self.h / 2 - c, 0]),
-                np.array([-self.w / 2 - c, -self.h / 2 + c, 0]),
-                np.array([-self.w / 2 - d, -self.h / 2, 0]),
+                np.array([(-self.w / 2 - d) * self.size, (self.h / 2) * self.size, 0]),
+                np.array(
+                    [(-self.w / 2 - c) * self.size, (self.h / 2 - c) * self.size, 0]
+                ),
+                np.array(
+                    [(-self.w / 2 - c) * self.size, (-self.h / 2 + c) * self.size, 0]
+                ),
+                np.array([(-self.w / 2 - d) * self.size, (-self.h / 2) * self.size, 0]),
             ]
         if (direction == RIGHT).all():
             pos = [
-                np.array([self.w / 2 + d, self.h / 2, 0]),
-                np.array([self.w / 2 + c, self.h / 2 - c, 0]),
-                np.array([self.w / 2 + c, -self.h / 2 + c, 0]),
-                np.array([self.w / 2 + d, -self.h / 2, 0]),
+                np.array([(self.w / 2 + d) * self.size, (self.h / 2) * self.size, 0]),
+                np.array(
+                    [(self.w / 2 + c) * self.size, (self.h / 2 - c) * self.size, 0]
+                ),
+                np.array(
+                    [(self.w / 2 + c) * self.size, (-self.h / 2 + c) * self.size, 0]
+                ),
+                np.array([(self.w / 2 + d) * self.size, (-self.h / 2) * self.size, 0]),
             ]
 
         if (direction == UP).all() and self.input is not None:
@@ -769,6 +787,10 @@ def FadeInUp(obj, *args, **kwargs):
     return FadeInDirection(obj, UP, *args, **kwargs)
 
 
+def FadeInRight(obj, *args, **kwargs):
+    return FadeInDirection(obj, RIGHT, *args, **kwargs)
+
+
 def FadeInDown(obj, *args, **kwargs):
     return FadeInDirection(obj, DOWN, *args, **kwargs)
 
@@ -1133,8 +1155,6 @@ class Motivation(MovingCameraScene):
 
         self.play(*animations)
 
-        self.play(*wall.animateFillFlash())
-
         wall.add_tiles(tiles, positions)
 
         self.play(
@@ -1196,22 +1216,23 @@ class ProgrammingModel(Scene):
         wall, tileset = examples["even_size"]
         wall = wall.shift(DOWN * 2)
 
-        self.play(WriteText(text[0][0]))
+        self.play(FadeInUp(text[0][0]))
 
-        self.play(WriteText(text[0][1]), wall.animateWrite())
+        self.play(Write(text[0][1]), wall.animateWrite(), run_time=2.1)
 
         tileset.next_to(wall, RIGHT, buff=1)
 
         g = VGroup(tileset, wall)
 
-        self.play(wall.animate.set_x(wall.get_x() - g.get_x()))
+        self.play(
+            wall.animate.set_x(wall.get_x() - g.get_x()),
+            FadeInUp(text[1][0]),
+        )
 
         tileset.next_to(wall, RIGHT, buff=1)
 
-        self.play(WriteText(text[1][0]))
-
         self.play(
-            WriteText(text[1][1]),
+            Write(text[1][1], run_time=2.8),
             AnimationGroup(
                 tileset.animateWrite(),
                 AnimationGroup(
@@ -1229,9 +1250,9 @@ class ProgrammingModel(Scene):
             ),
         )
 
-        self.play(WriteText(text[2][0]))
+        self.play(FadeInUp(text[2][0]))
 
-        self.play(WriteText(text[2][1]))
+        self.play(Write(text[2][1], run_time=2.5))
 
         self.play(
             AnimationGroup(
@@ -1460,9 +1481,7 @@ class ProgrammingModel(Scene):
         self.play(
             AnimationGroup(
                 *[
-                    Wiggle(
-                        wall.get_color_object_characters_in_direction(UP)[i]
-                    )
+                    Wiggle(wall.get_color_object_characters_in_direction(UP)[i])
                     for i in range(len(wall.input))
                     if wall.input[i] == "1"
                 ],
@@ -1734,7 +1753,6 @@ class ParenthesesExample(Scene):
             for j in range(wall.h):
                 wall.remove_tile(result_wall.get_tile(i, j))
 
-        fade_coefficient = 0.8
         parentheses_coefficient = 0.085
 
         shift = 0.43
@@ -1765,9 +1783,9 @@ class ParenthesesExample(Scene):
                             parentheses[0][i]
                             .animate.scale(1 / INDICATE_SCALE)
                             .shift(DOWN * parentheses_coefficient)
-                        ).fade(fade_coefficient)
+                        ).fade(FADE_COEFFICIENT)
                         if i not in indexes and i in prev_indexes[0]
-                        else parentheses[0][i].animate.fade(fade_coefficient)
+                        else parentheses[0][i].animate.fade(FADE_COEFFICIENT)
                         if prev_indexes == [[]]
                         else parentheses[0][i].animate.fade(0)
                     )
@@ -1798,7 +1816,7 @@ class ParenthesesExample(Scene):
 
             result = AnimationGroup(
                 *[
-                    wall.get_tile(i, j).animate.fade(fade_coefficient)
+                    wall.get_tile(i, j).animate.fade(FADE_COEFFICIENT)
                     if (i, j) not in indexes and (i, j) in cache[0]
                     else wall.get_tile(i, j).animate.restore()
                     if (i, j) in indexes
@@ -1951,12 +1969,422 @@ class ParenthesesExample(Scene):
         self.play(TransformMatchingShapes(no2dot, no2o))
 
 
-
-class Automata(Scene):
-    def construct(self):
-        pass
-
-
 class ComputationalPower(Scene):
     def construct(self):
-        pass
+        title = Tex("\Large Computational Power")
+
+        self.play(FadeInUp(title))
+
+        tile = Tile(PALETTE).scale(2)
+
+        cf = 0.8
+        c = 1.3
+
+        question = Tex("?").scale(QUESTION_MARK_SCALE * 1.5).shift(RIGHT * cf)
+
+        self.play(
+            Transform(title, tile),
+        )
+
+        self.remove(title)
+
+        self.play(
+            tile.animate.shift(LEFT * cf),
+            FadeInRight(question),
+        )
+
+        lang = (
+            SVGMobject("assets/languages/python.svg")
+            .next_to(ORIGIN, RIGHT)
+            .shift(RIGHT * c)
+        )
+
+        sscale = 2.8
+
+        l = Tex("$=$").scale(sscale)
+        g = Tex("$>$").scale(sscale)
+        ll = Tex("$\ll$").scale(sscale)
+
+        self.play(
+            tile.animate.next_to(ORIGIN, LEFT).shift(LEFT * c),
+            FadeInRight(lang),
+            question.animate.move_to(ORIGIN).fade(FADE_COEFFICIENT),
+            FadeInUp(l),
+        )
+
+        self.play(
+            FadeOutUp(l, move_factor=0.85),
+            FadeInUp(g, move_factor=0.85),
+        )
+
+        self.play(
+            FadeOutUp(g, move_factor=0.85),
+            FadeInUp(ll, move_factor=0.85),
+        )
+
+        r = (
+            Tex("$\Leftrightarrow$")
+            .scale(sscale / 1.5)
+            .move_to(tile)
+            .rotate(PI / 2)
+            .shift(DOWN * 0.5)
+        )
+
+        g = VGroup(tile, lang, ll, question)
+
+        lbtm = Tex("LBTM").scale(sscale / 1.5).next_to(r, DOWN)
+
+        self.play(
+            AnimationGroup(
+                g.animate.shift(UP * 1.2),
+                AnimationGroup(
+                    FadeInDown(r),
+                    FadeInDown(lbtm),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        lll = Tex("$<$").scale(sscale).move_to(ll)
+
+        java = (
+            SVGMobject("assets/languages/java.svg")
+            .move_to(lang)
+            .set_height(lang.height)
+        )
+
+        hs = SVGMobject("assets/languages/haskell.svg").move_to(lang)
+
+        self.play(
+            FadeOutUp(ll, move_factor=0.85),
+            FadeInUp(lll, move_factor=0.85),
+            FadeOut(question),
+        )
+
+        self.play(
+            FadeOutUp(lang, move_factor=1.5),
+            FadeInUp(java, move_factor=1.5),
+        )
+
+        self.play(
+            FadeOutUp(java, move_factor=1.5),
+            FadeInUp(hs, move_factor=1.5),
+        )
+
+        r2 = (
+            Tex("$\Leftrightarrow$")
+            .scale(sscale / 1.5)
+            .set_x(hs.get_x())
+            .set_y(r.get_y())
+            .rotate(PI / 2)
+        )
+
+        g = VGroup(tile, lang, ll, question)
+
+        tm = Tex("TM").scale(sscale / 1.5).next_to(r2, DOWN)
+
+        self.play(
+            FadeInDown(r2),
+            FadeInDown(tm),
+        )
+
+        self.play(
+            FadeOutUp(tm),
+            FadeOutUp(r2),
+            FadeOutUp(hs),
+            FadeOutUp(lll),
+        )
+
+        examples = (
+            Tex(
+                r"""
+                \begin{itemize}
+                \itemsep0em
+                \item prime numbers
+                \item divisibility
+                \item power of two
+                \end{itemize}
+                """
+            )
+            .set_x(lang.get_x())
+            .set_y(tile.get_y())
+            .shift(LEFT * 0.5)
+        )
+
+        ns = [13, 26, 1000]
+
+        self.play(FadeInUp(examples[0][0 : ns[0]]))
+        self.play(FadeInUp(examples[0][ns[0] : ns[1]]))
+        self.play(FadeInUp(examples[0][ns[1] : ns[2]]))
+
+        impl = Tex("$\Rightarrow$").scale(sscale / 1.5).next_to(lbtm, RIGHT)
+
+        algorithm = Tex(
+            r"\parbox{10em}{$\exists$ an algorithm to find tiling (given the tileset and the input)}"
+        ).next_to(impl, RIGHT)
+
+        self.play(
+            FadeInRight(impl),
+            FadeInRight(algorithm),
+        )
+
+
+class ToInfinity(Scene):
+    def construct(self):
+        w = 10
+        h = 4
+
+        s = 1.05
+
+        wall = Wall(PALETTE, width=w, height=h, size=s)
+        wall2 = Wall(PALETTE, width=w * 3, height=h * 3, size=s)
+
+        self.play(Write(wall.border))
+
+        seed(5)
+        tiles = [
+            [Tile([choice(PALETTE) for _ in range(4)], size=s) for _ in range(w)]
+            for _ in range(h)
+        ]
+
+        tiles2 = [
+            [Tile([choice(PALETTE) for _ in range(4)], size=s) for _ in range(w * 3)]
+            for _ in range(h * 3)
+        ]
+
+        for i in range(w):
+            for j in range(h):
+                wall.add_tile(tiles[j][i], i, j)
+
+        for i in range(w * 3):
+            for j in range(h * 3):
+                wall2.add_tile(tiles2[j][i], i, j)
+
+        self.play(
+            AnimationGroup(*[FadeIn(t.border) for t in wall.tiles], lag_ratio=0.01)
+        )
+
+        tls = [
+            wall2.get_tile(i, j)
+            for i in range(w * 3)
+            for j in range(h * 3)
+            if (
+                (i in range(w, w * 2) and j not in range(h, h * 2))
+                or (i not in range(w, w * 2) and j in range(h, h * 2))
+                or (i not in range(w, w * 2) and j not in range(h, h * 2))
+            )
+        ]
+
+        tls = sorted(tls, key=lambda x: np.linalg.norm(x.get_center()))
+
+        self.remove(wall.border)
+
+        self.play(
+            AnimationGroup(
+                *[FadeIn(t.border) for t in tls], lag_ratio=0.005, run_time=2
+            )
+        )
+
+        self.play(*[t.border.animate.fade(0.94) for t in list(wall.tiles) + tls])
+
+        # TODO: tileset
+
+        questions = Tex(
+            r"""
+                \begin{enumerate}
+                \itemsep0em
+                \item can fill the plane $\Rightarrow$ can fill it periodically?
+                \item $\exists$ an algorithm to decide if it can fill the plane?
+                \end{enumerate}
+                """
+        )
+
+        n = 40
+
+        l1 = questions[0][0:n].shift(RIGHT * 0.5)
+        l2 = questions[0][n:10000]
+
+        self.play(Write(l1, run_time=1.5))
+
+        self.play(Write(l2, run_time=1.5))
+
+        self.play(questions.animate.shift(UP * 1.15))
+
+        no = Tex("No.", color=RED).scale(4).next_to(questions, DOWN).shift(DOWN * 0.7)
+
+        self.play(Write(no))
+
+        impl = (
+            Tex("$\Rightarrow$")
+            .rotate(-PI / 2)
+            .scale(1.5)
+            .next_to(l2, UP)
+            .shift(DOWN * 0.8)
+        )
+
+        self.play(
+            AnimationGroup(
+                FadeOutDown(no),
+                AnimationGroup(
+                    l2.animate.shift(DOWN * 0.8),
+                    FadeInDown(impl, move_factor=0.5),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        impl2 = Tex("$\Rightarrow$").rotate(-PI / 2).scale(1.5).next_to(l2, DOWN)
+
+        hp = Tex(r"$\lnot$ halting problem").next_to(impl2, DOWN).shift(UP * 0.2)
+
+        self.play(
+            AnimationGroup(
+                FadeInDown(impl2, move_factor=0.5),
+                FadeInDown(hp, move_factor=0.5),
+            ),
+        )
+
+        self.play(
+            hp.animate.set_color(RED),
+        )
+
+        not1 = (
+            Tex(r"$\lnot$", color=RED)
+            .move_to(questions[0][:2])
+            .align_to(questions[0][:2], DOWN)
+        )
+        not2 = (
+            Tex(r"$\lnot$", color=RED)
+            .move_to(questions[0][n : n + 2])
+            .align_to(questions[0][n : n + 2], DOWN)
+        )
+
+        l1p = questions[0][2:n]
+        l2p = questions[0][n + 2 : 1000000]
+
+        self.play(
+            Rotate(impl2, PI, about_point=impl2.get_center()),
+            l2p.animate.set_color(RED),
+            Transform(questions[0][n : n + 2], not2),
+        )
+
+        self.play(
+            Rotate(impl, PI, about_point=impl.get_center()),
+            l1p.animate.set_color(RED),
+            Transform(questions[0][0:2], not1),
+        )
+
+        def to_colors(c):
+            return [PALETTE[{RED: 0, GREEN: 1, BLUE: 2, WHITE: 3}[a]] for a in c]
+
+        tileset = (
+            TileSet(
+                Tile(to_colors([RED, RED, GREEN, RED])),
+                Tile(to_colors([RED, BLUE, GREEN, BLUE])),
+                Tile(to_colors([GREEN, RED, GREEN, GREEN])),
+                Tile(to_colors([BLUE, WHITE, BLUE, RED])),
+                Tile(to_colors([BLUE, BLUE, BLUE, WHITE])),
+                Tile(to_colors([WHITE, WHITE, WHITE, RED])),
+                Tile(to_colors([GREEN, RED, WHITE, BLUE])),
+                Tile(to_colors([WHITE, BLUE, RED, BLUE])),
+                Tile(to_colors([RED, BLUE, RED, WHITE])),
+                Tile(to_colors([GREEN, GREEN, RED, BLUE])),
+                Tile(to_colors([WHITE, RED, GREEN, RED])),
+                rows=2,
+            )
+            .scale(1)
+            .next_to(l1, DOWN)
+        )
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOutDown(impl),
+                    FadeOutDown(impl2),
+                    FadeOutDown(l2),
+                    FadeOutDown(not2),
+                    FadeOutDown(hp),
+                    l1.animate.set_color(WHITE).shift(UP * 0.3),
+                ),
+                AnimationGroup(Write(tileset)),
+                lag_ratio=0.4,
+            )
+        )
+
+
+class Outro(Scene):
+    def construct(self):
+        holes = Tex(
+            r"""
+                \begin{itemize}
+                \itemsep0em
+                \item reductions to automatons and grammars
+                \item other convex shapes (triangles, hexagons)
+                \item Penrose and Truchet tilings
+                \item non-Euclidianity, higher dimensionss
+                \end{itemize}
+                """
+        )
+
+        ns = [34, 72, 97, 10000]
+
+        self.play(
+            AnimationGroup(
+                *[
+                    FadeInUp(holes[0][0 if i == 0 else ns[i - 1] : ns[i]])
+                    for i in range(len(ns))
+                ],
+                lag_ratio=0.25,
+            )
+        )
+
+        w = 15
+        h = 10
+
+        wall = Wall(PALETTE, width=w, height=h)
+
+        seed(3)
+        tiles = [
+            [Tile([choice(PALETTE) for _ in range(4)]) for _ in range(w)]
+            for _ in range(h)
+        ]
+
+        for i in range(w):
+            for j in range(h):
+                wall.add_tile(tiles[j][i], i, j)
+
+        self.play(FadeOutUp(holes))
+
+        seed(5)
+        for count, (i1, i2) in enumerate(
+            zip((range(w - 1), range(w)), (range(h), range(h - 1)))
+        ):
+            for i in i1:
+                for j in i2:
+                    p1, p2 = (i, j), (i + 1, j) if not count else (i, j + 1)
+                    d1, d2 = (RIGHT, LEFT) if not count else (DOWN, UP)
+
+                    c1, c2 = tiles[p1[1]][p1[0]].get_color_in_direction(d1), tiles[
+                        p2[1]
+                    ][p2[0]].get_color_in_direction(d2)
+                    new_color = choice([c1, c2])
+
+                    tiles[p1[1]][p1[0]].set_color_in_direction(new_color, d1)
+                    tiles[p2[1]][p2[0]].set_color_in_direction(new_color, d2)
+
+        self.play(
+            AnimationGroup(
+                *[Write(t.color_objects) for t in wall.tiles], lag_ratio=0.01
+            ),
+            run_time=2,
+        )
+
+        tile = Tile(PALETTE)
+        pp = Tex(r"{ \bf ++ }").scale(2).next_to(tile, RIGHT)
+
+        g = VGroup(tile, pp).scale(2).move_to(ORIGIN)
+
+        self.play(*[t.color_objects.animate.fade(0.85) for t in wall.tiles])
+        self.play(Write(g))
+
+        self.play(*[FadeOut(t.color_objects) for t in wall.tiles], FadeOut(g))
