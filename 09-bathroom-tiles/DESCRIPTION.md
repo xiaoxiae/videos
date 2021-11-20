@@ -1,16 +1,12 @@
+TODO: update when script finalized
 Since the time of the ancient Greeks, the best ideas were born in the bathroom -- just ask Archimedes. This would come in handy for programming, but unfortunately, laptops and moisture don't get along very well.
 
 The solution: bathroom tiles!
 
 ------------------
 
-Bathroom tile exercies:
-TODO: proper link
+Other bathroom tile examples that didn't make it into the video:
 https://slama.dev/bathroom-tile-programming/
-
-Proof of linearly bounded Turing machine equivalence:
-TODO: proper link
-https://slama.dev/bathroom-tile-programming/#lba-equivalence
 
 ------------------
 

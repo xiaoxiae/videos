@@ -694,46 +694,236 @@ examples = {
         ),
     ),
     "parentheses_log": (
-        Wall([PALETTE[1], None, PALETTE[0], BLACK], input="(((())))"),
+        Wall([PALETTE[0], None, PALETTE[0], PALETTE[0]], input="()(())"),
         TileSet(
-            Tile([1, "(", PALETTE[0], BLACK]),
-            Tile([BLACK, BLACK, PALETTE[0], BLACK]),
-            Tile([0, "(", 1, "+"]),
-            Tile([1, "(", 0, BLACK]),
-            Tile([1, "+", BLACK, BLACK]),
-            Tile([1, BLACK, 1, BLACK]),
-            Tile([0, BLACK, 0, BLACK]),
-            Tile([BLACK, BLACK, 0, BLACK]),
-            Tile([0, ")", 1, BLACK]),
-            Tile([1, ")", 0, "-"]),
-            Tile([PALETTE[1], ")", 1, BLACK]),
-            Tile([0, "-", 1, BLACK]),
-            Tile([1, "-", 0, "-"]),
-            Tile([BLACK, "-", 1, BLACK]),
-            Tile([PALETTE[1], BLACK, BLACK, BLACK]),
-            Tile([PALETTE[1], BLACK, 0, BLACK]),
-            Tile([BLACK, BLACK, BLACK, BLACK]),
+            Tile([1, "(", PALETTE[0], PALETTE[0]]),
+            Tile([1, "(", 0, PALETTE[0]]),
+            Tile([0, "(", 1, "("]),
+            Tile([1, PALETTE[0], 1, PALETTE[0]]),
+            Tile([0, PALETTE[0], 0, PALETTE[0]]),
+            Tile([0, ")", 1, PALETTE[0]]),
+            Tile([1, ")", 0, ")"]),
+            Tile([PALETTE[0], ")", 1, PALETTE[0]]),
+            Tile([PALETTE[0], PALETTE[0], 0, PALETTE[0]]),
+            Tile([PALETTE[0], PALETTE[0], PALETTE[0], PALETTE[0]]),
+        ),
+    ),
+    "parentheses_log_compact": (
+        Wall([0, None, 0, 0], input="()(())"),
+        TileSet(
+            Tile([0, "(", 1, "("]),
+            Tile([1, "(", 0, 0]),
+            Tile([0, 0, 0, 0]),
+            Tile([1, 0, 1, 0]),
+            Tile([0, ")", 1, 0]),
+            Tile([1, ")", 0, ")"]),
+        ),
+    ),
+    "power_of_two": (
+        Wall([1, None, RED, ""], input="11111111"),
+        TileSet(
+            Tile([0, 1, RED, ""]),
+            Tile([0, "", RED, ""]),
+
+            Tile([0, 1, 1, 1]),
+
+            Tile([1, 1, 0, ""]),
+
+            Tile([0, "", 0, ""]),
+            Tile([1, "", 1, ""]),
         ),
     ),
     "palindrome": (
-        Wall([PALETTE[0], None, PALETTE[1], BLACK], input="10100101"),
+        Wall([PALETTE[0], None, PALETTE[1], ""], input="10111101"),
         TileSet(
-            Tile([RED, "1", PALETTE[1], BLACK]),
-            Tile([PALETTE[0], "1", RED, BLACK]),
-            Tile([RED, "1", RED, "1"]),
-            Tile([RED, "0", RED, "0"]),
-            Tile([PALETTE[0], BLACK, PALETTE[0], BLACK]),
-            Tile([PALETTE[1], BLACK, PALETTE[1], BLACK]),
-            Tile([BLUE, "0", PALETTE[1], BLACK]),
-            Tile([PALETTE[0], "0", BLUE, BLACK]),
-            Tile([BLUE, "1", BLUE, "1"]),
-            Tile([BLUE, "0", BLUE, "0"]),
-            Tile([PALETTE[0], "0", PALETTE[1], BLACK]),
-            Tile([PALETTE[0], "1", PALETTE[1], BLACK]),
+            Tile([0, "0", PALETTE[1], ""]),
+            Tile([PALETTE[0], "0", 0, ""]),
+            Tile([1, "1", PALETTE[1], ""]),
+            Tile([PALETTE[0], "1", 1, ""]),
+            Tile([PALETTE[0], "", PALETTE[0], ""]),
+            Tile([PALETTE[1], "", PALETTE[1], ""]),
+            Tile([1, "1", 1, "1"]),
+            Tile([1, "0", 1, "0"]),
+            Tile([0, "1", 0, "1"]),
+            Tile([0, "0", 0, "0"]),
+            Tile([PALETTE[0], 0, PALETTE[1], ""]),
+            Tile([PALETTE[0], 1, PALETTE[1], ""]),
         ),
     ),
 }
 
+class WebExampleParenthesesLogMinimal(Scene):
+    def construct(self):
+
+        wall, tileset = examples["parentheses_log_compact"]
+
+        result_wall = find_tiling(tileset, wall, max_height=2).next_to(tileset, DOWN)
+
+        g = VGroup(tileset, result_wall).move_to(ORIGIN).scale(1.3)
+
+        tileset = tileset.scale(0.6)
+
+        for i, (text, start, end) in enumerate(
+            [
+                ("start + increment", tileset[0], tileset[1]),
+                ("carry", tileset[2], tileset[3]),
+                ("end + decrement", tileset[4], tileset[5]),
+            ]
+        ):
+            b = BraceBetweenPoints(
+                Point().next_to(start, UP + LEFT, buff=0).get_center(),
+                Point().next_to(end, UP + RIGHT, buff=0).get_center(),
+                direction=UP,
+                color=NOTES_COLOR,
+            ).scale([-1, NOTES_SCALE, 1])
+
+            bl = (
+                Tex(text, color=NOTES_COLOR)
+                .next_to(b, UP)
+                .scale(NOTES_SCALE)
+                .shift(DOWN * 0.1)
+            )
+
+            if i == 1:
+                bl.shift(DOWN * 0.05)
+
+            g.add(b)
+            g.add(bl)
+
+        g.move_to(ORIGIN)
+        self.add(g)
+
+class WebExampleParenthesesLog(Scene):
+    def construct(self):
+
+        wall, tileset = examples["parentheses_log"]
+
+        result_wall = find_tiling(tileset, wall, max_height=2).next_to(tileset, DOWN)
+
+        g = VGroup(tileset, result_wall).move_to(ORIGIN).scale(1.3)
+
+        tileset = tileset.scale(0.6)
+
+        for i, (text, start, end) in enumerate(
+            [
+                ("start", tileset[0], tileset[0]),
+                ("increment", tileset[1], tileset[2]),
+                ("carry over", tileset[3], tileset[4]),
+                ("decrement", tileset[5], tileset[6]),
+                ("end", tileset[7], tileset[8]),
+                ("fill", tileset[9], tileset[9]),
+            ]
+        ):
+            b = BraceBetweenPoints(
+                Point().next_to(start, UP + LEFT, buff=0).get_center(),
+                Point().next_to(end, UP + RIGHT, buff=0).get_center(),
+                direction=UP,
+                color=NOTES_COLOR,
+            ).scale([-1, NOTES_SCALE, 1])
+
+            bl = (
+                Tex(text, color=NOTES_COLOR)
+                .next_to(b, UP)
+                .scale(NOTES_SCALE)
+                .shift(DOWN * 0.1)
+            )
+
+            if i == 2:
+                bl.shift(DOWN * 0.05)
+
+            g.add(b)
+            g.add(bl)
+
+        g.move_to(ORIGIN)
+        self.add(g)
+
+class WebExamplePowerOfTwo(Scene):
+    def construct(self):
+
+        wall, tileset = examples["power_of_two"]
+
+        result_wall = find_tiling(tileset, wall, max_height=3).next_to(tileset, DOWN)
+
+        tileset = tileset.scale(0.9)
+
+        g = VGroup(tileset, result_wall)
+
+        for i, (text, start, end) in enumerate(
+            [
+                ("eat the first one", tileset[0], tileset[1]),
+                ("increment", tileset[2], tileset[3]),
+                ("carry", tileset[4], tileset[5]),
+            ]
+        ):
+            b = BraceBetweenPoints(
+                Point().next_to(start, UP + LEFT, buff=0).get_center(),
+                Point().next_to(end, UP + RIGHT, buff=0).get_center(),
+                direction=UP,
+                color=NOTES_COLOR,
+            ).scale([-1, NOTES_SCALE, 1])
+
+            bl = (
+                Tex(text, color=NOTES_COLOR)
+                .next_to(b, UP)
+                .scale(NOTES_SCALE)
+                .shift(DOWN * 0.1)
+            )
+
+            if i == 2:
+                bl.shift(DOWN * 0.05)
+
+            g.add(b)
+            g.add(bl)
+
+        g.move_to(ORIGIN)
+        self.add(g)
+
+
+class WebExamplePalindrome(Scene):
+    def construct(self):
+
+        wall, tileset = examples["palindrome"]
+
+        result_wall = find_tiling(tileset, wall, max_height=4).next_to(tileset, DOWN)
+
+        g = VGroup(tileset, result_wall).move_to(ORIGIN)
+
+        tileset = tileset.scale(0.60)
+
+        for i, (text, start, end) in enumerate(
+            [
+                ("start/end 0", tileset[0], tileset[1]),
+                ("start/end 1", tileset[2], tileset[3]),
+                ("carry sides", tileset[4], tileset[5]),
+                ("carry input to next row", tileset[6], tileset[9]),
+                ("odd size", tileset[10], tileset[11]),
+            ]
+        ):
+            b = BraceBetweenPoints(
+                Point().next_to(start, UP + LEFT, buff=0).get_center(),
+                Point().next_to(end, UP + RIGHT, buff=0).get_center(),
+                direction=UP,
+                color=NOTES_COLOR,
+            ).scale([-1, NOTES_SCALE, 1])
+
+            bl = (
+                Tex(text, color=NOTES_COLOR)
+                .next_to(b, UP)
+                .scale(NOTES_SCALE * 0.80)
+                .shift(DOWN * 0.1)
+            )
+
+            if i == 0 or i == 1:
+                bl.shift(DOWN * 0.05)
+
+            if i == 4:
+                bl.shift(UP * 0.07)
+
+            g.add(b)
+            g.add(bl)
+
+        g.move_to(ORIGIN)
+        self.add(g)
 
 class FadeOutDirection(Transform):
     def __init__(
@@ -1968,6 +2158,29 @@ class ParenthesesExample(Scene):
         self.play(TransformMatchingShapes(no2, no2dot))
         self.play(TransformMatchingShapes(no2dot, no2o))
 
+        self.play(
+                no2o.animate.shift(DOWN * 2.2),
+                task.animate.shift(DOWN * 2.2),
+                FadeOutDown(wall, move_factor=2.2),
+                FadeOutDown(tileset, move_factor=2.2),
+                FadeOutDown(parentheses, move_factor=2.2),
+                )
+
+        opt = HighlightedTex(r"|optimal| time complexity: $\mathcal{O}(\log n)$").next_to(no2o, DOWN)
+        opt.shift(LEFT * (-no2o[0][0].get_x() + opt[1][0].get_x()))
+
+        self.play(FadeInDown(opt))
+
+        arrows = [
+                Arrow(start=UP, end=DOWN).align_on_border(DOWN).shift(LEFT),
+                Arrow(start=UP, end=DOWN).align_on_border(DOWN).shift(RIGHT),
+                ]
+
+        self.play(
+                FadeInUp(arrows[0]),
+                FadeInUp(arrows[1]),
+                )
+
 
 class ComputationalPower(Scene):
     def construct(self):
@@ -2186,8 +2399,6 @@ class ToInfinity(Scene):
         )
 
         self.play(*[t.border.animate.fade(0.94) for t in list(wall.tiles) + tls])
-
-        # TODO: tileset
 
         questions = Tex(
             r"""

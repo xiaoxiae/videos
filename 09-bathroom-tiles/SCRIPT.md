@@ -52,7 +52,7 @@ We can again separate the tiles into a few groups.
 
 The first two tiles just connect adjacent opening and closing parentheses, since we don't need more than one layer for that.
 
-We also have tiles for non-adjacent opening and losing parentheses, and tiles to connect them. 
+We also have tiles for non-adjacent opening and losing parentheses, and tiles to connect them.
 
 Finally, we have a blank tile to fill in the gaps.
 
@@ -60,11 +60,9 @@ The reason for different colors for opening and closing parentheses is that if t
 
 As for time complexity, there can be at most $n/2$ pairs of parentheses and we need at most one row for each, so this solution runs in time $O(n)$.
 
-(TODO: animation)
 Interestingly, $O(n)$ is not the fastest way this problem can be solved. There is an arguably more beautiful solution that only requires $O(\log n)$ rows, which I'm not going to show in this video but would instead love you, the viewer, to think about on your own.
 
-(TODO: animation)
-I will leave a link to solution to this problem and many more in the description, if you're interested in solving some on your own. Also, if you come up with a different solution or a new problem entirely, write it in the comments so other people can see and take inspiration from.
+I will leave a link to solution to this problem and many more in the description, if you're interested in solving some on your own.
 
 
 # Computational power
