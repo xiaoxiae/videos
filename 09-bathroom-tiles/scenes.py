@@ -488,7 +488,7 @@ class Wall(VMobject):
 
 
 class TileSet(VMobject):
-    def __init__(self, *tiles, rows=1):
+    def __init__(self, *tiles, rows=1, exclude_commas=False):
         super().__init__()
 
         self.tiles = VGroup(*tiles)
@@ -498,19 +498,20 @@ class TileSet(VMobject):
 
         n = len(tiles)
         for i in range(n - 1):
-            self.commas.add(
-                Tex("\Large $,$")
-                .next_to(self.tiles[i], DOWN + RIGHT, buff=0)
-                .shift(UP * 0.07 + RIGHT * 0.1)
-            )
+            if not exclude_commas:
+                self.commas.add(
+                    Tex("\Large $,$")
+                    .next_to(self.tiles[i], DOWN + RIGHT, buff=0)
+                    .shift(UP * 0.07 + RIGHT * 0.1)
+                )
 
         brace_offset = -0.25
         self.braces = VGroup(
             BraceBetweenPoints(
-                Point().next_to(self.tiles[0], UP + LEFT).get_center(),
-                Point().next_to(self.tiles[0], DOWN + LEFT).get_center(),
+                Point().next_to(self.tiles[-1], UP + LEFT).get_center(),
+                Point().next_to(self.tiles[-1], DOWN + LEFT).get_center(),
                 direction=LEFT,
-            ).shift(LEFT * brace_offset),
+            ).next_to(self.tiles[0], LEFT),
             BraceBetweenPoints(
                 Point().next_to(self.tiles[-1], UP + RIGHT).get_center(),
                 Point().next_to(self.tiles[-1], DOWN + RIGHT).get_center(),
@@ -551,12 +552,20 @@ def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
     def set(x, y, tile):
         wallarray[y + 1][x + 1] = tile
 
+    def equal_or_none(a, b):
+        """If some of the tiles are none, it means that there is no color and it's ok"""
+        # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        # JESUS CHRIST BURN IT WITH FIRE
+        # I SHALL NOT BE REDEEMED FOR WRITING THIS UNHOLY ABOMINATION
+        return a == "None" or b == "None" or a == b
+
     # if we're past (on the very right tile)
     if i == w:
         # check if the tile on the left is ok
-        if at(i - 1, j).get_color_in_direction(RIGHT) != at(
-            i, j
-        ).get_color_in_direction(LEFT):
+        if not equal_or_none(
+            at(i - 1, j).get_color_in_direction(RIGHT),
+            at(i, j).get_color_in_direction(LEFT),
+        ):
             return
 
         if j == h - 1:
@@ -566,18 +575,22 @@ def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
         j += 1
 
     for tile in tileset.tiles:
-        if at(i, j - 1).get_color_in_direction(DOWN) != tile.get_color_in_direction(UP):
+        if not equal_or_none(
+            at(i, j - 1).get_color_in_direction(DOWN), tile.get_color_in_direction(UP)
+        ):
             continue
 
-        if at(i - 1, j).get_color_in_direction(RIGHT) != tile.get_color_in_direction(
-            LEFT
+        if not equal_or_none(
+            at(i - 1, j).get_color_in_direction(RIGHT),
+            tile.get_color_in_direction(LEFT),
         ):
             continue
 
         # if we're last row
         if j == h - 1:
-            if at(i, j + 1).get_color_in_direction(UP) != tile.get_color_in_direction(
-                DOWN
+            if not equal_or_none(
+                at(i, j + 1).get_color_in_direction(UP),
+                tile.get_color_in_direction(DOWN),
             ):
                 continue
 
@@ -588,34 +601,60 @@ def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
         set(i, j, None)
 
 
-def find_tiling(tileset: List[Tile], wall: Wall, max_height=1):
+def find_tiling(
+    tileset: List[Tile],
+    wall: Wall,
+    w=None,
+    min_height=1,
+    max_height=1,
+    ignore_sides=False,
+):
     """Find if there exists a tiling of maximal height for a given wall."""
-    w = wall.w
-    for h in range(1, max_height + 1):
+    if w is None:
+        w = wall.w
+
+    for h in range(min_height, max_height + 1):
         wallarray = [[None] * (w + 2) for _ in range(h + 2)]
 
         for i in range(1, w + 1):
-            wallarray[0][i] = Tile([None, None, None, wall.input[i - 1]])
+            wallarray[0][i] = Tile(
+                [None, None, None, None if ignore_sides else wall.input[i - 1]]
+            )
 
         for i in range(1, w + 1):
             wallarray[-1][i] = Tile(
-                [None, wall.get_color_in_direction(DOWN), None, None]
+                [
+                    None,
+                    None if ignore_sides else wall.get_color_in_direction(DOWN),
+                    None,
+                    None,
+                ]
             )
 
         for i in range(1, h + 1):
             wallarray[i][-1] = Tile(
-                [None, None, wall.get_color_in_direction(RIGHT), None]
+                [
+                    None,
+                    None,
+                    None if ignore_sides else wall.get_color_in_direction(RIGHT),
+                    None,
+                ]
             )
 
         for i in range(1, h + 1):
             wallarray[i][0] = Tile(
-                [wall.get_color_in_direction(LEFT), None, None, None]
+                [
+                    None if ignore_sides else wall.get_color_in_direction(LEFT),
+                    None,
+                    None,
+                    None,
+                ]
             )
 
         result = find_tiling_recursive(0, 0, tileset, wallarray, w, h)
 
         if result is not None:
-            wall = Wall(wall.colors, wall.input, height=h)
+            wall = Wall(wall.colors, wall.input, width=w, height=h)
 
             for x in range(w):
                 for y in range(h):
@@ -720,17 +759,25 @@ examples = {
         ),
     ),
     "power_of_two": (
-        Wall([1, None, RED, ""], input="11111111"),
+        Wall([1, None, PALETTE[0], ""], input="11111111"),
         TileSet(
-            Tile([0, 1, RED, ""]),
-            Tile([0, "", RED, ""]),
-
+            Tile([0, 1, PALETTE[0], ""]),
+            Tile([0, "", PALETTE[0], ""]),
             Tile([0, 1, 1, 1]),
-
             Tile([1, 1, 0, ""]),
-
             Tile([0, "", 0, ""]),
             Tile([1, "", 1, ""]),
+            Tile([1, 1, PALETTE[0], ""]),
+        ),
+    ),
+    "divisibleby": (
+        Wall([0, None, 0, PALETTE[0]], input="2270268"),
+        TileSet(
+            *[
+                Tile([(j * 10 + i) % 13, i, j, PALETTE[0]])
+                for i in range(10)
+                for j in range(13)
+            ]
         ),
     ),
     "palindrome": (
@@ -751,6 +798,7 @@ examples = {
         ),
     ),
 }
+
 
 class WebExampleParenthesesLogMinimal(Scene):
     def construct(self):
@@ -792,6 +840,7 @@ class WebExampleParenthesesLogMinimal(Scene):
 
         g.move_to(ORIGIN)
         self.add(g)
+
 
 class WebExampleParenthesesLog(Scene):
     def construct(self):
@@ -837,6 +886,7 @@ class WebExampleParenthesesLog(Scene):
         g.move_to(ORIGIN)
         self.add(g)
 
+
 class WebExamplePowerOfTwo(Scene):
     def construct(self):
 
@@ -853,6 +903,7 @@ class WebExamplePowerOfTwo(Scene):
                 ("eat the first one", tileset[0], tileset[1]),
                 ("increment", tileset[2], tileset[3]),
                 ("carry", tileset[4], tileset[5]),
+                ("accept '1' too", tileset[6], tileset[6]),
             ]
         ):
             b = BraceBetweenPoints(
@@ -869,11 +920,42 @@ class WebExamplePowerOfTwo(Scene):
                 .shift(DOWN * 0.1)
             )
 
-            if i == 2:
+            if i == 2 or i == 3:
                 bl.shift(DOWN * 0.05)
 
             g.add(b)
             g.add(bl)
+
+        g.move_to(ORIGIN)
+        self.add(g)
+
+
+class WebExampleDivisible(Scene):
+    def construct(self):
+
+        wall, tileset = examples["divisibleby"]
+
+        result_wall = (
+            find_tiling(tileset, wall, max_height=1)
+            .scale(1.4)
+            .next_to(tileset, DOWN)
+            .shift(DOWN * 0.7)
+        )
+
+        TileSet(
+            *[Tile([(j * 10 + i) % 13, i, j, ""]) for i in range(10) for j in range(13)]
+        ),
+
+        tileset = TileSet(
+            Tex("all tiles in the form"),
+            Tile(["j", "i", r"$k$", PALETTE[0]]),
+            Tex(
+                r"$\substack { {\forall i \in \left\{0, \ldots, 9\right\} } \\ {\forall j \in \left\{0, \ldots, 12\right\} } \\ {\forall k = (10j + i)\ \mathrm{mod}\ 13} }$"
+            ),
+            exclude_commas=True,
+        )
+
+        g = VGroup(tileset, result_wall).scale(1.2)
 
         g.move_to(ORIGIN)
         self.add(g)
@@ -924,6 +1006,7 @@ class WebExamplePalindrome(Scene):
 
         g.move_to(ORIGIN)
         self.add(g)
+
 
 class FadeOutDirection(Transform):
     def __init__(
@@ -1040,7 +1123,7 @@ class Motivation(MovingCameraScene):
 
         g = VGroup(ft, archimedes).move_to(ORIGIN)
 
-        text_write_duration = 1.6
+        text_write_duration = 1
 
         self.play(
             FadeInUp(p1),
@@ -1355,8 +1438,6 @@ class Motivation(MovingCameraScene):
         for i in range(wall.w):
             wall.remove_tile(wall.get_tile(i, 0))
 
-        self.play(FadeOut(wall), FadeOut(tileset))
-
 
 TASK_OFFSET = 0.6 * UP
 WALL_OFFSET = 1.7 * DOWN
@@ -1382,7 +1463,7 @@ class ProgrammingModel(Scene):
             (
                 Tex("Output:"),
                 HighlightedTex(
-                    "|accept| if there exists valid tiling, else |reject|",
+                    "|accept| if there exists valid tiling, else |reject| it",
                     color=[GREEN, RED],
                 ),
             ),
@@ -1409,6 +1490,16 @@ class ProgrammingModel(Scene):
         self.play(FadeInUp(text[0][0]))
 
         self.play(Write(text[0][1]), wall.animateWrite(), run_time=2.1)
+
+        self.play(
+            AnimationGroup(
+                *[
+                    Wiggle(wall.get_color_object_characters_in_direction(UP)[i])
+                    for i in range(len(wall.input))
+                ],
+                lag_ratio=0.08,
+            )
+        )
 
         tileset.next_to(wall, RIGHT, buff=1)
 
@@ -1442,7 +1533,12 @@ class ProgrammingModel(Scene):
 
         self.play(FadeInUp(text[2][0]))
 
-        self.play(Write(text[2][1], run_time=2.5))
+        n = 24
+        self.play(Write(VGroup(text[2][1][0], text[2][1][1][:n]), run_time=1.8))
+
+        self.play(
+            Write(VGroup(text[2][1][1][n:], text[2][1][2], text[2][1][3]), run_time=1)
+        )
 
         self.play(
             AnimationGroup(
@@ -1531,10 +1627,7 @@ class ProgrammingModel(Scene):
         self.play(
             AnimationGroup(
                 *[
-                    BumpUp(
-                        wall.get_color_object_characters_in_direction(UP)[i],
-                        run_time=1.0,
-                    )
+                    Wiggle(wall.get_color_object_characters_in_direction(UP)[i])
                     for i in range(len(wall.input))
                     if wall.input[i] == "1"
                 ],
@@ -1679,15 +1772,9 @@ class ProgrammingModel(Scene):
             )
         )
 
-        self.play(
-            FadeOutUp(wall),
-            FadeOutUp(tileset),
-            FadeOutUp(task),
-            *[FadeOutUp(n) for n in nums + nums_transformed + bs],
-        )
-
 
 class TimeComplexity(Scene):
+    @fade
     def construct(self):
         title = Tex("\Large Time Complexity")
 
@@ -1733,7 +1820,7 @@ class TimeComplexity(Scene):
             )
         )
 
-        self.play(Write(traditional_text, run_time=3))
+        self.play(Write(traditional_text, run_time=3.5))
 
         traditional_examples = (
             Tex(
@@ -1780,7 +1867,7 @@ class TimeComplexity(Scene):
         self.play(
             AnimationGroup(
                 FadeOutDown(question),
-                Write(bathroom_text, run_time=3),
+                Write(bathroom_text, run_time=3.5),
                 lag_ratio=0.3,
             )
         )
@@ -1790,27 +1877,13 @@ class TimeComplexity(Scene):
             AnimationGroup(
                 FadeInUp(bathroom_examples[0][0:n]),
                 FadeInUp(bathroom_examples[0][n:]),
-                lag_ratio=0.1,
+                lag_ratio=0.3,
             )
-        )
-
-        self.play(
-            *[
-                FadeOutUp(c)
-                for c in [
-                    title,
-                    bathroom,
-                    traditional,
-                    bathroom_text,
-                    traditional_text,
-                    bathroom_examples,
-                    traditional_examples,
-                ]
-            ]
         )
 
 
 class ParenthesesExample(Scene):
+    @fade
     def construct(self):
         task = HighlightedTex(
             r"{\bf Task:} |accept| input \(\Leftrightarrow\) parentheses are balanced",
@@ -2134,6 +2207,7 @@ class ParenthesesExample(Scene):
 
         self.play(
             Rotate(parentheses[0][5]),
+            Rotate(parentheses[0][0]),
             Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP)),
         )
 
@@ -2141,6 +2215,7 @@ class ParenthesesExample(Scene):
             wall.animate.restore(),
             tileset.animate.restore(),
             Rotate(parentheses[0][5], angle=-PI),
+            Rotate(parentheses[0][0], angle=-PI),
             Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP), angle=-PI),
         )
 
@@ -2159,53 +2234,67 @@ class ParenthesesExample(Scene):
         self.play(TransformMatchingShapes(no2dot, no2o))
 
         self.play(
-                no2o.animate.shift(DOWN * 2.2),
-                task.animate.shift(DOWN * 2.2),
-                FadeOutDown(wall, move_factor=2.2),
-                FadeOutDown(tileset, move_factor=2.2),
-                FadeOutDown(parentheses, move_factor=2.2),
-                )
+            no2o.animate.shift(DOWN * 2.2),
+            task.animate.shift(DOWN * 2.2),
+            FadeOutDown(wall, move_factor=2.2),
+            FadeOutDown(tileset, move_factor=2.2),
+            FadeOutDown(parentheses, move_factor=2.2),
+        )
 
-        opt = HighlightedTex(r"|optimal| time complexity: $\mathcal{O}(\log n)$").next_to(no2o, DOWN)
+        opt = HighlightedTex(
+            r"|optimal| time complexity: $\mathcal{O}(\log n)$"
+        ).next_to(no2o, DOWN)
         opt.shift(LEFT * (-no2o[0][0].get_x() + opt[1][0].get_x()))
 
         self.play(FadeInDown(opt))
 
         arrows = [
-                Arrow(start=UP, end=DOWN).align_on_border(DOWN).shift(LEFT),
-                Arrow(start=UP, end=DOWN).align_on_border(DOWN).shift(RIGHT),
-                ]
+            Arrow(
+                start=UP,
+                end=DOWN,
+                stroke_width=10,
+                max_stroke_width_to_length_ratio=10,
+                max_tip_length_to_length_ratio=0.5,
+            )
+            .align_on_border(DOWN)
+            .shift(LEFT + UP),
+            Arrow(
+                start=UP,
+                end=DOWN,
+                stroke_width=10,
+                max_stroke_width_to_length_ratio=10,
+                max_tip_length_to_length_ratio=0.5,
+            )
+            .align_on_border(DOWN)
+            .shift(RIGHT + UP),
+        ]
 
         self.play(
-                FadeInUp(arrows[0]),
-                FadeInUp(arrows[1]),
-                )
+            opt.animate.shift(UP * 1.25),
+            no2o.animate.shift(UP * 1.25),
+            task.animate.shift(UP * 1.25),
+            FadeInUp(arrows[0], move_factor=0.6),
+            FadeInUp(arrows[1], move_factor=0.6),
+        )
 
 
 class ComputationalPower(Scene):
+    @fade
     def construct(self):
         title = Tex("\Large Computational Power")
 
         self.play(FadeInUp(title))
 
-        tile = Tile(PALETTE).scale(2)
-
         cf = 0.8
         c = 1.3
+
+        tile = Tile(PALETTE).scale(2).shift(LEFT * cf)
 
         question = Tex("?").scale(QUESTION_MARK_SCALE * 1.5).shift(RIGHT * cf)
 
         self.play(
-            Transform(title, tile),
+            ReplacementTransform(title, VGroup(tile, question)),
         )
-
-        self.remove(title)
-
-        self.play(
-            tile.animate.shift(LEFT * cf),
-            FadeInRight(question),
-        )
-
         lang = (
             SVGMobject("assets/languages/python.svg")
             .next_to(ORIGIN, RIGHT)
@@ -2301,13 +2390,6 @@ class ComputationalPower(Scene):
             FadeInDown(tm),
         )
 
-        self.play(
-            FadeOutUp(tm),
-            FadeOutUp(r2),
-            FadeOutUp(hs),
-            FadeOutUp(lll),
-        )
-
         examples = (
             Tex(
                 r"""
@@ -2326,15 +2408,35 @@ class ComputationalPower(Scene):
 
         ns = [13, 26, 1000]
 
-        self.play(FadeInUp(examples[0][0 : ns[0]]))
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOutUp(tm),
+                    FadeOutUp(r2),
+                    FadeOutUp(hs),
+                    FadeOutUp(lll),
+                ),
+                FadeInUp(examples[0][0 : ns[0]]),
+                lag_ratio=0.35,
+            ),
+        )
         self.play(FadeInUp(examples[0][ns[0] : ns[1]]))
         self.play(FadeInUp(examples[0][ns[1] : ns[2]]))
 
-        impl = Tex("$\Rightarrow$").scale(sscale / 1.5).next_to(lbtm, RIGHT)
+        impl = (
+            Tex("$\Rightarrow$")
+            .scale(sscale / 1.5)
+            .next_to(lbtm, RIGHT)
+            .shift(RIGHT * 0.35)
+        )
 
-        algorithm = Tex(
-            r"\parbox{10em}{$\exists$ an algorithm to find tiling (given the tileset and the input)}"
-        ).next_to(impl, RIGHT)
+        algorithm = (
+            Tex(
+                r"\parbox{10em}{$\exists$ an algorithm to find tiling (given the tileset and the input)}"
+            )
+            .next_to(impl, RIGHT)
+            .shift(RIGHT * 0.5)
+        )
 
         self.play(
             FadeInRight(impl),
@@ -2343,14 +2445,18 @@ class ComputationalPower(Scene):
 
 
 class ToInfinity(Scene):
+    @fade
     def construct(self):
         w = 10
         h = 4
 
+        w2 = w * 2
+        h2 = h * 2 + 2
+
         s = 1.05
 
         wall = Wall(PALETTE, width=w, height=h, size=s)
-        wall2 = Wall(PALETTE, width=w * 3, height=h * 3, size=s)
+        wall2 = Wall(PALETTE, width=w2, height=h2, size=s)
 
         self.play(Write(wall.border))
 
@@ -2361,16 +2467,16 @@ class ToInfinity(Scene):
         ]
 
         tiles2 = [
-            [Tile([choice(PALETTE) for _ in range(4)], size=s) for _ in range(w * 3)]
-            for _ in range(h * 3)
+            [Tile([choice(PALETTE) for _ in range(4)], size=s) for _ in range(w2)]
+            for _ in range(h2)
         ]
 
         for i in range(w):
             for j in range(h):
                 wall.add_tile(tiles[j][i], i, j)
 
-        for i in range(w * 3):
-            for j in range(h * 3):
+        for i in range(w2):
+            for j in range(h2):
                 wall2.add_tile(tiles2[j][i], i, j)
 
         self.play(
@@ -2379,12 +2485,21 @@ class ToInfinity(Scene):
 
         tls = [
             wall2.get_tile(i, j)
-            for i in range(w * 3)
-            for j in range(h * 3)
+            for i in range(w2)
+            for j in range(h2)
             if (
-                (i in range(w, w * 2) and j not in range(h, h * 2))
-                or (i not in range(w, w * 2) and j in range(h, h * 2))
-                or (i not in range(w, w * 2) and j not in range(h, h * 2))
+                (
+                    i in range(int(w2 / 3), int(w2 / 3 * 2))
+                    and j not in range(int(h2 / 3), int(h2 / 3 * 2))
+                )
+                or (
+                    i not in range(int(w2 / 3), int(w2 / 3 * 2))
+                    and j in range(int(h2 / 3), int(h2 / 3 * 2))
+                )
+                or (
+                    i not in range(int(w2 / 3), int(w2 / 3 * 2))
+                    and j not in range(int(h2 / 3), int(h2 / 3 * 2))
+                )
             )
         ]
 
@@ -2400,44 +2515,34 @@ class ToInfinity(Scene):
 
         self.play(*[t.border.animate.fade(0.94) for t in list(wall.tiles) + tls])
 
-        questions = Tex(
-            r"""
-                \begin{enumerate}
-                \itemsep0em
-                \item can fill the plane $\Rightarrow$ can fill it periodically?
-                \item $\exists$ an algorithm to decide if it can fill the plane?
-                \end{enumerate}
-                """
+        l1 = Tex(
+            "1. If a tileset can fill the plane, can it also fill it periodically?"
+        ).scale(0.9)
+        l2 = (
+            Tex("2. Is there an algorithm to check if a tiling exists?")
+            .scale(0.9)
+            .next_to(l1, DOWN)
         )
 
-        n = 40
+        questions = VGroup(l1, l2)
 
-        l1 = questions[0][0:n].shift(RIGHT * 0.5)
-        l2 = questions[0][n:10000]
+        self.play(Write(l1, run_time=2))
 
-        self.play(Write(l1, run_time=1.5))
+        self.play(Write(l2, run_time=2))
 
-        self.play(Write(l2, run_time=1.5))
+        no = Tex("No.", color=RED).scale(4).shift(DOWN)
 
-        self.play(questions.animate.shift(UP * 1.15))
-
-        no = Tex("No.", color=RED).scale(4).next_to(questions, DOWN).shift(DOWN * 0.7)
+        self.play(questions.animate.next_to(no, UP).shift(UP * 0.8))
 
         self.play(Write(no))
 
-        impl = (
-            Tex("$\Rightarrow$")
-            .rotate(-PI / 2)
-            .scale(1.5)
-            .next_to(l2, UP)
-            .shift(DOWN * 0.8)
-        )
+        impl = Tex("$\Rightarrow$").rotate(-PI / 2).scale(1.5).next_to(l1, DOWN)
 
         self.play(
             AnimationGroup(
                 FadeOutDown(no),
                 AnimationGroup(
-                    l2.animate.shift(DOWN * 0.8),
+                    l2.animate.shift(DOWN * 0.9),
                     FadeInDown(impl, move_factor=0.5),
                 ),
                 lag_ratio=0.5,
@@ -2446,7 +2551,7 @@ class ToInfinity(Scene):
 
         impl2 = Tex("$\Rightarrow$").rotate(-PI / 2).scale(1.5).next_to(l2, DOWN)
 
-        hp = Tex(r"$\lnot$ halting problem").next_to(impl2, DOWN).shift(UP * 0.2)
+        hp = Tex(r"$\lnot$ halting problem", color=RED).next_to(impl2, DOWN)
 
         self.play(
             AnimationGroup(
@@ -2455,34 +2560,30 @@ class ToInfinity(Scene):
             ),
         )
 
-        self.play(
-            hp.animate.set_color(RED),
-        )
-
         not1 = (
             Tex(r"$\lnot$", color=RED)
-            .move_to(questions[0][:2])
-            .align_to(questions[0][:2], DOWN)
+            .move_to(questions[0][0][:2])
+            .align_to(questions[0][0][:2], DOWN)
         )
         not2 = (
             Tex(r"$\lnot$", color=RED)
-            .move_to(questions[0][n : n + 2])
-            .align_to(questions[0][n : n + 2], DOWN)
+            .move_to(questions[1][0][:2])
+            .align_to(questions[1][0][:2], DOWN)
         )
 
-        l1p = questions[0][2:n]
-        l2p = questions[0][n + 2 : 1000000]
+        l1p = questions[0][0][2:]
+        l2p = questions[1][0][2:]
 
         self.play(
             Rotate(impl2, PI, about_point=impl2.get_center()),
             l2p.animate.set_color(RED),
-            Transform(questions[0][n : n + 2], not2),
+            Transform(questions[1][0][:2], not2),
         )
 
         self.play(
             Rotate(impl, PI, about_point=impl.get_center()),
             l1p.animate.set_color(RED),
-            Transform(questions[0][0:2], not1),
+            Transform(questions[0][0][:2], not1),
         )
 
         def to_colors(c):
@@ -2507,6 +2608,10 @@ class ToInfinity(Scene):
             .next_to(l1, DOWN)
         )
 
+        result = find_tiling(
+            tileset, wall2, w=w2, max_height=h2, min_height=h2, ignore_sides=True,
+        ).scale(s)
+
         self.play(
             AnimationGroup(
                 AnimationGroup(
@@ -2522,8 +2627,20 @@ class ToInfinity(Scene):
             )
         )
 
+        self.play(FadeOutDown(tileset), FadeOutDown(l1))
+
+        tls = [result.get_tile(i, j) for i in range(w2) for j in range(h2)]
+        tls = sorted(tls, key=lambda x: np.linalg.norm(x.get_center()))
+
+        self.play(
+            AnimationGroup(
+                *[Write(t) for t in tls], lag_ratio=0.005, run_time=2
+            )
+        )
+
 
 class Outro(Scene):
+    @fade
     def construct(self):
         holes = Tex(
             r"""
@@ -2532,7 +2649,7 @@ class Outro(Scene):
                 \item reductions to automatons and grammars
                 \item other convex shapes (triangles, hexagons)
                 \item Penrose and Truchet tilings
-                \item non-Euclidianity, higher dimensionss
+                \item non-Euclidianity, higher dimensions
                 \end{itemize}
                 """
         )
@@ -2597,5 +2714,3 @@ class Outro(Scene):
 
         self.play(*[t.color_objects.animate.fade(0.85) for t in wall.tiles])
         self.play(Write(g))
-
-        self.play(*[FadeOut(t.color_objects) for t in wall.tiles], FadeOut(g))

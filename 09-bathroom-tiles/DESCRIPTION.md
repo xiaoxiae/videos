@@ -1,7 +1,4 @@
-TODO: update when script finalized
-Since the time of the ancient Greeks, the best ideas were born in the bathroom -- just ask Archimedes. This would come in handy for programming, but unfortunately, laptops and moisture don't get along very well.
-
-The solution: bathroom tiles!
+A dive into the unconventional bathroom tile programming model.
 
 ------------------
 
@@ -33,6 +30,8 @@ sox (audio): http://sox.sourceforge.net/
 Social media:
 Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 Website (for other things I'm up to): https://slama.dev/
+
+Special thanks to Matěj Kripner for providing feedback!
 
 ------------------
 
