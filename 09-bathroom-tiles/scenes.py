@@ -250,6 +250,9 @@ class Wall(VMobject):
 
         self.input = input
 
+        self.w = width
+        self.h = height
+
         width *= size
         height *= size
 
@@ -268,9 +271,6 @@ class Wall(VMobject):
 
         self.color_objects = VGroup()
         self.color_object_characters = []
-
-        self.w = width
-        self.h = height
 
         for color, direction in zip(colors, DIRECTIONS):
             self.set_color_in_direction(color, direction, new=True)
@@ -2447,16 +2447,16 @@ class ComputationalPower(Scene):
 class ToInfinity(Scene):
     @fade
     def construct(self):
-        w = 10
-        h = 4
+        w = 8
+        h = 3
 
         w2 = w * 2
-        h2 = h * 2 + 2
+        h2 = h * 3
 
-        s = 1.05
+        s = 0.90
 
-        wall = Wall(PALETTE, width=w, height=h, size=s)
-        wall2 = Wall(PALETTE, width=w2, height=h2, size=s)
+        wall = Wall(PALETTE, width=w, height=h, size=s).move_to(ORIGIN)
+        wall2 = Wall(PALETTE, width=w2, height=h2, size=s).move_to(ORIGIN)
 
         self.play(Write(wall.border))
 
@@ -2666,8 +2666,8 @@ class Outro(Scene):
             )
         )
 
-        w = 15
-        h = 10
+        w = 16
+        h = 9
 
         wall = Wall(PALETTE, width=w, height=h)
 
