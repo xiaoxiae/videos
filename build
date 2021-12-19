@@ -103,10 +103,14 @@ for scene in os.listdir(video_directory):
                     original_path = os.path.join(path, name)
                     changed_path = os.path.join(path, "vid", f"{i+1}.mp4")
                     image_path = os.path.join(path, "img", f"{i+1}.png")
+                    video_from_image_path = os.path.join(path, "img", f"{i+1}.mp4")
 
                     os.rename(original_path, changed_path)
 
-                    # save the first frame of each video
+                    # save the last frame from each video
                     subprocess.Popen(["ffmpeg", "-i",  changed_path, "-vf", 'select=eq(n\,0)', "-vframes", "1", "-y", image_path]).communicate()
+                    subprocess.Popen(["ffmpeg", "-stream_loop", "300", "-i", image_path, "-c:v", "libx264", "-crf", "0", video_from_image_path]).communicate()
+
+                    os.remove(image_path)
 
             os.remove(partial_file_path)
