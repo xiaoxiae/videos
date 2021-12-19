@@ -18,7 +18,7 @@ INTRODUCTION
 
 **[i4]:** For this example, it is pretty clear that we can. However, if we were to change the top side like so, it would no longer be possible, because there are no tiles with a red on the top side.
 
-W**[i5]:** hat we just described is the programming model that we'll be using. The input will be some finite sequence of colors on the top side of the wall (which could also be symbols to make some of the programs more readable). Our program will be a finite set of tile types and the remaining colors of the wall. The program will **accept** the input if there exists a valid tiling of any non-zero height, and **reject** it if there's none.
+**[i5]:** This is essentially the programming model that we'll be using. The input will be some finite sequence of colors on the top side of the wall (which could also be symbols to make some of the programs more readable). Our program will be a finite set of tile types and the remaining colors of the wall. The program will **accept** the input if there exists a valid tiling of any non-zero height, and **reject** it if there's none.
 
 ---
 EXAMPLE: EVEN SIZE OF INPUT
@@ -34,7 +34,7 @@ EXAMPLE: NUMBER OF ONES DIVISIBLE BY 3
 
 **[e21]:** The tiles are divided into two groups: when the input contains a zero, we carry over the number of threes we've seen. When it contains a one, we increment.
 
-**[e22]:** With this out of the way, let's tile!
+**[e22]:** Let's see the tiling in action to better understand how it works.
 
 **[e23]:** As you can see, the number of ones we're carrying in the tiles correspond to the actual number when counting from left, which is exactly what we want.
 
@@ -62,7 +62,7 @@ EXAMPLE: BALANCED PARENTHESES
 
 **[e32]:** One solution might look like this. Although daunting at first, the best way to understand it is to look at a successful tiling.
 
-**[e33]:** As you can see, the tiles are defined in such a way that they connect each corresponding pair of parentheses using the wall itself. For example, these two parentheses are connected via this path.
+**[e33]:** As you can see, the tiles are defined in such a way that they connect each corresponding pair of parentheses using the wall itself. For example, these two parentheses are connected via this path, and these two via this short one.
 
 **[e34]:** We can again separate the tiles into a few groups. The first two tiles just connect adjacent opening and closing parentheses, since we don't need more than one layer for that.
 
@@ -96,9 +96,9 @@ COMPUTATIONAL POWER
 TO INFINITY
 ---
 
-**[inf1]:** Let's go further and extend the bathroom wall to infinity in all directions.
+**[inf1]:** Let's extend the bathroom wall to infinity in all directions.
 
-**[inf2]:** The question about tiling still remains, but two new ones arise:
+**[inf2]:** The question about tiling still remains, but two new, seemingly unrelated ones arise:
 
 1. If a tileset can fill the plane, can it also fill it periodically?
 2. Is there an algorithm to check if a tiling exists (just as for the previous, finite model)?
