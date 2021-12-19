@@ -12,3 +12,7 @@ A random list of ideas for videos.
 - Aho-Corasick
 - Goldberg
 - Cook-Levin theorem
+
+## IPS
+- Number Systems (fibonacci, -2)
+- Hydra
