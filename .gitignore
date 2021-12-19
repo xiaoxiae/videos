@@ -5,6 +5,8 @@
 **/ignored
 **/export
 
+music/
+
 *.pdf
 *.html
 *.xopp~
