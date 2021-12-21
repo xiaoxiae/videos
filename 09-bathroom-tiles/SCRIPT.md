@@ -32,13 +32,15 @@ EXAMPLE: NUMBER OF ONES DIVISIBLE BY 3
 
 **[e21]:** Another, slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones is divisible by three. The idea is to count how many ones we've seen when tiling from the left. When counting, we'll loop back to 0 when the count reaches 3, because we're only interested in the remainder after division.
 
-**[e21]:** The tiles are divided into two groups: when the input contains a zero, we carry over the number of threes we've seen. When it contains a one, we increment.
+**[e22]:** This means that we have to end with a 0, because no remainder after division happens if and only if the number is wholly divisible.
 
-**[e22]:** Let's see the tiling in action to better understand how it works.
+**[e23]:** The tiles are divided into two groups: when the input contains a zero, we carry over the number of threes we've seen. When it contains a one, we increment.
 
-**[e23]:** As you can see, the number of ones we're carrying in the tiles correspond to the actual number when counting from left, which is exactly what we want.
+**[e24]:** Let's see the tiling in action to better understand how it works.
 
-**[e24]:** The input is accepted, because there are 6 ones, which is indeed divisible by 3.
+**[e25]:** As you can see, the number of ones we're carrying in the tiles correspond to the actual number when counting from left, which is exactly what we want.
+
+**[e26]:** The input is accepted, because there are 6 ones, which is indeed divisible by 3.
 
 ---
 TIME COMPLEXITY

@@ -1,7 +1,4 @@
-from utilities import *
-from string import digits
-
-import manimpango
+from manim import *
 
 PALETTE = ["#b91e2f", "#f68828", "#cdd190", "#122f30"]
 REDUCED_PALETTE = PALETTE[:2]
@@ -83,7 +80,7 @@ class PartialFlash(AnimationGroup):
         lines.set_stroke(width=self.line_stroke_width)
         return lines
 
-    def create_line_anims(self) -> Iterable["ShowPassingFlash"]:
+    def create_line_anims(self):
         return [
             ShowPassingFlash(
                 line,
@@ -1447,9 +1444,10 @@ TILESET_OFFSET = UP * 0.7
 class ProgrammingModel(Scene):
     @fade
     def construct(self):
-        title = Tex("\Large Programming model")
+        title = Tex(r"\Large \textsc{Programming model}")
 
         self.play(FadeInUp(title))
+
         self.play(title.animate.shift(UP * 2.5))
 
         text = [
@@ -1635,6 +1633,7 @@ class ProgrammingModel(Scene):
             )
         )
 
+
         nums = [
             Tex(str(wall.input[: i + 1].count("1")), color=NOTES_COLOR)
             .scale(NOTES_SCALE)
@@ -1671,6 +1670,11 @@ class ProgrammingModel(Scene):
                 lag_ratio=nums_lag,
                 run_time=nums_run_time,
             )
+        )
+
+        self.play(
+            Wiggle(nums_transformed[-1]),
+            Wiggle(wall.get_color_object_characters_in_direction(RIGHT)),
         )
 
         bs = []
@@ -1776,7 +1780,7 @@ class ProgrammingModel(Scene):
 class TimeComplexity(Scene):
     @fade
     def construct(self):
-        title = Tex("\Large Time Complexity")
+        title = Tex(r"\Large \textsc{Time Complexity}")
 
         self.play(FadeInUp(title))
 
@@ -2104,6 +2108,10 @@ class ParenthesesExample(Scene):
             )
         )
 
+        self.play(highlight_parentheses([3, 4]))
+
+        self.play( highlight_tiles( [(0, 3), (0, 4)]))
+
         brace_offset = 0.25
         bs = []
         for i, (text, start, end) in enumerate(
@@ -2209,6 +2217,7 @@ class ParenthesesExample(Scene):
             Rotate(parentheses[0][5]),
             Rotate(parentheses[0][0]),
             Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP)),
+            Rotate(wall.get_tile(0, 0).get_color_object_in_direction(UP)),
         )
 
         self.play(
@@ -2217,6 +2226,7 @@ class ParenthesesExample(Scene):
             Rotate(parentheses[0][5], angle=-PI),
             Rotate(parentheses[0][0], angle=-PI),
             Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP), angle=-PI),
+            Rotate(wall.get_tile(0, 0).get_color_object_in_direction(UP), angle=-PI),
         )
 
         self.play(*[FadeOutUp(b) for b in bs])
@@ -2239,6 +2249,7 @@ class ParenthesesExample(Scene):
             FadeOutDown(wall, move_factor=2.2),
             FadeOutDown(tileset, move_factor=2.2),
             FadeOutDown(parentheses, move_factor=2.2),
+            run_time=1.5,
         )
 
         opt = HighlightedTex(
@@ -2281,7 +2292,7 @@ class ParenthesesExample(Scene):
 class ComputationalPower(Scene):
     @fade
     def construct(self):
-        title = Tex("\Large Computational Power")
+        title = Tex(r"\Large \textsc{Computational Power}")
 
         self.play(FadeInUp(title))
 
@@ -2362,6 +2373,8 @@ class ComputationalPower(Scene):
             FadeInUp(lll, move_factor=0.85),
             FadeOut(question),
         )
+
+        return
 
         self.play(
             FadeOutUp(lang, move_factor=1.5),
@@ -2455,10 +2468,20 @@ class ToInfinity(Scene):
 
         s = 0.90
 
+        title = Tex(r"\Large \textsc{To Infinity!}")
+
+        self.play(FadeInUp(title))
+
         wall = Wall(PALETTE, width=w, height=h, size=s).move_to(ORIGIN)
         wall2 = Wall(PALETTE, width=w2, height=h2, size=s).move_to(ORIGIN)
 
-        self.play(Write(wall.border))
+        self.play(
+                AnimationGroup(
+                    FadeOut(title),
+                    Write(wall.border),
+                    lag_ratio=0.5,
+                )
+                )
 
         seed(5)
         tiles = [
