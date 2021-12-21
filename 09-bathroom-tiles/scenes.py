@@ -1,6 +1,7 @@
 from utilities import *
 
 from string import digits
+from random import seed, choice
 
 PALETTE = ["#b91e2f", "#f68828", "#cdd190", "#122f30"]
 REDUCED_PALETTE = PALETTE[:2]
@@ -544,7 +545,7 @@ def IndicateColorCharacter(char):
     return Indicate(char, color=YELLOW, scale=INDICATE_SCALE)
 
 
-def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
+def find_tiling_recursive(i, j, tileset, wallarray, w, h):
     def at(x, y):
         return wallarray[y + 1][x + 1]
 
@@ -601,7 +602,7 @@ def find_tiling_recursive(i, j, tileset: List[Tile], wallarray, w, h):
 
 
 def find_tiling(
-    tileset: List[Tile],
+    tileset,
     wall: Wall,
     w=None,
     min_height=1,
