@@ -113,9 +113,11 @@ for scene in os.listdir(video_directory):
 
                     os.rename(original_path, changed_path)
 
+                    t = 10
+
                     # save the last frame from each video
                     subprocess.Popen(["ffmpeg", "-i",  changed_path, "-vf", 'select=eq(n\,0)', "-vframes", "1", "-y", image_path]).communicate()
-                    subprocess.Popen(["ffmpeg", "-stream_loop", "300", "-i", image_path, "-c:v", "libx264", "-crf", "0", video_from_image_path]).communicate()
+                    subprocess.Popen(["ffmpeg", "-framerate", f"1/{t}", "-i", image_path, "-c:v", "libx264", "-t", "10", "-pix_fmt", "yuv420p", video_from_image_path]).communicate()
 
                     os.remove(image_path)
 
