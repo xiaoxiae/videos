@@ -1,4 +1,6 @@
-from manim import *
+from utilities import *
+
+from string import digits
 
 PALETTE = ["#b91e2f", "#f68828", "#cdd190", "#122f30"]
 REDUCED_PALETTE = PALETTE[:2]
@@ -99,8 +101,8 @@ class Wiggle(Animation):
         scale_value: float = INDICATE_SCALE,
         rotation_angle: float = 0.02 * TAU,
         n_wiggles: int = 3,
-        scale_about_point: Optional[np.ndarray] = None,
-        rotate_about_point: Optional[np.ndarray] = None,
+        scale_about_point = None,
+        rotate_about_point = None,
         run_time: float = 1.5,
         **kwargs,
     ) -> None:
