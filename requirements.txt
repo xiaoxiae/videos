@@ -1,3 +1,5 @@
+manim
+pulp
 pyloudnorm
 pysoundfile
-manim
+pyyaml
