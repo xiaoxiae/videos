@@ -57,11 +57,21 @@ arguments = parser.parse_args()
 # (possibly) call Manim
 if not arguments.no_manim:
     if arguments.scene is None:
+        # remove everything when no scene is specified
         if os.path.exists(video_directory):
             shutil.rmtree(video_directory)
 
         process = subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-aq{arguments.quality}", "--disable_caching"])
     else:
+        # remove only the scene and its folders when the scene is specified
+        scene_folder = os.path.join(video_directory, arguments.scene)
+        if os.path.exists(scene_folder):
+            shutil.rmtree(scene_folder)
+
+        scene_video = os.path.join(video_directory, arguments.scene + ".mp4")
+        if os.path.exists(scene_video):
+            os.remove(scene_video)
+
         process = subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", "--disable_caching", arguments.scene])
 
     result = process.communicate()
