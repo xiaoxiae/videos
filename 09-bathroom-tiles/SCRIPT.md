@@ -16,9 +16,9 @@ INTRODUCTION
 
 **[i3]:** Now say we have the colors of the wall and a finite set of tile types. The question is: can we create a tiling that satisfies our requirements? Note that we can use as many tiles of each type as we want, but we cannot rotate them.
 
-**[i4]:** For this example, it is pretty clear that we can. However, if we were to change the top side like so, it would no longer be possible, because there are no tiles with a red on the top side.
+**[i4]:** For this example, it is pretty clear that we can. However, if we were to change the top side like so, it would no longer be possible, because there are no tiles with red on the top side.
 
-**[i5]:** This is essentially the programming model that we'll be using. The input will be some finite sequence of colors on the top side of the wall (which could also be symbols to make some of the programs more readable). Our program will be a finite set of tile types and the remaining colors of the wall. The program will **accept** the input if there exists a valid tiling of any non-zero height, and **reject** it if there's none.
+**[i5]:** This is essentially the programming model that we'll be using. The input will be some finite sequence of colors on the top side of the wall (which could also be symbols to make some of the programs more readable). Our program will be a finite set of tile types and the remaining colors of the wall. Note that neither the tileset nor the wall colors can depend on the input. The program will **accept** the input if there exists a valid tiling of any non-zero height, and **reject** it if there's none.
 
 ---
 EXAMPLE: EVEN SIZE OF INPUT
@@ -32,15 +32,15 @@ EXAMPLE: NUMBER OF ONES DIVISIBLE BY 3
 
 **[e21]:** Another, slightly more advanced example is this one, where the program accepts the input, if and only if the number of ones is divisible by three. The idea is to count how many ones we've seen when tiling from the left. When counting, we'll loop back to 0 when the count reaches 3, because we're only interested in the remainder after division.
 
-**[e22]:** This means that we have to end with a 0, because no remainder after division happens if and only if the number is wholly divisible.
+**[e22]:** This means that we have to end with a 0, because a remainder 0 after division happens if and only if the number is wholly divisible.
 
-**[e23]:** The tiles are divided into two groups: when the input contains a zero, we carry over the number of threes we've seen. When it contains a one, we increment.
+**[e23]:** The tiles are divided into two groups: we carry over the number of threes we've seen when the input contains a zero, and increment when it contains a one.
 
 **[e24]:** Let's see the tiling in action to better understand how it works.
 
-**[e25]:** As you can see, the number of ones we're carrying in the tiles correspond to the actual number when counting from left, which is exactly what we want.
+**[e25]:** As you can see, the number of ones we're carrying in the tiles correspond to the actual number when counting from the left, which is exactly what we want. Additionally, there is always exactly one tile to place at any given point in the tiling, since it's uniquely determined by the previous tile and the input.
 
-**[e26]:** The input is accepted, because there are 6 ones, which is indeed divisible by 3.
+**[e26]:** Because there are 6 ones, which is indeed divisible by 3, the input is accepted.
 
 ---
 TIME COMPLEXITY
@@ -52,9 +52,11 @@ TIME COMPLEXITY
 
 **[t3]:** For example, bubble sort will sort an input of size $n$ in $O(n^2)$ operations, and binary search will find an item in a sorted array in $O(log(n))$ operations.
 
-**[t4]:** For our programming model, this definition doesn't make sense, since the tiling either exists or it doesn't. What we'll do here instead is measure the minimum number of rows needed to accept the input, based again on the size of the input.
+**[t4]:** For our programming model, this definition doesn't make sense, since the tiling either exists or it doesn't. What we'll do here instead is measure the minimum number of rows needed to accept the input, again based on its size.
 
-**[t5]:** But so far, we've only seen problems requiring exactly one row, so let's look at one that requires a bit more.
+**[t5]:** When the input is not accepted, there will be no rows to count since the tiling doesn't exist. We'll therefore exclude rejected inputs from the calculation altogether, since there is no good way to measure them.
+
+**[t6]:** But so far, we've only seen problems requiring exactly one row, so let's look at one that requires a bit more.
 
 ---
 EXAMPLE: BALANCED PARENTHESES
@@ -64,7 +66,7 @@ EXAMPLE: BALANCED PARENTHESES
 
 **[e32]:** One solution might look like this. Although daunting at first, the best way to understand it is to look at a successful tiling.
 
-**[e33]:** As you can see, the tiles are defined in such a way that they connect each corresponding pair of parentheses using the wall itself. For example, these two parentheses are connected via this path, and these two via this short one.
+**[e33]:** As you can see, the tiles are defined in such a way that they connect each corresponding pair of parentheses using the wall itself. For example, these two parentheses are connected via this path.
 
 **[e34]:** We can again separate the tiles into a few groups. The first two tiles just connect adjacent opening and closing parentheses, since we don't need more than one layer for that.
 
@@ -76,7 +78,7 @@ EXAMPLE: BALANCED PARENTHESES
 
 **[e38]:** As for time complexity, there can be at most $n/2$ pairs of parentheses and we need at most one row for each, so this solution runs in time $O(n)$.
 
-**[e39]:** Interestingly, this is not the fastest way this problem can be solved. There is an arguably more beautiful solution that only requires time $O(\log n)$, which I'm not going to show in this video but would instead love you, the viewer, to think about on your own.
+**[e39]:** Interestingly, this is not the fastest way this problem can be solved. There is an arguably more beautiful optimal solution that only requires time $O(\log n)$, which I'm not going to show in this video but would instead love you, the viewer, to think about on your own.
 
 **[e310]:** I will leave a link to solution to this problem and many more in the description, if you're interested in solving some of them.
 
@@ -86,11 +88,11 @@ COMPUTATIONAL POWER
 
 **[c1]:** So... how strong is our model? Which problems can it solve and which can it not? Is it as strong as Python, or stronger, or is it not even close?
 
-**[c2]:** Well, our model turns out to be equivalent to a linearly bounded Turing machine. By this we mean a Turing machine with a finite tape that is as long as the input.
+**[c2]:** Well, our model turns out to be equivalent to a linearly bounded Turing machine. By this we mean a non-deterministic Turing machine with a finite tape that is as long as the input.
 
 **[c3]:** This means that it is not as strong as Python (and basically every other modern programming language), since Python is Turing complete and thus equivalent to a regular Turing machine.
 
-**[c4]:** Despite this limitation, it can still solve a surprisingly large set of problems, like checking whether a number is prime, divisible by some other number, a power of two, and many more.
+**[c4]:** Despite this limitation, it can still solve a surprisingly large set of problems, like checking whether a number is prime, whether a maze contains a path from one point to another, or even whether a boolean expression has an assignment of variables that make it true.
 
 **[c5]:** One neat consequence of this limitation is that there exists an algorithm to tell you, whether a given tileset will tile for a given input. This is not true for a regular Turing machine, where no such algorithm exists.
 

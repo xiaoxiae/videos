@@ -340,7 +340,7 @@ class Wall(VMobject):
             self.color_object_characters.append([])
 
             for i in range(len(self.input) + 1):
-                c = (0.25 if i in (0, len(self.input)) else 0.5) * self.size
+                c = (0.5 if i in (0, len(self.input)) else 0.3) * self.size
                 line = Line(
                     start=[-self.w / 2 + i * self.size, self.h / 2, 0],
                     end=[-self.w / 2 + i * self.size, self.h / 2 + c, 0],
@@ -1107,15 +1107,16 @@ class BumpUp(Transform):
         return target
 
 
-class Motivation(MovingCameraScene):
+class Motivation2(MovingCameraScene):
+    @fade
     def construct(self):
         p1 = SVGMobject("assets/pillar.svg").scale(2.8).shift(LEFT * 4.8)
         p2 = SVGMobject("assets/pillar.svg").scale(2.8).shift(RIGHT * 4.8)
 
-        ft = Text("Eureka!", font="Gelio Pasteli").scale(2)
+        ft = Text("Εύρηκα!").scale(2)
 
         archimedes = (
-            Text("– Archimedes", font="Gelio Pasteli")
+            Text("– Ἀρχιμήδης")
             .scale(0.7)
             .next_to(ft, DOWN)
             .align_to(ft, RIGHT)
@@ -1317,9 +1318,12 @@ class Motivation(MovingCameraScene):
             AnimationGroup(
                 FadeOut(VGroup(bl, blt, bu, but)),
                 Write(wall.color_objects),
-                AnimationGroup(*changes.values()),
                 lag_ratio=0.6,
             )
+        )
+
+        self.play(
+            *changes.values()
         )
 
         tiles = [
@@ -1706,6 +1710,13 @@ class ProgrammingModel(Scene):
             bs += [b, bl]
 
             self.play(
+                FadeInUp(b),
+                FadeInUp(bl)
+                if i == 1
+                else AnimationGroup(FadeInUp(bl), task.animate.shift(UP * 0.3)),
+            )
+
+            self.play(
                 *[
                     Wiggle(
                         t.get_color_object_in_direction(UP),
@@ -1714,13 +1725,6 @@ class ProgrammingModel(Scene):
                     )
                     for t in tileset
                 ][i * 3 : (i + 1) * 3]
-            )
-
-            self.play(
-                FadeInUp(b),
-                FadeInUp(bl)
-                if i == 1
-                else AnimationGroup(FadeInUp(bl), task.animate.shift(UP * 0.3)),
             )
 
             self.play(
@@ -1813,8 +1817,29 @@ class TimeComplexity(Scene):
             .shift(DOWN * 0.2)
         )
 
-        for i, j in ((0, 7), (15, 19), (27, 33), (52, 73)):
-            bathroom_text[0][i:j].set_color(YELLOW)
+        for k, (i, j) in enumerate(((0, 7), (15, 19), (27, 33), (52, 73))):
+            if k == 2:
+                color = GREEN
+            else:
+                color = YELLOW
+
+            bathroom_text[0][i:j].set_color(color)
+
+        bathroom_text_2 = (
+            HighlightedTex(
+                "\parbox{15em}{Rejected inputs are ignored.}"
+            )
+            .scale(0.7)
+            .next_to(bathroom_text, DOWN)
+        )
+
+        for k, (i, j) in enumerate(((0, 8), (17, 25))):
+            if k == 0:
+                color = RED
+            else:
+                color = YELLOW
+
+            bathroom_text_2[0][i:j].set_color(color)
 
         bathroom_group = VGroup(bathroom, bathroom_text)
         bathroom_group.move_to(ORIGIN).shift(RIGHT * 3.2 + UP * 0.5)
@@ -1856,7 +1881,7 @@ class TimeComplexity(Scene):
             )
             .scale(0.7)
             .next_to(bathroom_text, DOWN)
-            .shift(DOWN * 0.2)
+            .shift(DOWN * 0.75)
         )
 
         n = 17
@@ -1866,7 +1891,7 @@ class TimeComplexity(Scene):
         question = (
             Tex("?")
             .scale(QUESTION_MARK_SCALE)
-            .move_to(VGroup(bathroom_text, *bathroom_examples))
+            .move_to(VGroup(bathroom_text, *bathroom_examples)).shift(UP * 0.35)
         )
 
         self.play(Write(question))
@@ -1878,6 +1903,9 @@ class TimeComplexity(Scene):
                 lag_ratio=0.3,
             )
         )
+
+        bathroom_text_2.next_to(bathroom_text, DOWN).align_to(bathroom_text, LEFT)
+        self.play(Write(bathroom_text_2, run_time=1))
 
         n = 16
         self.play(
@@ -2110,10 +2138,6 @@ class ParenthesesExample(Scene):
                 [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 0)]
             )
         )
-
-        self.play(highlight_parentheses([3, 4]))
-
-        self.play( highlight_tiles( [(0, 3), (0, 4)]))
 
         brace_offset = 0.25
         bs = []
@@ -2348,7 +2372,7 @@ class ComputationalPower(Scene):
 
         g = VGroup(tile, lang, ll, question)
 
-        lbtm = Tex("LBTM").scale(sscale / 1.5).next_to(r, DOWN)
+        lbtm = Tex("linear TM").scale(sscale / 1.5).next_to(r, DOWN)
 
         self.play(
             AnimationGroup(
@@ -2376,8 +2400,6 @@ class ComputationalPower(Scene):
             FadeInUp(lll, move_factor=0.85),
             FadeOut(question),
         )
-
-        return
 
         self.play(
             FadeOutUp(lang, move_factor=1.5),
@@ -2412,8 +2434,8 @@ class ComputationalPower(Scene):
                 \begin{itemize}
                 \itemsep0em
                 \item prime numbers
-                \item divisibility
-                \item power of two
+                \item path in a maze
+                \item SAT assignment
                 \end{itemize}
                 """
             )
@@ -2422,7 +2444,7 @@ class ComputationalPower(Scene):
             .shift(LEFT * 0.5)
         )
 
-        ns = [13, 26, 1000]
+        ns = [13, 25, 1000]
 
         self.play(
             AnimationGroup(
@@ -2448,10 +2470,10 @@ class ComputationalPower(Scene):
 
         algorithm = (
             Tex(
-                r"\parbox{10em}{$\exists$ an algorithm to find tiling (given the tileset and the input)}"
+                r"\parbox{6.5em}{$\exists$ an algorithm to find tiling}"
             )
             .next_to(impl, RIGHT)
-            .shift(RIGHT * 0.5)
+            .shift(RIGHT * 0.25)
         )
 
         self.play(
@@ -2469,7 +2491,7 @@ class ToInfinity(Scene):
         w2 = w * 2
         h2 = h * 3
 
-        s = 0.90
+        s = 0.887
 
         title = Tex(r"\Large \textsc{To Infinity!}")
 
@@ -2695,11 +2717,13 @@ class Outro(Scene):
         w = 16
         h = 9
 
-        wall = Wall(PALETTE, width=w, height=h)
+        s = 0.887
+
+        wall = Wall(PALETTE, width=w, height=h, size=s)
 
         seed(3)
         tiles = [
-            [Tile([choice(PALETTE) for _ in range(4)]) for _ in range(w)]
+            [Tile([choice(PALETTE) for _ in range(4)], size=s) for _ in range(w)]
             for _ in range(h)
         ]
 
