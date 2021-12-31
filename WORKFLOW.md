@@ -44,9 +44,10 @@ My internal workflow document, so I don't forget to do something when I'm creati
 	- playlist
 	- "show more":
 		- language (english)
+		- license (standard YouTube)
 2. step:
-	- final screen - import from the previous video
 	- subtitles: from file
+	- final screen - import from the previous video
 4. step:
 	- make the video public
 
