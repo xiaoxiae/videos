@@ -1107,7 +1107,7 @@ class BumpUp(Transform):
         return target
 
 
-class Motivation2(MovingCameraScene):
+class Motivation(MovingCameraScene):
     @fade
     def construct(self):
         p1 = SVGMobject("assets/pillar.svg").scale(2.8).shift(LEFT * 4.8)
@@ -1141,8 +1141,8 @@ class Motivation2(MovingCameraScene):
 
         offset = 1.2
 
-        ft2 = Text("Bathroom tiles!").scale(1.0).shift(DOWN * offset)
-        tom = Text("- Tom").scale(0.6).next_to(ft2, DOWN).align_to(ft2, RIGHT)
+        ft2 = Text("Bathroom tiles!").scale(1.05).shift(DOWN * offset)
+        tom = Text("– Tom").scale(0.7).next_to(ft2, DOWN).align_to(ft2, RIGHT)
 
         g2 = VGroup(ft2, tom)
         g2.move_to(ORIGIN).shift(DOWN * offset)
@@ -1891,7 +1891,7 @@ class TimeComplexity(Scene):
         question = (
             Tex("?")
             .scale(QUESTION_MARK_SCALE)
-            .move_to(VGroup(bathroom_text, *bathroom_examples)).shift(UP * 0.35)
+            .move_to(VGroup(bathroom_text, *bathroom_examples)).shift(UP * 0.7)
         )
 
         self.play(Write(question))
@@ -2488,8 +2488,11 @@ class ToInfinity(Scene):
         w = 8
         h = 3
 
-        w2 = w * 2
-        h2 = h * 3
+        dw = 2
+        dh = 3
+
+        w2 = w * dw
+        h2 = h * dh
 
         s = 0.887
 
@@ -2527,9 +2530,14 @@ class ToInfinity(Scene):
             for j in range(h2):
                 wall2.add_tile(tiles2[j][i], i, j)
 
+        self.next_section()
+
         self.play(
             AnimationGroup(*[FadeIn(t.border) for t in wall.tiles], lag_ratio=0.01)
         )
+
+        remaining_w = w2 - w
+        remaining_h = h2 - h
 
         tls = [
             wall2.get_tile(i, j)
@@ -2537,16 +2545,16 @@ class ToInfinity(Scene):
             for j in range(h2)
             if (
                 (
-                    i in range(int(w2 / 3), int(w2 / 3 * 2))
-                    and j not in range(int(h2 / 3), int(h2 / 3 * 2))
+                    i in range(int(remaining_w / 2), int(remaining_w / 2 + w))
+                    and j not in range(int(remaining_h / 2), int(remaining_h / 2 + h))
                 )
                 or (
-                    i not in range(int(w2 / 3), int(w2 / 3 * 2))
-                    and j in range(int(h2 / 3), int(h2 / 3 * 2))
+                    i not in range(int(remaining_w / 2), int(remaining_w / 2 + w))
+                    and j in range(int(remaining_h / 2), int(remaining_h / 2 + h))
                 )
                 or (
-                    i not in range(int(w2 / 3), int(w2 / 3 * 2))
-                    and j not in range(int(h2 / 3), int(h2 / 3 * 2))
+                    i not in range(int(remaining_w / 2), int(remaining_w / 2 + w))
+                    and j not in range(int(remaining_h / 2), int(remaining_h / 2 + h))
                 )
             )
         ]
@@ -2561,7 +2569,7 @@ class ToInfinity(Scene):
             )
         )
 
-        self.play(*[t.border.animate.fade(0.94) for t in list(wall.tiles) + tls])
+        self.play(*[t.border.animate.fade(0.94) for t in tls + list(wall.tiles)])
 
         l1 = Tex(
             "1. If a tileset can fill the plane, can it also fill it periodically?"

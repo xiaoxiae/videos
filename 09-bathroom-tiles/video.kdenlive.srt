@@ -68,8 +68,7 @@ Note that neither the tileset nor the wall colors can depend on the input.
 
 18
 00:01:33,516 --> 00:01:39,850
-The program will accept the input if there exists a valid tiling of
-any non-zero height, and reject it if there’s none.
+The program will accept the input if there exists a valid tiling of any non-zero height, and reject it if there’s none.
 
 19
 00:01:41,166 --> 00:01:46,733
@@ -180,7 +179,7 @@ We’ll therefore exclude rejected inputs from the calculation altogether, since
 But so far, we’ve only seen problems requiring exactly one row, so let’s look at one that requires a bit more.
 
 46
-00:04:19,066 --> 00:04:25,083
+00:04:19,065 --> 00:04:25,083
 The task is to create a program that accepts the input, if and only if it contains parentheses that are balanced
 
 47

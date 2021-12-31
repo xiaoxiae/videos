@@ -34,7 +34,7 @@ EXAMPLE: NUMBER OF ONES DIVISIBLE BY 3
 
 **[e22]:** This means that we have to end with a 0, because a remainder 0 after division happens if and only if the number is wholly divisible.
 
-**[e23]:** The tiles are divided into two groups: we carry over the number of threes we've seen when the input contains a zero, and increment when it contains a one.
+**[e23]:** The tiles are divided into two groups: we carry over the number of ones we've seen when the input contains a zero, and increment when it contains a one.
 
 **[e24]:** Let's see the tiling in action to better understand how it works.
 
