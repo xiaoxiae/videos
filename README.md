@@ -8,4 +8,4 @@ Source code to my videos, found on my [YouTube channel](https://www.youtube.com/
 - 2021/04/28: **[Vizing's theorem](https://www.youtube.com/watch?v=OZWZpQmGp0g)** - _A proof of Vizing's theorem about graph edge coloring._
 
 ## Other
-- 2021/04/28: **[Bathroom Tile Programming](https://www.youtube.com/watch?v=KlaEp6ydVhA)** - _A dive into the unconventional bathroom tile programming model._
+- 2021/12/31: **[Bathroom Tile Programming](https://www.youtube.com/watch?v=KlaEp6ydVhA)** - _A dive into the unconventional bathroom tile programming model._
