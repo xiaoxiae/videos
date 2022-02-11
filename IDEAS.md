@@ -13,6 +13,10 @@ A random list of ideas for videos.
 - Goldberg
 - Cook-Levin theorem
 
+## Aproximation algorithms
+- RAND-SAT, LP-SAT, BEST-SAT
+- static dictionary
+
 ## IPS
 - Number Systems (fibonacci, -2)
 - Hydra
