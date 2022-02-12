@@ -14,7 +14,6 @@ A random list of ideas for videos.
 - Cook-Levin theorem
 
 ## Aproximation algorithms
-- RAND-SAT, LP-SAT, BEST-SAT
 - static dictionary
 
 ## IPS
