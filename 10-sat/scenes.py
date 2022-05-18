@@ -1,6 +1,7 @@
 from utilities import *
 
 class Intro(MovingCameraScene):
+    @fade
     def construct(self):
         sat = Tex("\Huge SAT").scale(2)
 
@@ -92,6 +93,7 @@ class Intro(MovingCameraScene):
 
 
 class SAT(MovingCameraScene):
+    @fade
     def construct(self):
         sat = Tex(r"\Huge SAT")
 
