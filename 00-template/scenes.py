@@ -1,4 +1,5 @@
-from utilities import *
+from manim import *
+
 
 class Intro(Scene):
     def construct(self):
