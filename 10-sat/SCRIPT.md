@@ -6,12 +6,6 @@ SAT, or the boolean satisfiability problem is arguably one of the most important
 
 Sometimes, however, we need our algorithms to run in polynomial time, in exchange for the solution being close to, but not quite the optimum. This is what we call approximation algorithms -- they run fast, but produce a solution that is not optimal.
 
-TODO: animation of a table
-TODO: | algorithms               | exact | approximation algorithms    |
-TODO: | ---            | ---                | ---               |
-TODO: | running time   | $O(exponential)$   | $O(polynomial)$   |
-TODO: | solution       | optimal            | \le optimal       |
-
 What is fascinating about SAT in particular and will be the main topic of this video is that the optimal SAT approximation algorithm is a clever combination of two other, seemingly unrelated approximation algorithms, which intuitively shouldn't work well, but turns out to be the optimal way to do things.
 
 But let's slow down just a bit and get our definitions out of the way.

@@ -44,7 +44,7 @@ Special thanks to Martin Mareš, Matěj Kripner, Kateřina Sulková, Vašek Kon�
 
 [CZ] KSP 26 - Dlaždičky (zadání + řešení):
 https://ksp.mff.cuni.cz/h/ulohy/26/zadani4.html#task-26-4-8
-https://ksp.mff.cuni.cz/h/ulohy/26/reseni4.html#task-26-4-8š
+https://ksp.mff.cuni.cz/h/ulohy/26/reseni4.html#task-26-4-8
 
 [EN] Wikipedia - Wang Tiles:
 https://en.wikipedia.org/wiki/Wang_tile
