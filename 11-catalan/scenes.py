@@ -14,7 +14,25 @@ class StarsExample(Scene):
 
         self.play(*stars_animations)
 
-        self.play(ChangeStars(trees[2], 5))
+        #self.play(ChangeStars(trees[2], 5))
+
+        self.play(*[FadeOut(t) for t in trees])
+
+
+class BuildStarsExample(Scene):
+    def construct(self):
+        tree = BinaryTree.generate_binary_trees(7)[72]
+
+        self.play(Write(tree))
+
+        StarUtilities.add_stars_to_graph(tree)
+
+        self.play(CreateStars(tree))
+
+        for i in range(6):
+            self.play(*SwapChildren(tree, tree.get_parent(StarUtilities.get_highest_star(tree)), move_height=0))
+            self.play(*SwapChildren(tree, tree.get_parent(StarUtilities.get_highest_star(tree)), move_height=0))
+            self.play(*RemoveHighestStar(tree))
 
 
 class DyckPathExample(Scene):

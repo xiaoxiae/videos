@@ -2,10 +2,17 @@ from __future__ import annotations
 
 from manim import *
 from typing import *
+from random import seed
 from itertools import permutations, combinations
 import sympy
 
+
 class StarUtilities:
+    STAR_COLOR = GREEN
+    STAR_N = 8
+    STAR_SCALE = 0.15
+    STAR_OFFSET = 0.26
+
     @classmethod
     def get_star_name(cls, i):
         return f"star_{i}"
@@ -19,32 +26,45 @@ class StarUtilities:
         return int(s[len("star_"):])
 
     @classmethod
-    def create_star_object(cls, number) -> VMobject:
-        star_scale = 0.2
+    def get_highest_star(cls, graph):
+        max_index = 0
+        max_name = None
+        for v in graph.vertices:
+            if cls.is_star_name(v):
+                if cls.get_star_index(v) > max_index:
+                    max_index = cls.get_star_index(v)
+                    max_name = v
+        return max_name
 
+
+    @classmethod
+    def create_star_object(cls, number) -> VMobject:
         # this MUST be an odd number, else the rotation won't work
-        n = 6
-        star = Star(n, density=1.5, color=BLUE, fill_opacity=1).scale(star_scale).rotate(PI * 2 / (n * 2))
-        text = Tex(str(number), color=BLACK).scale(2.5 * star_scale).move_to(star)
+        star = Star(cls.STAR_N, density=1.5, color=cls.STAR_COLOR, fill_opacity=1).scale(cls.STAR_SCALE)
+        text = Tex(str(number), color=BLACK).scale(3 * cls.STAR_SCALE).move_to(star)
 
         return VGroup(star, text)
 
     @classmethod
-    def attach_star_to_vertex(cls, graph, v, number, direction, direction_scale=0.26):
+    def get_star_position(cls, graph, v, direction):
+        """Get the star position, relative to the given vertex in a graph."""
+        return graph.vertices[v].get_center() + (DOWN * 1.9 + direction) * cls.STAR_OFFSET
+
+    @classmethod
+    def attach_star_to_vertex(cls, graph, v, number, direction):
         """Create star from the vertex in the given direction (LEFT/RIGHT)."""
 
         vertex = graph.add_vertices(
             cls.get_star_name(number),
             positions={
-                cls.get_star_name(number): graph.vertices[v].get_center()
-                + (DOWN * 1.9 + direction) * direction_scale
+                cls.get_star_name(number): cls.get_star_position(graph, v, direction)
             },
             vertex_type=lambda: cls.create_star_object(number),
         )[0]
 
         graph.add_edges(
             ((v, cls.get_star_name(number))),
-            edge_type=lambda *args, **kwargs: Line(*args, color=vertex.color, **kwargs),
+            edge_type=lambda *args, **kwargs: Line(*args, color=cls.STAR_COLOR, **kwargs),
         )
 
 
@@ -116,7 +136,7 @@ def CreateStars(graph) -> Animation:
                         FadeIn(graph.vertices[v], run_time=0.4),
                         Flash(
                             graph.vertices[v],
-                            color=graph.vertices[v].color,
+                            color=graph.edges[(u, v)].color,
                             run_time=0.4,
                             line_length=0.05,
                             flash_radius=0.18,
@@ -127,6 +147,57 @@ def CreateStars(graph) -> Animation:
             )
 
     return AnimationGroup(*[a for (_, a) in sorted(animations, key=lambda x: x[0])], lag_ratio=0.1)
+
+
+def RemoveHighestStar(graph) -> Animation:
+    """Return an animation of removing the star with the highest number (along with its vertex) from the graph.
+    We're assuming that we're not removing the very last vertex."""
+
+    max_name = StarUtilities.get_highest_star(graph)
+
+    max_name_parent = graph.get_parent(max_name)
+    max_parent_squared = graph.get_parent(max_name_parent)
+    children = graph.get_children(max_name_parent)
+
+    # if the star's parent contains a non'star child
+    if not StarUtilities.is_star_name(children[0]) or not StarUtilities.is_star_name(children[1]):
+        non_star_child = children[0] if not StarUtilities.is_star_name(children[0]) else children[1]
+
+        max_name_parent_vertex = graph.vertices[max_name_parent]
+        removed = graph.remove_vertices(max_name_parent)
+        removed += graph.remove_vertices(max_name)
+
+        non_star_child_descendants = graph.get_all_descendants(non_star_child)
+
+        animations = []
+
+        # if the parent also has a parent
+        if max_parent_squared is not None:
+            edge = graph.add_edges((max_parent_squared, non_star_child))[0]
+            edge.set_opacity(0)
+
+            animations += [edge.animate.set_opacity(1)]
+
+        return [
+            *[FadeOut(r, run_time=0.5) for r in removed],
+            *[graph.vertices[v].animate.shift(max_name_parent_vertex.get_center() - graph.vertices[non_star_child].get_center()) for v in non_star_child_descendants],
+        ] + animations
+
+    else:
+        other_child = children[0] if max_name != children[0] else children[1]
+
+        removed = graph.remove_vertices(max_name_parent)
+        removed += graph.remove_vertices(max_name)
+
+        edge = graph.add_edges((max_parent_squared, other_child))[0]
+        edge.set_color(StarUtilities.STAR_COLOR)
+        edge.set_opacity(0)
+
+        return [
+            *[FadeOut(r, run_time=0.5) for r in removed],
+            graph.vertices[other_child].animate.move_to(StarUtilities.get_star_position(graph, max_parent_squared, LEFT if max_parent_squared[-1] == "l" else RIGHT)),
+            edge.animate.set_opacity(1),
+        ]
 
 
 class LinedPolygon(VMobject):
@@ -235,6 +306,38 @@ class DyckPath(VMobject):
 
 
 class BinaryTree(Graph):
+    def get_parent(self, v) -> str:
+        """Return the parent of a vertex (given that it's not the root), else return None."""
+        for x, y in self.edges:
+            if v == y:
+                return x
+
+    def get_children(self, v) -> List[str]:
+        """Return the parent of a vertex (given that it's not the leaf), else return []."""
+        children = []
+        for x, y in self.edges:
+            if v == x:
+                children.append(y)
+        return children
+
+    def get_all_descendants(self, v) -> List[str]:
+        """Return all children of a vertex, including the vertex itself."""
+        stack = [v]
+        children = []
+
+        while len(stack) != 0:
+            u = stack.pop(0)
+            children.append(u)
+
+            for v in self.vertices:
+                if v in children:
+                    continue
+
+                if (u, v) in self.edges:
+                    stack.append(v)
+
+        return children
+
 
     def get_non_full_vertices(self) -> List[str]:
         """Return all vertices of a graph (having '0' as root) that don't have 2 children."""
@@ -326,26 +429,8 @@ class BinaryTree(Graph):
 
 
 
-def SwapChildren(graph, v, move_distance=0.1, speed_ratio=0.75, **kwargs) -> List[Animation]:
+def SwapChildren(graph, v, move_height=0.1, speed_ratio=0.75, **kwargs) -> List[Animation]:
     """Generates animations for swapping the children of a vertex."""
-
-    def get_all_descendants(graph: Graph, vertex):
-        """Return all children of a vertex, including the vertex itself."""
-        stack = [vertex]
-        children = []
-
-        while len(stack) != 0:
-            u = stack.pop(0)
-            children.append(u)
-
-            for v in graph.vertices:
-                if v in children:
-                    continue
-
-                if (u, v) in graph.edges:
-                    stack.append(v)
-
-        return children
 
     def generate_swap_animations(parent, child, direction):
         """Generate the swap animations for a parent, given its child."""
@@ -363,8 +448,8 @@ def SwapChildren(graph, v, move_distance=0.1, speed_ratio=0.75, **kwargs) -> Lis
 
         path = CubicBezier(
             points[0],
-            points[1] + direction * move_distance,
-            points[2] + direction * move_distance,
+            points[1] + direction * move_height,
+            points[2] + direction * move_height,
             points[3],
         )
 
@@ -374,7 +459,7 @@ def SwapChildren(graph, v, move_distance=0.1, speed_ratio=0.75, **kwargs) -> Lis
                 path.copy().shift(graph.vertices[v].get_center() - c_pos),
                 **kwargs,
             )
-            for v in get_all_descendants(graph, child)
+            for v in graph.get_all_descendants(child)
         ]
 
     # find the children
