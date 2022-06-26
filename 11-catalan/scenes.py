@@ -1,7 +1,7 @@
 from utilities import *
 
 
-class GraphStarsScene(Scene):
+class StarsExample(Scene):
     def construct(self):
         trees = VGroup(*BinaryTree.generate_binary_trees(3)).arrange(buff=0.8)
 
@@ -14,10 +14,18 @@ class GraphStarsScene(Scene):
 
         self.play(*stars_animations)
 
-        self.wait(1)
-
-        self.play(*SwapChildren(trees[2], ""))
-
-        self.wait(1)
-
         self.play(ChangeStars(trees[2], 5))
+
+
+class DyckPathExample(Scene):
+    def construct(self):
+        path = DyckPath([1, 1, 1, -1,-1, -1, 1, -1, 1, 1, -1, -1], labels=True)
+
+        self.play(Write(path))
+
+
+class TriangulatedPolygonExample(Scene):
+    def construct(self):
+        p = VGroup(*LinedPolygon.generate_triangulated_polygons(7)).arrange_in_grid(rows=5).scale(0.5)
+
+        self.play(Write(p))

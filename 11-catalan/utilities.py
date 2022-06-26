@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from manim import *
 from typing import *
-from itertools import permutations
-
+from itertools import permutations, combinations
+import sympy
 
 class StarUtilities:
     @classmethod
@@ -129,6 +129,111 @@ def CreateStars(graph) -> Animation:
     return AnimationGroup(*[a for (_, a) in sorted(animations, key=lambda x: x[0])], lag_ratio=0.1)
 
 
+class LinedPolygon(VMobject):
+
+    @classmethod
+    def generate_triangulated_polygons(cls, n: int) -> List[LinedPolygon]:
+        """Generate all possible triangulated polygons on n vertices.
+        Runs reasonably quickly for <= 10 vertices (~a minute)."""
+        # computers are fast
+        edges = list(combinations(range(n), r=2))
+
+        # remove adjacent edges
+        edges = [e for e in edges if abs(e[0] - e[1]) != 1 and abs(e[0] - e[1]) != n - 1]
+
+        def _is_subset_intesecting(subset) -> bool:
+            # check for intersections
+            for i in range(len(subset)):
+                for j in range(i + 1, len(subset)):
+                    e1 = subset[i]
+                    e2 = subset[j]
+
+                    # if they share a vertex, they don't intersect
+                    if len(set(e1 + e2)) != len(e1) + len(e2):
+                        continue
+
+                    p1, p2 = e1
+                    p3, p4 = e2
+
+                    if p1 < p3 < p2 and p3 < p2 < p4:
+                        return True
+
+            return False
+
+        polygons = []
+
+        for subset in combinations(edges, r = n - 3):
+            if not _is_subset_intesecting(subset):
+                polygons.append(LinedPolygon(n, subset))
+
+        return polygons
+
+
+    def __init__(self, n, edges):
+        super().__init__()
+
+        polygon = RegularPolygon(n, color=WHITE)
+        vertices = polygon.get_vertices()
+
+        self.add(polygon)
+
+        for u, v in edges:
+            self.add(Line(start=vertices[u], end=vertices[v]))
+
+
+class DyckPath(VMobject):
+
+    def __init__(self, delta: List[int], labels=False, spacing=0.5):
+        super().__init__()
+
+        vertices = list(range(len(delta) + 1))
+        edges = [(i, i + 1) for i in vertices[:-1]]
+
+        layout = {}
+
+        pos = ORIGIN
+        min_x, max_x = 0, 0
+        min_y, max_y = 0, 0
+        for i, (v, d) in enumerate(zip(vertices, [0] + delta)):
+            if d == 1:
+                pos = np.array(pos) + (RIGHT + UP) * spacing
+            elif d == -1:
+                pos = np.array(pos) +(RIGHT + DOWN) * spacing
+
+            min_x = min(min_x, pos[0])
+            max_x = max(max_x, pos[0])
+            min_y = min(min_y, pos[1])
+            max_y = max(max_y, pos[1])
+
+            layout[v] = np.array(pos)
+
+        for v in layout:
+            layout[v][0] -= (max_x + min_x) / 2
+            layout[v][1] -= (max_y + min_y) / 2
+
+        g = Graph(vertices, edges, layout=layout)
+        self.add(g)
+
+        bottom_line = DashedLine(
+            g.vertices[0].get_center(),
+            g.vertices[len(g.vertices) - 1].get_center(),
+            dashed_ratio=0.25,
+            color=GRAY,
+        )
+
+        self.add(bottom_line)
+        bottom_line.set_z_index(-1)
+
+        if labels:
+            for v, d in zip(vertices, delta):
+                color = RED if d == -1 else GREEN
+                label = Tex(str(d), color=color).scale(0.5).next_to(g.vertices[v], UP, buff=0.15)
+                self.add(label)
+
+
+
+
+
 class BinaryTree(Graph):
 
     def get_non_full_vertices(self) -> List[str]:
@@ -214,7 +319,7 @@ class BinaryTree(Graph):
         return g
 
     @classmethod
-    def generate_binary_trees(cls, n: int) -> List[VMobject]:
+    def generate_binary_trees(cls, n: int) -> List[BinaryTree]:
         """Generate all binary trees on n vertices."""
         return [cls._binary_tree_from_parentheses(p)
                 for p in cls._generate_parentheses(n)]
@@ -275,7 +380,7 @@ def SwapChildren(graph, v, move_distance=0.1, speed_ratio=0.75, **kwargs) -> Lis
     # find the children
     a, b = [x for (w, x) in graph.edges if v == w]
 
-    # TODO: using AnimationGroup here stops updaters, I'm not sure why
+    # TODO: using AnimationGroup here stops updaters, I'm not sure how to prevent it
     return [
         *generate_swap_animations(v, a, UP),
         *generate_swap_animations(v, b, DOWN),
