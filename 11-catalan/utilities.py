@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from math import e
 from manim import *
 from typing import *
 from random import seed
-from itertools import permutations, combinations
+from itertools import permutations, combinations, product
 import sympy
 
 
@@ -260,12 +261,14 @@ class DyckPath(VMobject):
         vertices = list(range(len(delta) + 1))
         edges = [(i, i + 1) for i in vertices[:-1]]
 
+        self.deltas = delta
+
         layout = {}
 
         pos = ORIGIN
         min_x, max_x = 0, 0
         min_y, max_y = 0, 0
-        for i, (v, d) in enumerate(zip(vertices, [0] + delta)):
+        for i, (v, d) in enumerate(zip(vertices, [0] + list(delta))):
             if d == 1:
                 pos = np.array(pos) + (RIGHT + UP) * spacing
             elif d == -1:
@@ -282,30 +285,155 @@ class DyckPath(VMobject):
             layout[v][0] -= (max_x + min_x) / 2
             layout[v][1] -= (max_y + min_y) / 2
 
-        g = Graph(vertices, edges, layout=layout)
-        self.add(g)
+        self.path = Graph(vertices, edges, layout=layout)
+        self.add(self.path)
 
-        bottom_line = DashedLine(
-            g.vertices[0].get_center(),
-            g.vertices[len(g.vertices) - 1].get_center(),
-            dashed_ratio=0.25,
-            color=GRAY,
+        self.bottom_line = DyckPath.create_dyck_line(
+            self.path.vertices[0].get_center(),
+            self.path.vertices[len(self.path.vertices) - 1].get_center()
         )
 
-        self.add(bottom_line)
-        bottom_line.set_z_index(-1)
+        for v in self.path.vertices:
+            self.path.vertices[v].set_z_index(1)
+
+        self.add(self.bottom_line)
 
         if labels:
             for v, d in zip(vertices, delta):
                 color = RED if d == -1 else GREEN
-                label = Tex(str(d), color=color).scale(0.5).next_to(g.vertices[v], UP, buff=0.15)
+                label = Tex(str(d), color=color).scale(0.5).next_to(self.path.vertices[v], UP, buff=0.15)
                 self.add(label)
 
 
+    @classmethod
+    def create_dyck_line(cls, start, end) -> VMobject:
+        """Create a dyck x axis line between points a and b."""
+        end[1] = start[1]  # make sure the line is straight
 
+        return DashedLine(start, end, dashed_ratio=0.25, color=GRAY)
+
+
+    @classmethod
+    def generate_dyck_paths(cls, n: int) -> List[DyckPath]:
+        paths = []
+
+        for path in product([1, -1], repeat=n * 2):
+            i = 0
+            for j in path:
+                i += j
+                if i < 0:
+                    break
+            else:
+                if i == 0:
+                    paths.append(cls(path))
+
+        return paths
+
+    def get_last_hill_animations(self):
+        dot = Dot().scale(0.01)
+
+        if len(self.deltas) == 0:
+            return self.path.vertices[0].animate.set_color(BLUE), lambda: None
+
+        delta_sum = 0
+        max_i = 0
+
+        for i, d in enumerate(self.deltas[:-1]):
+            if delta_sum == 0:
+                max_i = i
+
+            delta_sum += d
+
+        def blue_by_closeness(obj):
+            p1 = obj.get_center()
+            p2 = dot.get_center()
+
+            sigmoid = lambda x: clamp((2/(1 + e ** x)) ** 4, 0, 1)
+
+            d = abs(p1[0] - p2[0]) + abs(p1[1] - p2[1]) + abs(p1[2] - p2[2])
+
+            new_color = interpolate_color(WHITE, BLUE, sigmoid(d))
+
+            if color_distance(obj.color, BLUE) > color_distance(new_color, BLUE):
+                obj.color = new_color
+
+        points = []
+        for v in sorted(self.path.vertices)[max_i:]:
+            points.append(self.path.vertices[v].get_center())
+            self.path.vertices[v].add_updater(blue_by_closeness)
+
+        path = Path(points)
+
+        tpath = TracedPath(dot.get_center, stroke_width=6, stroke_color=BLUE)
+        self.add(tpath)
+
+        a1 = AnimationGroup(
+            self.path.vertices[max_i].animate.set_color(BLUE),
+            MoveAlongPath(dot, path, run_time=2),
+            lag_ratio=0.25
+        )
+
+        crossed_path = DyckPath.create_dyck_line(
+            self.path.vertices[max_i + 1].get_center(),
+            self.path.vertices[len(self.deltas) - 1].get_center(),
+        )
+
+        l1 = Line(self.path.vertices[max_i].get_center(), self.path.vertices[max_i + 1].get_center(), stroke_width=6, stroke_color=BLUE)
+        l2 = Line(self.path.vertices[len(self.deltas) - 1].get_center(), self.path.vertices[len(self.deltas)].get_center(), stroke_width=6, stroke_color=BLUE)
+
+        a3 = Write(l1, run_time=0)
+        a4 = Write(l2, run_time=0)
+
+        a2 = AnimationGroup(
+            Write(crossed_path, run_time=1),
+            FadeOut(tpath),
+            *[self.path.vertices[i].animate.set_color(WHITE)
+              for i in range(max_i + 1, len(self.deltas))]
+        )
+
+        def to_do_after():
+            self.add(l1)
+            self.add(l2)
+            self.add(crossed_path)
+            self.remove(tpath)
+
+        return Succession(a1, a3, a4, a2), to_do_after
+
+    def get_left_right_subpaths(self, scale) -> Tuple[DyckPath]:
+        delta_sum = 0
+        max_i = 0
+
+        for i, d in enumerate(self.deltas[:-1]):
+            if delta_sum == 0:
+                max_i = i
+
+            delta_sum += d
+
+        left = DyckPath(self.deltas[:max_i]).scale(scale)
+        right = DyckPath(self.deltas[max_i + 1:-1]).scale(scale)
+
+        align_object_by_coords(
+            left,
+            left.path.vertices[0].get_center(),
+            self.path.vertices[0].get_center()
+        )
+
+        align_object_by_coords(
+            right,
+            right.path.vertices[0].get_center(),
+            self.path.vertices[max_i + 1].get_center()
+        )
+
+        return (left, right)
+
+    def __str__(self):
+        return f"DyckPath({self.deltas})"
+
+    __repr__ = __str__
 
 
 class BinaryTree(Graph):
+
     def get_parent(self, v) -> str:
         """Return the parent of a vertex (given that it's not the root), else return None."""
         for x, y in self.edges:
@@ -340,7 +468,7 @@ class BinaryTree(Graph):
 
 
     def get_non_full_vertices(self) -> List[str]:
-        """Return all vertices of a graph (having '0' as root) that don't have 2 children."""
+        """Return all vertices of a graph (having '' as root) that don't have 2 children."""
         vertices = []
 
         for v in self.vertices:
@@ -388,8 +516,16 @@ class BinaryTree(Graph):
         edges = []
 
         def _populate(g, v):
-            """Populate vertices and edges. Vertices to be deleted contain the 'B' symbol."""
+            """Populate vertices and edges.
+            Vertices to be deleted contain the 'L' symbol (leaf), for aligning."""
             if g == [None, None]:
+                if cls == FullBinaryTree:
+                    vertices.append(v + "lL")
+                    edges.append((v, vertices[-1]))
+
+                    vertices.append(v + "rL")
+                    edges.append((v, vertices[-1]))
+
                 return
 
             for i in range(2):
@@ -401,7 +537,7 @@ class BinaryTree(Graph):
 
                     _populate(g[i], vertices[-1])
                 else:
-                    vertices.append(v + s + "B")
+                    vertices.append(v + s + "L")
                     edges.append((v, vertices[-1]))
 
         _populate(graph, "")
@@ -412,12 +548,13 @@ class BinaryTree(Graph):
             layout="tree",
             root_vertex="",
             layout_config={"vertex_spacing": (1.15, 1)},
-            vertex_type=lambda: Dot().scale(3),
+            vertex_type=lambda: Dot().scale(1.5),
         )
 
-        for v in list(g.vertices):
-            if "B" in v:
-                g.remove_vertices(v)
+        if cls != FullBinaryTree:
+            for v in list(g.vertices):
+                if "L" in v:
+                    g.remove_vertices(v)
 
         return g
 
@@ -427,6 +564,9 @@ class BinaryTree(Graph):
         return [cls._binary_tree_from_parentheses(p)
                 for p in cls._generate_parentheses(n)]
 
+
+class FullBinaryTree(BinaryTree):
+    pass
 
 
 def SwapChildren(graph, v, move_height=0.1, speed_ratio=0.75, **kwargs) -> List[Animation]:
@@ -470,3 +610,44 @@ def SwapChildren(graph, v, move_height=0.1, speed_ratio=0.75, **kwargs) -> List[
         *generate_swap_animations(v, a, UP),
         *generate_swap_animations(v, b, DOWN),
     ]
+
+
+class Path(VMobject):
+    def __init__(self, points, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.set_points_as_corners(points)
+
+    def get_important_points(self):
+        """Returns the important points of the curve."""
+        # shot explanation: Manim uses quadratic Bézier curves to create paths
+        # > each curve is determined by 4 points - 2 anchor and 2 control
+        # > VMobject's builtin self.points returns *all* points
+        # > we, however, only care about the anchors
+        # > see https://en.wikipedia.org/wiki/Bézier_curve for more details
+        return list(self.get_start_anchors()) + [self.get_end_anchors()[-1]]
+
+
+def clamp(x, min_x, max_x):
+    return max(min(x, max_x), min_x)
+
+
+def color_distance(a, b):
+    """Return the distance of two colors in terms of the sum of absolute values of
+    differences of their RGB."""
+    r1, g1, b1 = color_to_int_rgb(a)
+    r2, g2, b2 = color_to_int_rgb(b)
+
+    # lmao
+    r1 = int(r1)
+    r2 = int(r2)
+    g1 = int(g1)
+    g2 = int(g2)
+    b1 = int(b1)
+    b2 = int(b2)
+
+    return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)
+
+
+def align_object_by_coords(obj, current, desired):
+    """Align an object such that it's current coordinate coordinate will be the desired."""
+    obj.shift(desired - current)

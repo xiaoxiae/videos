@@ -1,0 +1,47 @@
+Have you ever taken a math class and the number pi just appears out of nowhere? (For graphics, Basel problem is a good example) It's always a pleasant surprise, like running into an old friend, but it makes you wonder why it shows up so often.
+
+In my field, combinatorics, we have our own old friend that shows up in surprising places: The Catalan numbers.  (Scene transition with title card: What are the Catalan numbers?)
+
+The Catalan numbers are a sequence of integers $C_n$ that shows up shockingly often in counting problems.  (On screen, list of the numbers with formula)  MIT Professor Richard Stanley has documented over 200 different objects enumerated by the Catalan numbers, and it's fair to say that this is *the* most important sequence in all of combinatorics. 
+
+So... where do they come from?  Dyck paths.  A Dyck path, "or mountain range" is a sequence of "up steps" and "down steps" that start and end on the x-axis but never go below.  (Picture 3 examples of Dyck paths and 3 non-examples with check marks below the examples and red X's below the non-examples)
+
+Every path has an equal number of up-steps and down-steps, and we define the n-th Catalan number as "the number of Dyck paths with n up-steps."  But these numbers describe so much more than just Dyck paths.  In this video, we're going to look at 3 more places out of the hundreds where our friend shows up and I'm going to explain WHY they keep showing up.
+
+Our next encounter with the Catalan numbers comes in the form of binary trees.  A full binary tree is either just a node, or it's a node with a left and a  right child each of which is a full binary tree.  (Show a picture of a binary tree)
+
+And if you start to count them up, you'll notice that the number of full binary trees with 2n+1 total nodes is the n-th Catalan number.  If I asked you to explain why the number of Dyck paths and the number of full binary trees was the same, your first instinct might be to derive a formula for both the number Dyck paths and then for full binary trees and go "look here, they have the same formula."
+
+But this is still a bit unsatisfying.  It tells us that these are counted by the same numbers, but it doesn't tell us why they SHOULD have the same formula.  That is, there should be some sort of nice way to match up Dyck paths and full binary trees and indeed there is.  Feel free to pause now and try to figure out a way.
+
+Here's how to build a binary tree from a Dyck path.  Observe that every Dyck path is either empty, that is, containing no steps at all, or it has a final mountain, where it leaves the x-axis for the last time.  (Highlight the final mountain.) But what is a mountain?  It's a step up, followed by some path that starts and ends on the same y-level without going below, and then a step down.  In other words, it's a Dyck path with legs on either side.  (Show the level that it doesn't go below with a red line.)
+
+Finally, here's our recursive algorithm for how to construct a binary tree from a Dyck path:  If your Dyck path is empty, assign it to a tree that is just a single node. 
+Otherwise, make a tree whose left child is the tree you get from the path before the final mountain and whose right child is the tree you get from the final mountain with its legs cut off. (Animate the recursive pattern.)
+
+I think the binary trees provide a really nice explanation for why this sequence is so ubiquitous.  Any time you're counting objects that decompose into two copies of that type of object, you'll get a binary tree type structure and hence Catalan many objects.  Although... that structure can be hidden like with Dyck paths.
+
+See if you can spot the binary tree structure in our next problem.  You're looking through your old math notes, but to your dismay, some trickster has erased all of the parentheses.  How many ways could you put them back in?  (Show an expression with parentheses, and then without.)
+
+To study this problem, let's try to understand the structure of a particular parenthesized expression:   (7+16)*((9-3)/2)
+
+In the outermost layer, we are multiplying a left and a right expression.  Unsurprisingly then, we can call the entire expression the root of a tree, with its left child the left expression and the right child its right expression.  And since the children are themselves parenthetized expressions, we can repeat the process and get a full binary tree.
+
+Going from a tree back to an expression is just as easy.  Label the vertices of the tree with the symbols in your expression from left to right, and at each vertex make its left child its left expression and its right child its right expression.  (Show animation) 
+
+Since we have a correspondence between parenthesizations with n operations and binary trees with 2n+1 nodes, we know there must be C_n ways to parenthesize an expression.  Parenthesizations are intimately related to an important shape in math and physics known as the Associahedron, but that's a story for another time.
+
+The last place we meet our friend for today comes with a familiar face: Euler.  The Catalan numbers were actually originally discovered by Euler, but they continue to follow the long tradition of things in math being named after the first person after Euler to discover them.
+
+Euler discovered the numbers by counting triangulations of convex polygons.  To triangulate a polygon, you want to partition it into triangles without adding any new vertices. Triangulations are important all over computer science and especailly in computer graphics.  
+
+If you start counting how many ways you can triangulate an n-gon, (show picture of all triangulations on 3, 4, 5, and 6 vertices) you'll quickly notice that our friend is back, but I don't see any obvious binary tree structures on the triangulations.  Instead, we're going to match these up with parenthetizations.
+
+Pick an edge and color it red.  Starting after the red edge, label the remaining edges going around counterclockwise.  Stretch out the polygon so its edges lay flat with the red edge going over them.  The triangulation is now a bunch of arcs grouping the edges together.  The left edge of an arc acts like a left parentheses and the right edge like a right parentheses, and voila, you have a parenthetization.  Of course you could then match this up with a binary tree, but I think that structure is hidden pretty deep.
+
+At the start of the video, we flashed the formula for the Catalan numbers, so you may be wondering where that comes from.  If you've stuck around this long, you might appreciate the following beautiful proof.  
+
+As we know, C_n is the number of full binary with 2n+1 vertices.  Each tree has n+1 leaves, that is, vertices with no children, so on each tree there are (n+1)! ways of labelling its leaves.  I'm going to call these leaf-labelled binary trees or LLBs for short.  To find a formula for C_n, we're going to count LLBs in another way.  We can build an LLB with 2n+3 nodes from one with 2n+1 by replacing any node with a tree whose left or right child is that node and whose other child is a leaf labelled (n+1).  Every LLB can be obtained through a unique sequence of choices in this process, so we simply must count how many ways we can build an LLB this way.
+
+On a tree with 2n+1 nodes, we choose a node and a direction (left or right) giving 2*(2n+1) choices.  Then there are (2*1)(2*3)(2*5)...(2*(2n+1)) total LLBs.  Dividing by $(n+1)!$ we recover the formula for the Catalan numbers.
+
