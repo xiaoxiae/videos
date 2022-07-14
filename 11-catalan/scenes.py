@@ -398,6 +398,153 @@ class ExpressionExample(Scene):
 
 class TriangulatedPolygonExample(Scene):
     def construct(self):
-        p = VGroup(*LinedPolygon.generate_triangulated_polygons(7)).arrange_in_grid(rows=5).scale(0.5)
+        polygons = LinedPolygon.generate_triangulated_polygons(10)
+
+        p = polygons[979].scale(2)
 
         self.play(Write(p))
+
+class AllTriangulatedPolygons(Scene):
+    def construct(self):
+
+        dp = [
+            VGroup(*LinedPolygon.generate_triangulated_polygons(3)).arrange_in_grid(cols=1).set_width(1),
+            VGroup(*LinedPolygon.generate_triangulated_polygons(4)).arrange_in_grid(cols=1).set_width(0.95),
+            VGroup(*LinedPolygon.generate_triangulated_polygons(5)).arrange_in_grid(cols=1).set_width(0.8),
+            VGroup(*LinedPolygon.generate_triangulated_polygons(6)).arrange_in_grid(cols=2).set_width(1.3),
+        ]
+
+        table = Table(
+            [dp],
+            element_to_mobject = lambda x: x,
+            row_labels=[Tex("Triangulations").rotate(PI / 2)],
+            col_labels=[Tex("1"), Tex("2"), Tex("5"), Tex("14")],
+            v_buff=0.4, h_buff=0.65,
+            top_left_entry=Tex("$C_n$"),
+            include_outer_lines=True,
+        )
+
+        table.remove(*table.get_vertical_lines())
+
+        self.play(Write(table))
+
+        #self.play(
+        #    FadeIn(table.get_entries()),
+        #    AnimationGroup(
+        #        Write(table.get_horizontal_lines()[0]),
+        #        Write(table.get_horizontal_lines()[2]),
+        #        Write(table.get_horizontal_lines()[1]),
+        #        lag_ratio=0.25,
+        #    ),
+        #)
+
+
+class PolygonToExpressionExample(MovingCameraScene):
+    def construct(self):
+        polygon = LinedPolygon.generate_triangulated_polygons(6)[12].scale(2)
+
+        self.play(Write(polygon))
+
+        vertices = polygon.polygon.get_vertices()
+
+        red_line = Line(start=vertices[2], end=vertices[1], color=RED, stroke_width=8)
+
+        vertice_objects = VGroup(*[Dot().move_to(v) for v in vertices])
+
+        self.play(
+            FadeIn(red_line),
+            Flash(red_line, color=RED),
+        )
+
+        vertex_labels = VGroup(
+            Tex("1").move_to((vertices[2] + vertices[3]) / 2 * 1.3),
+            Tex("2").move_to((vertices[3] + vertices[4]) / 2 * 1.3),
+            Tex("3").move_to((vertices[4] + vertices[5]) / 2 * 1.3),
+            Tex("4").move_to((vertices[5] + vertices[0]) / 2 * 1.3),
+            Tex("5").move_to((vertices[0] + vertices[1]) / 2 * 1.3),
+        )
+
+        self.play(
+            AnimationGroup(
+                FadeIn(vertice_objects),
+                AnimationGroup(
+                    FadeIn(vertex_labels[0], shift=(vertices[2] + vertices[3]) / 2 * 0.2),
+                    FadeIn(vertex_labels[1], shift=(vertices[3] + vertices[4]) / 2 * 0.2),
+                    FadeIn(vertex_labels[2], shift=(vertices[4] + vertices[5]) / 2 * 0.2),
+                    FadeIn(vertex_labels[3], shift=(vertices[5] + vertices[0]) / 2 * 0.2),
+                    FadeIn(vertex_labels[4], shift=(vertices[0] + vertices[1]) / 2 * 0.2),
+                ),
+                lag_ratio=0.25,
+            )
+        )
+
+        size = vertices[5] - vertices[4]
+
+        other_lines = Path([vertices[2], vertices[3], vertices[4], vertices[5], vertices[0], vertices[1]])
+
+        polygon.remove(polygon.polygon)
+        self.bring_to_back(other_lines)
+
+        self.play(
+            FadeOut(red_line),
+        )
+
+        new_path = Path([
+            vertices[4] - size * 2,
+            vertices[4] - size * 1,
+            vertices[4],
+            vertices[4] + size * 1,
+            vertices[4] + size * 2,
+            vertices[4] + size * 3,
+            ])
+
+        arcs = VGroup(
+            ArcBetweenPoints(new_path[0], new_path[2], angle=-PI / 2),
+            ArcBetweenPoints(new_path[0], new_path[3], angle=-PI / 1.3),
+            ArcBetweenPoints(new_path[5], new_path[3], angle=PI / 2),
+        )
+
+        all_stuff = VGroup(arcs, vertice_objects)
+
+        self.play(
+            Transform(other_lines, new_path),
+            Transform(list(polygon.edges.values())[1], arcs[0]),
+            Transform(list(polygon.edges.values())[2], arcs[1]),
+            Transform(list(polygon.edges.values())[0], arcs[2]),
+            vertex_labels[0].animate.next_to((new_path[0] + new_path[1]) / 2, DOWN, buff=0.4),
+            vertex_labels[1].animate.next_to((new_path[1] + new_path[2]) / 2, DOWN, buff=0.4),
+            vertex_labels[2].animate.next_to((new_path[2] + new_path[3]) / 2, DOWN, buff=0.4),
+            vertex_labels[3].animate.next_to((new_path[3] + new_path[4]) / 2, DOWN, buff=0.4),
+            vertex_labels[4].animate.next_to((new_path[4] + new_path[5]) / 2, DOWN, buff=0.4),
+            vertice_objects[2].animate.move_to(new_path[0]),
+            vertice_objects[3].animate.move_to(new_path[1]),
+            vertice_objects[4].animate.move_to(new_path[2]),
+            vertice_objects[5].animate.move_to(new_path[3]),
+            vertice_objects[0].animate.move_to(new_path[4]),
+            vertice_objects[1].animate.move_to(new_path[5]),
+            self.camera.frame.animate.shift(DOWN),
+            run_time=2,
+        )
+
+        parentheses = VGroup(
+            Tex("(").next_to(new_path[0], DOWN, buff=0.4).shift(LEFT * 0.2),
+            Tex("(").next_to(new_path[0], DOWN, buff=0.4).shift(RIGHT * 0.2),
+            Tex(")").next_to(new_path[2], DOWN, buff=0.4),
+            Tex("(").next_to(new_path[3], DOWN, buff=0.4).shift(RIGHT * 0.2),
+            Tex(")").next_to(new_path[3], DOWN, buff=0.4).shift(LEFT * 0.2),
+            Tex(")").next_to(new_path[5], DOWN, buff=0.4),
+        ).shift(UP * 0.05)
+
+        expression = Tex("$((1 + 2) * 3) - (4 / 5)$").scale(2).shift(2.5 * DOWN)
+
+        self.play(
+                FadeIn(parentheses, lag_ratio=0.1),
+                )
+
+        self.play(
+                FadeOut(vertice_objects),
+                FadeOut(VGroup(*list(polygon.edges.values()))),
+                FadeOut(other_lines),
+                TransformMatchingShapes(VGroup(*vertex_labels, *parentheses), expression),
+                self.camera.frame.animate.move_to(expression),
+        )

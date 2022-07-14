@@ -244,13 +244,20 @@ class LinedPolygon(VMobject):
     def __init__(self, n, edges):
         super().__init__()
 
-        polygon = RegularPolygon(n, color=WHITE)
-        vertices = polygon.get_vertices()
+        self.polygon = RegularPolygon(n, color=WHITE)
 
-        self.add(polygon)
+        if n == 4:
+            self.polygon.rotate(2 * PI / 8)
+
+        vertices = self.polygon.get_vertices()
+
+        self.add(self.polygon)
+
+        self.edges = {}
 
         for u, v in edges:
-            self.add(Line(start=vertices[u], end=vertices[v]))
+            self.edges[(u, v)] = Line(start=vertices[u], end=vertices[v])
+            self.add(self.edges[(u, v)])
 
 
 class DyckPath(VMobject):
@@ -651,3 +658,16 @@ def color_distance(a, b):
 def align_object_by_coords(obj, current, desired):
     """Align an object such that it's current coordinate coordinate will be the desired."""
     obj.shift(desired - current)
+
+
+class Path(VMobject):
+    def __init__(self, points, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.set_points_as_corners(points)
+
+    def get_important_points(self):
+        """Returns the important points of the curve."""
+        return list(self.get_start_anchors()) + [self.get_end_anchors()[-1]]
+
+    def __getitem__(self, i):
+        return self.get_important_points()[i]
