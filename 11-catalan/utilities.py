@@ -614,7 +614,7 @@ def SwapChildren(graph, v, move_height=0.1, speed_ratio=0.75, **kwargs) -> List[
 
     # TODO: using AnimationGroup here stops updaters, I'm not sure how to prevent it
     return [
-        *generate_swap_animations(v, a, UP),
+        *generate_swap_animations(v, a, DOWN),
         *generate_swap_animations(v, b, DOWN),
     ]
 
@@ -655,9 +655,12 @@ def color_distance(a, b):
     return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)
 
 
-def align_object_by_coords(obj, current, desired):
+def align_object_by_coords(obj, current, desired, animation=False):
     """Align an object such that it's current coordinate coordinate will be the desired."""
-    obj.shift(desired - current)
+    if animation:
+        return obj.animate.shift(desired - current)
+    else:
+        obj.shift(desired - current)
 
 
 class Path(VMobject):

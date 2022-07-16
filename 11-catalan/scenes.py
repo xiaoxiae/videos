@@ -19,18 +19,41 @@ class StarsExample(Scene):
         self.play(*[FadeOut(t) for t in trees])
 
 
-class BuildStarsExample(Scene):
+class BuildStarsExample(MovingCameraScene):
     def construct(self):
         tree = BinaryTree.generate_binary_trees(7)[72]
 
-        self.play(Write(tree))
-
         StarUtilities.add_stars_to_graph(tree)
 
-        self.play(CreateStars(tree))
+        self.camera.frame.move_to(tree).set_height(tree.height * 1.5)
 
-        for i in range(2):
-            self.play(*RemoveHighestStar(tree))
+        self.play(
+            AnimationGroup(
+                Write(tree),
+                lag_ratio=0.5,
+            )
+        )
+
+        for i in range(6):
+            new_tree = tree.copy()
+
+            v = tree.get_parent(StarUtilities.get_highest_star(tree))
+
+            self.play(*SwapChildren(tree, v))
+            self.play(*SwapChildren(tree, v))
+
+            self.play(*RemoveHighestStar(new_tree), run_time=0)
+            self.play(FadeIn(new_tree), run_time=0)
+            self.play(FadeOut(new_tree), run_time=0)
+
+            self.play(
+                *RemoveHighestStar(tree),
+                self.camera.frame.animate.move_to(new_tree).set_height(max(new_tree.height * 1.6, 3)),
+            )
+
+        v = tree.get_parent(StarUtilities.get_highest_star(tree))
+        self.play(*SwapChildren(tree, v))
+        self.play(*SwapChildren(tree, v))
 
 
 class DyckPathExamplesNew(MovingCameraScene):
@@ -371,9 +394,30 @@ class DyckToBinary(MovingCameraScene):
         )
 
 
-class ExpressionExample(Scene):
+class ExpressionExample(MovingCameraScene):
     def construct(self):
-        expression = Tex(r"$(7+16) \times ((9 - 3) / 2)$").scale(2)
+        expression = Tex(r"$(7+16) \times ((9 - 3) \div 2)$").scale(2)
+
+        g = Graph(
+                ["", "l", "r", "ll", "lr", "rl", "rr", "rll", "rlr"],
+                [("", "l"),
+                 ("", "r"),
+                 ("l", "ll"),
+                 ("l", "lr"),
+                 ("r", "rl"),
+                 ("r", "rr"),
+                 ("rl", "rll"),
+                 ("rl", "rlr")],
+                layout="tree", root_vertex="").flip().scale(3)
+
+        g.suspend_updating()
+
+        for e in g.edges:
+            g.edges[e].scale(0.5)
+
+        align_object_by_coords(expression, expression[0][6].get_center(), g.vertices[""].get_center())
+
+        self.camera.frame.move_to(expression)
 
         self.play(Write(expression, run_time=0.75))
 
@@ -395,14 +439,178 @@ class ExpressionExample(Scene):
             )
         )
 
+        group = VGroup(g.vertices[""], g.vertices["l"], g.vertices["r"])
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    align_object_by_coords(
+                        expression[0][0:6],
+                        expression[0][2].get_center(),
+                        g.vertices["l"].get_center(),
+                        animation=True),
+                    align_object_by_coords(
+                        expression[0][8:],
+                        expression[0][13].get_center(),
+                        g.vertices["r"].get_center(),
+                        animation=True),
+                ),
+                AnimationGroup(
+                    Write(g.edges[("", "l")]),
+                    Write(g.edges[("", "r")]),
+                ),
+                lag_ratio=0.5,
+            ),
+            self.camera.frame.animate.move_to(group).set_height(max(self.camera.frame.height, group.height * 2)),
+        )
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    expression[0][8].animate.fade(1),
+                    expression[0][12].animate.fade(1),
+                ),
+                AnimationGroup(
+                    expression[0][2].animate.set_color(WHITE),
+                    expression[0][1:2].animate.set_color(RED),
+                    Circumscribe(expression[0][1:2], color=RED),
+                    expression[0][3:5].animate.set_color(BLUE),
+                    Circumscribe(expression[0][3:5], color=BLUE),
+
+                    expression[0][13].animate.set_color(WHITE),
+                    expression[0][9:12].animate.set_color(RED),
+                    Circumscribe(expression[0][9:12], color=RED),
+                    expression[0][14:15].animate.set_color(BLUE),
+                    Circumscribe(expression[0][14:15], color=BLUE),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        group = VGroup(g.vertices[""], g.vertices["l"], g.vertices["r"], g.vertices["ll"], g.vertices["rr"])
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    align_object_by_coords(
+                        expression[0][1:2],
+                        expression[0][1:2].get_center(),
+                        g.vertices["ll"].get_center(),
+                        animation=True),
+                    align_object_by_coords(
+                        expression[0][3:5],
+                        expression[0][3:5].get_center(),
+                        g.vertices["lr"].get_center(),
+                        animation=True),
+                    align_object_by_coords(
+                        expression[0][9:12],
+                        expression[0][10].get_center(),
+                        g.vertices["rl"].get_center(),
+                        animation=True),
+                    align_object_by_coords(
+                        expression[0][14],
+                        expression[0][14].get_center(),
+                        g.vertices["rr"].get_center(),
+                        animation=True),
+                ),
+                AnimationGroup(
+                    Write(g.edges[("l", "ll")]),
+                    Write(g.edges[("l", "lr")]),
+                    Write(g.edges[("r", "rl")]),
+                    Write(g.edges[("r", "rr")]),
+                ),
+                lag_ratio=0.5,
+            ),
+            self.camera.frame.animate.move_to(group).set_height(max(self.camera.frame.height, group.height * 1.6)),
+        )
+
+        self.play(
+            expression[0][1].animate.set_color(WHITE),
+            expression[0][3].animate.set_color(WHITE),
+            expression[0][4].animate.set_color(WHITE),
+            expression[0][10].animate.set_color(WHITE),
+            expression[0][14].animate.set_color(WHITE),
+
+            expression[0][9:10].animate.set_color(RED),
+            Circumscribe(expression[0][9:10], color=RED),
+            expression[0][11:12].animate.set_color(BLUE),
+            Circumscribe(expression[0][11:12], color=BLUE),
+        )
+
+        group = VGroup(g.vertices[""], g.vertices["l"], g.vertices["r"], g.vertices["ll"], g.vertices["rr"], g.vertices["rll"], g.vertices["rlr"])
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    align_object_by_coords(
+                        expression[0][9],
+                        expression[0][9].get_center(),
+                        g.vertices["rll"].get_center(),
+                        animation=True),
+                    align_object_by_coords(
+                        expression[0][11],
+                        expression[0][11].get_center(),
+                        g.vertices["rlr"].get_center(),
+                        animation=True),
+                ),
+                AnimationGroup(
+                    Write(g.edges[("rl", "rll")]),
+                    Write(g.edges[("rl", "rlr")]),
+                ),
+                lag_ratio=0.5,
+            ),
+            self.camera.frame.animate.move_to(group).set_height(max(self.camera.frame.height, group.height * 1.4)),
+        )
+
+        self.play(
+            expression[0].animate.set_color(WHITE),
+        )
+
+
 
 class TriangulatedPolygonExample(Scene):
     def construct(self):
-        polygons = LinedPolygon.generate_triangulated_polygons(10)
+        n = 8
 
-        p = polygons[979].scale(2)
+        polygons = LinedPolygon.generate_triangulated_polygons(n)
 
-        self.play(Write(p))
+        p = polygons[79].scale(2.5).rotate(PI / n)
+        vertices = p.polygon.get_vertices()
+
+        all_edges = list(p.edges) + [(i, (i + 1) % n) for i in range(n)]
+
+        triangles_brr = set()
+
+        print(all_edges)
+
+        for e1 in all_edges:
+            for e2 in all_edges:
+                for e3 in all_edges:
+                    if e1 == e2 or e2 == e3 or e1 == e3:
+                        continue
+
+                    s = tuple(set(e1).union(set(e2).union(set(e3))))
+
+                    if len(s) == 3 and s not in triangles_brr:
+                        triangles_brr.add(s)
+
+        colors = [RED, "#ffd166", "#06d6a0", BLUE]
+        all_colors = color_gradient(colors, len(triangles_brr))
+
+        triangles = VGroup(*[Polygon(vertices[a], vertices[b], vertices[c], fill_opacity=1, color=all_colors[i])
+                     for i, (a, b, c) in enumerate(triangles_brr)])
+
+        for t in triangles:
+            t.round_corners(0.01)
+
+        self.play(Write(p),
+                run_time=1.5,
+                )
+
+        self.play(
+                FadeIn(triangles, lag_ratio=0.05, run_time=1.5),
+                FadeIn(p, run_time=0), # hack
+                )
 
 class AllTriangulatedPolygons(Scene):
     def construct(self):
@@ -426,17 +634,15 @@ class AllTriangulatedPolygons(Scene):
 
         table.remove(*table.get_vertical_lines())
 
-        self.play(Write(table))
-
-        #self.play(
-        #    FadeIn(table.get_entries()),
-        #    AnimationGroup(
-        #        Write(table.get_horizontal_lines()[0]),
-        #        Write(table.get_horizontal_lines()[2]),
-        #        Write(table.get_horizontal_lines()[1]),
-        #        lag_ratio=0.25,
-        #    ),
-        #)
+        self.play(
+            FadeIn(table.get_entries()),
+            AnimationGroup(
+                Write(table.get_horizontal_lines()[0]),
+                Write(table.get_horizontal_lines()[2]),
+                Write(table.get_horizontal_lines()[1]),
+                lag_ratio=0.25,
+            ),
+        )
 
 
 class PolygonToExpressionExample(MovingCameraScene):
@@ -454,6 +660,7 @@ class PolygonToExpressionExample(MovingCameraScene):
         self.play(
             FadeIn(red_line),
             Flash(red_line, color=RED),
+            FadeIn(vertice_objects),
         )
 
         vertex_labels = VGroup(
@@ -465,17 +672,11 @@ class PolygonToExpressionExample(MovingCameraScene):
         )
 
         self.play(
-            AnimationGroup(
-                FadeIn(vertice_objects),
-                AnimationGroup(
-                    FadeIn(vertex_labels[0], shift=(vertices[2] + vertices[3]) / 2 * 0.2),
-                    FadeIn(vertex_labels[1], shift=(vertices[3] + vertices[4]) / 2 * 0.2),
-                    FadeIn(vertex_labels[2], shift=(vertices[4] + vertices[5]) / 2 * 0.2),
-                    FadeIn(vertex_labels[3], shift=(vertices[5] + vertices[0]) / 2 * 0.2),
-                    FadeIn(vertex_labels[4], shift=(vertices[0] + vertices[1]) / 2 * 0.2),
-                ),
-                lag_ratio=0.25,
-            )
+            FadeIn(vertex_labels[0], shift=(vertices[2] + vertices[3]) / 2 * 0.2),
+            FadeIn(vertex_labels[1], shift=(vertices[3] + vertices[4]) / 2 * 0.2),
+            FadeIn(vertex_labels[2], shift=(vertices[4] + vertices[5]) / 2 * 0.2),
+            FadeIn(vertex_labels[3], shift=(vertices[5] + vertices[0]) / 2 * 0.2),
+            FadeIn(vertex_labels[4], shift=(vertices[0] + vertices[1]) / 2 * 0.2),
         )
 
         size = vertices[5] - vertices[4]
@@ -535,7 +736,19 @@ class PolygonToExpressionExample(MovingCameraScene):
             Tex(")").next_to(new_path[5], DOWN, buff=0.4),
         ).shift(UP * 0.05)
 
-        expression = Tex("$((1 + 2) * 3) - (4 / 5)$").scale(2).shift(2.5 * DOWN)
+        expression = Tex("$((1 + 2) * 3) - (4 \div 5)$").scale(2).shift(2.5 * DOWN)
+
+        plus = expression[0][3].copy()
+        expression[0][3].fade(1)
+
+        times = expression[0][6].copy()
+        expression[0][6].fade(1)
+
+        minus = expression[0][9].copy()
+        expression[0][9].fade(1)
+
+        div = expression[0][12].copy()
+        expression[0][12].fade(1)
 
         self.play(
                 FadeIn(parentheses, lag_ratio=0.1),
@@ -546,5 +759,10 @@ class PolygonToExpressionExample(MovingCameraScene):
                 FadeOut(VGroup(*list(polygon.edges.values()))),
                 FadeOut(other_lines),
                 TransformMatchingShapes(VGroup(*vertex_labels, *parentheses), expression),
+                Transform(vertice_objects[3], plus),
+                Transform(vertice_objects[4], times),
+                Transform(vertice_objects[5], minus),
+                Transform(vertice_objects[0], div),
                 self.camera.frame.animate.move_to(expression),
+                run_time=1.5,
         )
