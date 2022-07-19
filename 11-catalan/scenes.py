@@ -1,25 +1,7 @@
 from utilities import *
 
 
-class StarsExample(Scene):
-    def construct(self):
-        trees = VGroup(*BinaryTree.generate_binary_trees(3)).arrange(buff=0.8)
-
-        self.play(AnimationGroup(*[Write(t) for t in trees], lag_ratio=0.1))
-
-        stars_animations = []
-        for t in trees:
-            StarUtilities.add_stars_to_graph(t)
-            stars_animations.append(CreateStars(t))
-
-        self.play(*stars_animations)
-
-        #self.play(ChangeStars(trees[2], 5))
-
-        self.play(*[FadeOut(t) for t in trees])
-
-
-class BuildStarsExample(MovingCameraScene):
+class DeconstructStarsExample(MovingCameraScene):
     def construct(self):
         tree = BinaryTree.generate_binary_trees(7)[72]
 
@@ -34,13 +16,10 @@ class BuildStarsExample(MovingCameraScene):
             )
         )
 
-        for i in range(6):
+        for i in range(7):
             new_tree = tree.copy()
 
             v = tree.get_parent(StarUtilities.get_highest_star(tree))
-
-            self.play(*SwapChildren(tree, v))
-            self.play(*SwapChildren(tree, v))
 
             self.play(*RemoveHighestStar(new_tree), run_time=0)
             self.play(FadeIn(new_tree), run_time=0)
@@ -50,84 +29,6 @@ class BuildStarsExample(MovingCameraScene):
                 *RemoveHighestStar(tree),
                 self.camera.frame.animate.move_to(new_tree).set_height(max(new_tree.height * 1.6, 3)),
             )
-
-        v = tree.get_parent(StarUtilities.get_highest_star(tree))
-        self.play(*SwapChildren(tree, v))
-        self.play(*SwapChildren(tree, v))
-
-
-class DyckPathExamplesNew(MovingCameraScene):
-    def construct(self):
-        self.next_section()
-
-        dyck_paths = Tex(r"Dyck Paths").scale(2)
-
-        self.play(Write(dyck_paths))
-
-        good_paths = VGroup(
-            DyckPath([1, -1, 1, 1, -1, 1, -1, -1]),
-            DyckPath([1, 1, 1, -1, -1, -1, 1, -1]),
-        ).arrange(buff=1.5).shift(DOWN)
-
-        good_paths[0].align_to(good_paths[1], DOWN)
-
-        self.play(
-            AnimationGroup(
-                dyck_paths.animate.shift(UP * 1.25),
-                AnimationGroup(*[Write(p) for p in good_paths], lag_ratio=0.3),
-                lag_ratio=0.5,
-            )
-        )
-
-        #self.play(
-        #    good_paths.animate.arrange(DOWN, buff=0.54).move_to(LEFT * 3 + DOWN * 0.7),
-        #    dyck_paths.animate.move_to(LEFT * 3 + UP * 1.5),
-        #    run_time=1.25
-        #)
-
-        return
-
-        bad_paths = VGroup(
-            DyckPath([-1, 1, 1, -1, 1, -1]),
-            DyckPath(list(reversed([-1, -1, 1, 1, 1, -1, -1]))),
-            DyckPath([1, 1, -1, 1]),
-        ).arrange(DOWN, buff=0.35).move_to(RIGHT * 3 + UP * 0.7)
-
-        self.play(AnimationGroup(*[Write(p) for p in bad_paths], lag_ratio=0.1))
-
-        cross = Tex(r"$\times$").next_to(bad_paths, DOWN, buff=0.7).scale(2).set_color(RED)
-
-        self.play(FadeIn(cross, shift=DOWN * 0.2))
-
-        self.next_section()
-
-        featured_path = good_paths[0]
-
-        # transition
-        self.play(
-            self.camera.frame.animate.move_to(featured_path).set_width(featured_path.width * 1.5),
-            FadeOut(good_paths[1]),
-            FadeOut(good_paths[2]),
-            FadeOut(bad_paths),
-            FadeOut(cross),
-            FadeOut(dyck_paths),
-        )
-
-        self.play(
-            AnimationGroup(
-            *list(map(lambda x: AnimationGroup(*x), zip(
-                [featured_path.path.edges[(u, v)].animate.set_color(GREEN if featured_path.deltas[u] == 1 else RED)
-                  for (u, v) in featured_path.path.edges],
-                [Flash(
-                    featured_path.path.edges[(u, v)],
-                    line_width=0.04, flash_radius=0.05, line_stroke_width=1, line_length=0.04,
-                    color=(GREEN if featured_path.deltas[u] == 1 else RED)
-                    )
-                  for (u, v) in featured_path.path.edges],
-                ))),
-            lag_ratio=0.05,
-            )
-        )
 
 
 class DyckPathExamples(MovingCameraScene):
@@ -140,9 +41,9 @@ class DyckPathExamples(MovingCameraScene):
             DyckPath([1, -1, 1, -1, 1, -1]),
         ).arrange()
 
-        good_paths[0].shift(UP)
+        good_paths[0].shift(UP + RIGHT * 0.5)
         good_paths[1].shift(DOWN)
-        good_paths[2].shift(UP)
+        good_paths[2].shift(UP + LEFT * 0.5)
 
         self.play(AnimationGroup(*[Write(p) for p in good_paths], lag_ratio=0.1))
 
@@ -193,20 +94,31 @@ class DyckPathExamples(MovingCameraScene):
                     )
                   for (u, v) in featured_path.path.edges],
                 ))),
-            lag_ratio=0.05,
+            lag_ratio=0.1,
             )
         )
-
 
 
 class AllDyckPaths(Scene):
     def construct(self):
         dp = [
-            VGroup(*DyckPath.generate_dyck_paths(1)).arrange_in_grid(cols=1).set_width(1),
-            VGroup(*DyckPath.generate_dyck_paths(2)).arrange_in_grid(cols=1).set_width(1.2),
-            VGroup(*DyckPath.generate_dyck_paths(3)).arrange_in_grid(cols=1).set_width(1.5),
-            VGroup(*DyckPath.generate_dyck_paths(4)).arrange_in_grid(cols=2).set_width(2.4),
+            VGroup(*DyckPath.generate_dyck_paths(1)).arrange_in_grid(cols=1, buff=0.8).set_width(1),
+            VGroup(*DyckPath.generate_dyck_paths(2)).arrange_in_grid(cols=1, buff=0.8).set_width(1.2),
+            VGroup(*DyckPath.generate_dyck_paths(3)).arrange_in_grid(cols=1, buff=0.8).set_width(1.2),
+            VGroup(*DyckPath.generate_dyck_paths(4)).arrange_in_grid(cols=2, buff=0.8).set_width(2.4),
         ]
+
+        for graph in dp[1]:
+            for v in graph.path.vertices:
+                graph.path.vertices[v].scale(1.1)
+
+        for graph in dp[2]:
+            for v in graph.path.vertices:
+                graph.path.vertices[v].scale(1.4)
+
+        for graph in dp[3]:
+            for v in graph.path.vertices:
+                graph.path.vertices[v].scale(1.8)
 
         table = Table(
             [dp],
@@ -368,9 +280,9 @@ class DyckToBinary(MovingCameraScene):
         edges = []
 
         paths = parallel_animate_subpath_creation([dpath], all_paths, 1          , vertices, edges)
-        paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.85 ** 1, vertices, edges)
-        paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.85 ** 2, vertices, edges)
-        paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.85 ** 3, vertices, edges)
+        paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.75 ** 1, vertices, edges)
+        paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.75 ** 2, vertices, edges)
+        paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.75 ** 3, vertices, edges)
 
         g = Graph([id(v) for v in vertices], [(id(u), id(v)) for u, v in edges])
 
@@ -409,6 +321,8 @@ class ExpressionExample(MovingCameraScene):
                  ("rl", "rll"),
                  ("rl", "rlr")],
                 layout="tree", root_vertex="").flip().scale(3)
+
+        g_copy = g.copy()
 
         g.suspend_updating()
 
@@ -562,64 +476,131 @@ class ExpressionExample(MovingCameraScene):
             self.camera.frame.animate.move_to(group).set_height(max(self.camera.frame.height, group.height * 1.4)),
         )
 
+        for v in g.vertices:
+            g.vertices[v].scale(1.5)
+
         self.play(
-            expression[0].animate.set_color(WHITE),
+            *[Transform(g.edges[e], g_copy.edges[e]) for e in g_copy.edges],
+            FadeTransform(expression[0][6], g.vertices[""]),
+            FadeTransform(expression[0][2], g.vertices["l"]),
+            FadeTransform(expression[0][13], g.vertices["r"]),
+            FadeTransform(expression[0][1], g.vertices["ll"]),
+            FadeTransform(expression[0][3:5], g.vertices["lr"]),
+            FadeTransform(expression[0][10], g.vertices["rl"]),
+            FadeTransform(expression[0][14], g.vertices["rr"]),
+            FadeTransform(expression[0][9], g.vertices["rll"]),
+            FadeTransform(expression[0][11], g.vertices["rlr"]),
         )
 
 
+class TriangulatedPolygonExample(MovingCameraScene):
+    """Note: this animation takes a few minutes to compute since we're creating a lot of shapes inefficiently."""
 
-class TriangulatedPolygonExample(Scene):
     def construct(self):
         n = 8
+        count = 79
 
-        polygons = LinedPolygon.generate_triangulated_polygons(n)
+        polygons = VGroup(*LinedPolygon.generate_triangulated_polygons(n))
 
-        p = polygons[79].scale(2.5).rotate(PI / n)
-        vertices = p.polygon.get_vertices()
+        for polygon in polygons:
+            polygon.rotate(PI / n)
 
-        all_edges = list(p.edges) + [(i, (i + 1) % n) for i in range(n)]
+        p = polygons[count].scale(2.5)
 
-        triangles_brr = set()
+        self.play(Write(p.polygon), run_time=1)
 
-        print(all_edges)
+        self.play(Write(VGroup(*list(p.edges.values())), run_time=1.5))
 
-        for e1 in all_edges:
-            for e2 in all_edges:
-                for e3 in all_edges:
-                    if e1 == e2 or e2 == e3 or e1 == e3:
-                        continue
+        triangles = create_polygon_triangles(p)
+        self.bring_to_back(triangles)
 
-                    s = tuple(set(e1).union(set(e2).union(set(e3))))
+        self.play(FadeIn(triangles, lag_ratio=0.05, run_time=1.5))
 
-                    if len(s) == 3 and s not in triangles_brr:
-                        triangles_brr.add(s)
+        p.add_to_back(triangles)
 
-        colors = [RED, "#ffd166", "#06d6a0", BLUE]
-        all_colors = color_gradient(colors, len(triangles_brr))
+        polygons = VGroup(*LinedPolygon.generate_triangulated_polygons(n))
 
-        triangles = VGroup(*[Polygon(vertices[a], vertices[b], vertices[c], fill_opacity=1, color=all_colors[i])
-                     for i, (a, b, c) in enumerate(triangles_brr)])
+        for polygon in polygons:
+            polygon.rotate(PI / n)
+            polygon.add_to_back(create_polygon_triangles(polygon))
 
-        for t in triangles:
-            t.round_corners(0.01)
+        polygons.arrange_in_grid(cols=17, buff=0.3)
 
-        self.play(Write(p),
-                run_time=1.5,
-                )
+        pos = polygons[count].get_center()
+        polygons.remove(polygons[count])
+        polygons.scale(2.5)
+
+        align_object_by_coords(polygons, pos, p.get_center())
+
+        def dist(a, b):
+            x1, y1, z1 = a.get_center()
+            x2, y2, z2 = b.get_center()
+
+            return ((x1 - x2) ** 2 + (y1 - y2) ** 2 - (z1 - z2) ** 2) ** (1/2)
 
         self.play(
-                FadeIn(triangles, lag_ratio=0.05, run_time=1.5),
-                FadeIn(p, run_time=0), # hack
-                )
+            AnimationGroup(
+                AnimationGroup(*[Write(q) for q in sorted(polygons, key=lambda x: dist(x, p))], lag_ratio=0.05),
+                self.camera.frame.animate.set_width(polygons.width * 1.15).move_to(polygons),
+                lag_ratio=0.5,
+            )
+        )
+
+
+class AllBinaryTrees(Scene):
+    def construct(self):
+
+        dp = [
+            VGroup(*FullBinaryTree.generate_binary_trees(1)).arrange_in_grid(cols=1, buff=0.6).set_width(1),
+            VGroup(*FullBinaryTree.generate_binary_trees(2)).arrange_in_grid(cols=1, buff=0.6).set_width(1),
+            VGroup(*FullBinaryTree.generate_binary_trees(3)).arrange_in_grid(cols=2, buff=0.6).set_width(2),
+            VGroup(*FullBinaryTree.generate_binary_trees(4)).arrange_in_grid(cols=3, buff=1.2).set_width(2.2),
+        ]
+
+        for graph in dp[1]:
+            for v in graph.vertices:
+                graph.vertices[v].scale(1.1)
+
+        for graph in dp[2]:
+            for v in graph.vertices:
+                graph.vertices[v].scale(1.2)
+
+        for graph in dp[3]:
+            for v in graph.vertices:
+                graph.vertices[v].scale(1.8)
+
+
+        table = Table(
+            [dp],
+            element_to_mobject = lambda x: x,
+            row_labels=[Tex("Full Binary Trees").rotate(PI / 2)],
+            col_labels=[Tex("1"), Tex("2"), Tex("5"), Tex("14")],
+            v_buff=0.4, h_buff=0.65,
+            top_left_entry=Tex("$C_n$"),
+            include_outer_lines=True,
+        )
+
+        table.remove(*table.get_vertical_lines())
+
+        self.play(
+            FadeIn(table.get_entries()),
+            AnimationGroup(
+                Write(table.get_horizontal_lines()[0]),
+                Write(table.get_horizontal_lines()[2]),
+                Write(table.get_horizontal_lines()[1]),
+                lag_ratio=0.25,
+            ),
+        )
+
 
 class AllTriangulatedPolygons(Scene):
     def construct(self):
 
         dp = [
-            VGroup(*LinedPolygon.generate_triangulated_polygons(3)).arrange_in_grid(cols=1).set_width(1),
-            VGroup(*LinedPolygon.generate_triangulated_polygons(4)).arrange_in_grid(cols=1).set_width(0.95),
-            VGroup(*LinedPolygon.generate_triangulated_polygons(5)).arrange_in_grid(cols=1).set_width(0.8),
-            VGroup(*LinedPolygon.generate_triangulated_polygons(6)).arrange_in_grid(cols=2).set_width(1.3),
+            VGroup(*LinedPolygon.generate_triangulated_polygons(3)).arrange_in_grid(cols=1, buff=0.8).set_width(1),
+            VGroup(*LinedPolygon.generate_triangulated_polygons(4)).arrange_in_grid(cols=1, buff=0.3).set_width(0.90),
+            VGroup(*LinedPolygon.generate_triangulated_polygons(5)).arrange_in_grid(cols=1, buff=0.5).set_width(0.75),
+            VGroup(*LinedPolygon.generate_triangulated_polygons(6)).arrange_in_grid(cols=2, buff=0.6).set_width(1.3),
         ]
 
         table = Table(
@@ -765,4 +746,119 @@ class PolygonToExpressionExample(MovingCameraScene):
                 Transform(vertice_objects[0], div),
                 self.camera.frame.animate.move_to(expression),
                 run_time=1.5,
+        )
+
+
+class Intro(MovingCameraScene):
+    def construct(self):
+        pi = Tex(r"$$\pi$$").scale(8)
+
+        self.play(
+            AnimationGroup(
+                Write(pi),
+                Flash(pi, color=WHITE, flash_radius=1.5),
+                lag_ratio=0.5,
+                run_time=1.5
+            )
+        )
+
+        expressions = VGroup(
+            Tex(r"$$\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}$$"),
+            Tex(r"$$n! \approx \sqrt{2 \pi n} \left(\frac{n}{e}\right)^n$$"),
+            Tex(r"$$e^{i \pi} = -1$$"),
+        ).scale(1.5)
+
+        #expressions[0][0][10].set_color(BLUE)
+        #expressions[1][0][6].set_color(BLUE)
+        #expressions[2][0][2].set_color(BLUE)
+
+        self.play(
+            AnimationGroup(
+                Transform(pi, expressions[0][0][10]),
+                AnimationGroup(
+                    FadeIn(expressions[0][0][:10]),
+                    FadeIn(expressions[0][0][11:]),
+                ),
+                lag_ratio=0.25,
+            )
+        )
+
+        self.remove(pi)
+
+        self.play(
+            AnimationGroup(
+                FadeOut(expressions[0][0]),
+                Transform(expressions[0][0][10], expressions[1][0][6]),
+                AnimationGroup(
+                    FadeIn(expressions[1][0][:6]),
+                    FadeIn(expressions[1][0][7:]),
+                ),
+                lag_ratio=0.25,
+            )
+        )
+
+        self.remove(expressions[0][0][10])
+
+        self.play(
+            AnimationGroup(
+                FadeOut(expressions[1][0]),
+                Transform(expressions[1][0][6], expressions[2][0][2]),
+                AnimationGroup(
+                    FadeIn(expressions[2][0][:2]),
+                    FadeIn(expressions[2][0][3:]),
+                ),
+                lag_ratio=0.25,
+            )
+        )
+
+
+class IntroCatalan(MovingCameraScene):
+    def construct(self):
+        catalan_numbers = Tex(r"Catalan numbers").scale(2)
+
+        catalan_formula = Tex(r"$$\mathrm{C}_n = \frac{1}{n + 1} \cdot \binom{2n}{n}$$").shift(DOWN)
+
+
+        self.play(Write(catalan_numbers))
+
+        self.play(
+            catalan_numbers.animate.shift(UP),
+            FadeIn(catalan_formula, shift=UP * 0.5),
+        )
+
+        catalan_sequence = Tex(r"$$= 1, 1, 2, 5, 14, 42, \ldots$$").next_to(catalan_formula, DOWN).align_to(catalan_formula[0][2], LEFT)
+
+        self.play(
+            FadeIn(catalan_sequence, shift=UP * 0.3, lag_ratio=0.05),
+        )
+
+        objects = VGroup(
+            BinaryTree.generate_binary_trees(2)[0],
+            DyckPath([1, -1, 1, 1, -1, 1, -1, -1]),
+            LinedPolygon.generate_triangulated_polygons(7)[10],
+        )
+
+        StarUtilities.add_stars_to_graph(objects[0], no_labels=True)
+
+        objects[2].add_to_back(create_polygon_triangles(objects[2]))
+
+        for (u, v) in objects[1].path.edges:
+            objects[1].path.edges[(u, v)].set_color(GREEN if objects[1].deltas[u] == 1 else RED)
+
+        objects.arrange(buff=1.5).move_to(catalan_formula).shift(DOWN * 3.6)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    self.camera.frame.animate.shift(DOWN * 3.1),
+                    catalan_numbers.animate.shift(UP * 2),
+                ),
+                AnimationGroup(
+                    FadeIn(objects[0], shift=UP * 0.7),
+                    FadeIn(objects[1], shift=UP * 0.7),
+                    FadeIn(objects[2], shift=UP * 0.7),
+                    lag_ratio=0.1,
+                ),
+                lag_ratio=0.5,
+            )
         )

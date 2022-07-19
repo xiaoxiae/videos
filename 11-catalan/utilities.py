@@ -10,9 +10,9 @@ import sympy
 
 class StarUtilities:
     STAR_COLOR = GREEN
-    STAR_N = 8
-    STAR_SCALE = 0.15
-    STAR_OFFSET = 0.26
+    STAR_N = 6
+    STAR_SCALE = 0.12
+    STAR_OFFSET = 0.36
 
     @classmethod
     def get_star_name(cls, i):
@@ -39,11 +39,14 @@ class StarUtilities:
 
 
     @classmethod
-    def create_star_object(cls, number) -> VMobject:
+    def create_star_object(cls, number, no_labels=False) -> VMobject:
         # this MUST be an odd number, else the rotation won't work
         star = Star(cls.STAR_N, density=1.5, color=cls.STAR_COLOR, fill_opacity=1).scale(cls.STAR_SCALE)
-        text = Tex(str(number), color=BLACK).scale(3 * cls.STAR_SCALE).move_to(star)
 
+        if no_labels:
+            return VGroup(star)
+
+        text = Tex(str(number), color=BLACK).scale(3 * cls.STAR_SCALE).move_to(star)
         return VGroup(star, text)
 
     @classmethod
@@ -52,7 +55,7 @@ class StarUtilities:
         return graph.vertices[v].get_center() + (DOWN * 1.9 + direction) * cls.STAR_OFFSET
 
     @classmethod
-    def attach_star_to_vertex(cls, graph, v, number, direction):
+    def attach_star_to_vertex(cls, graph, v, number, direction, no_labels=False):
         """Create star from the vertex in the given direction (LEFT/RIGHT)."""
 
         vertex = graph.add_vertices(
@@ -60,7 +63,7 @@ class StarUtilities:
             positions={
                 cls.get_star_name(number): cls.get_star_position(graph, v, direction)
             },
-            vertex_type=lambda: cls.create_star_object(number),
+            vertex_type=lambda: cls.create_star_object(number, no_labels),
         )[0]
 
         graph.add_edges(
@@ -70,7 +73,7 @@ class StarUtilities:
 
 
     @classmethod
-    def add_stars_to_graph(cls, graph: BinaryTree):
+    def add_stars_to_graph(cls, graph: BinaryTree, no_labels=False):
         """Add stars to a binary tree. It is assumed that '' is the root."""
 
         count = 0
@@ -81,8 +84,8 @@ class StarUtilities:
 
             # add both stars
             if len(descendants) == 0:
-                cls.attach_star_to_vertex(graph, v, count + 1, LEFT)
-                cls.attach_star_to_vertex(graph, v, count + 2, RIGHT)
+                cls.attach_star_to_vertex(graph, v, count + 1, LEFT, no_labels)
+                cls.attach_star_to_vertex(graph, v, count + 2, RIGHT, no_labels)
                 count += 2
 
             # add one star
@@ -90,9 +93,9 @@ class StarUtilities:
                 d = descendants[0]
 
                 if d[-1] == "l":
-                    cls.attach_star_to_vertex(graph, v, count + 1, LEFT)
+                    cls.attach_star_to_vertex(graph, v, count + 1, LEFT, no_labels)
                 else:
-                    cls.attach_star_to_vertex(graph, v, count + 1, RIGHT)
+                    cls.attach_star_to_vertex(graph, v, count + 1, RIGHT, no_labels)
 
                 count += 1
 
@@ -190,15 +193,20 @@ def RemoveHighestStar(graph) -> Animation:
         removed = graph.remove_vertices(max_name_parent)
         removed += graph.remove_vertices(max_name)
 
-        edge = graph.add_edges((max_parent_squared, other_child))[0]
-        edge.set_color(StarUtilities.STAR_COLOR)
-        edge.set_opacity(0)
+        # if max's parent is the only remaining regular vertex, don't add any edges; just remove max and its parent
+        if max_parent_squared is None:
+            return [*[FadeOut(r, run_time=0.5) for r in removed]]
 
-        return [
-            *[FadeOut(r, run_time=0.5) for r in removed],
-            graph.vertices[other_child].animate.move_to(StarUtilities.get_star_position(graph, max_parent_squared, LEFT if max_parent_squared[-1] == "l" else RIGHT)),
-            edge.animate.set_opacity(1),
-        ]
+        else:
+            edge = graph.add_edges((max_parent_squared, other_child))[0]
+            edge.set_color(StarUtilities.STAR_COLOR)
+            edge.set_opacity(0)
+
+            return [
+                *[FadeOut(r, run_time=0.5) for r in removed],
+                graph.vertices[other_child].animate.move_to(StarUtilities.get_star_position(graph, max_parent_squared, LEFT if max_parent_squared[-1] == "l" else RIGHT)),
+                edge.animate.set_opacity(1),
+            ]
 
 
 class LinedPolygon(VMobject):
@@ -674,3 +682,34 @@ class Path(VMobject):
 
     def __getitem__(self, i):
         return self.get_important_points()[i]
+
+
+def create_polygon_triangles(p):
+    vertices = p.polygon.get_vertices()
+    n = len(vertices)
+
+    all_edges = list(p.edges) + [(i, (i + 1) % n) for i in range(n)]
+
+    triangles_brr = set()
+
+    for e1 in all_edges:
+        for e2 in all_edges:
+            for e3 in all_edges:
+                if e1 == e2 or e2 == e3 or e1 == e3:
+                    continue
+
+                s = tuple(set(e1).union(set(e2).union(set(e3))))
+
+                if len(s) == 3 and s not in triangles_brr:
+                    triangles_brr.add(s)
+
+    colors = [RED, "#ffd166", "#06d6a0", BLUE]
+    all_colors = color_gradient(colors, len(triangles_brr))
+
+    triangles = VGroup(*[Polygon(vertices[a], vertices[b], vertices[c], fill_opacity=1, color=all_colors[i])
+                 for i, (a, b, c) in enumerate(triangles_brr)])
+
+    for t in triangles:
+        t.round_corners(0.01)
+
+    return triangles
