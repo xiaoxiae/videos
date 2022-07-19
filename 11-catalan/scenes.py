@@ -525,10 +525,10 @@ class TriangulatedPolygonExample(MovingCameraScene):
             polygon.add_to_back(create_polygon_triangles(polygon))
 
         polygons.arrange_in_grid(cols=17, buff=0.3)
+        polygons.scale(2.5)
 
         pos = polygons[count].get_center()
         polygons.remove(polygons[count])
-        polygons.scale(2.5)
 
         align_object_by_coords(polygons, pos, p.get_center())
 
@@ -536,14 +536,11 @@ class TriangulatedPolygonExample(MovingCameraScene):
             x1, y1, z1 = a.get_center()
             x2, y2, z2 = b.get_center()
 
-            return ((x1 - x2) ** 2 + (y1 - y2) ** 2 - (z1 - z2) ** 2) ** (1/2)
+            return ((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2) ** (1/2)
 
         self.play(
-            AnimationGroup(
-                AnimationGroup(*[Write(q) for q in sorted(polygons, key=lambda x: dist(x, p))], lag_ratio=0.05),
-                self.camera.frame.animate.set_width(polygons.width * 1.15).move_to(polygons),
-                lag_ratio=0.5,
-            )
+            self.camera.frame.animate(run_time=2).set_width(polygons.width * 1.15).move_to(polygons),
+            *[Succession(Wait(dist(p, q) / 35), Write(q)) for q in polygons]
         )
 
 
