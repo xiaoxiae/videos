@@ -27,6 +27,14 @@ class StarUtilities:
         return int(s[len("star_"):])
 
     @classmethod
+    def get_all_stars(cls, graph):
+        all_stars = []
+        for v in graph.vertices:
+            if cls.is_star_name(v):
+                all_stars.append((cls.get_star_index(v), v))
+        return [s for _, s in sorted(all_stars)]
+
+    @classmethod
     def get_highest_star(cls, graph):
         max_index = 0
         max_name = None
@@ -50,18 +58,18 @@ class StarUtilities:
         return VGroup(star, text)
 
     @classmethod
-    def get_star_position(cls, graph, v, direction):
+    def get_star_position(cls, graph, v, direction, star_offset=None):
         """Get the star position, relative to the given vertex in a graph."""
-        return graph.vertices[v].get_center() + (DOWN * 1.9 + direction) * cls.STAR_OFFSET
+        return graph.vertices[v].get_center() + (DOWN * 1.9 + direction) * (star_offset or cls.STAR_OFFSET)
 
     @classmethod
-    def attach_star_to_vertex(cls, graph, v, number, direction, no_labels=False):
+    def attach_star_to_vertex(cls, graph, v, number, direction, no_labels=False, star_offset=None):
         """Create star from the vertex in the given direction (LEFT/RIGHT)."""
 
         vertex = graph.add_vertices(
             cls.get_star_name(number),
             positions={
-                cls.get_star_name(number): cls.get_star_position(graph, v, direction)
+                cls.get_star_name(number): cls.get_star_position(graph, v, direction, star_offset)
             },
             vertex_type=lambda: cls.create_star_object(number, no_labels),
         )[0]
@@ -73,7 +81,7 @@ class StarUtilities:
 
 
     @classmethod
-    def add_stars_to_graph(cls, graph: BinaryTree, no_labels=False):
+    def add_stars_to_graph(cls, graph: BinaryTree, no_labels=False, star_offset=None):
         """Add stars to a binary tree. It is assumed that '' is the root."""
 
         count = 0
@@ -84,8 +92,8 @@ class StarUtilities:
 
             # add both stars
             if len(descendants) == 0:
-                cls.attach_star_to_vertex(graph, v, count + 1, LEFT, no_labels)
-                cls.attach_star_to_vertex(graph, v, count + 2, RIGHT, no_labels)
+                cls.attach_star_to_vertex(graph, v, count + 1, LEFT, no_labels, star_offset)
+                cls.attach_star_to_vertex(graph, v, count + 2, RIGHT, no_labels, star_offset)
                 count += 2
 
             # add one star
@@ -93,30 +101,33 @@ class StarUtilities:
                 d = descendants[0]
 
                 if d[-1] == "l":
-                    cls.attach_star_to_vertex(graph, v, count + 1, LEFT, no_labels)
+                    cls.attach_star_to_vertex(graph, v, count + 1, LEFT, no_labels, star_offset)
                 else:
-                    cls.attach_star_to_vertex(graph, v, count + 1, RIGHT, no_labels)
+                    cls.attach_star_to_vertex(graph, v, count + 1, RIGHT, no_labels, star_offset)
 
                 count += 1
 
         return [cls.get_star_name(i + 1) for i in range(count)]
 
 
-def ChangeStars(graph, permutation: int) -> Animation:
+def ChangeStars(graph, permutation_from: int, permutation_to: int) -> Animation:
     """Return the animation of changing the permutation on the stars."""
     n = (len(graph.vertices) + 1) // 2
-    p = list(permutations(range(1, n + 1)))[permutation]  # computers are fast
+
+    p_from = list(permutations(range(n)))[permutation_from]  # computers are fast
+    p_to = list(permutations(range(n)))[permutation_to]      # computers are fast
 
     animations = []
 
     for vertex in graph.vertices:
         if StarUtilities.is_star_name(vertex):
             star = graph.vertices[vertex]
+            index = StarUtilities.get_star_index(vertex) - 1
 
-            new_index = p[StarUtilities.get_star_index(vertex) - 1]
+            new_index = p_to[p_from[index]]
 
-            if StarUtilities.get_star_index(vertex) != new_index:
-                new_star = StarUtilities.create_star_object(new_index)
+            if p_from[index] != new_index:
+                new_star = StarUtilities.create_star_object(new_index + 1)
                 new_star[1].move_to(star[0])
 
                 animations += [
@@ -526,7 +537,6 @@ class BinaryTree(Graph):
     def _binary_tree_from_parentheses(cls, graph) -> VMobject:
         """Generate a binary tree from nested parentheses.
         Sample input: [None, [None, None]] (generating a 2-vertex binary tree)."""
-
         vertices = [""]
         edges = []
 
@@ -555,7 +565,8 @@ class BinaryTree(Graph):
                     vertices.append(v + s + "L")
                     edges.append((v, vertices[-1]))
 
-        _populate(graph, "")
+        if graph is not None:
+            _populate(graph, "")
 
         g = cls(
             vertices,
@@ -566,7 +577,7 @@ class BinaryTree(Graph):
             vertex_type=lambda: Dot().scale(1.5),
         )
 
-        if cls != FullBinaryTree:
+        if graph is not None and cls != FullBinaryTree:
             for v in list(g.vertices):
                 if "L" in v:
                     g.remove_vertices(v)
@@ -576,6 +587,9 @@ class BinaryTree(Graph):
     @classmethod
     def generate_binary_trees(cls, n: int) -> List[BinaryTree]:
         """Generate all binary trees on n vertices."""
+        if n == 0:
+            return [cls._binary_tree_from_parentheses(None)]
+
         return [cls._binary_tree_from_parentheses(p)
                 for p in cls._generate_parentheses(n)]
 

@@ -3,20 +3,46 @@ from utilities import *
 
 class DeconstructStarsExample(MovingCameraScene):
     def construct(self):
-        tree = BinaryTree.generate_binary_trees(7)[72]
 
-        StarUtilities.add_stars_to_graph(tree)
+        n = 4
+        tree = BinaryTree.generate_binary_trees(n)[6]
+        tree_nolabels = tree.copy()
 
-        self.camera.frame.move_to(tree).set_height(tree.height * 1.5)
+        StarUtilities.add_stars_to_graph(tree, star_offset=0.25)
+        StarUtilities.add_stars_to_graph(tree_nolabels, star_offset=0.25, no_labels=True)
+
+        self.camera.frame.move_to(tree).set_height(tree.height * 1.8)
+
+        self.play(FadeIn(tree_nolabels, shift=DOWN * 0.1))
 
         self.play(
             AnimationGroup(
-                Write(tree),
-                lag_ratio=0.5,
+                *[Wiggle(tree_nolabels.vertices[s], scale_value=1.5) for s in StarUtilities.get_all_stars(tree_nolabels)],
+                lag_ratio=0.03,
             )
         )
 
-        for i in range(7):
+        self.play(
+            AnimationGroup(
+                *[FadeIn(tree.vertices[s][1], run_time=0.6) for s in StarUtilities.get_all_stars(tree)],
+                lag_ratio=0.07,
+            )
+        )
+
+        for obj in self.mobjects:
+            self.remove(obj)
+        self.add(tree)
+
+        from math import factorial
+
+        for i in range(20):
+            self.play(ChangeStars(tree, i, i + 1), run_time=1 if i < 3 else (1 / (i - 1)) ** (4/5))
+
+        self.play(ChangeStars(tree, i + 1, factorial(n + 1) - 1), run_time=0.5)
+
+        return
+
+        for i in range(n):
             new_tree = tree.copy()
 
             v = tree.get_parent(StarUtilities.get_highest_star(tree))
@@ -33,8 +59,6 @@ class DeconstructStarsExample(MovingCameraScene):
 
 class DyckPathExamples(MovingCameraScene):
     def construct(self):
-        self.next_section()
-
         good_paths = VGroup(
             DyckPath([1, -1, 1, 1, -1, 1, -1, -1]),
             DyckPath([1, 1, 1, -1, -1, -1, 1, -1]),
@@ -62,13 +86,15 @@ class DyckPathExamples(MovingCameraScene):
             DyckPath([1, 1, -1, 1]),
         ).arrange(DOWN, buff=0.35).move_to(RIGHT * 3 + DOWN * 0.7)
 
-        self.play(AnimationGroup(*[Write(p) for p in bad_paths], lag_ratio=0.1))
-
         cross = Tex(r"$\times$").next_to(bad_paths, UP, buff=0.7).scale(2).set_color(RED)
 
-        self.play(FadeIn(cross, shift=UP * 0.2))
-
-        self.next_section()
+        self.play(
+            AnimationGroup(
+                AnimationGroup(*[Write(p) for p in bad_paths], lag_ratio=0.1),
+                FadeIn(cross, shift=UP * 0.2),
+                lag_ratio=0.1,
+            )
+        )
 
         featured_path = good_paths[0]
 
@@ -102,29 +128,30 @@ class DyckPathExamples(MovingCameraScene):
 class AllDyckPaths(Scene):
     def construct(self):
         dp = [
+            VGroup(*DyckPath.generate_dyck_paths(0)).arrange_in_grid(cols=1, buff=0.8).set_width(0.15),
             VGroup(*DyckPath.generate_dyck_paths(1)).arrange_in_grid(cols=1, buff=0.8).set_width(1),
             VGroup(*DyckPath.generate_dyck_paths(2)).arrange_in_grid(cols=1, buff=0.8).set_width(1.2),
             VGroup(*DyckPath.generate_dyck_paths(3)).arrange_in_grid(cols=1, buff=0.8).set_width(1.2),
             VGroup(*DyckPath.generate_dyck_paths(4)).arrange_in_grid(cols=2, buff=0.8).set_width(2.4),
         ]
 
-        for graph in dp[1]:
+        for graph in dp[2]:
             for v in graph.path.vertices:
                 graph.path.vertices[v].scale(1.1)
 
-        for graph in dp[2]:
+        for graph in dp[3]:
             for v in graph.path.vertices:
                 graph.path.vertices[v].scale(1.4)
 
-        for graph in dp[3]:
+        for graph in dp[4]:
             for v in graph.path.vertices:
                 graph.path.vertices[v].scale(1.8)
 
         table = Table(
             [dp],
             element_to_mobject = lambda x: x,
-            row_labels=[VGroup(Tex("Dyck"), Tex("Paths")).arrange(DOWN)],
-            col_labels=[Tex("1"), Tex("2"), Tex("5"), Tex("14")],
+            row_labels=[Tex("Dyck Paths").rotate(PI / 2)],
+            col_labels=[Tex("1"), Tex("1"), Tex("2"), Tex("5"), Tex("14")],
             v_buff=0.4, h_buff=0.65,
             top_left_entry=Tex("$C_n$"),
             include_outer_lines=True,
@@ -221,6 +248,7 @@ class DyckToBinary(MovingCameraScene):
             return_paths = []
 
             path_tuples = []
+            lines = []
 
             for path in paths:
 
@@ -231,18 +259,20 @@ class DyckToBinary(MovingCameraScene):
 
                 vertices.append(l_path)
                 vertices.append(r_path)
-                edges.append((path, l_path))
-                edges.append((path, r_path))
+
+                # lines
+                avg = (path.get_center() + l_path.get_center()) / 2
+                avg = (path.get_center() + r_path.get_center()) / 2
 
                 return_paths.append(l_path)
                 return_paths.append(r_path)
 
                 self.bring_to_back(l_path)
-                l_pathcopy = l_path.copy().next_to(path, DOWN, buff=0.5).align_to(path, LEFT).scale(0.85)
+                l_pathcopy = l_path.copy().next_to(path, DOWN, buff=0.75).align_to(path, LEFT).scale(0.85)
                 l_path.fade(1)
 
                 self.bring_to_back(r_path)
-                r_pathcopy = r_path.copy().next_to(path, DOWN, buff=0.5).align_to(path, RIGHT).scale(0.85)
+                r_pathcopy = r_path.copy().next_to(path, DOWN, buff=0.75).align_to(path, RIGHT).scale(0.85)
                 r_path.fade(1)
 
                 if l_pathcopy.height > r_pathcopy.height:
@@ -253,22 +283,28 @@ class DyckToBinary(MovingCameraScene):
                 all_paths.add(l_pathcopy)
                 all_paths.add(r_pathcopy)
 
-                path_tuples.append((l_path, r_path, l_pathcopy, r_pathcopy))
+                lines.append(Line(path.get_center() * 0.5 +  l_pathcopy.get_center() * 0.5, path.get_center() * 0.3 +  l_pathcopy.get_center() * 0.7, stroke_width=3 * scale).set_opacity(0.3))
+                edges.append((path, l_path, lines[-1]))
+                lines.append(Line(path.get_center() * 0.5 +  r_pathcopy.get_center() * 0.5, path.get_center() * 0.3 +  r_pathcopy.get_center() * 0.7, stroke_width=3 * scale).set_opacity(0.3))
+                edges.append((path, r_path, lines[-1]))
+
+                path_tuples.append((path, l_path, r_path, l_pathcopy, r_pathcopy))
 
             self.play(
-                *[Transform(lp, lpc) for lp, rp, lpc, rpc in path_tuples],
-                *[Transform(rp, rpc) for lp, rp, lpc, rpc in path_tuples],
+                *[Transform(lp, lpc) for _, lp, rp, lpc, rpc in path_tuples],
+                *[Transform(rp, rpc) for _, lp, rp, lpc, rpc in path_tuples],
+                *[Succession(Wait(0.6), Write(line, run_time=0.5)) for line in lines],
                 self.camera.frame.animate.move_to(all_paths).set_height(max(self.camera.frame.height, all_paths.height * 1.25)),
             )
 
-            hill_anims = [lp.get_last_hill_animations() for lp, rp, lpc, rpc in path_tuples] + [rp.get_last_hill_animations() for lp, rp, lpc, rpc in path_tuples]
+            hill_anims = [lp.get_last_hill_animations() for _, lp, rp, lpc, rpc in path_tuples] + [rp.get_last_hill_animations() for _, lp, rp, lpc, rpc in path_tuples]
 
             self.play(*[a for (a, _) in hill_anims])
 
             for _, todo in hill_anims:
                 todo()
 
-            for lp, rp, lpc, rpc in path_tuples:
+            for _, lp, rp, lpc, rpc in path_tuples:
                 all_paths.remove(lpc)
                 all_paths.remove(rpc)
                 all_paths.add(lp)
@@ -284,25 +320,19 @@ class DyckToBinary(MovingCameraScene):
         paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.75 ** 2, vertices, edges)
         paths = parallel_animate_subpath_creation(paths, all_paths, 1 * 0.75 ** 3, vertices, edges)
 
-        g = Graph([id(v) for v in vertices], [(id(u), id(v)) for u, v in edges])
+        g = Graph([id(v) for v in vertices], [(id(u), id(v)) for u, v, _ in edges])
 
         for path in all_paths:
-            g.vertices[id(path)].move_to(path).align_to(path, DOWN)
+            g.vertices[id(path)].move_to(path).align_to(path, DOWN).scale(1.75)
+
+        for u, v, e in edges:
+            g.edges[(id(u), id(v))].put_start_and_end_on(g.vertices[id(u)].get_center(), g.vertices[id(v)].get_center())
 
         self.play(
-            *[
-            FadeTransform(path, g.vertices[id(path)])
-            for path in all_paths
-            ],
+            *[FadeTransform(path, g.vertices[id(path)]) for path in all_paths],
             self.camera.frame.animate.move_to(VGroup(*list(g.vertices.values()))).set_height(VGroup(*list(g.vertices.values())).height * 1.5),
+            *[Transform(e, g.edges[(id(u), id(v))]) for u, v, e in edges],
             run_time=1.5,
-        )
-
-        for path in all_paths:
-            g.remove(g.vertices[id(path)])
-
-        self.play(
-            Write(g, run_time=2)
         )
 
 
@@ -548,21 +578,22 @@ class AllBinaryTrees(Scene):
     def construct(self):
 
         dp = [
+            VGroup(*FullBinaryTree.generate_binary_trees(0)).arrange_in_grid(cols=1, buff=0.6).set_width(0.2),
             VGroup(*FullBinaryTree.generate_binary_trees(1)).arrange_in_grid(cols=1, buff=0.6).set_width(1),
             VGroup(*FullBinaryTree.generate_binary_trees(2)).arrange_in_grid(cols=1, buff=0.6).set_width(1),
             VGroup(*FullBinaryTree.generate_binary_trees(3)).arrange_in_grid(cols=2, buff=0.6).set_width(2),
             VGroup(*FullBinaryTree.generate_binary_trees(4)).arrange_in_grid(cols=3, buff=1.2).set_width(2.2),
         ]
 
-        for graph in dp[1]:
+        for graph in dp[2]:
             for v in graph.vertices:
                 graph.vertices[v].scale(1.1)
 
-        for graph in dp[2]:
+        for graph in dp[3]:
             for v in graph.vertices:
                 graph.vertices[v].scale(1.2)
 
-        for graph in dp[3]:
+        for graph in dp[4]:
             for v in graph.vertices:
                 graph.vertices[v].scale(1.8)
 
@@ -571,7 +602,7 @@ class AllBinaryTrees(Scene):
             [dp],
             element_to_mobject = lambda x: x,
             row_labels=[Tex("Full Binary Trees").rotate(PI / 2)],
-            col_labels=[Tex("1"), Tex("2"), Tex("5"), Tex("14")],
+            col_labels=[Tex("1"), Tex("1"), Tex("2"), Tex("5"), Tex("14")],
             v_buff=0.4, h_buff=0.65,
             top_left_entry=Tex("$C_n$"),
             include_outer_lines=True,
@@ -604,7 +635,7 @@ class AllTriangulatedPolygons(Scene):
             [dp],
             element_to_mobject = lambda x: x,
             row_labels=[Tex("Triangulations").rotate(PI / 2)],
-            col_labels=[Tex("1"), Tex("2"), Tex("5"), Tex("14")],
+            col_labels=[Tex("1"), Tex("1"), Tex("2"), Tex("5"), Tex("14")],
             v_buff=0.4, h_buff=0.65,
             top_left_entry=Tex("$C_n$"),
             include_outer_lines=True,
@@ -714,7 +745,7 @@ class PolygonToExpressionExample(MovingCameraScene):
             Tex(")").next_to(new_path[5], DOWN, buff=0.4),
         ).shift(UP * 0.05)
 
-        expression = Tex("$((1 + 2) * 3) - (4 \div 5)$").scale(2).shift(2.5 * DOWN)
+        expression = Tex(r"$((1 + 2) \times 3) - (4 \div 5)$").scale(2).shift(2.5 * DOWN)
 
         plus = expression[0][3].copy()
         expression[0][3].fade(1)
