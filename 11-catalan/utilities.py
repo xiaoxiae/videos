@@ -124,9 +124,10 @@ def ChangeStars(graph, permutation_from: int, permutation_to: int) -> Animation:
             star = graph.vertices[vertex]
             index = StarUtilities.get_star_index(vertex) - 1
 
-            new_index = p_to[p_from[index]]
+            current = p_from[index]
+            new_index = p_to[index]
 
-            if p_from[index] != new_index:
+            if current != new_index:
                 new_star = StarUtilities.create_star_object(new_index + 1)
                 new_star[1].move_to(star[0])
 

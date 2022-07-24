@@ -1,17 +1,20 @@
 from utilities import *
 
 
-class DeconstructStarsExample(MovingCameraScene):
+class ConstructStarsExample(MovingCameraScene):
     def construct(self):
+        height_scale = 1.6
+
+        star_offset=0.25
 
         n = 4
         tree = BinaryTree.generate_binary_trees(n)[6]
         tree_nolabels = tree.copy()
 
-        StarUtilities.add_stars_to_graph(tree, star_offset=0.25)
-        StarUtilities.add_stars_to_graph(tree_nolabels, star_offset=0.25, no_labels=True)
+        StarUtilities.add_stars_to_graph(tree, star_offset=star_offset)
+        StarUtilities.add_stars_to_graph(tree_nolabels, star_offset=star_offset, no_labels=True)
 
-        self.camera.frame.move_to(tree).set_height(tree.height * 1.8)
+        self.camera.frame.move_to(tree).set_height(tree.height * height_scale)
 
         self.play(FadeIn(tree_nolabels, shift=DOWN * 0.1))
 
@@ -26,7 +29,16 @@ class DeconstructStarsExample(MovingCameraScene):
             AnimationGroup(
                 *[FadeIn(tree.vertices[s][1], run_time=0.6) for s in StarUtilities.get_all_stars(tree)],
                 lag_ratio=0.07,
-            )
+            ),
+            AnimationGroup(
+                *[Circumscribe(tree.vertices[s][1],
+                    color=BLACK,
+                    run_time=0.6,
+                    shape=Circle,
+                    stroke_width=1.2,
+                    buff=0.01) for s in StarUtilities.get_all_stars(tree)],
+                lag_ratio=0.07,
+            ),
         )
 
         for obj in self.mobjects:
@@ -35,26 +47,184 @@ class DeconstructStarsExample(MovingCameraScene):
 
         from math import factorial
 
-        for i in range(20):
-            self.play(ChangeStars(tree, i, i + 1), run_time=1 if i < 3 else (1 / (i - 1)) ** (4/5))
+        for i in range(30):
+            self.play(ChangeStars(tree, i, i + 1), run_time=0.5 if i < 3 else (1 / (i - 1)) ** (3/2))
 
-        self.play(ChangeStars(tree, i + 1, factorial(n + 1) - 1), run_time=0.5)
+        self.play(ChangeStars(tree, i, factorial(n + 1) - 1), run_time=0.1)
 
-        return
+        self.wait(0.5)
 
-        for i in range(n):
-            new_tree = tree.copy()
+        TEXT_SCALE = 0.4
 
-            v = tree.get_parent(StarUtilities.get_highest_star(tree))
+        llb = Tex(r"$$\mathrm{LLB}_{2n + 1} = C_n (n + 1)!$$").scale(TEXT_SCALE).next_to(tree, LEFT, buff=1)
 
-            self.play(*RemoveHighestStar(new_tree), run_time=0)
-            self.play(FadeIn(new_tree), run_time=0)
-            self.play(FadeOut(new_tree), run_time=0)
+        llb_compute = Tex(r"$$= \left(2 \cdot 1\right) \left(2 \cdot 3\right) \ldots \left(2 \cdot (2n + 1)\right)$$").scale(TEXT_SCALE)
 
-            self.play(
-                *RemoveHighestStar(tree),
-                self.camera.frame.animate.move_to(new_tree).set_height(max(new_tree.height * 1.6, 3)),
+        self.play(
+            FadeIn(llb, shift=LEFT * 0.1),
+            self.camera.frame.animate.move_to(VGroup(llb, tree)),
+        )
+
+        self.play(
+            AnimationGroup(
+                *[Circumscribe(tree.vertices[s], shape=Circle,
+                    color=WHITE if not StarUtilities.is_star_name(s) else GREEN,
+                    stroke_width=1,
+                    buff=0.03)
+                  for s in tree.vertices],
+                lag_ratio=0.05,
             )
+        )
+
+        tree.suspend_updating()
+
+        subtree = VGroup(
+            tree.vertices["r"],
+            tree.vertices["rl"],
+            tree.vertices["star_1"],
+            tree.vertices["star_2"],
+            tree.vertices["star_3"],
+            tree.edges[("r", "rl")],
+            tree.edges[("r", "star_1")],
+            tree.edges[("rl", "star_2")],
+            tree.edges[("rl", "star_3")],
+        )
+
+        ldot = Dot().move_to(StarUtilities.get_star_position(tree, "r", LEFT, star_offset=star_offset)).scale(0.5).set_color(DARK_GRAY)
+        rdot = Dot().move_to(StarUtilities.get_star_position(tree, "r", RIGHT, star_offset=star_offset)).scale(0.5).set_color(DARK_GRAY)
+
+        vpos = tree.vertices["r"].get_center()
+
+        ldot_line = Line(vpos, ldot.get_center(), stroke_width=tree.edges[("", "r")].stroke_width * 0.75).set_color(DARK_GRAY)
+        rdot_line = Line(vpos, rdot.get_center(), stroke_width=tree.edges[("", "r")].stroke_width * 0.75).set_color(DARK_GRAY)
+
+        subtree.shift(DOWN)
+        scale = self.camera.frame.height / (VGroup(tree, llb).height * height_scale)
+        animation = self.camera.frame.animate.move_to(VGroup(tree, llb)).set_height(VGroup(tree, llb).height * height_scale)
+        subtree.shift(UP)
+
+        v = BinaryTree.generate_binary_trees(1)[0].move_to(vpos)
+        v.set_z_index(1)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    subtree.animate.shift(DOWN),
+                    animation,
+                ),
+                AnimationGroup(
+                    FadeIn(v),
+                    AnimationGroup(
+                        FadeIn(ldot),
+                        Flash(ldot, color=DARK_GRAY, line_stroke_width=1, flash_radius=0.1, line_length=0.05),
+                        Write(ldot_line),
+                    ),
+                    AnimationGroup(
+                        FadeIn(rdot),
+                        Flash(rdot, color=DARK_GRAY, line_stroke_width=1, flash_radius=0.1, line_length=0.05),
+                        Write(rdot_line),
+                    ),
+                    lag_ratio=0.15,
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.bring_to_back(ldot)
+        self.bring_to_back(rdot)
+        self.bring_to_back(ldot_line)
+        self.bring_to_back(rdot_line)
+
+        star = StarUtilities.create_star_object("6").move_to(rdot).set_z_index(1)
+
+        l1 = Line(vpos, ldot.get_center(), stroke_width=tree.edges[("", "r")].stroke_width)
+        l2 = Line(vpos, rdot.get_center(), stroke_width=tree.edges[("", "r")].stroke_width)
+
+        subtree.shift(UP * 0.5)
+        scale = self.camera.frame.height / (VGroup(tree, llb).height * height_scale)
+        animation = self.camera.frame.animate.move_to(VGroup(tree, llb)).set_height(VGroup(tree, llb).height * height_scale)
+        subtree.shift(DOWN * 0.5)
+
+        self.play(
+            AnimationGroup(
+                align_object_by_coords(subtree, tree.vertices["r"].get_center(), ldot.get_center(), animation=True),
+                AnimationGroup(
+                    Write(star),
+                ),
+                AnimationGroup(
+                    Write(l1),
+                    Write(l2),
+                    lag_ratio=0.1,
+                ),
+                lag_ratio=0.5,
+            ),
+            animation,
+        )
+
+        self.remove(ldot)
+        self.remove(rdot)
+        self.remove(ldot_line)
+        self.remove(rdot_line)
+
+        entire_tree = VGroup(tree, star, l1, l2, v)
+
+        align_object_by_coords(llb_compute, llb_compute[0][0].get_center(), llb[0][7].get_center())
+        llb_compute.shift(RIGHT * 1.23)
+
+        shift = RIGHT * 2.6
+        entire_tree.shift(shift)
+        animation = self.camera.frame.animate.move_to(VGroup(entire_tree, llb[0][8:]))
+        entire_tree.shift(-shift)
+
+        self.play(
+            FadeOut(llb[0][0:8]),
+            AnimationGroup(
+                entire_tree.animate.shift(shift),
+                FadeIn(llb_compute, shift=RIGHT * 0.2),
+                lag_ratio=0.5,
+            ),
+            animation,
+        )
+
+        next_part = Tex(r"$$C_n = \frac{\left(2 \cdot 1\right) \left(2 \cdot 3\right) \ldots \left(2 \cdot (2n + 1)\right)}{(n + 1)!}$$").scale(TEXT_SCALE)
+        align_object_by_coords(next_part, next_part[0][2].get_center(), llb_compute[0][0].get_center())
+        next_part.shift(LEFT * 0.5)
+
+        def return_symbol_transforms(a, b, i, j, n):
+            return [ReplacementTransform(a[0][i + k], b[0][j + k]) for k in range(n)]
+
+        # it randomly starts updating here
+        tree.remove(tree.edges[("", "r")])
+        entire_tree.add(Line(tree.vertices[""].get_center(), v.get_center(), stroke_width=tree.edges[("", "r")].stroke_width))
+
+        self.play(
+            *return_symbol_transforms(llb_compute, next_part, 0, 2, 24),
+            *return_symbol_transforms(llb, next_part, 10, 27, 6),
+            *return_symbol_transforms(llb, next_part, 8, 0, 2),
+            Succession(Wait(0.2), FadeIn(next_part[0][26])),
+        )
+
+        more_next_part = Tex(r"$$C_n = \frac{1}{n + 1} \cdot \binom{2n}{n}$$").scale(TEXT_SCALE)
+
+        align_object_by_coords(more_next_part, more_next_part[0][2].get_center(), next_part[0][2].get_center())
+
+        self.play(
+            Transform(next_part[0][3:], more_next_part[0][3:])
+        )
+
+        for o in self.mobjects:
+            self.remove(o)
+
+        mnp = more_next_part.copy().scale(1.5)
+        et = entire_tree.copy()
+
+        g = VGroup(mnp, et).arrange(buff=1.5)
+
+        self.play(
+            Transform(more_next_part, mnp),
+            Transform(entire_tree, et),
+            self.camera.frame.animate.move_to(g),
+        )
 
 
 class DyckPathExamples(MovingCameraScene):
@@ -283,9 +453,9 @@ class DyckToBinary(MovingCameraScene):
                 all_paths.add(l_pathcopy)
                 all_paths.add(r_pathcopy)
 
-                lines.append(Line(path.get_center() * 0.5 +  l_pathcopy.get_center() * 0.5, path.get_center() * 0.3 +  l_pathcopy.get_center() * 0.7, stroke_width=3 * scale).set_opacity(0.3))
+                lines.append(Line(path.get_center() * 0.5 +  l_pathcopy.get_center() * 0.5, path.get_center() * 0.3 +  l_pathcopy.get_center() * 0.7, stroke_width=3.3 * scale).set_opacity(0.3).scale(0.9))
                 edges.append((path, l_path, lines[-1]))
-                lines.append(Line(path.get_center() * 0.5 +  r_pathcopy.get_center() * 0.5, path.get_center() * 0.3 +  r_pathcopy.get_center() * 0.7, stroke_width=3 * scale).set_opacity(0.3))
+                lines.append(Line(path.get_center() * 0.5 +  r_pathcopy.get_center() * 0.5, path.get_center() * 0.3 +  r_pathcopy.get_center() * 0.7, stroke_width=3.3 * scale).set_opacity(0.3).scale(0.9))
                 edges.append((path, r_path, lines[-1]))
 
                 path_tuples.append((path, l_path, r_path, l_pathcopy, r_pathcopy))
@@ -299,7 +469,9 @@ class DyckToBinary(MovingCameraScene):
 
             hill_anims = [lp.get_last_hill_animations() for _, lp, rp, lpc, rpc in path_tuples] + [rp.get_last_hill_animations() for _, lp, rp, lpc, rpc in path_tuples]
 
-            self.play(*[a for (a, _) in hill_anims])
+            self.play(
+                *[a for (a, _) in hill_anims],
+            )
 
             for _, todo in hill_anims:
                 todo()
@@ -844,8 +1016,7 @@ class IntroCatalan(MovingCameraScene):
     def construct(self):
         catalan_numbers = Tex(r"Catalan numbers").scale(2)
 
-        catalan_formula = Tex(r"$$\mathrm{C}_n = \frac{1}{n + 1} \cdot \binom{2n}{n}$$").shift(DOWN)
-
+        catalan_formula = Tex(r"$$C_n = \frac{1}{n + 1} \cdot \binom{2n}{n}$$").shift(DOWN)
 
         self.play(Write(catalan_numbers))
 
