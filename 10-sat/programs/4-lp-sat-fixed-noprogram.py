@@ -5,8 +5,7 @@ from random import random
 model = LpProblem(name="lp-sat", sense=LpMaximize)
 
 # literal variables
-variables = [LpVariable(name=c) for c in "ab"]
-a, b = variables
+a, b = [LpVariable(name=c) for c in "ab"]
 
 # clause variables
 x, y, z = [LpVariable(name=c) for c in "xyz"]
@@ -28,4 +27,4 @@ model += x + y + z
 # solve (and ignore debug messages)
 status = model.solve(PULP_CBC_CMD(msg=False))
 print(f"Objective function: {model.objective.value()}")
-print("Hints:", *[f"{v.name} = {v.value()}" for v in variables])
+print("\n".join([f"{v.name} = {v.value()}" for v in [a, b]]))
