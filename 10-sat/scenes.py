@@ -9,8 +9,6 @@ class Factories(MovingCameraScene):
     def construct(self):
         seed(0xDEADBEEF)
 
-        #h = 5
-        #w = 5
         h = 13
         w = 31
         offset = ((w * h) // 2 - 1)
@@ -53,9 +51,9 @@ class Factories(MovingCameraScene):
         self.camera.frame.move_to(VGroup(*factories[offset:offset+3]))
 
         texts = VGroup(*[
-            (VGroup(*[Tex(p) for p in pgroup]).arrange(DOWN).next_to(factories[i], DOWN)
+            (VGroup(*[Tex(p) for p in pgroup]).arrange(DOWN, buff=0.15).next_to(factories[i], DOWN, buff=0.3)
                 if len(pgroup) == 2
-                else VGroup(*[Tex(p) for p in pgroup]).arrange(DOWN).next_to(factories[i], DOWN).shift(DOWN * 0.25))
+                else VGroup(*[Tex(p) for p in pgroup]).arrange(DOWN, buff=0.15).next_to(factories[i], DOWN, buff=0.3).shift(DOWN * 0.25))
             for i, pgroup in enumerate(products)])
 
         groups = sorted([(i, distance(f, Dot())) for i, f in enumerate(factories)], key=lambda x: x[1])
@@ -79,10 +77,41 @@ class Factories(MovingCameraScene):
         self.camera.frame.save_state()
 
         self.play(
+            AnimationGroup(
+                texts[offset + 2][1].animate.set_color(DARK_GRAY),
+                AnimationGroup(
+                    Circumscribe(texts[offset][0],     color=WHITE, stroke_width=2),
+                    Circumscribe(texts[offset][1],     color=WHITE, stroke_width=2),
+                    Circumscribe(texts[offset + 1][0], color=WHITE, stroke_width=2),
+                    Circumscribe(texts[offset + 2][0], color=WHITE, stroke_width=2),
+                ),
+                lag_ratio=0.0,
+            ),
+        )
+
+        self.play(
             *[Succession(Wait(d / 40), FadeIn(factories[i], shift=UP * 0.1)) for i, d in groups if i not in not_wanted],
             *[Succession(Wait(d / 40), FadeIn(texts[i], shift=UP * 0.1)) for i, d in groups if i not in not_wanted],
             self.camera.frame.animate(run_time=2).set_height(v.get_height() * 1.25),
+            texts[offset + 2][1].animate.set_color(WHITE),
         )
+
+        text = Tex("How can we do this efficiently?").scale(10).move_to(self.camera.frame)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    factories.animate.set_opacity(0.3),
+                    texts.animate.set_opacity(0.3),
+                ),
+                FadeIn(text),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.remove(text)
+        factories.set_opacity(1)
+        texts.set_opacity(1)
 
         self.play(
             self.camera.frame.animate.restore(),
@@ -163,11 +192,12 @@ class Factories(MovingCameraScene):
 
 
 class SATSad(MovingCameraScene):
+    @fade
     def construct(self):
         sat = Tex("\Huge SAT")
         self.camera.frame.save_state()
 
-        self.play(Write(sat))
+        self.play(FadeIn(sat))
 
         p = Tex(r"\Huge \textbf{P}").scale(1.3)
         np = Tex(r"\Huge \textbf{NP}").scale(1.3)
@@ -218,7 +248,7 @@ class SATSad(MovingCameraScene):
 
 
         g1 = axes.plot(f1, x_range=[0, n], color=BLUE)
-        l1 = axes.get_graph_label(g1, "\mathcal{O}(e^x)", x_val=n * (5/6), direction=UP + LEFT, buff=0.1).scale(0.7)
+        l1 = axes.get_graph_label(g1, "\mathcal{O}(\mathrm{exp})", x_val=n * (5/6), direction=UP + LEFT, buff=0.1).scale(0.7)
 
         tip = Triangle().set_color(BLUE).set_opacity(1.0).scale(0.15).rotate(-PI / 7).move_to(axes.coords_to_point(n, 2**n)).shift(UP * 0.06 + LEFT * 0.015)
 
@@ -226,6 +256,8 @@ class SATSad(MovingCameraScene):
             self.remove(mobject)
 
         self.camera.frame.restore()
+
+        thing = VGroup(axes, labels, g1, tip, l1).move_to(ORIGIN)
 
         self.play(
             AnimationGroup(
@@ -236,10 +268,10 @@ class SATSad(MovingCameraScene):
             )
         )
 
-        nof = n * (15/16)
+        nof = n * (11/12)
 
         point = Dot(axes.coords_to_point(nof, f1(nof)), color=BLUE)
-        line = axes.get_lines_to_point(axes.c2p(nof, f1(nof)))[0].set_color(BLUE)
+        line = axes.get_lines_to_point(axes.c2p(nof, f1(nof)))[1].set_color(BLUE)
 
         text = Tex("long time").scale(0.65).next_to(point, RIGHT, buff=0.25).set_color(BLUE)
 
@@ -280,167 +312,30 @@ class SATSad(MovingCameraScene):
 
         self.play(FadeIn(table, shift=UP * 0.3))
 
-        #self.play(Circumscribe(VGroup(table[0][48-d:62-d], table[0][83-d:90-d]), color=YELLOW, stroke_width=0.7, buff=0.05, time_width=0.5, run_time=1))
-        self.play(Circumscribe(VGroup(table[0][62-d:75-d], table[0][90-d:103-d]), color=YELLOW, stroke_width=1.7, buff=0.1, time_width=0.5, run_time=1.5))
+        #self.play(Circumscribe(VGroup(table[0][48-d:62-d], table[0][83-d:90-d]), color=YELLOW, stroke_width=2, buff=0.05, time_width=0.5, run_time=1))
+        self.play(Circumscribe(VGroup(table[0][62-d:75-d], table[0][90-d:103-d]), color=YELLOW, stroke_width=2, buff=0.1, time_width=0.5, run_time=1.5))
 
         self.play(FadeOut(table))
 
-        #best_sat = Tex(r"\Huge BEST-SAT").shift(UP)
+        best_sat = Tex(r"\Huge BEST-SAT").shift(UP)
+        best_sat[0][0:5].set_color(GREEN)
 
-        #lp = Tex(r"\Large LP-SAT \\ \vspace{0.3em} \normalsize \textit{also random, based on \\ linear programming}").move_to(best_sat).shift((RIGHT + DOWN) * 3)
-        #rand = Tex(r"\Large RAND-SAT \\ \vspace{0.3em} \normalsize \textit{assignment is \\ entirely random}").move_to(best_sat).shift((LEFT + DOWN) * 3)
+        lp = Tex(r"\Large LP-SAT \\ \vspace{0.3em} \normalsize \textit{also random, based on \\ \textbf{linear programming}}").move_to(best_sat).shift((RIGHT + DOWN) * 3)
+        lp[0][0:3].set_color(RED)
 
-        #self.play(
-        #    FadeIn(lp, shift=UP * 0.3),
-        #    FadeIn(rand, shift=UP * 0.3),
-        #    FadeIn(best_sat, shift=UP * 0.1),
-        #)
+        rand = Tex(r"\Large RAND-SAT \\ \vspace{0.3em} \normalsize \textit{assignment is \\ \textbf{entirely random}}").move_to(best_sat).shift((LEFT + DOWN) * 3)
+        rand[0][0:5].set_color(RED)
 
+        self.camera.frame.move_to(best_sat)
 
-class SATYetAgain(MovingCameraScene):
-    def construct(self):
-        bsat = Tex("\Huge Boolean Satisfiability Problem").scale(0.7)
-
-        sat = Tex("\Huge SAT").scale(2)
-        sat_cp = sat.copy()
-
-        p = Tex(r"\Huge \textbf{P}").scale(1.3)
-        np = Tex(r"\Huge \textbf{NP}").scale(1.3)
-
-        p_np = VGroup(p, np).arrange(buff=1.5).shift(UP * 0.6)
-
-        self.play(Write(bsat), run_time=1.5)
+        self.play(FadeIn(best_sat))
 
         self.play(
-                AnimationGroup(
-                    AnimationGroup(
-                        FadeOut(bsat[0][0:7], shift=LEFT * 0.25),
-                        FadeOut(bsat[0][10:], shift=RIGHT * 0.25),
-                    ),
-                    AnimationGroup(
-                        FadeTransform(bsat[0][7], sat[0][0]),
-                        Transform(bsat[0][8], sat[0][1]),
-                        Transform(bsat[0][9], sat[0][2]),
-                    ),
-                    lag_ratio=0.5,
-                )
-            )
-
-        for mobject in self.mobjects:
-            self.remove(mobject)
-
-        sat.become(sat_cp)
-
-        self.add(sat)
-
-        sat_to_surround = sat.copy().shift(DOWN * 1.1).scale(1/4)
-
-        p_circle = Circle(color=WHITE).surround(p, buffer_factor=1.45)
-        np_circle = Circle(color=WHITE).surround(p_np + VGroup(sat_to_surround), buffer_factor=1.15)
-
-        self.play(
-                AnimationGroup(
-                    Transform(sat, sat_to_surround),
-                    AnimationGroup(
-                        Write(p_np),
-                        Write(p_circle),
-                        Write(np_circle),
-                        lag_ratio=0.1,
-                    ),
-                lag_ratio=0.6))
-
-        self.play(
-                self.camera.frame.animate.scale(1/3).move_to(sat),
-                p_circle.animate.shift(UP + LEFT),
-                p.animate.shift(UP + LEFT),
-                np.animate.shift(UP + RIGHT),
-                np_circle.animate.scale(2),
-                sat.animate.scale(1/2)
-                )
-
-        problems = VGroup(*map(Tex, ["graph\n\ncoloring", "knapsack", "hamiltonian\n\ncycle", "subset\n\nsum"]))
-
-        directions = [LEFT * 1.5, UP, RIGHT * 1.5, DOWN]
-        arrows = VGroup()
-
-        # TODO: tohle lépe
-        for i, problem in enumerate(problems):
-            problem.scale(1/3).move_to(sat).shift((directions[i] + directions[i - 1]) * 0.7)
-            arrow = Arrow(start=problem.get_center(), end=sat.get_center(), buff=0.45)
-            arrows.add(arrow)
-
-        self.play(
-            AnimationGroup(
-                AnimationGroup(*[FadeIn(problem, run_time=1, shift=(sat.get_center() - problem.get_center()) * 0.2) for problem in problems], lag_ratio=0.25),
-                AnimationGroup(*[FadeIn(arrow, shift=(sat.get_center() - arrow.get_center()) * 0.2) for arrow in arrows], lag_ratio=0.25),
-                lag_ratio=0.0,
-            )
+            FadeIn(lp),
+            FadeIn(rand),
+            self.camera.frame.animate.set_y(VGroup(lp, rand, best_sat).get_y())
         )
 
-        turtles = VGroup(*[SVGMobject("assets/turtle.svg").scale(0.09).next_to(problem, UP, buff=0.075) for problem in problems])
-        rabbit = SVGMobject("assets/rabbit.svg").scale(0.135).next_to(sat, UP, buff=0.075)
-
-        self.camera.frame.save_state()
-
-        self.play(
-            *[FadeIn(turtle, shift=0.02 * UP) for turtle in turtles],
-            FadeIn(rabbit, shift=0.02 * UP),
-        )
-
-        myTemplate = TexTemplate()
-        myTemplate.add_to_preamble(r"\usepackage{booktabs}")
-        myTemplate.add_to_preamble(r"\usepackage{xcolor}")
-
-        table = Tex(r"""
-\renewcommand\arraystretch{1.3}
-\begin{table}[ht]
-\centering
-\begin{tabular}[t]{lll}
-\toprule
-& \textbf{exact} &\textbf{approximation} \\
-\midrule
-\textbf{running time}&$\mathcal{O}(\mathrm{exponential})$&$\mathcal{O}(\mathrm{polynomial})$\\
-\textbf{solution}&optimal&almost optimal\\
-\bottomrule
-\end{tabular}
-\end{table}%
-""", tex_template=myTemplate).scale(1/3).move_to(sat).shift(DOWN * 0.2)
-
-        d = 17
-        table[0][48-d:62-d].set_color(RED)
-        table[0][62-d:75-d].set_color(GREEN)
-        table[0][83-d:90-d].set_color(GREEN)
-        table[0][90-d:103-d].set_color(RED)
-
-        self.play(
-            self.camera.frame.animate.restore(),
-            AnimationGroup(
-                AnimationGroup(FadeOut(problems), FadeOut(arrows), FadeOut(turtles), FadeOut(rabbit)),
-                AnimationGroup(sat.animate.next_to(table, UP), FadeIn(table, shift=UP * 0.3)),
-                lag_ratio=0.5,
-            )
-        )
-
-        self.play(Circumscribe(VGroup(table[0][48-d:62-d], table[0][83-d:90-d]), color=YELLOW, stroke_width=0.7, buff=0.05, time_width=0.5, run_time=1))
-        self.play(Circumscribe(VGroup(table[0][62-d:75-d], table[0][90-d:103-d]), color=YELLOW, stroke_width=0.7, buff=0.05, time_width=0.5, run_time=1))
-
-        lp = Tex(r"\Large LP-SAT \\ \vspace{0.3em} \normalsize \textit{also random, based on \\ linear programming}").scale(1/3).move_to(sat).shift(RIGHT + DOWN)
-        rand = Tex(r"\Large RAND-SAT \\ \vspace{0.3em} \normalsize \textit{assignment is \\ entirely random}").scale(1/3).move_to(sat).shift(LEFT + DOWN)
-
-        self.play(FadeOut(table))
-
-        best_sat = Tex(r"\Huge BEST").scale(1/4)
-        dash = Tex("\Huge -").scale(1/4)
-        new_sat = sat.copy()
-        VGroup(best_sat, dash, new_sat).arrange(buff=0.07).move_to(sat)
-
-        self.play(
-                FadeIn(lp, shift=UP * 0.3),
-                FadeIn(rand, shift=UP * 0.3),
-                sat.animate.move_to(new_sat),
-                FadeIn(best_sat, shift=LEFT * 0.1),
-                FadeIn(dash, shift=LEFT * 0.1),
-                )
 
 SIZE = 0.75
 
@@ -573,7 +468,7 @@ class SAT(MovingCameraScene):
                 lag_ratio=0.1,
                 ),
                 AnimationGroup(
-                *[Circumscribe(VGroup(*[example[0][ii] for ii in i]), color=RED if len(i) == 2 else GREEN, shape=Circle, buff=0.05, stroke_width=1.5) for i in variable_pos_example if len(i) == q],
+                *[Circumscribe(VGroup(*[example[0][ii] for ii in i]), color=RED if len(i) == 2 else GREEN, shape=Circle, buff=0.05, stroke_width=2) for i in variable_pos_example if len(i) == q],
                 lag_ratio=0.1,
                 )
             )
@@ -594,7 +489,8 @@ class SAT(MovingCameraScene):
                     *[FadeIn(s) for i, s in enumerate(groups[0]) if i not in all_variable_pos_groups],
                 ),
                 lag_ratio=0.5
-            )
+            ),
+            run_time=2,
         )
 
         ade = [variable_pos_groups[0], variable_pos_groups[4], variable_pos_groups[6]]
@@ -619,7 +515,9 @@ class SAT(MovingCameraScene):
 
         combined_copies = VGroup(lmao[0], lmao3[0], lmao3[1], lmao2[0], lmao[1], lmao2[1], lmao[2], lmao3[2])
 
-        self.play(AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao], lag_ratio=0.1))
+        self.play(FadeIn(lmao[0], shift=DOWN * 0.2), run_time=0.5)
+        self.play(FadeIn(lmao[1], shift=DOWN * 0.2), run_time=0.5)
+        self.play(FadeIn(lmao[2], shift=DOWN * 0.2), run_time=0.5)
         self.play(AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao2], lag_ratio=0.1))
         self.play(AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao3], lag_ratio=0.1))
 
@@ -640,7 +538,7 @@ class SATAgain(MovingCameraScene):
     def construct(self):
         sat = Tex(r"\Huge SAT")
 
-        self.play(Write(sat))
+        self.play(FadeIn(sat))
 
         sat.save_state()
 
@@ -648,68 +546,18 @@ class SATAgain(MovingCameraScene):
         example[0][9].scale(0.75)
         example[0][19].scale(0.75)
 
+        variable_pos_example = [[1], [3, 4], [6, 7], [11, 12], [14], [16, 17], [21], [23]]
+        for i in variable_pos_example:
+            VGroup(*[example[0][ii] for ii in i]).set_color(RED if len(i) == 2 else GREEN)
+
         self.play(
-            sat.animate.shift(UP * 2),
+            sat.animate.shift(UP * 1.3),
             FadeIn(example, shift=UP * 0.5),
         )
 
-        def straight_brace_points(p1, p2):
-            p2[1] = p1[1]
-            return p1, p2
-
-        braces = VGroup(
-            BraceBetweenPoints(*straight_brace_points(example[0][0].get_center(), example[0][8].get_center())),
-            BraceBetweenPoints(*straight_brace_points(example[0][10].get_center(), example[0][18].get_center())),
-            BraceBetweenPoints(*straight_brace_points(example[0][20].get_center(), example[0][24].get_center())),
-        ).shift(DOWN * 0.3)
-
-        for brace in braces:
-            brace.add(Tex("clause").next_to(brace, DOWN))
-
-        self.play(AnimationGroup(*[FadeIn(brace, shift=UP * 0.1) for brace in braces], lag_ratio=0.1))
-
-        groups = Tex(r"$$[a, \lnot b, \lnot c] \quad [\lnot a, d, \lnot e] \quad [e, f]$$").move_to(example).scale(1.6)
-
-        variable_pos_example = [[1], [3, 4], [6, 7], [11, 12], [14], [16, 17], [21], [23]]
-        variable_pos_groups = [[1], [3, 4], [6, 7], [10, 11], [13], [15, 16], [19], [21]]
-
-        all_variable_pos_example = sum(variable_pos_example, [])
-        all_variable_pos_groups = sum(variable_pos_groups, [])
-
-        for q in [1, 2]:
-            self.play(
-                AnimationGroup(
-                *[VGroup(*[example[0][ii] for ii in i]).animate.set_color(RED if len(i) == 2 else GREEN) for i in variable_pos_example if len(i) == q],
-                lag_ratio=0.1,
-                ),
-                AnimationGroup(
-                *[Circumscribe(VGroup(*[example[0][ii] for ii in i]), color=RED if len(i) == 2 else GREEN, shape=Circle, buff=0.05, stroke_width=1.5) for i in variable_pos_example if len(i) == q],
-                lag_ratio=0.1,
-                )
-            )
-
-        for i in variable_pos_groups:
-            VGroup(*[groups[0][ii] for ii in i]).set_color(RED if len(i) == 2 else GREEN)
-
-        self.play(
-            AnimationGroup(
-                AnimationGroup(
-                    FadeOut(braces),
-                    *[FadeOut(s) for i, s in enumerate(example[0]) if i not in all_variable_pos_example],
-                ),
-                AnimationGroup(
-                    *[ReplacementTransform(VGroup(*[example[0][ii] for ii in i]), VGroup(*[groups[0][jj] for jj in j])) for i, j in zip(variable_pos_example, variable_pos_groups)]
-                ),
-                AnimationGroup(
-                    *[FadeIn(s) for i, s in enumerate(groups[0]) if i not in all_variable_pos_groups],
-                ),
-                lag_ratio=0.5
-            )
-        )
-
-        ade = [variable_pos_groups[0], variable_pos_groups[4], variable_pos_groups[6]]
-        not_ae = [variable_pos_groups[3], variable_pos_groups[5]]
-        otherslmao = [variable_pos_groups[1], variable_pos_groups[2], variable_pos_groups[7]]
+        ade = [variable_pos_example[0], variable_pos_example[4], variable_pos_example[6]]
+        not_ae = [variable_pos_example[3], variable_pos_example[5]]
+        otherslmao = [variable_pos_example[1], variable_pos_example[2], variable_pos_example[7]]
 
         equals = Tex("$=$").rotate(PI / 2).scale(0)
         one = Tex("$1$").scale(0.85).next_to(equals, DOWN, buff=0.15)
@@ -720,28 +568,38 @@ class SATAgain(MovingCameraScene):
         combined_zero = VGroup(equals, zero)
         combined_q = VGroup(equals, q)
 
-        lmao = [combined.copy().next_to(VGroup(*[groups[0][j] for j in i]), DOWN, buff=0.2) for i in ade]
-        lmao2 = [combined_zero.copy().next_to(VGroup(*[groups[0][j] for j in i]), DOWN, buff=0.2) for i in not_ae]
-        lmao3 = [combined_q.copy().next_to(VGroup(*[groups[0][j] for j in i]), DOWN, buff=0.2) for i in otherslmao]
+        lmao = [combined.copy().next_to(VGroup(*[example[0][j] for j in i]), DOWN, buff=0.2) for i in ade]
+        lmao2 = [combined_zero.copy().next_to(VGroup(*[example[0][j] for j in i]), DOWN, buff=0.2) for i in not_ae]
+        lmao3 = [combined_q.copy().next_to(VGroup(*[example[0][j] for j in i]), DOWN, buff=0.2) for i in otherslmao]
 
         for o in lmao3:
             o.align_to(lmao2[0], UP)
 
-        combined_copies = VGroup(lmao[0], lmao3[0], lmao3[1], lmao2[0], lmao[1], lmao2[1], lmao[2], lmao3[2])
+        self.play(
+            AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao]),
+            AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao2]),
+            AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao3]),
+        )
 
-        self.play(AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao], lag_ratio=0.1))
-        self.play(AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao2], lag_ratio=0.1))
-        self.play(AnimationGroup(*[FadeIn(combined_copy, shift=DOWN * 0.2) for combined_copy in lmao3], lag_ratio=0.1))
+        example.add(*[o for o in lmao + lmao2 + lmao3])
+
+        example2 = Tex(r"$$(a) \land (\lnot a)$$").shift(DOWN * 0.5).scale(1.6).align_to(example, UP)
+        example2[0][1].set_color(GREEN)
+        example2[0][5:5+2].set_color(RED)
+
+        self.play(
+            FadeOut(example, shift=UP * 1.5),
+            FadeIn(example2, shift=UP * 1.5),
+        )
+
+        self.remove(*[o for o in lmao + lmao2 + lmao3])
 
         self.play(
             AnimationGroup(
-                AnimationGroup(
-                    FadeOut(groups[0]),
-                    FadeOut(combined_copies),
-                ),
-                sat.animate.shift(DOWN * 1.5),
+                FadeOut(example2),
+                self.camera.frame.animate.move_to(sat),
                 lag_ratio=0.5,
-            )
+            ),
         )
 
         max_sat = Tex(r"\Huge MAX", color=BLUE)
@@ -751,16 +609,29 @@ class SATAgain(MovingCameraScene):
         ms = VGroup(max_sat, dash, new_sat).arrange(buff=0.3).move_to(sat)
         dash.shift(LEFT * 0.08)
 
+        sat.set_z_index(1)
+
         self.play(
             sat.animate.move_to(new_sat),
             FadeIn(max_sat, shift=LEFT * 0.5),
             FadeIn(dash, shift=LEFT * 0.5),
         )
 
-        goal = Tex(r"Maximize the number of satisfied clauses.").next_to(ms, DOWN, buff=0.5)
+        goal = Tex(r"\textbf{Maximize} the number of satisfied clauses.").next_to(ms, DOWN, buff=0.7)
         goal[0][0:8].set_color(BLUE)
 
-        self.play(FadeIn(goal, shift=DOWN * 0.5))
+        self.play(
+            self.camera.frame.animate.move_to(VGroup(ms, goal)),
+            FadeIn(goal, shift=DOWN * 0.8),
+        )
+
+        goal2 = Tex(r"unique products.")
+        align_object_by_coords(goal2, goal2[0][0], goal[0][19])
+
+        self.play(
+            FadeOut(goal[0][19:], shift=DOWN * 0.5),
+            FadeIn(goal2, shift=DOWN * 0.5),
+        )
 
 
 class RANDSATFormal(MovingCameraScene):
@@ -770,7 +641,7 @@ class RANDSATFormal(MovingCameraScene):
         for i in variable_pos_example:
             VGroup(*[example[0][ii] for ii in i]).set_color(RED if len(i) == 2 else GREEN)
 
-        self.play(FadeIn(example, shift=DOWN * 0.2))
+        self.play(FadeIn(example))
 
         brace = BraceBetweenPoints(example[0][0].get_center(), example[0][8].get_center()).shift(DOWN * 0.3)
 
@@ -810,11 +681,12 @@ class RANDSATFormal(MovingCameraScene):
             self.camera.frame.animate.move_to(VGroup(example[0][:9], brace, k, combined_copies)),
         )
 
+        # TODO: tohle musí ale být Pr[satisfied] a Pr[not satisfied]
         psat = Tex(r"$$p_{\lnot \text{sat}} = \left(\frac{1}{2}\right)^k$$").move_to(k).scale(0.55)
 
         self.play(
-            FadeOut(k, shift=DOWN * 0.5),
-            FadeIn(psat, shift=DOWN * 0.5),
+            FadeOut(k, shift=RIGHT * 1.2),
+            FadeIn(psat, shift=RIGHT * 1.2),
         )
 
         sat = Tex(r"$$p_{\text{sat}} = 1 - \left(\frac{1}{2}\right)^k$$").move_to(k).scale(0.55)
@@ -915,9 +787,16 @@ class LPSAT(MovingCameraScene):
         self.play(Write(lp_table[2:4], run_time=2.75))
         self.play(Write(lp_table[4:6], run_time=1.25))
 
+        self.play(FadeOut(lp_table))
+
+        img = SVGMobject("assets/img.svg").stretch_to_fit_width(self.camera.frame.get_width()).stretch_to_fit_height(self.camera.frame.get_height()).move_to(self.camera.frame)
+
+        self.play(Transform(lp_table[1][0][0], img[0]))
+        # TODO: the actual code
+
 
 class Proof(MovingCameraScene):
-    #@fade
+    @fade
     def construct(self):
         # TODO: intro
 
@@ -1240,3 +1119,43 @@ class Proof(MovingCameraScene):
                 lag_ratio=0.5,
             )
         )
+
+        # TODO: the rest of the shit
+
+
+class BestSat(MovingCameraScene):
+    def construct(self):
+        table = Table(
+            [
+                [Tex(r"$$\left(\frac{1}{2}\right)^{k_j}$$")],
+                [Tex(r"$$\left[1 - \left(1 - \frac{1}{k_j}\right)^{k_j}\right] z^*_j$$")],
+            ],
+            element_to_mobject = lambda x: x,
+            row_labels=[Tex("RAND-SAT").scale(1), Tex("LP-SAT").scale(1)],
+            col_labels=[Tex(r"$$\mathrm{Pr}\left[C_j\ \text{satisfied}\right] \ge$$")],
+            v_buff=0.4, h_buff=0.65,
+            include_outer_lines=True,
+        )
+
+        # disgustang
+        table.remove(*table.get_vertical_lines())
+        table.remove(table.get_horizontal_lines()[3])
+
+        self.play(FadeIn(table))
+        return
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeIn(table[0], shift=RIGHT * 0.25),
+                    FadeIn(table[2], shift=RIGHT * 0.25),
+                    lag_ratio=0.1,
+                ),
+                AnimationGroup(
+                    FadeIn(table[1]),
+                    FadeIn(table[3]),
+                ),
+                lag_ratio=0.6,
+            )
+        )
+

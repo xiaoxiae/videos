@@ -10,6 +10,12 @@ def fade(f):
 
 def align_object_by_coords(obj, current, desired, animation=False):
     """Align an object such that it's current coordinate coordinate will be the desired."""
+    if isinstance(current, Mobject):
+        current = current.get_center()
+
+    if isinstance(desired, Mobject):
+        desired = desired.get_center()
+
     if animation:
         return obj.animate.shift(desired - current)
     else:
