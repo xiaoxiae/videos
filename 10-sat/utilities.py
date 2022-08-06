@@ -21,7 +21,7 @@ def align_object_by_coords(obj, current, desired, animation=False):
     else:
         obj.shift(desired - current)
 
+
 def distance(a: Mobject, b: Mobject):
     """Return the Euclidean distance of two mobjects."""
     return sum([(a.get_center()[i] - b.get_center()[i]) ** 2 for i in range(len(a.get_center()))]) ** (1/2)
-    
