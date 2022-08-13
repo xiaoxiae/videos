@@ -29,38 +29,44 @@ Going back to the factories problem, each product will be a clause and each fact
 If a factory produces a single product, it will be added to the appropriate clause.
 If it produces two, one will be positive and one negative, since a factory can only produce one product at a time.
 As you can see, a product is produced if and only if at least one of its factories are producing it.
+In this simple example, the problem doesn't have a solution, because a single factory produces two unique products.
 
 \marginpar{\texttt{SATSad}}
 Unfortunately, SAT is NP-hard, which means that it runs in exponential time and solving it for a large number of factories and products could take a few millennia.
 One thing we could do in cases like these is to use an approximation algorithm, which exchanges an improved running time for a solution that is close to, but not quite the optimum.
-What is fascinating about SAT in particular and will be the main topic of this video is that one of its best approximation algorithms is a random combination of two of its other approximation algorithms, which seems crazy at first but will make more sense as we go on.
+Interestingly, one of SAT's best approximation algorithms is a random combination of two of its other, worse approximation algorithms, which is truly remarkable.
 
 \newpage
+
+---
+MAX-SAT
+---
+
+\marginpar{\texttt{SATAgain}}
+As previously mentioned, SAT is the problem of satisfying a boolean formula in CNF.
+This formulation can't really be approximated, since the satisfying assignment either exists or it doesn't, as we've seen in the factories example.
+We'll therefore generalize SAT to MAX-SAT, which will no longer require that every group is satisfied, but instead that as many as possible are.
+In this case, three out of four expressions can be satisfied, which is nice!
+
 
 ---
 RAND-SAT
 ---
 
-\marginpar{\texttt{SATAgain}}
-As previously mentioned, SAT is the problem of satisfying a boolean formula in CNF.
-This formulation can't really be approximated, since the satisfying assignment either exists or it doesn't.
-We'll therefore generalize SAT to MAX-SAT, which will no longer require that every group is satisfied, but instead that as many as possible are.
-In terms of our factory problem, this means that we'll be maximizing the number of unique products the factories produce.
+\marginpar{\texttt{TransparentRANDSAT}}
+<!-- write RAND-SAT, show description and then fade it out and move RAND-SAT to the corner -->
+Our first algorithm to solve MAX-SAT will be entirely random, assigning True/False values with the probability of 0.5.
 
 \marginpar{Program \texttt{RAND-SAT}}
-<!-- write RAND-SAT, show description and then fade it out and move RAND-SAT to the corner -->
-Our first algorithm, RAND-SAT, will be entirely random, assigning True/False values with the probability of 0.5.
-
-I wrote a Python program to simulate its behavior on our expression from before.
+I wrote a Python program to simulate it on the expression from before.
 We have a `generate_random_values` function that randomly generates $n$ boolean values.
 We then have a `count_satisfied_clauses` function that counts the number of satisfied clauses of the expression.
-Running $10\ 000$ times in total, we randomly assign boolean values to the literals and count the number of satisfied clauses.
+Running $10\ 000$ times in total, we randomly assign boolean values to the literals and count the number of satisfied clauses, printing the satisfied percentage at the end.
 
-If we run the program, we see that the average number of satisfied clauses is about TODO percent, which is pretty good, considering how simple the algorithm is.
+If we run the program, we see that the average number of satisfied clauses is about 56 %, which is pretty good, considering how simple the algorithm is and that the best it can do in this case is 3/4.
 
 \marginpar{\texttt{RANDSATFormal}}
-Formally, the algorithm doesn't satisfy a clause of $k$ literals if and only if all of the literals are set to false.
-since the probabilities of each assignment are independent, the probability of the clause not being satisfied is $(\frac{1}{2})^k$.
+Formally, the algorithm doesn't satisfy a clause of $k$ literals if and only if all of them are set to false, the probability of which is is $(\frac{1}{2})^k$.
 Therefore the probability that it its satisfied is $1 - (\frac{1}{2})^k$.
 
 Since each clause contains at least one literal, it is satisfied with the probability of at least $1/2$, meaning the algorithm will (in expectation) satisfy at least $1/2$ of the clauses.
@@ -73,7 +79,7 @@ Since each clause contains at least one literal, it is satisfied with the probab
 LP-SAT
 ---
 
-\marginpar{\texttt{LPSAT}}
+\marginpar{\texttt{TransparentLPSAT}}
 Our second algorithm, LP-SAT, will be a little more complicated.
 To fully understand it, we need a slight interlude about linear programming.
 
@@ -81,29 +87,27 @@ A linear program conains real variables and linear inequalities that restrict th
 The goal is to maximize a linear expression (called the objective function).
 
 \marginpar{Fade z animace do programu \texttt{LP Example}}
-<!-- transform from Manim to code (variables, inequalities, objective function) --> 
 Using Python and its package PULP to solve this particular example, the optimal solution yields the following objective function and assignment of variables.
 
 \marginpar{TODO animation}
- <!-- animations nějaká animace tady -->
-Since linear programming is polynomial (TODO: add a note), we'll use it to solve MAX-SAT.
+ <!-- animations -->
+Since linear programming is polynomial, we'll use it to solve MAX-SAT.
 \marginpar{Fade to program \texttt{MAX-SAT using LP}}
-Taking this example DNF expression, we'll convert it to a linear program in the following way.
+Taking our familiar expression once again, we'll convert it to a linear program in the following way.
 We'll create a binary variable for each literal and clause in the formula.
 The expression to maximize will be the sum of clause literals, which corresponds to the number of satisfied clauses.
 
-<!-- TODO: change this to the example where not all can be satisfied -->
 The inequalities will reflect the clauses: we'll restrict the clause variables by the formula variables, depending on the clause literals.
-If we, for example, take a look at the first inequality, the only way for $x$ to be 1 is if at least one of the literal variables are satisfied (so either $a$ is 1, $b$ is 0 or $c$ is 0).
-If none of them are, then the right side will be 0, forcing $x$ to be 0 as well.
+If we, for example, take a look at the third inequality, the only way for $y$ to be 1 is if at least one of the literal variables are satisfied (so either $b$ is 1 or $c$ is 0).
+If none of them are, then the right side will be 0, forcing $y$ to be 0 as well.
 
-Running the program yields the objective function of 2, meaning that only two of the three clauses can be satisfied at the same time.
+Running the program yields the objective function of 3, meaning that only three of the four clauses can be satisfied at the same time (which we already know).
 
-\marginpar{Overlay cross (\texttt{CrossText}), because we cheated}
-This seems like we've succeeded in creating a fast algorithm for MAX-SAT that always yields the optimal solution, but that's only because we cheated -- arbitrarily setting the variables to be integers (binary, to be more specific) makes linear programming NP-hard, so this doesn't work.
+\marginpar{Overlay cross (\texttt{TransparentCrossText}), because we cheated}
+At first glance, it seems like we've created a fast exact algorithm for MAX-SAT, but that's only because we cheated -- arbitrarily setting the variables to be integers (binary, to be more specific) makes linear programming NP-hard (and thus exponential), so this doesn't work.
 
 \marginpar{\texttt{RelaxedMAXSAT}}
-Let's fix this.
+Let's fix it.
 Writing our MAX-SAT program formally, we have binary variables for literals and clauses, inequalities for each clause and an objective function as the sum of clause variables.
 
 Since the problem is the variables being integer, let's just relax them to allow real numbers again (from 0 to 1).

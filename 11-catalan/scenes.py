@@ -807,7 +807,7 @@ class AllTriangulatedPolygons(Scene):
             [dp],
             element_to_mobject = lambda x: x,
             row_labels=[Tex("Triangulations").rotate(PI / 2)],
-            col_labels=[Tex("1"), Tex("1"), Tex("2"), Tex("5"), Tex("14")],
+            col_labels=[Tex("1"), Tex("2"), Tex("5"), Tex("14")],
             v_buff=0.4, h_buff=0.65,
             top_left_entry=Tex("$C_n$"),
             include_outer_lines=True,

@@ -5,6 +5,7 @@ import subprocess
 import shutil
 import os
 import argparse
+import re
 
 import soundfile as sf
 import pyloudnorm as pyln
@@ -45,7 +46,7 @@ parser.add_argument(
     "-q", "--quality",
     choices=["l", "m", "h", "k"],
     default="k",
-    help="the quality of the video (k=4K by default)"
+    help="the quality of the video (4K by default)"
 )
 
 # licenses (to give as options)
@@ -54,31 +55,53 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # get the parser and parse the commands
 arguments = parser.parse_args()
 
+
+def render_scene(scene):
+    """Render a single scene """
+    args = ["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", "--disable_caching", scene]
+
+    if scene.lower().startswith("transparent"):
+        args.append("-t")
+
+    process = subprocess.Popen(args)
+    process.communicate()
+
+    if process.returncode != 0:
+        print(f"\nBuild failed with exit code {process.returncode}")
+        quit()
+
+
 # (possibly) call Manim
 if not arguments.no_manim:
+    scenes = []
+
+    # please lord forgive me for I have sinned
+    # this is needed because classes ending with Transparent are going to be rendered transparently
+    with open("scenes.py", "r") as f:
+        for line in f.read().splitlines():
+            if match := re.match(r"\s*class\s+(.+?)\(.*Scene\)\s*:", line):
+                scenes.append(match.group(1))
+
     if arguments.scene is None:
         # remove everything when no scene is specified
         if os.path.exists(video_directory):
             shutil.rmtree(video_directory)
 
-        process = subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-aq{arguments.quality}", "--disable_caching"])
+        for scene in scenes:
+            render_scene(scene)
     else:
         # remove only the scene and its folders when the scene is specified
         scene_folder = os.path.join(video_directory, arguments.scene)
         if os.path.exists(scene_folder):
             shutil.rmtree(scene_folder)
 
-        scene_video = os.path.join(video_directory, arguments.scene + ".mp4")
-        if os.path.exists(scene_video):
-            os.remove(scene_video)
+        for ext in ["mp4", "mov"]:
+            scene_video = os.path.join(video_directory, arguments.scene + f".{ext}")
+            if os.path.exists(scene_video):
+                os.remove(scene_video)
 
-        process = subprocess.Popen(["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", "--disable_caching", arguments.scene])
+        render_scene(arguments.scene)
 
-    result = process.communicate()
-
-    if process.returncode != 0:
-        print(f"\nBuild failed with exit code {process.returncode}")
-        quit()
 
 # (possibly) normalize audio
 if not arguments.no_sound_normalization:
@@ -97,7 +120,8 @@ if not arguments.no_sound_normalization:
 
         sf.write(os.path.join(normalized_directory, name), loudness_normalized_audio, rate)
 
-# rename to [1..n].mp4
+
+# rename to [1..n].whatever
 for scene in os.listdir(video_directory):
     if os.path.isdir(os.path.join(video_directory, scene)):
         partial_file_path = os.path.join(video_directory, scene, "partial_movie_file_list.txt")
@@ -116,10 +140,12 @@ for scene in os.listdir(video_directory):
                     if not os.path.exists(os.path.join(path, image_folder)):
                         os.mkdir(os.path.join(path, image_folder))
 
+                    ext = os.path.splitext(name)[1][1:]
+
                     original_path = os.path.join(path, name)
-                    changed_path = os.path.join(path, "vid", f"{i+1}.mp4")
+                    changed_path = os.path.join(path, "vid", f"{i+1}.{ext}")
                     image_path = os.path.join(path, "img", f"{i+1}.png")
-                    video_from_image_path = os.path.join(path, "img", f"{i+1}.mp4")
+                    video_from_image_path = os.path.join(path, "img", f"{i+1}.{ext}")
 
                     os.rename(original_path, changed_path)
 

@@ -8,7 +8,7 @@ a, b, c, d = [LpVariable(name=n) for n in "abcd"]
 
 # inequalities
 model += 500 * a +  10 * b + 230 * c + 10 * d <= 50
-model +=  10 * a +   2 * b -   7 * c +  1 * d <= 125
+model +=  10 * a +   2 * b -   7 * c +      d <= 125
 model += -50 * a           -  15 * c          <= 500
 
 # objective function

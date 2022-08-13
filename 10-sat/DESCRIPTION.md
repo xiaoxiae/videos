@@ -8,8 +8,6 @@ Timetable:
 
 ------------------
 
-youtube
-
 Source code:
 https://github.com/xiaoxiae/videos/tree/master/10-sat>
 
@@ -27,8 +25,8 @@ Vector Magic (image vectorization): https://vectormagic.com/
 Inkscape (vector image editing): https://inkscape.org/
 
 Social media:
-Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 Website (for other things I'm up to): https://slama.dev/
+Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
 ------------------
 

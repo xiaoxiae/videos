@@ -19,9 +19,14 @@ experiments = 10000
 satisfied = 0
 
 for i in range(experiments):
-    a, b, c, d, e, f = generate_random_values(6)
+    a, b, c = generate_random_values(3)
 
-    satisfied += count_satisfied_clauses([a, not b, not c], [not a, d, e], [e, f])
+    satisfied += count_satisfied_clauses(
+        [a],
+        [not a],
+        [b, not c],
+        [c]
+    )
 
 average = satisfied / experiments
-print(f"{average:.2f}/3 ~= {average/3:.2f}%")
+print(f"{average:.2f}/4 ~= {average/4:.2f}")

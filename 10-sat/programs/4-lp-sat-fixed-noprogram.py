@@ -1,5 +1,4 @@
 from pulp import *
-from random import random
 
 
 model = LpProblem(name="lp-sat", sense=LpMaximize)
