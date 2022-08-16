@@ -1,25 +1,18 @@
 from pulp import *
-from random import random
 
 
 model = LpProblem(name="lp-sat", sense=LpMaximize)
 
 # literal variables
-a, b = [LpVariable(name=c) for c in "ab"]
+a, b = [LpVariable(name=c, lowBound=0, upBound=1) for c in "ab"]
 
 # clause variables
-x, y, z = [LpVariable(name=c) for c in "xyz"]
+x, y, z = [LpVariable(name=c, lowBound=0, upBound=1) for c in "xyz"]
 
 # inequalities
-model += x <= a                  # [a]
-model += y <= (1 - a) + b        # [~a, b]
-model += z <= (1 - a) + (1 - b)  # [~a, ~b]
-
-model += 0 <= a <= 1
-model += 0 <= b <= 1
-model += 0 <= x <= 1
-model += 0 <= y <= 1
-model += 0 <= z <= 1
+model += x <= a
+model += y <= (1 - a) + b
+model += z <= (1 - a) + (1 - b)
 
 # maximize clause variables
 model += x + y + z
@@ -30,11 +23,13 @@ print(f"Objective function: {model.objective.value()}")
 print("\n".join([f"{v.name} = {v.value()}" for v in [a, b]]))
 
 
+from random import random
+
 variables = [a, b]
 
 def assign_variables_based_on_lp():
     """Return an assignment of n variables based on """
-    return [True if l.value() <= random() else False for l in variables]
+    return [True if l.value() >= random() else False for l in variables]
 
 
 def count_satisfied_clauses(*clauses):
@@ -52,8 +47,11 @@ satisfied = 0
 for i in range(experiments):
     a, b = assign_variables_based_on_lp()
 
-    satisfied += count_satisfied_clauses([a], [not a, b], [not a, not b])
+    satisfied += count_satisfied_clauses(
+        [a],
+        [not a, b],
+        [not a, not b]
+    )
 
 average = satisfied / experiments
-
-print(f"{average:.2f}/3 ~= {average/3 * 100:.2f}%")
+print(f"\n{average:.2f}/3 ~= {average/3 * 100:.2f}%")

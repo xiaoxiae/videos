@@ -1,4 +1,4 @@
-A short video about an elegant proof of the number of spanning trees of a complete graph.
+An elegant proof of the number of spanning trees of a complete graph.
 
 ------------------
 

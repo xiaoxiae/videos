@@ -8,7 +8,6 @@ class Factories(MovingCameraScene):
 
     @fade
     def construct(self):
-        self.next_section(skip_animations=True)
         seed(0xDEADBEEF)
 
         h = 13
@@ -87,30 +86,61 @@ class Factories(MovingCameraScene):
                 stroke_width=2,
             )
 
+        #self.play(
+        #    AnimationGroup(
+        #        AnimationGroup(
+        #            Circumscribe(texts[offset][0],     color=WHITE, stroke_width=2),
+        #            Circumscribe(texts[offset][1],     color=WHITE, stroke_width=2),
+        #            Circumscribe(texts[offset + 1][0], color=WHITE, stroke_width=2),
+        #            Circumscribe(texts[offset + 2][0], color=WHITE, stroke_width=2),
+        #            lag_ratio=0.1
+        #        ),
+        #        AnimationGroup(
+        #            texts[offset + 2][1].animate.set_color(DARK_GRAY),
+        #            Write(l),
+        #        ),
+        #        lag_ratio=0.4,
+        #    ),
+        #)
+
+        unique = Tex(r"$$\{\text{Mars}, \text{Oreos}, \text{Sprite}, \text{Pepsi}\}$$").next_to(VGroup(*texts[offset:offset+3]), DOWN, buff=1).scale(0.8)
+
+        copies = VGroup(*[
+            texts[offset][0].copy(),
+            texts[offset][1].copy(),
+            texts[offset+1][0].copy(),
+            texts[offset+2][0].copy(),
+            texts[offset+2][1].copy(),
+        ])
+
+        unique[0][0].scale(1.1).shift(LEFT * 0.05)
+        unique[0][-1].scale(1.1).shift(RIGHT * 0.05)
+
         self.play(
             AnimationGroup(
                 AnimationGroup(
-                    Circumscribe(texts[offset][0],     color=WHITE, stroke_width=2),
-                    Circumscribe(texts[offset][1],     color=WHITE, stroke_width=2),
-                    Circumscribe(texts[offset + 1][0], color=WHITE, stroke_width=2),
-                    Circumscribe(texts[offset + 2][0], color=WHITE, stroke_width=2),
-                    lag_ratio=0.1
+                    Write(unique[0][0]),
+                    Write(unique[0][-1]),
+                    FadeTransform(copies[0], unique[0][1:1+4].copy()),
+                    FadeTransform(copies[1], unique[0][6:6+5].copy()),
+                    FadeTransform(copies[2], unique[0][12:12+6].copy()),
+                    FadeTransform(copies[2], unique[0][19:19+5].copy()),
+                    FadeTransform(copies[3], unique[0][12:12+6].copy()),
                 ),
                 AnimationGroup(
-                    texts[offset + 2][1].animate.set_color(DARK_GRAY),
-                    Write(l),
+                    *[FadeIn(unique[0][c]) for c in [5, 11, 18]],
+                    lag_ratio=0.05,
                 ),
-                lag_ratio=0.4,
+                lag_ratio=0.5,
             ),
+            self.camera.frame.animate.move_to(VGroup(*factories[offset:offset+3], *texts[offset:offset+3], unique)),
         )
 
         self.play(
             *[Succession(Wait(d / 40), FadeIn(factories[i], shift=UP * 0.1)) for i, d in groups if i not in not_wanted],
             *[Succession(Wait(d / 40), FadeIn(texts[i], shift=UP * 0.1)) for i, d in groups if i not in not_wanted],
+            *[FadeOut(o) for o in self.mobjects if o not in factories[offset:offset+3] and o not in texts[offset:offset+3]],
             self.camera.frame.animate(run_time=2).set_height(v.get_height() * 1.25),
-
-            texts[offset + 2][1].animate.set_color(WHITE),
-            FadeOut(l),
         )
 
         text = Tex("How can you do this efficiently?").scale(10).move_to(self.camera.frame)
@@ -120,6 +150,8 @@ class Factories(MovingCameraScene):
             texts.animate.set_opacity(0.3),
             FadeIn(text),
         )
+
+        self.wait()
 
         self.remove(text)
         factories.set_opacity(1)
@@ -200,8 +232,6 @@ class Factories(MovingCameraScene):
                 lag_ratio=0.75,
             ),
         )
-
-        self.next_section()
 
         self.play(AnimationGroup(*[FadeIn(formula[0][i], shift=UP * 0.2) for i in symbols], lag_ratio=0.05))
 
@@ -321,7 +351,9 @@ class SATSad(MovingCameraScene):
         best_sat[0][0:5].set_color(GREEN)
 
         lp = Tex(r"\Large LP-SAT \\ \vspace{0.3em} \normalsize \textit{also random, based on \\ linear programming}").move_to(best_sat).shift((RIGHT + DOWN) * 3)
+        lp[0][0:3].set_color(RED)
         rand = Tex(r"\Large RAND-SAT \\ \vspace{0.3em} \normalsize \textit{assignment is \\ entirely random}").move_to(best_sat).shift((LEFT + DOWN) * 3)
+        rand[0][0:5].set_color(RED)
 
         self.camera.frame.restore()
         self.camera.frame.move_to(best_sat)
@@ -338,6 +370,7 @@ class SATSad(MovingCameraScene):
 SIZE = 0.75
 
 class TransparentRANDSAT(MovingCameraScene):
+    @fade
     def construct(self):
         sat = Tex(r"RAND-SAT \\ \vspace{0.3em} \textit{assignment is entirely random ($p=1/2$)}").scale(3)
         sat[0][8:].scale(0.35).next_to(sat[0][:8], DOWN, buff=0.35)
@@ -361,28 +394,6 @@ class TransparentRANDSAT(MovingCameraScene):
         )
 
 
-class SATusingLPText(MovingCameraScene):
-    @fade
-    def construct(self):
-        satulp = Tex(r"\Huge MAX-SAT using LP").scale(SIZE)
-
-        self.play(Write(satulp))
-
-class RelaxedSATusingLPText(MovingCameraScene):
-    @fade
-    def construct(self):
-        satulp = Tex(r"\Huge Relaxed MAX-SAT using LP").scale(SIZE)
-
-        self.play(Write(satulp))
-
-class LPExampleText(MovingCameraScene):
-    @fade
-    def construct(self):
-        example = Tex(r"\Huge Example").scale(SIZE)
-
-        self.play(Write(example))
-
-
 class TransparentCrossText(MovingCameraScene):
     @fade
     def construct(self):
@@ -390,18 +401,24 @@ class TransparentCrossText(MovingCameraScene):
 
         self.play(FadeIn(cross))
 
-        text = Tex(r"Integer Linear Programming is \textbf{NP-hard}.")
-        text[0][26:26+7].set_color(RED)
+        text = Tex(r"Integer Linear Programming is \textbf{exponential}.")
+        text[0][26:26+11].set_color(RED)
 
         new_cross = cross.copy().scale(0.5)
 
         VGroup(new_cross, text).arrange(DOWN, buff=1)
 
-        self.play(Transform(cross, new_cross))
-        self.play(FadeIn(text))
+        self.play(
+            AnimationGroup(
+                Transform(cross, new_cross),
+                FadeIn(text),
+                lag_ratio=0.3,
+            )
+        )
 
 
 class SAT(MovingCameraScene):
+    @fade
     def construct(self):
         bsat = Tex("\Huge Boolean Satisfiability Problem").scale(0.7)
 
@@ -524,6 +541,7 @@ class SAT(MovingCameraScene):
 
 
 class SATAgain(MovingCameraScene):
+    @fade
     def construct(self):
         sat = Tex(r"SAT").scale(4)
 
@@ -743,7 +761,7 @@ class RANDSATFormal(MovingCameraScene):
             )
         )
 
-        prob = Tex(r"$$\mathbb{E}\left[\text{\% of sat. clauses}\right] \ge 1/2$$").next_to(example, DOWN, buff=1.0).scale(1.25)
+        prob = Tex(r"$$\mathbb{E}\left[\text{\# of sat. clauses}\right] \ge 1/2 \cdot \text{total}$$").next_to(example, DOWN, buff=1.0).scale(1.25)
 
         braces = VGroup(
             BraceBetweenPoints(example[0][0].get_center(), example[0][8].get_center(), UP),
@@ -764,6 +782,7 @@ class RANDSATFormal(MovingCameraScene):
 
 
 class TransparentLPSAT(MovingCameraScene):
+    @fade
     def construct(self):
         lpsat = Tex(r"LP-SAT").scale(3)
 
@@ -814,6 +833,8 @@ class TransparentLPSAT(MovingCameraScene):
             *[(5, i, i + 7 + 47) for i in range(13)],
         ]
 
+        new_lp.scale(1/1.75).align_to(self.camera.frame, UP).align_to(self.camera.frame, RIGHT).shift((DOWN + LEFT) * 0.5)
+
         self.play(
             AnimationGroup(
                 AnimationGroup(
@@ -824,18 +845,82 @@ class TransparentLPSAT(MovingCameraScene):
                     FadeOut(lp),
                 ),
                 AnimationGroup(
-                    *[Transform(lp_table[a][0][b], img[c]) for a, b, c in transforms],
+                    Transform(lp, new_lp),
+                    AnimationGroup(
+                        *[FadeTransform(lp_table[a][0][b], img[c]) for a, b, c in transforms],
+                        lag_ratio=0.0005,
+                    ),
+                ),
+                lag_ratio=0.7,
+                run_time=2,
+            )
+        )
+
+        self.remove(lp)
+        self.remove(new_lp)
+        self.add(new_lp)
+
+        objects = []
+
+        for a, b, c in transforms:
+            objects.append(img[c])
+
+        self.play(*[FadeOut(o) for o in objects])
+
+        max_sat = Tex("MAX-SAT using").set_height(new_lp.get_height())
+
+        new_lp_2 = VGroup(max_sat, new_lp.copy()).arrange(DOWN).align_to(self.camera.frame, UP).align_to(self.camera.frame, RIGHT).shift((DOWN + LEFT) * 0.5)
+
+        # bruh^2
+        example2 = Tex(r"$$(a) \land (\lnot a) \land (b \lor \lnot c) \land (c)$$")
+        example2[0][1].set_color(GREEN)
+        example2[0][5:5+2].set_color(RED)
+        example2[0][10].set_color(GREEN)
+        example2[0][12:12+2].set_color(RED)
+        example2[0][17].set_color(GREEN)
+
+        self.play(
+            Write(example2, run_time=1),
+            FadeIn(new_lp_2[0], shift=DOWN * 0.25),
+            Transform(new_lp, new_lp_2[1]),
+        )
+
+        img = SVGMobject("assets/lp-max-sat.svg").stretch_to_fit_width(self.camera.frame.get_width()).stretch_to_fit_height(self.camera.frame.get_height()).move_to(self.camera.frame)
+
+        transforms = [1, 5, 6, 10, 12, 13, 17]
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    *[FadeOut(example2[0][i]) for i in range(len(example2[0])) if i not in transforms],
+                ),
+                AnimationGroup(
+                    *[FadeTransform(example2[0][b], img[i]) for i, b in enumerate(transforms)],
                     lag_ratio=0.0005,
                 ),
                 lag_ratio=0.7,
+                run_time=2,
             )
         )
+
+        self.remove(img)
+        self.remove(example2)
+
+        objects = []
+
+        for i, b in enumerate(transforms):
+            objects.append(img[i])
+
+        self.play(*[FadeOut(o) for o in objects])
 
 
 class Proof(MovingCameraScene):
     @fade
     def construct(self):
-        # TODO: intro
+        tex = Tex("How good is LP-SAT?").scale(1.8)
+
+        self.play(Write(tex))
+        self.play(FadeOut(tex))
 
         tex_ag = Tex(r"$$\prod_{i = 1}^{n} \sqrt[n]{a_i} \le \frac{1}{n} \sum_{i = 1}^{n} a_i$$")
 
@@ -964,19 +1049,17 @@ class Proof(MovingCameraScene):
 
         lp_table = VGroup(
                 Tex(r"{\bf Variables:}"),
-                Tex(r"$$y_i\ \text{(literals) and}\ z_j\ \text{(clauses)}$$"),
+                Tex(r"$$y_i\ \text{(literals) and}\ z_j\ \text{(clauses)} \in \left[0, 1\right] $$"),
                 Tex(r"{\bf Inequalities:}"),
                 Tex(r"$$z_j \le \sum_{\text{positive}} y_i + \sum_{\text{negative}} \left(1-y_i\right)$$"),
                 Tex(r"{\bf Maximize:}"),
                 Tex(r"$$\sum z_j\ \text{(satisfied clauses)}$$ "))
 
         lp_table.arrange_in_grid(cols=2, col_alignments="rl", row_alignments="uuu", buff=(0.5, 0.8)).scale(0.75).shift(DOWN * 0.75)
-        lp_table[2].shift(DOWN * 0.10)
-        lp_table[4].shift(DOWN * 0.095)
+        lp_table[2].shift(DOWN * 0.11)
+        lp_table[4].shift(DOWN * 0.1)
 
-        self.play(Write(lp_table[0:2], run_time=1.5))
-        self.play(Write(lp_table[2:4], run_time=1.5))
-        self.play(Write(lp_table[4:6], run_time=1.5))
+        self.play(FadeIn(lp_table, run_time=1.5))
 
         consider = Tex(r"$$y_i^*, z_j^* \qquad C_j\ \text{with}\ k_j\ \text{literals}$$").shift(DOWN * 0.5)
 
@@ -997,12 +1080,14 @@ class Proof(MovingCameraScene):
                         ReplacementTransform(lp_table[1][0][15], VGroup(consider[0][4])),
                         ReplacementTransform(lp_table[1][0][16], VGroup(consider[0][6])),
                     ),
-                    Write(VGroup(consider[0][1], consider[0][3], consider[0][5], consider[0][7:]), run_time=1.5),
+                    Write(VGroup(consider[0][1], consider[0][3], consider[0][5]), run_time=1.5),
                     lag_ratio=1,
                 ),
                 lag_ratio=0.5,
             )
         )
+
+        self.play(Write(consider[0][7:]))
 
         proof_not_satisfied = Tex(r"""$$
 \begin{aligned}
@@ -1021,9 +1106,13 @@ class Proof(MovingCameraScene):
         self.play(
             AnimationGroup(
                 consider.animate.next_to(VGroup(ag, jen), DOWN, buff=0.5),
-                Write(p1, run_time=2),
+                Write(p1[0][:19], run_time=1.25),
                 lag_ratio=0.75
             )
+        )
+
+        self.play(
+                Write(p1[0][19:], run_time=1.25),
         )
 
         combined = VGroup(p1.copy(), p2.copy()).move_to(ORIGIN).align_to(p1, UP)
@@ -1113,7 +1202,8 @@ class Proof(MovingCameraScene):
 
         self.remove(p5)
 
-        p7 = Tex(r"$$\ge \left(1 - \frac{1}{e}\right) z^*_j \approx 0.63z^*_j$$").scale(0.65)
+        p7 = Tex(r"$$\ge \left(1 - \frac{1}{e}\right) z^*_j$$").scale(0.65)
+        p8 = Tex(r"$$\approx 0.63z^*_j$$").scale(0.65)
         p6_copy = p6.copy()
         align_object_by_coords(p6_copy, p6_copy[0][1].get_center(), p5_with_overset[0][0].get_center())
         p7.next_to(p6_copy, DOWN).align_to(p6_copy[0][1], LEFT)
@@ -1131,12 +1221,18 @@ class Proof(MovingCameraScene):
             FadeIn(p7, shift=UP * 1.15),
         )
 
+        p8.next_to(p7, RIGHT, buff=0.15).align_to(p7[0][-1], DOWN)
+
+        self.play(Write(p8))
+
+        p7.add(p8)
+
         p7_copy = p7.copy().set_color(WHITE)
         align_object_by_coords(p7_copy, p7_copy[0][0].get_center(), p6[0][1].get_center())
 
         p1_copy = p1[0][:19].copy()
 
-        VGroup(p1_copy, p7_copy).scale(1.5).move_to(ORIGIN).shift(UP * 0.2)
+        a = VGroup(p1_copy, p7_copy).scale(1.5).move_to(ORIGIN).shift(UP * 0.2)
 
         p1_copy[7:7+3].set_opacity(0)
         p1[0][7:7+3].set_opacity(0)
@@ -1157,11 +1253,44 @@ class Proof(MovingCameraScene):
             )
         )
 
-        # TODO: the rest of the shit
+        p9 = Tex(r"$$\mathbb{E}\left[\text{\# of sat. clauses}\right] = \sum_j \mathrm{Pr}\left[C_j\ \text{is satisfied}\right]$$").scale(0.65).scale(1.5)
+        p9.next_to(a, DOWN, buff=1)
+
+        self.play(
+            Write(p9),
+            self.camera.frame.animate.move_to(VGroup(a, p9)),
+        )
+
+        cplmao = p7[0][1:1+10].copy().next_to(p9[0][18], RIGHT, buff=0.13)
+
+        self.play(
+            p7[0][0].animate.move_to(p9[0][17]),
+            FadeOut(p9[0][17]),
+            p7[0][1:1+10].animate.next_to(p9[0][18], RIGHT, buff=0.13),
+            Transform(p7[0][1:1+10], cplmao),
+            FadeOut(p9[0][20:]),
+            FadeOut(p1[0][:19]),
+            FadeOut(p8),
+            self.camera.frame.animate.move_to(VGroup(p9[0][:20], cplmao)),
+        )
+
+        self.play(
+            p7[0][1:1+7].animate.align_to(p9[0][18], LEFT),
+            p9[0][18:18+2].animate.align_to(p7[0][1:1+7], RIGHT),
+        )
+
+        vg = VGroup(p9[0][18:18+2], p7[0][1+7:1+7+3])
+        opt = Tex("OPT").align_to(vg, LEFT).align_to(p9[0][6], DOWN).shift(DOWN * 0.06)
+
+        self.play(
+            FadeTransform(vg, opt)
+        )
 
 
-class BestSat(MovingCameraScene):
+class BestSAT(MovingCameraScene):
+    @fade
     def construct(self):
+        self.next_section(skip_animations=True)
         table = Table(
             [
                 [Tex(r"$$\left[1 - \left(\frac{1}{2}\right)^{k_j}\right] z^*_j$$")],
@@ -1169,7 +1298,7 @@ class BestSat(MovingCameraScene):
             ],
             element_to_mobject = lambda x: x,
             row_labels=[Tex("RAND-SAT"), Tex("LP-SAT")],
-            col_labels=[Tex(r"$$\mathrm{Pr}\left[C_j\ \text{satisfied}\right] \ge$$")],
+            col_labels=[Tex(r"$$\mathrm{Pr}\left[C_j\ \text{is satisfied}\right] \ge$$")],
             v_buff=0.4, h_buff=0.65,
             include_outer_lines=True,
         )
@@ -1204,6 +1333,7 @@ class BestSat(MovingCameraScene):
 
         z_j = Tex(r"$z^*_j \in \left[0, 1\right] \ldots$ how can the clause be satisfied \textbf{in the optimal case}").scale(0.75)
         z_j.next_to(table, DOWN, buff=0.75)
+        z_j_opt = Tex(r"$\ldots$ $\sum z_j^* = \text{OPT}$ (sum of clause variables)").scale(0.75).next_to(z_j, DOWN).align_to(z_j[0][9], LEFT)
 
         self.play(
             FadeIn(z_j, shift=DOWN * 0.5),
@@ -1211,8 +1341,13 @@ class BestSat(MovingCameraScene):
         )
 
         self.play(
-            FadeIn(table.get_entries((0, 1))[0][0]),
-            FadeIn(table.get_entries((0, 1))[0][10:]),
+            FadeIn(z_j_opt, shift=DOWN * 0.25),
+            self.camera.frame.animate.move_to(VGroup(z_j, table, z_j_opt)).set_width(VGroup(table, z_j).get_width() * 1.6),
+        )
+
+        self.play(
+            FadeIn(table.get_entries((0, 1))[0][0], shift=RIGHT * 0.25),
+            FadeIn(table.get_entries((0, 1))[0][10:], shift=LEFT * 0.25),
         )
 
         table2 = Table(
@@ -1233,7 +1368,36 @@ class BestSat(MovingCameraScene):
             element_to_mobject = lambda x: x,
             row_labels=[Tex("RAND-SAT"), Tex("LP-SAT")],
             col_labels=[Tex("1"),Tex("2"),Tex("3"),Tex("4")],
-            top_left_entry=Tex("clause size").scale(0.75),
+            top_left_entry=Tex("$k$ (clause size)").scale(0.7),
+            v_buff=0.4, h_buff=0.65,
+            include_outer_lines=True,
+        )
+
+        table3 = Table(
+            [
+                [
+                    Tex(r"$$\frac{1}{2} z_j^*$$"),
+                    Tex(r"$$\frac{3}{4} z_j^*$$"),
+                    Tex(r"$$\frac{7}{8} z_j^*$$"),
+                    Tex(r"$$\frac{15}{16} z_j^*$$"),
+                ],
+                [
+                    Tex(r"$$1 z_j^*$$"),
+                    Tex(r"$$\frac{3}{4} z_j^*$$"),
+                    Tex(r"$$\approx 0.703 z_j^*$$"),
+                    Tex(r"$$\approx 0.683 z_j^*$$"),
+                ],
+                [
+                    Tex(r"$$\frac{3}{4} z_j^*$$"),
+                    Tex(r"$$\frac{3}{4} z_j^*$$"),
+                    Tex(r"$$\frac{3}{4} z_j^*$$"),
+                    Tex(r"$$\frac{3}{4} z_j^*$$"),
+                ],
+            ],
+            element_to_mobject = lambda x: x,
+            row_labels=[Tex("RAND-SAT"), Tex("LP-SAT"), Tex("BEST-SAT")],
+            col_labels=[Tex("1"),Tex("2"),Tex("3"),Tex("4")],
+            top_left_entry=Tex("$k$ (clause size)").scale(0.7),
             v_buff=0.4, h_buff=0.65,
             include_outer_lines=True,
         )
@@ -1244,6 +1408,13 @@ class BestSat(MovingCameraScene):
         table2.remove(table2.get_horizontal_lines()[3])
         hlines2.remove(table2.get_horizontal_lines()[3])
         hlines2[2].set_stroke_width(1.5)
+
+        # disgustang
+        table3.remove(*table3.get_vertical_lines())
+        hlines3 = list(table3.get_horizontal_lines())
+        table3.remove(table3.get_horizontal_lines()[3])
+        hlines3.remove(table3.get_horizontal_lines()[3])
+        hlines3[2].set_stroke_width(1.5)
 
         self.play(
             AnimationGroup(
@@ -1263,6 +1434,109 @@ class BestSat(MovingCameraScene):
                 lag_ratio=0.5,
             )
         )
+
+        for o in self.mobjects:
+            self.remove(o)
+
+        self.add(table2)
+        self.add(z_j)
+        self.add(z_j_opt)
+
+        res = 1000
+        cols = color_gradient([RED, RED, GREEN], res + 1)
+
+        self.play(
+            Circumscribe(
+                VGroup(
+                    table2.get_entries((2, 2)),
+                    table2.get_entries((2, 3)),
+                    table2.get_entries((2, 4)),
+                    table2.get_entries((2, 5)),
+                ),
+                color=WHITE,
+            ),
+            table2.get_entries((2, 2)).animate.set_color(cols[int((1/2) * res)]),
+            table2.get_entries((2, 3)).animate.set_color(cols[int((3/4) * res)]),
+            table2.get_entries((2, 4)).animate.set_color(cols[int((7/8) * res)]),
+            table2.get_entries((2, 5)).animate.set_color(cols[int((15/16) * res)]),
+        )
+
+        self.play(
+            Circumscribe(
+                VGroup(
+                    table2.get_entries((3, 2)),
+                    table2.get_entries((3, 3)),
+                    table2.get_entries((3, 4)),
+                    table2.get_entries((3, 5)),
+                ),
+                color=WHITE,
+            ),
+            table2.get_entries((3, 2)).animate.set_color(cols[int((1) * res)]),
+            table2.get_entries((3, 3)).animate.set_color(cols[int((3/4) * res)]),
+            table2.get_entries((3, 4)).animate.set_color(cols[int((0.703) * res)]),
+            table2.get_entries((3, 5)).animate.set_color(cols[int((0.683) * res)]),
+        )
+
+        table3.get_entries((4, 2)).set_color(cols[int((3/4) * res)])
+        table3.get_entries((4, 3)).set_color(cols[int((3/4) * res)])
+        table3.get_entries((4, 4)).set_color(cols[int((3/4) * res)])
+        table3.get_entries((4, 5)).set_color(cols[int((3/4) * res)])
+
+        calc = Tex(r"$$\approx 0.632 z_j^*$$").set_color(cols[int((0.632) * res)]).move_to(table2.get_entries((3, 4)))
+        calc2 = calc.copy().move_to(table2.get_entries((3, 5)))
+
+        sorted_lines2 = list(sorted(hlines2, key=lambda x: -x.get_y()))
+        sorted_lines3 = list(sorted(hlines3, key=lambda x: -x.get_y()))
+
+        align_object_by_coords(table3, sorted_lines3[0], sorted_lines2[0])
+
+        c = DOWN * 1
+
+        cp = z_j_opt.copy().shift(c)
+
+        self.play(
+            sorted_lines2[-1].animate.move_to(sorted_lines3[-1]),
+            FadeIn(table3.get_row_labels()[2], shift=DOWN * 0.4),
+            z_j.animate.shift(c),
+            z_j_opt.animate.shift(c),
+            self.camera.frame.animate.move_to(VGroup(z_j, z_j_opt, cp, table2)).set_width(VGroup(table2, z_j, z_j_opt, cp).get_width() * 1.6),
+        )
+
+        a1 = ArcBetweenPoints(
+                    Dot().next_to(table2.get_row_labels()[0], LEFT).get_center(),
+                    Dot().next_to(table3.get_row_labels()[2], LEFT).get_center(),
+                )
+
+        a2 = ArcBetweenPoints(
+                    Dot().next_to(table2.get_row_labels()[1], LEFT).get_center(),
+                    Dot().next_to(table3.get_row_labels()[2], LEFT).get_center(),
+                )
+
+        self.play(
+            AnimationGroup(
+                Create(a1, run_time=0.75),
+                Create(a2, run_time=0.75),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(
+            FadeOut(table2.get_entries((3, 4))[0][1:-3], shift=DOWN * 0.5),
+            FadeOut(table2.get_entries((3, 5))[0][1:-3], shift=DOWN * 0.5),
+            FadeIn(calc                       [0][1:-3], shift=DOWN * 0.5),
+            FadeIn(calc2                      [0][1:-3], shift=DOWN * 0.5),
+        )
+
+        self.next_section()
+
+        for i in range(4):
+            self.play(
+                Transform(table2.get_entries((2, 2+i)).copy(), table3.get_entries((4, 2+i)).copy()),
+                Transform(table2.get_entries((3, 2+i)).copy(), table3.get_entries((4, 2+i)).copy()),
+                run_time = 1 - 0.1 * i,
+            )
+
+        self.play()
 
 
 class TransparentRelaxedMAXSAT(MovingCameraScene):
@@ -1314,6 +1588,64 @@ class TransparentRelaxedMAXSAT(MovingCameraScene):
             ReplacementTransform(table[1][0][27+4], table2[1][0][27+4]),
         )
 
+        example2 = Tex(r"$$(a) \land (\lnot a \lor b) \land (\lnot a \lor \lnot b)$$").next_to(table2, DOWN, buff=1.5)
+        example2[0][1].set_color(GREEN)
+        example2[0][5:5+2].set_color(RED)
+        example2[0][8].set_color(GREEN)
+        example2[0][12:12+2].set_color(RED)
+        example2[0][15:15+2].set_color(RED)
+
+        self.play(
+            FadeIn(example2, shift=DOWN * 0.25),
+            self.camera.frame.animate.move_to(VGroup(table2, example2)).set_height(VGroup(table2, example2).get_height() * 1.5),
+        )
+
+        img = SVGMobject("assets/lp-max-sat-relax.svg").stretch_to_fit_width(self.camera.frame.get_width()).stretch_to_fit_height(self.camera.frame.get_height()).move_to(self.camera.frame)
+
+        tfs1 = [28, 30]
+        tfs2 = [1, 5, 6, 8, 12, 13, 15, 16]
+
+        text = VGroup(Tex("Relaxed MAX-SAT using"), Tex("Linear Programming")).scale(0.9).arrange(DOWN).align_to(self.camera.frame, UP).align_to(self.camera.frame, RIGHT).shift((DOWN + LEFT) * 0.5)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(table[0]),
+                    FadeOut(table[2]),
+                    FadeOut(table[4]),
+                    FadeOut(table[5]),
+                    FadeOut(table[3]),
+                    *[FadeOut(c) for i, c in enumerate(table2[1][0]) if i in [27, 31]],
+                    *[FadeOut(c) for i, c in enumerate(table[1][0]) if i not in tfs1],
+                    *[FadeOut(c) for i, c in enumerate(example2[0]) if i not in tfs1],
+                ),
+                AnimationGroup(
+                    FadeIn(text),
+                    AnimationGroup(
+                        FadeTransform(table[1][0][28].copy(), img[0]),
+                        FadeTransform(table[1][0][28], img[2]),
+                        FadeTransform(table[1][0][30].copy(), img[1]),
+                        FadeTransform(table[1][0][30], img[3]),
+                        FadeTransform(example2[0][1], img[4]),
+                        FadeTransform(example2[0][5], img[5]),
+                        FadeTransform(example2[0][6], img[6]),
+                        FadeTransform(example2[0][8], img[7]),
+                        FadeTransform(example2[0][12], img[8]),
+                        FadeTransform(example2[0][13], img[9]),
+                        FadeTransform(example2[0][15], img[10]),
+                        FadeTransform(example2[0][16], img[11]),
+                        lag_ratio=0.0005,
+                    ),
+                ),
+                lag_ratio=0.7,
+                run_time=2,
+            )
+        )
+
+        self.play(*[FadeOut(o) for o in self.mobjects if o != text and o is not text])
+
+        return
+
         nl = NumberLine(
             x_range=[0, 11, 1],
             length=10,
@@ -1336,7 +1668,6 @@ class TransparentRelaxedMAXSAT(MovingCameraScene):
         rms = Tex("Relaxed MAX-SAT", color=ORANGE).next_to(tm[10], UP, buff=0.4)
         tm[10].set_color(ORANGE).set_stroke_width(5).scale(1.2)
 
-
         self.play(
             FadeIn(nl, shift=DOWN * 0.5),
             self.camera.frame.animate.move_to(VGroup(table, nl, ms)).set_width(VGroup(table, nl, ms).get_width() * 1.6),
@@ -1358,3 +1689,19 @@ class TransparentRelaxedMAXSAT(MovingCameraScene):
             Create(l1),
             FadeIn(omsa, shift=RIGHT * 0.25),
         )
+
+
+class TransparentMoreExplainPls(MovingCameraScene):
+    @fade
+    def construct(self):
+        tex = Tex(r"assign true to a \textbf{literal} with the", r"probability of its corresponding \textbf{variable}").arrange(DOWN).next_to(config.bottom, UP, buff=1)
+
+        self.play(Write(tex))
+
+
+class TransparentLPSAT2(MovingCameraScene):
+    @fade
+    def construct(self):
+        tex = Tex("LP-SAT").scale(1.3).align_to(self.camera.frame, UP).align_to(self.camera.frame, RIGHT).shift((DOWN + LEFT) * 0.8)
+
+        self.play(Write(tex))

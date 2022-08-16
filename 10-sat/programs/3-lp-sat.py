@@ -10,10 +10,10 @@ a, b, c = [LpVariable(name=c, cat=LpBinary) for c in "abc"]
 w, x, y, z = [LpVariable(name=c, cat=LpBinary) for c in "wxyz"]
 
 # inequalities
-model += w <= a           # [a]
-model += x <= (1 - a)     # [~a]
-model += y <= b + (1 - c) # [b, ~c]
-model += z <= c           # [c]
+model += w <= a
+model += x <= (1 - a)
+model += y <= b + (1 - c)
+model += z <= c
 
 # maximize clause variables
 model += w + x + y + z

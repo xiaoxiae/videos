@@ -4,21 +4,15 @@ from pulp import *
 model = LpProblem(name="lp-sat", sense=LpMaximize)
 
 # literal variables
-a, b = [LpVariable(name=c) for c in "ab"]
+a, b = [LpVariable(name=c, lowBound=0, upBound=1) for c in "ab"]
 
 # clause variables
-x, y, z = [LpVariable(name=c) for c in "xyz"]
+x, y, z = [LpVariable(name=c, lowBound=0, upBound=1) for c in "xyz"]
 
 # inequalities
-model += x <= a                  # [a]
-model += y <= (1 - a) + b        # [~a, b]
-model += z <= (1 - a) + (1 - b)  # [~a, ~b]
-
-model += 0 <= a <= 1
-model += 0 <= b <= 1
-model += 0 <= x <= 1
-model += 0 <= y <= 1
-model += 0 <= z <= 1
+model += x <= a
+model += y <= (1 - a) + b
+model += z <= (1 - a) + (1 - b)
 
 # maximize clause variables
 model += x + y + z
