@@ -1,9 +1,18 @@
 ---
-FIRST SECTION NAME
+title: <title>
+subtitle: Video Script
+author: Tomáš Sláma
+header-includes:
+- \pagenumbering{gobble}
+- \newgeometry{left=15mm, right=40mm, top=15mm, bottom=15mm, marginparwidth=30mm}
 ---
 
-# FirstClassName
+\hrule
+\vspace{1.5em}
 
-**[voice-file-name-1]:**  This is a sentence in the script to record.
+---
+INTRODUCTION
+---
 
-**[voice-file-name-2]:**  This is another sentence in the script to record.
+\marginpar{\texttt{SceneName}}
+Script...

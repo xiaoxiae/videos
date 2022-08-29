@@ -12,10 +12,14 @@ A random list of ideas for videos.
 - Aho-Corasick
 - Goldberg
 - Cook-Levin theorem
+- Linear Time In-place BFS and DFS
 
 ## Aproximation algorithms
 - static dictionary
 
 ## IPS
 - Number Systems (fibonacci, -2)
-- Hydra
+
+## Problems
+- closest point for groups of people
+- prime numbers (.())...
