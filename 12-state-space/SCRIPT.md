@@ -15,35 +15,39 @@ INTRODUCTION
 ---
 
 \marginpar{\texttt{SceneName}}
-Theseus, the Greek hero, has embarked on a journey to find the terrible Minotaur. <!-- write theseus -->
-Finding himself deep in the twisting maze of Minos, the Minotaur has been alerted to his presence and starts moving towards him. <!-- animate twice camera out and then camera pan to the right -->
-This is rather unfortunate news for Theseus, because in this version of the story, he seems to have forgotten his sword and so his only option is to run away, with Minotaur giving chase -- can he get out before he is caught?
+Deep in the twisting maze of Minos, a lone Theseus seeks the mighty minotaur. <!-- just image of the labyrinth -->
+After endless days of fruitless searching, the minotaur is alerted to his presense and starts moving towards him. <!-- animate twice camera out and then camera pan to the right; minotaur has question mark above him -->
+This is rather unfortunate news for Theseus, because he seems to have forgotten his sword at home and so his only option is to run away -- can he get out before he is caught? <!-- animation of an exclamation point above theseus -->
 
 Before solving this slightly tricky question, let's start by looking at a simple version where there is no Minotaur.
-You might recognize this as one of the fundamental problems in computer science, that is, finding the shortest path in a maze.
-There are a number of algorithms that can to help us solve this problem, but the one we're interested in is BFS.
+You might recognize this as one of the fundamental problems in computer science, that is, finding the shortest path.
+There are a number of algorithms that can help us solve this problem, the simplest one being Breadth-first search (or BFS for short).
 
-The idea behind BFS is quite simple: we'll have a queue of positions to explore, starting with the initial one.
-Each round, we'll take a position from the queue, add the unexplored positions to it and repeat. <!-- animation of the algorithm on the maze, with the actual queue -->
+The idea behind BFS is very simple: we have a queue of positions (or states) to explore, starting with the initial one.
+Each round, we'll take a position from the queue, add its unexplored neighbours and repeat. <!-- animation of the algorithm on the maze, with the actual queue on the side; animating what is explored -->
 
-Let's implement it in Python.
+Let's try implementing it in Python.
+TODO: conversion to code
 
 TODO: top-down implementation (starting with the BFS function)
 - with the stop_condition thingy
 
-Since we see that we can get out by ourselves in this particular maze, let's see if we can do so with the Minotaur on our tail.
+Since we see that Theseus can get out in this particular maze, let's see if we can do so with the Minotaur on his tail.
 
-The rules of this new game are the following: for every move Theseus makes (left, right, up and down), the Minotaur can make two (again left, right, up and down). <!-- animate theseus and the minotaur moving -->
+The rules of this new task are the following: for every move Theseus makes (left, right, up and down), the Minotaur can make two (again left, right, up and down). <!-- animate theseus and the minotaur moving -->
 Fortunately, the Minotaur isn't particularly bright and so it always moves directly towards Theseus, wherever he is in the maze.
-He first checks if he can move closer horizontally, and if this is not the case then he will try to do so vertically, repeating twice.
-
+He does this by first checking if he can move closer horizontally, and if this is not the case then he will try to do so vertically, repeating twice.
 Here are a few simulated moves for this particular maze.
 
-The key insight for solving this problem is the following: when implemeting BFS, the state that we kept track of was just the position of Theseus.
+Try to pause here for a minute and think about how we could conceptually solve this more difficult problem.
+
+The key insight is the following: in the previous task, the state that we kept track of was just the position of Theseus.
 Now, the state has changed and is the position of Theseus and the position of the Minotaur.
-Interestingly, the way we wrote BFS is very general and doesn't care about Theseus or Minotaur, it just takes the oldest state, adds its undiscovered neighbouring states and repeats, meaning that we can use it to solve our Minotaur problem as well!
+However, the way we wrote BFS earlier is very general -- as you can see, it doesn't care about Theseus nor the Minotaur, it just takes an initial state (whatever it might be) and repeatedly adds and explores its neighbouring states, meaning that we can easily re-use it to solve our Minotaur problem!
 
 TODO: implementation
 
 Just to show you that this method can apply to a wide variety of problems, we'll help this frog jump across a bridge filled with holes.
-The frog wants to get to the other side in as few jumps as possible without falling, but since it only knows prime numbers, it can jump 2, 3, 5 or 7 tiles at a time.
+The frog wants to get to the other side in as few jumps as possible without falling, but since it's a frogmatician, it only knows prime numbers and can therefore jump 2, 3, 5 or 7 tiles at a time.
+
+TODO: implementation

@@ -23,6 +23,11 @@ arecord (audio recording): https://linux.die.net/man/1/arecord
 sox (audio processing): http://sox.sourceforge.net/
 Vector Magic (image vectorization): https://vectormagic.com/
 Inkscape (vector image editing): https://inkscape.org/
+MiDaS (monocular depthmap estimation): https://github.com/isl-org/MiDaS
+Depthy (parallax image viewer): http://depthy.stamina.pl/
+Midjourney (illustration generator): https://www.midjourney.com/home/
+Voronoi (maze graphics): https://github.com/xiaoxiae/Voronoi
+Voronoi (random maze generation): https://github.com/john-science/mazelib
 
 Social media:
 Website (for other things I'm up to): https://slama.dev/
