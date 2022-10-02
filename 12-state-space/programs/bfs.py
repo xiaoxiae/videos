@@ -1,3 +1,96 @@
+# block is_valid
+def is_valid(position):
+    x, y = position
+    return maze[y][x] != "#"
+# endblock
+
+
+# block next_states
+def next_states(position):
+    x, y = position
+    states = []
+
+    for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+        nx = x + dx
+        ny = y + dy
+
+        if is_valid((nx, ny)):
+            states.append((nx, ny))
+
+    return states
+# endblock
+
+# block bfs
+def bfs(starting_state, stop_condition):
+    queue = [starting_state]
+    discovered = {starting_state}
+
+    while len(queue) != 0:
+        current = queue.pop(0)
+
+        if stop_condition(current):
+            print("Solution found!")
+            return
+
+        for next_state in next_states(current):
+            if next_state not in discovered:
+                queue.append(next_state)
+                discovered.add(current)
+
+    print("No solution!")
+# endblock
+
+# block bfs_better
+def bfs(starting_state, stop_condition):
+    queue = [starting_state]
+    discovered = {starting_state: None}
+
+    while len(queue) != 0:
+        current = queue.pop(0)
+
+        if stop_condition(current):
+            print("Solution found!")
+
+            path = []
+            while discovered[current] is not None:
+                path.append(current)
+                current = discovered[current]
+            path.append(current)
+
+            for coordinate in reversed(path):
+                print(coordinate)
+
+            return
+
+        for next_state in next_states(current):
+            if next_state not in discovered:
+                queue.append(next_state)
+                discovered[next_state] = current
+
+    print("No solution!")
+# endblock
+
+# block bfs_mid
+def bfs(starting_state, stop_condition):
+    queue = [starting_state]
+    discovered = {starting_state: None}
+
+    while len(queue) != 0:
+        current = queue.pop(0)
+
+        if stop_condition(current):
+            print("Solution found!")
+            return
+
+        for next_state in next_states(current):
+            if next_state not in discovered:
+                queue.append(next_state)
+                discovered[next_state] = current
+
+    print("No solution!")
+# endblock
+
+# block start
 maze = [
     "##########",
     "#       E#",
@@ -20,55 +113,5 @@ for y, row in enumerate(maze):
         elif char == "E":
             escape = (x, y)
 
-
-def is_valid(position):
-    x, y = position
-    return maze[y][x] != "#"
-
-
-def next_moves(position):
-    x, y = position
-    moves = []
-
-    for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
-        nx = x + dx
-        ny = y + dy
-
-        if is_valid((nx, ny)):
-            moves.append((nx, ny))
-
-    return moves
-
-
-def stop_condition(position):
-    return position == escape
-
-
-def bfs(starting):
-    queue = [starting]
-    discovered = {starting: None}
-
-    while len(queue) != 0:
-        current = queue.pop(0)
-
-        if stop_condition(current):
-            path = []
-            while discovered[current] is not None:
-                path.append(current)
-                current = discovered[current]
-            path.append(current)
-
-            for coordinate in reversed(path):
-                print(coordinate)
-
-            quit()
-
-        for next_move in next_moves(current):
-            if next_move not in discovered:
-                discovered[next_move] = current
-                queue.append(next_move)
-
-    print("No solution!")
-    quit()
-
-bfs(theseus)
+bfs(theseus, lambda state: state == escape)
+# endblock
