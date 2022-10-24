@@ -28,7 +28,6 @@ parser.add_argument(
 
 parser.add_argument(
     "--no-manim",
-    dest="no_manim",
     action="store_true",
     help="don't run Manim, just do the video post-processing",
     default=False,
@@ -36,15 +35,21 @@ parser.add_argument(
 
 parser.add_argument(
     "--no-sound-normalization",
-    dest="no_sound_normalization",
     action="store_true",
     help="don't normalize sound",
     default=False,
 )
 
 parser.add_argument(
+    "--shorts",
+    action="store_true",
+    help="render in shorts mode (resolution is flipped)",
+    default=False,
+)
+
+parser.add_argument(
     "-q", "--quality",
-    choices=["l", "m", "h", "k"],
+    choices=["m", "h", "k"],
     default="k",
     help="the quality of the video (4K by default)"
 )
@@ -58,7 +63,18 @@ arguments = parser.parse_args()
 
 def render_scene(scene):
     """Render a single scene """
-    args = ["python3", "-m", "manim", "scenes.py", f"-q{arguments.quality}", "--disable_caching", scene]
+    quality_mapping = {
+        "m": (1280, 720, 30),
+        "h": (1920, 1080, 60),
+        "k": (3840, 2160, 60),
+    }
+
+    w, h, f = quality_mapping[arguments.quality]
+
+    if arguments.shorts:
+        w, h = h, w
+
+    args = ["python3", "-m", "manim", "scenes.py", "--fps", str(f), "-r", f"{w},{h}", "--disable_caching", scene]
 
     if scene.lower().startswith("transparent"):
         args.append("-t")
