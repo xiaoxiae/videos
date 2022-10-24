@@ -20,7 +20,7 @@ def next_theseus_positions(position):
 # endblock
 
 
-# block next_minotaur_position
+# block next_theseus_positions
 def move_towards(start, end):
     return +1 if start < end else 0 if start == end else -1
 
@@ -59,16 +59,20 @@ def next_states(state):
 # endblock
 
 
-# block bfs
-def bfs(starting_state, stop_condition):
-    queue = [starting_state]
+# block a_star
+def a_star(starting_state, stop_condition, heuristic):
+    import heapq
+
+    heap = [(0 + heuristic(starting_state), starting_state)]
     discovered = {starting_state: None}
 
-    while len(queue) != 0:
-        current = queue.pop(0)
+    i = 0
+    while len(heap) != 0:
+        i += 1
+        distance, current = heapq.heappop(heap)
 
         if stop_condition(current):
-            print("Solution found!")
+            print(f"Solution found in {i} steps!")
 
             path = [current]
             while discovered[current] is not None:
@@ -82,7 +86,9 @@ def bfs(starting_state, stop_condition):
 
         for next_state in next_states(current):
             if next_state not in discovered:
-                queue.append(next_state)
+                next_distance = distance - heuristic(current) + 1 + heuristic(next_state)
+
+                heapq.heappush(heap, (next_distance, next_state))
                 discovered[next_state] = current
 
     print("No solution!")
@@ -114,81 +120,8 @@ for y, row in enumerate(maze):
         elif char == "M":
             minotaur = (x, y)
 
-bfs((theseus, minotaur), lambda state: state[0] == escape)
-# endblock
+def distance(p1, p2):
+    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
 
-# block start_partial
-maze = [
-    "##########",
-    "#       E#",
-    "#   #   ##",
-    "# T # M  #",
-    "#   #    #",
-    "#   #    #",
-    "#   #    #",
-    "#  #     #",
-    "##########",
-]
-
-theseus = None
-escape = None
-
-for y, row in enumerate(maze):
-    for x, char in enumerate(row):
-        if char == "T":
-            theseus = (x, y)
-        elif char == "E":
-            escape = (x, y)
-
-bfs(theseus, lambda state: state == escape)
-# endblock
-
-# block start_partial_2
-maze = [
-    "##########",
-    "#       E#",
-    "#   #   ##",
-    "# T # M  #",
-    "#   #    #",
-    "#   #    #",
-    "#   #    #",
-    "#  #     #",
-    "##########",
-]
-
-theseus = None
-escape = None
-minotaur = None
-
-for y, row in enumerate(maze):
-    for x, char in enumerate(row):
-        if char == "T":
-            theseus = (x, y)
-        elif char == "E":
-            escape = (x, y)
-        elif char == "M":
-            minotaur = (x, y)
-
-bfs(theseus, lambda state: state == escape)
-# endblock
-
-# block output
-Solution found!
-((2, 3), (6, 3))
-((2, 4), (5, 4))
-((2, 5), (5, 5))
-((2, 6), (5, 6))
-((2, 7), (4, 7))
-((2, 6), (4, 7))
-((3, 6), (4, 7))
-((3, 5), (4, 7))
-((3, 4), (4, 7))
-((3, 3), (4, 7))
-((3, 2), (4, 7))
-((3, 1), (4, 7))
-((4, 1), (4, 7))
-((5, 1), (5, 6))
-((6, 1), (6, 5))
-((7, 1), (7, 4))
-((8, 1), (8, 3))
+a_star((theseus, minotaur), lambda state: state[0] == escape, lambda state: distance(state[0], escape))
 # endblock

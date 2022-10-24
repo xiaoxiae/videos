@@ -25,11 +25,13 @@ def bfs(starting_state, stop_condition):
     queue = [starting_state]
     discovered = {starting_state}
 
+    i = 0
     while len(queue) != 0:
+        i += 1
         current = queue.pop(0)
 
         if stop_condition(current):
-            print("Solution found!")
+            print(f"Solution found in {i} steps!")
             return
 
         for next_state in next_states(current):
@@ -113,17 +115,4 @@ for y, row in enumerate(maze):
             escape = (x, y)
 
 bfs(theseus, lambda state: state == escape)
-# endblock
-
-# block output
-Solution found!
-(2, 3)
-(3, 3)
-(3, 2)
-(3, 1)
-(4, 1)
-(5, 1)
-(6, 1)
-(7, 1)
-(8, 1)
 # endblock

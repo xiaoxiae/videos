@@ -7,9 +7,12 @@ class Queue(VMobject):
     def __init__(self, scale: float = 1):
         super().__init__()
 
+        self.max_height = 10
+        self.item_height = 1
+
         ARROW_SIZE = 1.4
 
-        self.buff = 0.1 * scale
+        self.buff = 0.15 * scale
 
         self.top = VGroup(
             Arrow(start=UP * ARROW_SIZE, end=ORIGIN),
@@ -19,7 +22,7 @@ class Queue(VMobject):
         self.bot = VGroup(
             Arrow(start=ORIGIN, end=DOWN * ARROW_SIZE),
             Line(start=LEFT, end=RIGHT),
-        ).next_to(self.top, DOWN, buff=self.buff)
+        )
 
         self.items = []
 
@@ -33,25 +36,142 @@ class Queue(VMobject):
         self.bot[0].set_stroke_width(scale * 6)
         self.bot[1].set_stroke_width(scale * 6)
 
-    def animate_add(self, obj: Mobject) -> Animation:
-        put_obj = obj.copy().next_to(self.top, DOWN, buff=self.buff)
+        self.bot.next_to(self.top, DOWN, buff=self.buff)
 
-        other_objs = VGroup(*(self.items + [self.bot]))
+    #def animate_add(self, objs) -> Animation:
+    #    put_objs = [self.top]
 
-        self.items = [obj] + self.items
+    #    new_total_height = (len(self.items) + len(objs)) * self.item_height + (len(self.items) + len(objs) - 1) * self.buff
+
+    #    actual_height = self.item_height if new_total_height <= self.max_height else (self.max_height - (len(self.items) + len(objs) - 1) * self.buff) / (len(self.items) + len(objs))
+
+    #    for obj in objs:
+    #        obj.set_height(actual_height)
+    #        put_objs.append(obj.copy().next_to(put_objs[-1], DOWN, buff=self.buff))
+    #    put_objs.pop(0)
+
+    #    other_objs = VGroup(*self.items)
+    #    other_objs_new = other_objs.copy().set_height(len(other_objs) * actual_height + (len(other_objs) - 1) * self.buff).next_to(put_objs[-1], DOWN, buff=self.buff)
+
+    #    for obj, put_obj in zip(objs, put_objs):
+    #        obj.move_to(put_obj)
+
+    #    self.items = objs + self.items
+
+    #    lmao_scuffed = [self.top] + put_objs + list(other_objs_new)
+
+    #    return AnimationGroup(
+    #        AnimationGroup(
+    #            *[Transform(a, b) for a, b in zip(other_objs, other_objs_new)],
+    #        self.bot.animate.next_to(lmao_scuffed[-1], DOWN, buff=self.buff),
+    #        ),
+    #        AnimationGroup(*[FadeIn(o, shift=RIGHT * 2) for o in objs], lag_ratio=0.1, run_time=1),
+    #        lag_ratio=0.25,
+    #    )
+
+    def animate_add_from(self, objs, froms) -> Animation:
+        put_objs = [self.top]
+
+        new_total_height = (len(self.items) + len(objs)) * self.item_height + (len(self.items) + len(objs) - 1) * self.buff
+
+        actual_height = self.item_height if new_total_height <= self.max_height else (self.max_height - (len(self.items) + len(objs) - 1) * self.buff) / (len(self.items) + len(objs))
+
+        for obj in objs:
+            obj.set_height(actual_height)
+            put_objs.append(obj.copy().next_to(put_objs[-1], DOWN, buff=self.buff))
+        put_objs.pop(0)
+
+        other_objs = VGroup(*self.items)
+        other_objs_new = other_objs.copy().set_height(len(other_objs) * actual_height + (len(other_objs) - 1) * self.buff).next_to(put_objs[-1], DOWN, buff=self.buff)
+
+        for obj, put_obj in zip(objs, put_objs):
+            obj.move_to(put_obj)
+
+        self.items = objs + self.items
+
+        lmao_scuffed = [self.top] + put_objs + list(other_objs_new)
+
+        froms_copies = []
+        for f in froms:
+            fc = f.copy()
+            fc.set_z_index(0.01)
+            froms_copies.append(fc)
 
         return AnimationGroup(
-            other_objs.animate.next_to(put_obj, DOWN, buff=self.buff),
-            obj.animate.move_to(put_obj),
+            AnimationGroup(
+                *[Transform(a, b) for a, b in zip(other_objs, other_objs_new)],
+            self.bot.animate.next_to(lmao_scuffed[-1], DOWN, buff=self.buff),
+            ),
+            AnimationGroup(*[ReplacementTransform(o1, o2) for o1, o2 in zip(froms_copies, objs)], lag_ratio=0.1, run_time=1),
+            lag_ratio=0.25,
         )
 
-    def animate_remove(self, pos) -> Animation:
+    def animate_remove(self) -> Animation:
         obj = self.items.pop()
 
+        new_total_height = (len(self.items)) * self.item_height + (len(self.items) - 1) * self.buff
+        actual_height = self.item_height if new_total_height <= self.max_height else (self.max_height - (len(self.items) - 1) * self.buff) / (len(self.items))
+
+        items_objs = VGroup(*self.items)
+        items_objs_new = items_objs.copy().set_height(len(items_objs) * actual_height + (len(items_objs) - 1) * self.buff).next_to(self.top, DOWN, buff=self.buff)
+
         return AnimationGroup(
-            self.bot.animate.next_to(self.top if len(self.items) == 0 else self.items[-1], DOWN, buff=self.buff),
-            obj.animate.move_to(pos),
+            AnimationGroup(
+                *[Transform(a, b) for a, b in zip(items_objs, items_objs_new)],
+                FadeOut(obj, shift=RIGHT * 2),
+            ),
+            self.bot.animate.next_to(self.top if len(self.items) == 0 else items_objs_new, DOWN, buff=self.buff),
+            lag_ratio=0.25,
         )
+
+    def animate_remove_to(self, to) -> Animation:
+        obj = self.items.pop()
+
+        new_total_height = (len(self.items)) * self.item_height + (len(self.items) - 1) * self.buff
+        actual_height = self.item_height if new_total_height <= self.max_height else (self.max_height - (len(self.items) - 1) * self.buff) / (len(self.items))
+
+        items_objs = VGroup(*self.items)
+        items_objs_new = items_objs.copy().set_height(len(items_objs) * actual_height + (len(items_objs) - 1) * self.buff).next_to(self.top, DOWN, buff=self.buff)
+
+        return AnimationGroup(
+            AnimationGroup(
+                *[Transform(a, b) for a, b in zip(items_objs, items_objs_new)],
+                ReplacementTransform(obj, to),
+            ),
+            self.bot.animate.next_to(self.top if len(self.items) == 0 else items_objs_new, DOWN, buff=self.buff),
+            lag_ratio=0.25,
+        )
+
+    #def animate_add_from(self, objs, fade_froms) -> Animation:
+    #    put_objs = [self.top]
+    #    for obj in objs:
+    #        put_objs.append(obj.copy().next_to(put_objs[-1], DOWN, buff=self.buff))
+    #    put_objs.pop(0)
+
+    #    other_objs = VGroup(*(self.items + [self.bot]))
+
+    #    for obj, put_obj in zip(objs, put_objs):
+    #        obj.move_to(put_obj)
+
+    #    self.items = objs + self.items
+
+    #    return AnimationGroup(
+    #        *[FadeTransform(f.copy(), o) for f, o in zip(fade_froms, objs)],
+    #        other_objs.animate.next_to(obj, DOWN, buff=self.buff),
+    #    )
+
+    #def animate_remove_fade(self, fade_to) -> Animation:
+    #    obj = self.items.pop()
+
+    #    #return AnimationGroup(
+    #    #    self.bot.animate.next_to(self.top if len(self.items) == 0 else self.items[-1], DOWN, buff=self.buff),
+    #    #    obj.animate.move_to(pos),
+    #    #)
+
+    #    return AnimationGroup(
+    #        self.bot.animate.next_to(self.top if len(self.items) == 0 else self.items[-1], DOWN, buff=self.buff),
+    #        FadeTransform(obj, fade_to),
+    #    )
 
 
 def MyCode(code_raw, **kwargs):
@@ -144,3 +264,16 @@ def code_parts_from_file(path: str) -> Dict[str, Code]:
                 block += line + "\n"
 
     return blocks
+
+def align_object_by_coords(obj, current, desired, animation=False):
+    """Align an object such that it's current coordinate coordinate will be the desired."""
+    if isinstance(current, Mobject):
+        current = current.get_center()
+
+    if isinstance(desired, Mobject):
+        desired = desired.get_center()
+
+    if animation:
+        return obj.animate.shift(desired - current)
+    else:
+        obj.shift(desired - current)

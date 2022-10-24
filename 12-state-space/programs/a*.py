@@ -4,7 +4,6 @@ def is_valid(position):
     return maze[y][x] != "#"
 # endblock
 
-
 # block next_states
 def next_states(position):
     x, y = position
@@ -60,16 +59,20 @@ def bfs(starting_state, stop_condition):
     print("No solution!")
 # endblock
 
-# block bfs_better
-def bfs(starting_state, stop_condition):
-    queue = [starting_state]
+# block a_star
+def a_star(starting_state, stop_condition, heuristic):
+    import heapq
+
+    heap = [(0 + heuristic(starting_state), starting_state)]
     discovered = {starting_state: None}
 
-    while len(queue) != 0:
-        current = queue.pop(0)
+    i = 0
+    while len(heap) != 0:
+        i += 1
+        distance, current = heapq.heappop(heap)
 
         if stop_condition(current):
-            print("Solution found!")
+            print(f"Solution found in {i} steps!")
 
             path = [current]
             while discovered[current] is not None:
@@ -83,7 +86,9 @@ def bfs(starting_state, stop_condition):
 
         for next_state in next_states(current):
             if next_state not in discovered:
-                queue.append(next_state)
+                next_distance = distance - heuristic(current) + 1 + heuristic(next_state)
+
+                heapq.heappush(heap, (next_distance, next_state))
                 discovered[next_state] = current
 
     print("No solution!")
@@ -112,18 +117,8 @@ for y, row in enumerate(maze):
         elif char == "E":
             escape = (x, y)
 
-bfs(theseus, lambda state: state == escape)
-# endblock
+def distance(p1, p2):
+    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
 
-# block output
-Solution found!
-(2, 3)
-(3, 3)
-(3, 2)
-(3, 1)
-(4, 1)
-(5, 1)
-(6, 1)
-(7, 1)
-(8, 1)
+a_star(theseus, lambda state: state == escape, lambda state: distance(state, escape))
 # endblock
