@@ -22,4 +22,3 @@ A random list of ideas for videos.
 
 ## Problems
 - closest point for groups of people
-- prime numbers (.())...

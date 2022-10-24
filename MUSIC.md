@@ -20,3 +20,6 @@ Light Stick by Blue Dot Sessions: https://app.sessions.blue/browse/track/82619
 
 Thannoid by Blue Dot Sessions: https://app.sessions.blue/browse/track/126782
 - used in 10 - SAT
+
+Cases to Rest by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
+- used in 13 - Primes Dots
