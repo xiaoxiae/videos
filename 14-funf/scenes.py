@@ -61,9 +61,11 @@ class Intro(MovingCameraScene):
 
         x, y = MyCodeKindaTho("111101"), MyCodeKindaTho("11001")
 
+        orig_color = x.code[0][0].color
+
         numbers = [
             (MyCodeKindaTho("100100"), MyCodeKindaTho("110010")),
-            (MyCodeKindaTho("10110"), MyCodeKindaTho("100000")),
+            (MyCodeKindaTho("10110"), MyCodeKindaTho("1000000")),
             (MyCodeKindaTho("1010110"), MyCodeKindaTho("0000000")),
         ]
 
@@ -215,7 +217,7 @@ class Intro(MovingCameraScene):
 
         self.play(
             FadeOut(h),
-            table.get_row_labels().animate.set_opacity(0.15),
+            FadeOut(table.get_row_labels()),
             self.camera.frame.animate.set_width(g.width * 2).move_to(g),
         )
 
@@ -263,6 +265,121 @@ class Intro(MovingCameraScene):
                     x.code[0][-1].animate.set_color(ORANGE),
                 ),
                 FadeIn(carry, shift=DOWN * 0.15),
+                lag_ratio=0.5,
+            )
+        )
+
+        a, b = numbers[1]
+        a.set_z_index(1)
+        b.set_z_index(1)
+
+        a.move_to(numbers[0][0]).align_to(numbers[0][0], RIGHT)
+        b.move_to(numbers[0][1]).align_to(numbers[0][1], RIGHT)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(x),
+                    FadeOut(y),
+                    sum.animate.set_opacity(0.25),
+                    carry.animate.set_opacity(0.25),
+                ),
+                AnimationGroup(
+                    numbers[0][0].animate.move_to(x).align_to(x, RIGHT).set_color(orig_color),
+                    numbers[0][1].animate.move_to(y).align_to(y, RIGHT).set_color(orig_color),
+                    plus.animate.shift(0.2 * LEFT),
+                    self.camera.frame.animate.move_to(VGroup(plus.copy().shift(0.2 * LEFT), x, y, numbers[0][0], numbers[0][1])).scale(1.1),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        a.set_color(GREEN)
+        b.set_color(ORANGE)
+
+        self.play(
+            FadeIn(a, shift=DOWN * 0.15),
+            FadeIn(b, shift=DOWN * 0.15),
+            sum.animate.set_opacity(1),
+            carry.animate.set_opacity(1),
+            numbers[0][0].code[0][1].animate.set_color(GREEN),
+            numbers[0][0].code[0][3].animate.set_color(GREEN),
+            numbers[0][0].code[0][4].animate.set_color(GREEN),
+            numbers[0][1].code[0][1].animate.set_color(GREEN),
+            numbers[0][1].code[0][3].animate.set_color(GREEN),
+            numbers[0][1].code[0][4].animate.set_color(GREEN),
+            numbers[0][0].code[0][0].animate.set_color(ORANGE),
+            numbers[0][1].code[0][0].animate.set_color(ORANGE),
+        )
+
+        c, d = numbers[2]
+        c.set_z_index(1)
+        d.set_z_index(1)
+
+        a.move_to(numbers[1][0]).align_to(numbers[1][0], RIGHT)
+        b.move_to(numbers[1][1]).align_to(numbers[1][1], RIGHT)
+
+        c.move_to(a).align_to(a, RIGHT)
+        d.move_to(b).align_to(b, RIGHT)
+
+        # TODO: move the line
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(numbers[0][0]),
+                    FadeOut(numbers[0][1]),
+                    sum.animate.set_opacity(0.25),
+                    carry.animate.set_opacity(0.25),
+                ),
+                AnimationGroup(
+                    a.animate.move_to(numbers[0][0]).align_to(numbers[0][0], RIGHT).set_color(orig_color),
+                    b.animate.move_to(numbers[0][1]).align_to(numbers[0][1], RIGHT).set_color(orig_color),
+                    plus.animate.shift(0.2 * LEFT),
+                    self.camera.frame.animate.move_to(VGroup(plus.copy().shift(0.2 * LEFT), a, b, numbers[0][0], numbers[0][1])).scale(1.1),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        c.set_color(GREEN)
+        d.set_color(ORANGE)
+
+        self.play(
+            FadeIn(c, shift=DOWN * 0.15),
+            FadeIn(d, shift=DOWN * 0.15),
+            sum.animate.set_opacity(1),
+            carry.animate.set_opacity(1),
+            a.code[0][0].animate.set_color(GREEN),
+            a.code[0][2].animate.set_color(GREEN),
+            a.code[0][3].animate.set_color(GREEN),
+            b.code[0][0].animate.set_color(GREEN),
+            b.code[0][2].animate.set_color(GREEN),
+            b.code[0][4].animate.set_color(GREEN),
+            b.code[0][5].animate.set_color(GREEN),
+        )
+
+        self.play(Circumscribe(VGroup(d, carry), color=ORANGE))
+
+        eq = MyCodeKindaTho("=").set_color(WHITE).rotate(PI / 2).scale(1.25).next_to(c, DOWN)
+        esix = MyCodeKindaTho("86").next_to(eq, DOWN).set_color(WHITE)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(plus),
+                    FadeOut(a),
+                    FadeOut(b),
+                    FadeOut(d),
+                    FadeOut(line),
+                    FadeOut(sum),
+                    FadeOut(carry),
+                ),
+                AnimationGroup(
+                    FadeIn(eq, shift=DOWN * 0.15),
+                    FadeIn(esix, shift=DOWN * 0.15),
+                    c.animate.set_color(WHITE),
+                    self.camera.frame.animate.move_to(VGroup(c, eq, esix)),
+                ),
                 lag_ratio=0.5,
             )
         )
