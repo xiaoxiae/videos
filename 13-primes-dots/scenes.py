@@ -4,13 +4,12 @@ from utilities import *
 
 class Intro(MovingCameraScene):
     def construct(self):
-        self.camera.background_color = DARKER_GRAY
         lines = open("cisla.txt").read().splitlines()
 
         primes = [2, 3, 5, 7, 11, 13]
 
         cool = 0.01
-        fade = 0.15
+        fade = 0.25
 
         nesting_colors = ["#54d4ff", "#fdf39b", "#afffff"]
 
@@ -181,30 +180,32 @@ class Intro(MovingCameraScene):
                 anims.append(num[-2].animate.set_opacity(fade))
                 anims.append(num[-5].animate.set_opacity(fade))
 
-        self.play(*anims)
-
-        anims = []
+        anims2 = []
         for i in range(len(numbers)):
             num = numbers[i][0]
-            anims.append(num[0].animate.set_opacity(fade))
-            anims.append(num[-1].animate.set_opacity(fade))
+            anims2.append(num[0].animate.set_opacity(fade))
+            anims2.append(num[-1].animate.set_opacity(fade))
 
-        self.play(*anims)
+        self.play(
+            *anims,
+            *anims2,
+        )
 
         n1 = 5
         sr1 = SR(numbers_original[n1][0][1])
         sr2 = SR(numbers[n1][0][1])
 
+        n2 = 9
+        numbers_original[n1].save_state()
+        numbers[n1].save_state()
+        numbers_original[n2].save_state()
+        numbers[n2].save_state()
+
         self.play(
-            numbers_original.animate.set_opacity(fade),
-            numbers.animate.set_opacity(fade),
-            numbers[n1].animate.set_opacity(1),
-            numbers_original[n1].animate.set_opacity(1),
+            *[numbers_original[i].animate.set_opacity(fade) for i in range(nnn) if i != n1],
+            *[numbers[i].animate.set_opacity(fade) for i in range(nnn) if i != n1],
             self.camera.frame.animate.move_to(VGroup(numbers[n1], numbers_original[n1])).set_width(VGroup(numbers[n1], numbers_original[n1]).width * 1.5),
         )
-
-        numbers[n1].set_opacity(1)
-        numbers_original[n1].set_opacity(1)
 
         self.play(
             FadeIn(sr1),
@@ -221,23 +222,18 @@ class Intro(MovingCameraScene):
             Transform(sr2, SR(numbers[n1][0][3:5])),
         )
 
-        n1 = 9
-
         self.play(
             FadeOut(sr1),
             FadeOut(sr2),
-            numbers_original.animate.set_opacity(fade),
-            numbers.animate.set_opacity(fade),
-            numbers[n1].animate.set_opacity(1),
-            numbers_original[n1].animate.set_opacity(1),
-            self.camera.frame.animate.move_to(VGroup(numbers[n1], numbers_original[n1])).set_width(VGroup(numbers[n1], numbers_original[n1]).width * 1.5),
+            *[numbers_original[i].animate.set_opacity(fade) for i in range(nnn) if i != n2],
+            *[numbers[i].animate.set_opacity(fade) for i in range(nnn) if i != n2],
+            numbers[n2].animate.restore(),
+            numbers_original[n2].animate.restore(),
+            self.camera.frame.animate.move_to(VGroup(numbers[n2], numbers_original[n2])).set_width(VGroup(numbers[n2], numbers_original[n2]).width * 1.5),
         )
 
-        sr1 = SR(numbers_original[n1][0][1])
-        sr2 = SR(numbers[n1][0][1])
-
-        numbers[n1].set_opacity(1)
-        numbers_original[n1].set_opacity(1)
+        sr1 = SR(numbers_original[n2][0][1])
+        sr2 = SR(numbers[n2][0][1])
 
         self.play(
             FadeIn(sr1),
@@ -245,16 +241,19 @@ class Intro(MovingCameraScene):
         )
 
         self.play(
-            Transform(sr1, SR(numbers_original[n1][0][4])),
-            Transform(sr2, SR(numbers[n1][0][2:6])),
+            Transform(sr1, SR(numbers_original[n2][0][4])),
+            Transform(sr2, SR(numbers[n2][0][2:6])),
+        )
+
+        self.play(
+            FadeOut(sr1),
+            FadeOut(sr2),
         )
 
         self.play(
             numbers_original.animate.set_opacity(1),
             numbers.animate.set_opacity(1),
             self.camera.frame.animate.move_to(VGroup(numbers_super, numbers)).set_height(VGroup(numbers_super, numbers).height * 1.3),
-            FadeOut(sr1),
-            FadeOut(sr2),
             AnimationGroup(
                 *[Transform(numbers_original[i], numbers_super[i]) for i in range(len(numbers_factors))],
                 lag_ratio=cool
