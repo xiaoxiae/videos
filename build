@@ -71,7 +71,9 @@ def render_scene(scene):
 
     w, h, f = quality_mapping[arguments.quality]
 
-    if arguments.shorts:
+    build_dir = os.path.abspath(os.path.dirname(__file__))
+
+    if os.path.isfile(os.path.join(build_dir, ".short")) or arguments.shorts:
         w, h = h, w
 
     args = ["python3", "-m", "manim", "scenes.py", "--fps", str(f), "-r", f"{w},{h}", "--disable_caching", scene]
