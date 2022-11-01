@@ -23,4 +23,4 @@ Social media:
 Website (for other things I'm up to): https://slama.dev/
 Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
-Inspired by Martin Mareš's Programming 1 exercises.
+Inspired by Martin Mareš's Programming 1 Course exercises.
