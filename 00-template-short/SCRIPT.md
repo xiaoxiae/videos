@@ -10,5 +10,4 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
-\marginpar{\texttt{Intro}}
 Script...
