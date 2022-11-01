@@ -3,9 +3,9 @@ My internal workflow document, so I don't forget to do something when I'm creati
 It could alternatively serve as a workflow document for anyone who would like to produce videos the way that I do.
 
 ## Scene and script creation
-1. clone `00-template/` into the new video folder
+1. clone an appropriate template into the new video folder
 	- change the name accordingly
-	- remove the video idea from `IDEAS.md`
+	- remove the video idea from `IDEAS.md` (if it's there)
 2. create all of the scenes in the video, along with the script
 	- update `DESCRIPTION.md` with:
 		- what the video is about
@@ -13,11 +13,11 @@ It could alternatively serve as a workflow document for anyone who would like to
 		- source code
 		- music
 3. run `build.py`, creating the video assets (video segments and still videos at the end of each one)
-	- scenes that should be transparently rendered should start with `Transparent`
+	- scene classes that should be transparently rendered must start with `Transparent`
 
 ### Using VectorMagic
-- on Windows: convert the picture using basic settings, save to SVG
-- on Linux:
+1. on Windows: convert the picture using basic settings, save to SVG
+2. on Linux:
 	- remove background
 	- ungroup everything
 	- convert everything to path (for good mesure, but it likely already is)
@@ -42,7 +42,7 @@ It could alternatively serve as a workflow document for anyone who would like to
 
 ## Post-export
 - update `DESCRIPTION.md` timestamps
-- place the video (named `video.mp4`) to `export/`, along with a thumbnail (named `thumbnail.png`) and run `export/encode`
+- place the video (named `video.mp4`) to `export/`, along with a thumbnail (named `thumbnail.png`) and run `export/encode` for downscaling
 
 ## YouTube upload
 1. step:
