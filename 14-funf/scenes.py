@@ -4,12 +4,11 @@ from utilities import *
 
 class Intro(MovingCameraScene):
     def construct(self):
-        self.camera.background_color = DARKER_GRAY
-
+        #self.next_section(skip_animations=True)
         with open("funf.c") as f:
             contents = f.read()
 
-        q = Tex(r"\underline{What does it do?}").scale(1.15)
+        q = Tex(r"\underline{How does it work?}").scale(1.15)
 
         code = MyCode(contents)
 
@@ -20,14 +19,17 @@ class Intro(MovingCameraScene):
         self.camera.frame.set_width(g.width * 1.4).move_to(g)
 
         self.play(
-            Write(q),
+            Write(q, run_time=1),
             FadeIn(code),
         )
 
         sr = CreateHighlightCodeLines(code, [12, 13, 14, 15, 16, 17, 18], offset=0)
+        sr_orig = sr.copy()
 
-        self.play(FadeIn(sr))
-        self.play(Transform(sr, CreateHighlightCodeLine(code, 15, start=10)))
+        sr.save_state()
+
+        # self.play(Transform(sr, CreateHighlightCodeLine(code, 15, start=10)))
+        sr.become(CreateHighlightCodeLine(code, 15, start=10))
 
         with open("funf.out") as f:
             contents = f.read()
@@ -35,9 +37,12 @@ class Intro(MovingCameraScene):
         brace = BraceBetweenPoints(Dot().next_to(sr, LEFT, buff=-0.1).get_center(), Dot().next_to(sr, RIGHT, buff=-0.1).get_center(), direction=UP).next_to(sr, UP, buff=0)
         output = MyCode(contents).code.next_to(brace, UP).scale(1.5)
 
+        sr = CreateHighlightObject(VGroup(brace, output, sr_orig))
+
         self.play(
             AnimationGroup(
-                Transform(sr, CreateHighlightObject(VGroup(CreateHighlightObject(VGroup(brace, output)), sr))),
+                #Transform(sr, CreateHighlightObject(VGroup(CreateHighlightObject(VGroup(brace, output)), sr))),
+                FadeIn(sr),
                 FadeIn(output, shift=UP * 0.1),
                 FadeIn(brace, shift=UP * 0.1),
             )
@@ -69,8 +74,8 @@ class Intro(MovingCameraScene):
             (MyCodeKindaTho("1010110"), MyCodeKindaTho("0000000")),
         ]
 
-        sum = MyCodeKindaTho("sum").scale(0.75)
-        carry = MyCodeKindaTho("carry").scale(0.75)
+        sum = MyCodeKindaTho("x = sum").scale(0.75)
+        carry = MyCodeKindaTho("y = carry").scale(0.75)
 
         table = Table(
             [
@@ -237,8 +242,19 @@ class Intro(MovingCameraScene):
             )
         )
 
-        sum.next_to(table.get_entries((-1, 2)), DOWN, buff=0.1).align_to(table.get_entries((-2, 2)), RIGHT).set_color(GREEN)
-        carry.next_to(table.get_entries((0, 2)), DOWN, buff=0.1).align_to(table.get_entries((-2, 2)), RIGHT).set_color(ORANGE)
+        sum.next_to(table.get_entries((-1, 2)), DOWN, buff=0.1).align_to(table.get_entries((-2, 2)), RIGHT)
+        sum.code[0][:3].set_color(WHITE)
+        sum.code[0][3:].set_color(GREEN)
+        sum.code[0][2].scale(0.7).next_to(sum.code[0][4], LEFT, buff=0.08)
+        sum.code[0][0].scale(0.7).next_to(sum.code[0][2], LEFT, buff=0.08)
+
+        carry.next_to(table.get_entries((0, 2)), DOWN, buff=0.1).align_to(table.get_entries((-2, 2)), RIGHT)
+        carry.code[0][:3].set_color(WHITE)
+        carry.code[0][3:].set_color(ORANGE)
+        carry.code[0][2].scale(0.7).next_to(carry.code[0][4], LEFT, buff=0.08)
+        carry.code[0][0].scale(0.7).next_to(carry.code[0][2], LEFT, buff=0.08).shift(DOWN * 0.03)
+
+        #self.next_section()
 
         self.play(
             AnimationGroup(
@@ -248,7 +264,7 @@ class Intro(MovingCameraScene):
                     x.code[0][3].animate.set_color(GREEN),
                     y.code[0][2].animate.set_color(GREEN),
                 ),
-                FadeIn(sum, shift=DOWN * 0.15),
+                FadeIn(sum, shift=DOWN * 0.1),
                 lag_ratio=0.5,
             )
         )
@@ -256,7 +272,7 @@ class Intro(MovingCameraScene):
         self.play(
             AnimationGroup(
                 AnimationGroup(
-                    andd.animate.set_color(ORANGE),
+                    andd.code[0][:-1].animate.set_color(ORANGE),
                     x.code[0][1].animate.set_color(ORANGE),
                     x.code[0][2].animate.set_color(ORANGE),
                     y.code[0][0].animate.set_color(ORANGE),
@@ -264,7 +280,7 @@ class Intro(MovingCameraScene):
                     y.code[0][-1].animate.set_color(ORANGE),
                     x.code[0][-1].animate.set_color(ORANGE),
                 ),
-                FadeIn(carry, shift=DOWN * 0.15),
+                FadeIn(carry, shift=DOWN * 0.1),
                 lag_ratio=0.5,
             )
         )
@@ -295,7 +311,7 @@ class Intro(MovingCameraScene):
         )
 
         a.set_color(GREEN)
-        b.set_color(ORANGE)
+        b.code[0][:-1].set_color(ORANGE)
 
         self.play(
             FadeIn(a, shift=DOWN * 0.15),
@@ -342,7 +358,7 @@ class Intro(MovingCameraScene):
         )
 
         c.set_color(GREEN)
-        d.set_color(ORANGE)
+        d.code[0][:-1].set_color(ORANGE)
 
         self.play(
             FadeIn(c, shift=DOWN * 0.15),
