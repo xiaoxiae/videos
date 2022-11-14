@@ -1,0 +1,58 @@
+1
+00:00:00,000 --> 00:00:04,350
+Here is a really cool way of encoding numbers using dots and parentheses that you might not have seen before.
+
+2
+00:00:05,233 --> 00:00:06,866
+Pause here and see if you can figure it out.
+
+3
+00:00:09,183 --> 00:00:11,333
+First off, the primes follow a pattern,
+
+4
+00:00:11,333 --> 00:00:13,450
+so it’s a good idea to look at the factorizations.
+
+5
+00:00:14,983 --> 00:00:17,233
+If we look at numbers
+with no repeating factors,
+
+6
+00:00:17,233 --> 00:00:20,016
+they only have single nested parentheses or dots,
+
+7
+00:00:20,016 --> 00:00:21,150
+which is just zeros and ones.
+
+8
+00:00:22,450 --> 00:00:26,200
+Furthermore, numbers with repeating factors are nested more heavily,
+
+9
+00:00:26,200 --> 00:00:28,016
+so the encoding likely involves their powers.
+
+10
+00:00:29,600 --> 00:00:33,650
+If we look at the full factorization, the encoding becomes quite clear –
+
+11
+00:00:33,650 --> 00:00:37,000
+the powers of the primes correspond
+to the inner sequence of dots and brackets.
+
+12
+00:00:38,200 --> 00:00:43,500
+For example, 5 is 2^0 times 3^0 times 5^1
+
+13
+00:00:43,500 --> 00:00:46,000
+and 9 is 2^0 times 3^2 .
+
+14
+00:00:48,316 --> 00:00:49,000
+Thanks for watching!
+

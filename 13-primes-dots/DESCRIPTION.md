@@ -24,3 +24,5 @@ Website (for other things I'm up to): https://slama.dev/
 Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
 Inspired by Martin Mareš's Programming 1 Course exercises.
+
+Special thanks to Matěj Kripner for support and feedback.

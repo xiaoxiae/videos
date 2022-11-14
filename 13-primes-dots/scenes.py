@@ -3,6 +3,7 @@ from utilities import *
 
 
 class Intro(MovingCameraScene):
+    @fade
     def construct(self):
         lines = open("cisla.txt").read().splitlines()
 
