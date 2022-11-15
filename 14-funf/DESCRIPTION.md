@@ -1,13 +1,13 @@
 #shorts
-<what the video is about>
+A Short video about a very strange way of adding numbers.
 
 ------------------
 
 Source code:
-https://github.com/xiaoxiae/videos/tree/master/<name-of-folder>
+https://github.com/xiaoxiae/videos/tree/master/14-funf/
 
 Music:
-<credit the music used>
+Cases to Rest by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
 
 Software used:
 Manim (animation software): https://github.com/ManimCommunity/manim/
@@ -23,9 +23,4 @@ Social media:
 Website (for other things I'm up to): https://slama.dev/
 Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
-<ACKNOWLEDGEMENTS>
-
-------------------
-
-[<LANGUAGE>] <Person's Thing I used to make the video>:
-https://url.com
+Inspired by Martin Mareš's Programming 1 Course exercises.
