@@ -12,18 +12,9 @@ It could alternatively serve as a workflow document for anyone who would like to
 		- resources used
 		- source code
 		- music
-3. run `build.py`, creating the video assets (video segments and still videos at the end of each one)
-	- scene classes that should be transparently rendered must start with `Transparent`
-
-### Using VectorMagic
-1. on Windows: convert the picture using basic settings, save to SVG
-2. on Linux:
-	- remove background
-	- ungroup everything
-	- convert everything to path (for good mesure, but it likely already is)
-	- outset a few times, else it will be rendered incorrectly
-		- might need to Edit > Preferences > Behavior and edit steps if it outsets by too much
-		- there is a bug in InkScape that removes the color after outsetting; to fix this, edit the file such that each path has the following style format: `style="color:#000000;fill:#3a302c;-inkscape-stroke:none"` (removing fill and opacity in the process); use a Vim macro to do this
+3. run `./build`, creating the video assets
+	- don't forget @fade decorators where needed!
+	- scene classes that should be transparently rendered must start with `Transparent`!
 
 ### Using OBS
 - the profiles and scenes are all in the `OBS/` directory
@@ -31,31 +22,33 @@ It could alternatively serve as a workflow document for anyone who would like to
 ## Recording audio
 1. sample noise using `get_noise_profile`
 2. record all of the voice lines using the `record` script in the `audio/` folder
-3. run `build.py` to normalize the audio across all lines
+3. run `./normalize` to normalize the audio across all lines
 
 ## Cutting
 - create a new KdenLive project, name it `video.kdenlive`
 - open Kdenlive and add the `audio/` and `video/` folder
 	- make sure that the `video/` folder is proxy, since we're cutting in 4K
 - start adding the scenes, adding still 1s videos to add correct spacing, along with the **audio** and **subtitles**
-- the voice audio should be **full**, the music audio should be apx. **-22 dB**
+- the voice audio should be **full**, the music audio should be apx. **-32 dB** (there is an effect to do this)
+- to create a freeze frame, use the next segment and a **freeze** modifier (without any parameters)
 
-## Post-export
+## Post-render
 - update `DESCRIPTION.md` timestamps
 - place the video (named `video.mp4`) to `export/`, along with a thumbnail (named `thumbnail.png`) and run `export/encode` for downscaling
+	- the thumbnail can be extracted using `ffmpeg -i <input file> -vf "select=eq(n\,0)" -q:v 3 thumbnail.png`
 
 ## YouTube upload
 1. step:
 	- name
 	- description
-	- miniature
+	- miniature/thumbnail
 	- playlist
 	- "show more":
 		- language (english)
 		- license (standard YouTube)
 2. step:
 	- subtitles: from file
-	- final screen - import from the previous video
+	- final screen (non-shorts) - import from the previous video
 4. step:
 	- make the video public
 

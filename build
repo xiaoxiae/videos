@@ -1,50 +1,23 @@
 #!/bin/python3
 
-"""A script for building all of the files to be put together."""
+"""A script for building and renaming all of the Manim scenes."""
 import subprocess
 import shutil
 import os
 import argparse
 import re
 
-import soundfile as sf
-import pyloudnorm as pyln
-
 from glob import glob
 
 
 video_directory = "video"
-audio_directory = "audio"
 
-parser = argparse.ArgumentParser(
-    description="A script for building files for the video."
-)
+parser = argparse.ArgumentParser()
 
 parser.add_argument(
     "-s", "--scene",
     help="the name of the scene to build; builds all when omitted",
     default=None,
-)
-
-parser.add_argument(
-    "--no-manim",
-    action="store_true",
-    help="don't run Manim, just do the video post-processing",
-    default=False,
-)
-
-parser.add_argument(
-    "--no-sound-normalization",
-    action="store_true",
-    help="don't normalize sound",
-    default=False,
-)
-
-parser.add_argument(
-    "--shorts",
-    action="store_true",
-    help="render in shorts mode (resolution is flipped)",
-    default=False,
 )
 
 parser.add_argument(
@@ -54,10 +27,8 @@ parser.add_argument(
     help="the quality of the video (4K by default)"
 )
 
-# licenses (to give as options)
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-# get the parser and parse the commands
 arguments = parser.parse_args()
 
 
@@ -73,7 +44,7 @@ def render_scene(scene):
 
     build_dir = os.path.abspath(os.path.dirname(__file__))
 
-    if os.path.isfile(os.path.join(build_dir, ".short")) or arguments.shorts:
+    if os.path.isfile(os.path.join(build_dir, ".short")):
         w, h = h, w
 
     args = ["python3", "-m", "manim", "scenes.py", "--fps", str(f), "-r", f"{w},{h}", "--disable_caching", scene]
@@ -89,54 +60,34 @@ def render_scene(scene):
         quit()
 
 
-# (possibly) call Manim
-if not arguments.no_manim:
-    scenes = []
+scenes = []
 
-    # please lord forgive me for I have sinned
-    # this is needed because classes ending with Transparent are going to be rendered transparently
-    with open("scenes.py", "r") as f:
-        for line in f.read().splitlines():
-            if match := re.match(r"\s*class\s+(.+?)\(.*Scene\)\s*:", line):
-                scenes.append(match.group(1))
+# please lord forgive me for I have sinned
+# this is needed because classes ending with Transparent are going to be rendered transparently
+with open("scenes.py", "r") as f:
+    for line in f.read().splitlines():
+        if match := re.match(r"\s*class\s+(.+?)\(.*Scene\)\s*:", line):
+            scenes.append(match.group(1))
 
-    if arguments.scene is None:
-        # remove everything when no scene is specified
-        if os.path.exists(video_directory):
-            shutil.rmtree(video_directory)
+if arguments.scene is None:
+    # remove everything when no scene is specified
+    if os.path.exists(video_directory):
+        shutil.rmtree(video_directory)
 
-        for scene in scenes:
-            render_scene(scene)
-    else:
-        # remove only the scene and its folders when the scene is specified
-        scene_folder = os.path.join(video_directory, arguments.scene)
-        if os.path.exists(scene_folder):
-            shutil.rmtree(scene_folder)
+    for scene in scenes:
+        render_scene(scene)
+else:
+    # remove only the scene and its folders when the scene is specified
+    scene_folder = os.path.join(video_directory, arguments.scene)
+    if os.path.exists(scene_folder):
+        shutil.rmtree(scene_folder)
 
-        for ext in ["mp4", "mov"]:
-            scene_video = os.path.join(video_directory, arguments.scene + f".{ext}")
-            if os.path.exists(scene_video):
-                os.remove(scene_video)
+    for ext in ["mp4", "mov"]:
+        scene_video = os.path.join(video_directory, arguments.scene + f".{ext}")
+        if os.path.exists(scene_video):
+            os.remove(scene_video)
 
-        render_scene(arguments.scene)
-
-
-# (possibly) normalize audio
-if not arguments.no_sound_normalization:
-    raw_directory = os.path.join(audio_directory, "raw")
-    normalized_directory = os.path.join(audio_directory, "normalized")
-
-    for path in glob(os.path.abspath(os.path.join(raw_directory, "*.wav"))):
-        name = os.path.basename(path)
-
-        data, rate = sf.read(path)
-
-        meter = pyln.Meter(rate)
-        loudness = meter.integrated_loudness(data)
-
-        loudness_normalized_audio = pyln.normalize.loudness(data, loudness, -32.0)
-
-        sf.write(os.path.join(normalized_directory, name), loudness_normalized_audio, rate)
+    render_scene(arguments.scene)
 
 
 # rename to [1..n].whatever
