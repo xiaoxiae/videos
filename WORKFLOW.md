@@ -28,6 +28,7 @@ It could alternatively serve as a workflow document for anyone who would like to
 - create a new KdenLive project, name it `video.kdenlive`
 - open Kdenlive and add the `audio/` and `video/` folder
 	- make sure that the `video/` folder is proxy, since we're cutting in 4K
+	- also make sure that the resolution matches the video files
 - start adding the scenes, adding still 1s videos to add correct spacing, along with the **audio** and **subtitles**
 - the voice audio should be **full**, the music audio should be apx. **-32 dB** (there is an effect to do this)
 - to create a freeze frame, use the next segment and a **freeze** modifier (without any parameters)
