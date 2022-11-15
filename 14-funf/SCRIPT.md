@@ -20,6 +20,6 @@ For the second, it calculates bitwise and, getting ones where both of the number
 
 If you think about these two operations, this is exactly how long addition works if we were to do it all at once -- the first number is the bits we can cleanly sum without carrying and the second is the bits we carry.
 
-The recursion runs until the carry is zero and the thus sum is complete.
+The recursion runs until the carry is zero and the sum is complete.
 
 Thanks for watching!
