@@ -102,3 +102,10 @@ def align_object_by_coords(obj, current, desired, animation=False):
         return obj.animate.shift(desired - current)
     else:
         obj.shift(desired - current)
+
+def fade(f):
+    def inner(self):
+        f(self)
+        self.play(*map(FadeOut, self.mobjects))
+
+    return inner

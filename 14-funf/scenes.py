@@ -3,8 +3,8 @@ from utilities import *
 
 
 class Intro(MovingCameraScene):
+    @fade
     def construct(self):
-        #self.next_section(skip_animations=True)
         with open("funf.c") as f:
             contents = f.read()
 
@@ -253,8 +253,6 @@ class Intro(MovingCameraScene):
         carry.code[0][3:].set_color(ORANGE)
         carry.code[0][2].scale(0.7).next_to(carry.code[0][4], LEFT, buff=0.08)
         carry.code[0][0].scale(0.7).next_to(carry.code[0][2], LEFT, buff=0.08).shift(DOWN * 0.03)
-
-        #self.next_section()
 
         self.play(
             AnimationGroup(
