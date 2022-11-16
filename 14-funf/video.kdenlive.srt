@@ -1,0 +1,88 @@
+1
+00:00:00,533 --> 00:00:03,650
+Here is a weird C program that calculates the sum of two numbers – 
+
+2
+00:00:03,649 --> 00:00:04,799
+can you figure out how it works?
+
+3
+00:00:07,500 --> 00:00:09,233
+Looking closely at the f function,
+
+4
+00:00:09,233 --> 00:00:10,466
+we see that it is recursive.
+
+5
+00:00:11,233 --> 00:00:12,649
+While y isn’t zero,
+
+6
+00:00:12,649 --> 00:00:16,116
+it performs binary operations on the numbers and calls itself,
+
+7
+00:00:16,116 --> 00:00:17,116
+finally returning x.
+
+8
+00:00:17,933 --> 00:00:19,766
+To see why it adds the numbers,
+
+9
+00:00:19,766 --> 00:00:21,316
+let’s see what the binary operations do.
+
+10
+00:00:22,350 --> 00:00:23,700
+For the first parameter,
+
+11
+00:00:23,700 --> 00:00:25,583
+it calculates bitwise xor,
+
+12
+00:00:25,583 --> 00:00:27,916
+getting ones where exactly one of the numbers has a one bit.
+
+13
+00:00:29,566 --> 00:00:30,516
+For the second,
+
+14
+00:00:30,516 --> 00:00:32,316
+it calculates bitwise and,
+
+15
+00:00:32,316 --> 00:00:34,650
+getting ones where both of the numbers have a one bit,
+
+16
+00:00:34,650 --> 00:00:35,850
+and shifts the number to the left.
+
+17
+00:00:37,583 --> 00:00:39,700
+If you think about these two operations,
+
+18
+00:00:39,699 --> 00:00:42,833
+this is exactly how long addition works if we were to do it all at once.
+
+19
+00:00:43,600 --> 00:00:46,900
+The first number is the bits we can cleanly sum without carrying
+
+20
+00:00:46,900 --> 00:00:48,283
+and the second is the bits we carry.
+
+21
+00:00:49,466 --> 00:00:52,783
+The recursion runs until the carry is zero and the sum is complete.
+
+22
+00:00:57,016 --> 00:00:57,766
+Thanks for watching!
+

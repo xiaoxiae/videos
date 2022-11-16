@@ -1,5 +1,5 @@
 #shorts
-A Short video about a very strange way of adding numbers.
+A very strange C program that adds numbers.
 
 ------------------
 

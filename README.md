@@ -12,5 +12,6 @@ Source code to my videos, found on my [YouTube channel](https://www.youtube.com/
 - 2021/12/31: **[Bathroom Tile Programming](https://www.youtube.com/watch?v=KlaEp6ydVhA)** - _A dive into the unconventional bathroom tile programming model._
 
 ## Shorts
+- 2022/11/16: **[What does this weird C program do?](https://youtube.com/shorts/X9pN7XZFbyE)** - A very strange C program that adds numbers.
 - 2022/11/14: **[Encoding Numbers using Dots and Parentheses](https://youtube.com/shorts/JY0_ApbZYkQ)** - A really cool way of encoding numbers using dots and parentheses.
 
