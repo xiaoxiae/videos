@@ -95,7 +95,7 @@ class MinotaurMovement(MovingCameraScene):
                 theseus_miniature.animate.shift(LEFT),
             )
 
-        self.next_section()
+        self.next_section() # this is correct too
 
 
 
@@ -121,7 +121,7 @@ class MinotaurMovement(MovingCameraScene):
         theseus_miniature.save_state()
         self.camera.frame.save_state()
 
-        rect = Square(fill_opacity=0.75, color=BLACK).scale(1000).set_z_index(1000000)
+        rect = get_fade_rect()
 
         self.play(
             AnimationGroup(
@@ -226,7 +226,7 @@ class MinotaurMovement(MovingCameraScene):
         tm = theseus_miniature.copy().shift(LEFT)
         theseus_miniature.set_opacity(0)
 
-        rect = Square(fill_opacity=0.75, color=BLACK).scale(1000).set_z_index(1000000)
+        rect = get_fade_rect()
         self.play(
             Transform(theseus_miniature, tm),
             minotaur_miniature.animate.shift(RIGHT),
@@ -266,7 +266,10 @@ class MinotaurMovement(MovingCameraScene):
 
 
 class Intro(MovingCameraScene):
+    @fade
     def construct(self):
+        self.next_section(skip_animations=True)
+
         with open("maze/mask.txt") as f:
             contents = f.read().splitlines()
 
@@ -356,7 +359,7 @@ class Intro(MovingCameraScene):
                 theseus_miniature.animate.shift(LEFT),
             )
 
-        rect = Square(fill_opacity=0.75, color=BLACK).scale(1000).set_z_index(1000000)
+        rect = get_fade_rect()
 
         canhe = Tex("Can he get out?").scale(1.5).move_to(self.camera.frame).set_z_index(10000000)
 
@@ -431,6 +434,8 @@ class Intro(MovingCameraScene):
 
         q = Queue(scale=2).next_to(bfs_text, DOWN, buff=2)
 
+        self.next_section()
+
         self.play(
             FadeIn(q),
             FadeIn(bfs_text),
@@ -438,6 +443,12 @@ class Intro(MovingCameraScene):
             #self.camera.frame.animate.shift(RIGHT * 7.5),
             run_time=1.5,
         )
+
+        self.play(
+            Circumscribe(q, stroke_width=15, buff=0.5),
+        )
+
+        return
 
         theseus_position = (theseus_position[0] - 1, theseus_position[1])
 
@@ -486,8 +497,6 @@ class Intro(MovingCameraScene):
 
         i = 1
 
-        fastboi=0.005
-
         def add_neighbours(position):
             states = []
             for next_state in next_states(position):
@@ -497,17 +506,10 @@ class Intro(MovingCameraScene):
                     states.append(next_state)
 
             if len(states) != 0:
-                if i > 5:
-                    self.play(
-                        animate_discover(states),
-                        animate_add_to_queue(states),
-                        run_time=fastboi,
-                    )
-                else:
-                    self.play(
-                        animate_discover(states),
-                        animate_add_to_queue(states),
-                    )
+                self.play(
+                    animate_discover(states),
+                    animate_add_to_queue(states),
+                )
 
         self.play(
             #theseus_miniature.animate.set_color(WHITE),
@@ -545,10 +547,7 @@ class Intro(MovingCameraScene):
 
             a, o = animate_pop_from_queue(current)
 
-            if i > 5:
-                self.play(a, run_time=fastboi)
-            else:
-                self.play(a)
+            self.play(a)
 
             self.remove(o)
             self.remove(theseus_miniature)
@@ -572,15 +571,11 @@ class Intro(MovingCameraScene):
 
             add_neighbours(current)
 
-            if i > 5:
-                self.play(animate_leave(current), run_time=fastboi)
-            else:
-                self.play(animate_leave(current))
+            self.play(animate_leave(current))
 
 
 class BFSMinotaur(MovingCameraScene):
     def construct(self):
-        self.next_section(skip_animations=True)
         blocks = code_parts_from_file("programs/bfs.py")
 
         bfs = Tex("Breadth-first search").scale(1.65)
@@ -617,8 +612,6 @@ class BFSMinotaur(MovingCameraScene):
             FadeCode(blocks["is_valid"]),
             FadeCode(blocks["next_states"]),
         )
-
-        #self.next_section()
 
         self.wait(1)
 
@@ -666,8 +659,6 @@ class BFSMinotaur(MovingCameraScene):
 
         blocks_minotaur["start_partial_2"].set_z_index(10)
 
-        self.next_section()
-
         self.play(
             FadeIn(blocks_minotaur["start_partial"]),
             Flash(blocks_minotaur["start_partial"].code[4][8]),
@@ -712,6 +703,7 @@ class BFSMinotaur(MovingCameraScene):
 
 class BFS(MovingCameraScene):
     def construct(self):
+        self.next_section(skip_animations=True)
         blocks = code_parts_from_file("programs/bfs.py")
 
         bfs = Tex("Breadth-first search").scale(1.65)
@@ -759,14 +751,43 @@ class BFS(MovingCameraScene):
             run_time=1,
         )
 
+        self.next_section()
+
         self.play(
             Write(blocks['start'].code[15:22]),
             run_time=2.5,
         )
 
+        question = Tex(r"\underline{What now?}").set_z_index(1000001).move_to(self.camera.frame).scale(2)
+        answer = Tex(r"write smaller functions!").set_z_index(1000001).move_to(self.camera.frame).scale(1.25)
+
+        group = VGroup(question.copy(), answer)
+        answer.next_to(question, DOWN, buff=0.25)
+
         self.play(
             AnimationGroup(
                 FadeCode(blocks['start'], skip_lines=[22]),
+                FadeIn(question),
+                lag_ratio=0.5
+            )
+        )
+
+        self.play(
+            AnimationGroup(
+                Transform(question, group[0]),
+                Write(group[1], run_time=1),
+                lag_ratio=0.75
+            )
+        )
+
+        return
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(question),
+                    FadeOut(answer),
+                ),
                 self.camera.frame.animate.move_to(blocks['is_valid']),
                 WriteCode(blocks['is_valid']),
                 lag_ratio=0.5,

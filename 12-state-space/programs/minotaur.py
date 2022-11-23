@@ -21,20 +21,22 @@ def next_theseus_positions(position):
 
 
 # block next_minotaur_position
-def move_towards(start, end):
-    return +1 if start < end else 0 if start == end else -1
+def move_towards(m, t):
+    return +1 if m < t else 0 if m == t else -1
 
 def next_minotaur_position(t_pos, m_pos):
     tx, ty = t_pos
     mx, my = m_pos
 
     for _ in range(2):
-        dx = move_towards(mx, tx)  # horizontal movement
+        # horizontal movement
+        dx = move_towards(mx, tx)
         if dx != 0 and is_valid((mx + dx, my)):
             mx += dx
             continue
 
-        dy = move_towards(my, ty)  # vertical movement
+        # vertical movement
+        dy = move_towards(my, ty)
         if dy != 0 and is_valid((mx, my + dy)):
             my += dy
             continue

@@ -202,6 +202,17 @@ def UnfadeCode(*args, **kwargs):
     return SetCodeOpacity(*args, **kwargs, opacity=1)
 
 
+def fade(f):
+    """A decorator for construct method of scenes where all objects should fade at the end."""
+    def inner(self):
+        f(self)
+        self.play(*map(FadeOut, self.mobjects))
+
+    return inner
+
+def get_fade_rect():
+    return Square(fill_opacity=0.85, color=BLACK).scale(1000).set_z_index(1000000)
+
 def CreateHighlightCodeLine(code, line, start=None, end=None):
     sr = SurroundingRectangle(
         code.code[line][start or 0:end or len(code.code[line])],
