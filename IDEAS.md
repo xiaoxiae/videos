@@ -19,6 +19,3 @@ A random list of ideas for videos.
 
 ## IPS
 - Number Systems (fibonacci, -2)
-
-## Problems
-- closest point for groups of people
