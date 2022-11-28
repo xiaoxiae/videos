@@ -116,8 +116,44 @@ for y, row in enumerate(maze):
         elif char == "M":
             minotaur = (x, y)
 
-bfs((theseus, minotaur), lambda state: state[0] == escape)
+bfs(
+    (theseus, minotaur),
+    lambda state: state[0] == escape
+)
 # endblock
+
+# block start_this_sucks
+maze = [
+    "##########",
+    "#       E#",
+    "#   #   ##",
+    "# T # M  #",
+    "#   #    #",
+    "#   #    #",
+    "#   #    #",
+    "#  #     #",
+    "##########",
+]
+
+theseus = None
+escape = None
+minotaur = None
+
+for y, row in enumerate(maze):
+    for x, char in enumerate(row):
+        if char == "T":
+            theseus = (x, y)
+        elif char == "E":
+            escape = (x, y)
+        elif char == "M":
+            minotaur = (x, y)
+
+bfs(
+    (theseus, minotaur),
+    lambda state: state[0] == escape
+bfs(theseus, lambda state: state == escape)
+# endblock
+
 
 # block start_partial
 maze = [

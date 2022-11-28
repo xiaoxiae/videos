@@ -2,6 +2,9 @@ from manim import *
 from typing import Dict
 
 
+BIG_OPACITY = 0.25
+
+
 class Queue(VMobject):
 
     def __init__(self, scale: float = 1):
@@ -195,7 +198,7 @@ def SetCodeOpacity(code, skip_lines = None, opacity=1):
 
 
 def FadeCode(*args, **kwargs):
-    return SetCodeOpacity(*args, **kwargs, opacity=0.25)
+    return SetCodeOpacity(*args, **kwargs, opacity=BIG_OPACITY)
 
 
 def UnfadeCode(*args, **kwargs):

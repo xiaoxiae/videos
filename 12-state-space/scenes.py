@@ -3,6 +3,7 @@ from utilities import *
 
 
 class MinotaurMovement(MovingCameraScene):
+    @fade
     def construct(self):
         self.next_section(skip_animations=True)  # this is correct
 
@@ -606,18 +607,29 @@ class BFSMinotaur(MovingCameraScene):
 
         self.add(*code_web)
 
+        self.remove(blocks["output"])
+
         self.play(
             FadeCode(blocks["start"]),
-            FadeCode(blocks["output"]),
             FadeCode(blocks["is_valid"]),
             FadeCode(blocks["next_states"]),
+            run_time=0.01,
         )
 
-        self.wait(1)
+        highlight = CreateHighlightCodeLine(blocks["bfs_better"], 0, start=8, end=38)
+
+        self.play(FadeIn(highlight))
+
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks["bfs_better"], [20, 21, 22, 23], offset=2)))
+
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks["bfs_better"], 20, start=20, end=40)))
 
         self.play(
             AnimationGroup(
-                FadeCode(blocks['bfs_better']),
+                AnimationGroup(
+                    FadeCode(blocks['bfs_better']),
+                    FadeOut(highlight),
+                ),
                 self.camera.frame.animate.move_to(start_group),
                 UnfadeCode(blocks['start']),
                 lag_ratio=0.5,
@@ -659,10 +671,18 @@ class BFSMinotaur(MovingCameraScene):
 
         blocks_minotaur["start_partial_2"].set_z_index(10)
 
+        self.camera.frame.save_state()
+
+        self.play(
+            self.camera.frame.animate.move_to(blocks_minotaur["start_partial"].code[0:10]).scale(0.5)
+        )
+
         self.play(
             FadeIn(blocks_minotaur["start_partial"]),
             Flash(blocks_minotaur["start_partial"].code[4][8]),
         )
+
+        self.play(self.camera.frame.animate.restore())
 
         blocks_minotaur["start_partial_2"].move_to(blocks_minotaur["start_partial"]).align_to(blocks_minotaur["start_partial"], UP)
 
@@ -670,17 +690,10 @@ class BFSMinotaur(MovingCameraScene):
         for mobject in self.mobjects:
             self.remove(mobject)
 
-        # TODO: globally: fadetramsforms in code to just transforms to remove the weird fading effect (where applicable)
-        # TODO: globally: write the code that currently fades in to visually distinguish it?
-        # TODO: globally: tiny pauses between theseus and minotaur movements (0.5s?)
-
         self.add(blocks["is_valid"])
         self.add(blocks["next_states"])
         self.add(bfs)
         self.add(blocks["bfs_better"])
-        self.add(blocks["output"])
-
-        # TODO: shit fading
 
         self.play(
             AnimationGroup(
@@ -690,7 +703,6 @@ class BFSMinotaur(MovingCameraScene):
                     Transform(blocks_minotaur["start_partial"].code[14:21], blocks_minotaur["start_partial_2"].code[15:22]),
                     Transform(blocks_minotaur["start_partial"].code[21:], blocks_minotaur["start_partial_2"].code[24:]),
                     self.camera.frame.animate.move_to(blocks_minotaur["start_partial_2"]).set_height(blocks_minotaur["start_partial_2"].height * 1.2),
-                    blocks["output"].animate.align_to(blocks_minotaur["output"], UP)
                 ),
                 AnimationGroup(
                     Write(blocks_minotaur["start_partial_2"].code[14]),
@@ -701,9 +713,140 @@ class BFSMinotaur(MovingCameraScene):
             )
         )
 
+        blocks_minotaur["start"].set_z_index(20)
+        blocks_minotaur["start_partial_2"].set_z_index(20)
+        blocks_minotaur["start_partial_2"].background_mobject.set_z_index(0)
+        blocks_minotaur["start_this_sucks"].background_mobject.set_z_index(1)
+
+        blocks_minotaur["start"].align_to(blocks_minotaur["start_partial_2"], LEFT)
+        blocks_minotaur["start_this_sucks"].align_to(blocks_minotaur["start"], LEFT).align_to(blocks_minotaur["start"], UP)
+
+        highlight = CreateHighlightCodeLine(blocks_minotaur["start"], -3, start=1).set_z_index(1000)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeTransform(blocks_minotaur["start_partial_2"].background_mobject, blocks_minotaur["start_this_sucks"].background_mobject),
+                    Transform(blocks_minotaur["start_partial"].code[-1][4:12], blocks_minotaur["start"].code[-3][2:10]),
+                    *[Transform(blocks_minotaur["start_partial"].code[-1][12 + i], blocks_minotaur["start"].code[-2][0 + i]) for i in range(20)],
+                    Transform(blocks_minotaur["start_partial"].code[-1][33:-1], blocks_minotaur["start"].code[-2][24:]),
+                    Transform(blocks_minotaur["start_partial"].code[-1][-1], blocks_minotaur["start"].code[-1][-1]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["start_this_sucks"]).set_height(blocks_minotaur["start_this_sucks"].height * 1.2),
+                ),
+                AnimationGroup(
+                    Write(blocks_minotaur["start"].code[-3][:2]),
+                    Write(blocks_minotaur["start"].code[-3][10:]),
+                    Write(blocks_minotaur["start"].code[-2][20:23]),
+                    run_time=1,
+                ),
+                lag_ratio=0.75,
+            )
+        )
+
+        self.play(FadeIn(highlight))
+
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks_minotaur["start"], -2, start=1).set_z_index(1000)))
+
+        # TODO: hackish
+        for mobject in self.mobjects:
+            self.remove(mobject)
+
+        self.add(blocks["is_valid"])
+        self.add(blocks["next_states"])
+        self.add(bfs)
+        self.add(blocks_minotaur["start"])
+        self.add(blocks["bfs_better"])
+
+        blocks_minotaur["start"].background_mobject.become(blocks_minotaur["start_this_sucks"].background_mobject)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeCode(blocks_minotaur['start']),
+                    FadeOut(highlight),
+                ),
+                self.camera.frame.animate.move_to(blocks['next_states']),
+                UnfadeCode(blocks['next_states']),
+                lag_ratio=0.5,
+            )
+        )
+
+        ntp_copy = blocks_minotaur['next_theseus_positions'].copy().move_to(blocks['next_states'])
+
+        self.play(
+            FadeTransform(blocks['next_states'].code[0][9:9+11], ntp_copy.code[0][9:9+22]),
+            Transform(blocks['next_states'].code[0][9+11:], ntp_copy.code[0][9+22:]),
+        )
+
+        # TODO: hackish
+        for mobject in self.mobjects:
+            self.remove(mobject)
+
+        self.add(blocks["is_valid"])
+        self.add(ntp_copy)
+        self.add(bfs)
+        self.add(blocks_minotaur["start"])
+        self.add(blocks["bfs_better"])
+
+        blocks_minotaur['is_valid'].set_opacity(BIG_OPACITY)
+        blocks_minotaur['next_theseus_positions'].set_opacity(BIG_OPACITY)
+        blocks_minotaur['bfs'].set_opacity(BIG_OPACITY)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    Transform(blocks['is_valid'], blocks_minotaur['is_valid']),
+                    Transform(ntp_copy, blocks_minotaur['next_theseus_positions']),
+                    Transform(blocks['bfs_better'], blocks_minotaur["bfs"]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["next_minotaur_position"].background_mobject),
+                ),
+                AnimationGroup(
+                    FadeIn(blocks_minotaur["next_minotaur_position"].background_mobject),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(
+            Write(blocks_minotaur["next_minotaur_position"].code[:2]),
+        )
+
+        self.play(
+            Write(blocks_minotaur["next_minotaur_position"].code[2:]),
+        )
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeCode(blocks_minotaur["next_minotaur_position"]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["next_states"].background_mobject),
+                ),
+                AnimationGroup(
+                    FadeIn(blocks_minotaur["next_states"].background_mobject),
+                    Write(blocks_minotaur["next_states"].code),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeCode(blocks_minotaur["next_states"]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["output"].background_mobject),
+                ),
+                AnimationGroup(
+                    FadeIn(blocks_minotaur["output"].background_mobject),
+                    Write(blocks_minotaur["output"].code),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+
 class BFS(MovingCameraScene):
+    @fade
     def construct(self):
-        self.next_section(skip_animations=True)
         blocks = code_parts_from_file("programs/bfs.py")
 
         bfs = Tex("Breadth-first search").scale(1.65)
@@ -751,15 +894,13 @@ class BFS(MovingCameraScene):
             run_time=1,
         )
 
-        self.next_section()
-
         self.play(
             Write(blocks['start'].code[15:22]),
             run_time=2.5,
         )
 
         question = Tex(r"\underline{What now?}").set_z_index(1000001).move_to(self.camera.frame).scale(2)
-        answer = Tex(r"write smaller functions!").set_z_index(1000001).move_to(self.camera.frame).scale(1.25)
+        answer = Tex(r"write small functions!").set_z_index(1000001).move_to(self.camera.frame).scale(1.25)
 
         group = VGroup(question.copy(), answer)
         answer.next_to(question, DOWN, buff=0.25)
@@ -775,12 +916,10 @@ class BFS(MovingCameraScene):
         self.play(
             AnimationGroup(
                 Transform(question, group[0]),
-                Write(group[1], run_time=1),
+                FadeIn(group[1], run_time=1),
                 lag_ratio=0.75
             )
         )
-
-        return
 
         self.play(
             AnimationGroup(
