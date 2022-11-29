@@ -21,7 +21,6 @@ ffmpeg (audio/video processing): https://ffmpeg.org/
 OBS (audio/video recording): https://obsproject.com/download
 arecord (audio recording): https://linux.die.net/man/1/arecord
 sox (audio processing): http://sox.sourceforge.net/
-Vector Magic (image vectorization): https://vectormagic.com/
 Inkscape (vector image editing): https://inkscape.org/
 
 Social media:
