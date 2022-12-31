@@ -20,7 +20,7 @@ def next_theseus_positions(position):
 # endblock
 
 
-# block next_theseus_positions
+# block next_minotaur_position
 def move_towards(start, end):
     return +1 if start < end else 0 if start == end else -1
 

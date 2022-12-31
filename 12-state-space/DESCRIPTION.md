@@ -1,5 +1,8 @@
 <what the video is about>
 
+The A* video: TODO
+Advent of Code: https://adventofcode.com/
+
 ------------------
 
 Timetable:
@@ -9,7 +12,7 @@ Timetable:
 ------------------
 
 Source code:
-https://github.com/xiaoxiae/videos/tree/master/<name-of-folder>
+https://github.com/xiaoxiae/videos/tree/master/12-state-space/>
 
 Music:
 <credit the music used>
@@ -18,24 +21,23 @@ Software used:
 Manim (animation software): https://github.com/ManimCommunity/manim/
 Kdenlive (video cutting): https://kdenlive.org/en/
 ffmpeg (audio/video processing): https://ffmpeg.org/
-OBS (audio/video recording): https://obsproject.com/download
 arecord (audio recording): https://linux.die.net/man/1/arecord
 sox (audio processing): http://sox.sourceforge.net/
-Vector Magic (image vectorization): https://vectormagic.com/
 Inkscape (vector image editing): https://inkscape.org/
-MiDaS (monocular depthmap estimation): https://github.com/isl-org/MiDaS
-Depthy (parallax image viewer): http://depthy.stamina.pl/
-Midjourney (illustration generator): https://www.midjourney.com/home/
-Voronoi (maze graphics): https://github.com/xiaoxiae/Voronoi
-Voronoi (random maze generation): https://github.com/john-science/mazelib
+Gimp (raster image editing): https://gimp.org/
+Midjourney (AI image generator): https://www.midjourney.com/home/
 
 Social media:
 Website (for other things I'm up to): https://slama.dev/
 Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
-<ACKNOWLEDGEMENTS>
+Inspired by Martin Mareš's Programming 1 Course exercises.
+
+Thanks to the awesome Polylog YouTube channel for collaborating on this video: https://www.youtube.com/@polylog7346
+
+Also thanks to Matěj Kripner for valuable feedback.
 
 ------------------
 
-[<LANGUAGE>] <Person's Thing I used to make the video>:
-https://url.com
+[EN] Wikipedia: State space search
+https://en.wikipedia.org/wiki/State_space_search

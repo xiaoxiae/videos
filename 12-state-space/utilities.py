@@ -1,8 +1,12 @@
 from manim import *
 from typing import Dict
+import networkx as nx
 
 
-BIG_OPACITY = 0.25
+BIG_OPACITY = 0.2
+ALIGN_SPACING = 1
+MINOTAUR_MOVE_SPEED = 1.5
+MINOTAUR_MOVE_DELAY = 0.15
 
 
 class Queue(VMobject):
@@ -17,14 +21,32 @@ class Queue(VMobject):
 
         self.buff = 0.15 * scale
 
-        self.top = VGroup(
+        top_arrow = VGroup(
+            Tex("In").scale(ARROW_SIZE * 2/3),
             Arrow(start=UP * ARROW_SIZE, end=ORIGIN),
-            Line(start=LEFT, end=RIGHT),
+        ).arrange(RIGHT)
+
+        top_line = Line(start=LEFT, end=RIGHT)
+
+        top_arrow.next_to(top_line, UP, buff=self.buff / 2)
+
+        self.top = VGroup(
+            top_arrow,
+            top_line,
         )
 
-        self.bot = VGroup(
+        bot_arrow = VGroup(
+            Tex("Out").scale(ARROW_SIZE * 2/3),
             Arrow(start=ORIGIN, end=DOWN * ARROW_SIZE),
-            Line(start=LEFT, end=RIGHT),
+        ).arrange(RIGHT)
+
+        bot_line = Line(start=LEFT, end=RIGHT)
+
+        bot_arrow.next_to(bot_line, DOWN, buff=self.buff / 2)
+
+        self.bot = VGroup(
+            bot_arrow,
+            bot_line,
         )
 
         self.items = []
@@ -209,34 +231,56 @@ def fade(f):
     """A decorator for construct method of scenes where all objects should fade at the end."""
     def inner(self):
         f(self)
-        self.play(*map(FadeOut, self.mobjects))
+
+        if not config.quality.startswith("medium"):
+            self.play(*map(FadeOut, self.mobjects))
 
     return inner
 
-def get_fade_rect():
-    return Square(fill_opacity=0.85, color=BLACK).scale(1000).set_z_index(1000000)
+def get_fade_rect(*args):
+    if len(args) == 0:
+        return Square(fill_opacity=1 - BIG_OPACITY, color=BLACK).scale(1000).set_z_index(1000000)
+    else:
+        return SurroundingRectangle(VGroup(*args), fill_opacity=1 - BIG_OPACITY, color=BLACK).set_z_index(1000000)
 
-def CreateHighlightCodeLine(code, line, start=None, end=None):
-    sr = SurroundingRectangle(
-        code.code[line][start or 0:end or len(code.code[line])],
+def maze_to_vgroup(contents):
+    maze = VGroup()
+    maze_dict = {}
+
+    for y, row in enumerate(contents):
+        for x, symbol in enumerate(row):
+            if symbol == "#":
+                r = Rectangle(width=1.0, height=1.0, fill_opacity=1, fill_color=WHITE)
+                r.set_z_index(10000)
+            elif symbol == ".":
+                continue
+            else:
+                r = Rectangle(width=1.0, height=1.0)
+                r.set_z_index(0.1)
+
+            r.move_to((y + 0.5) * DOWN + (x + 0.5) * RIGHT + len(contents) / 2 * UP + len(contents[0]) / 2 * LEFT)
+            maze.add(r)
+            maze_dict[(x, y)] = r
+
+    return maze, maze_dict
+
+def CreateHighlight(obj):
+    return SurroundingRectangle(
+        obj,
         color=YELLOW,
         fill_opacity=0.15
     ).set_z_index(1)
 
-    return sr
+
+def CreateHighlightCodeLine(code, line, start=None, end=None):
+    return CreateHighlight(code.code[line][start or 0:end or len(code.code[line])])
 
 
 def CreateHighlightCodeLines(code, lines, offset=1):  # TODO: offset is scuffed af
-    sr = SurroundingRectangle(
-        VGroup(*[l[offset:] for i, l in enumerate(code.code) if i in lines]),
-        color=YELLOW,
-        fill_opacity=0.15
-    ).set_z_index(1)
-
-    return sr
+    return CreateHighlight(VGroup(*[l[offset:] for i, l in enumerate(code.code) if i in lines]))
 
 
-def align_code(groups, buff=1):
+def align_code(groups, buff=ALIGN_SPACING):
     dir = groups[0][0]
     align = groups[0][1]
 
@@ -291,3 +335,71 @@ def align_object_by_coords(obj, current, desired, animation=False):
         return obj.animate.shift(desired - current)
     else:
         obj.shift(desired - current)
+
+def get_tree(depth):
+
+    def can_build_robot(ores, cost):
+        for o, c in zip(ores, cost):
+            if o < c:
+                return False
+        return True
+
+    def next_states(remaining, ores, robots, blueprint):
+        """Return the next state, given the current ores and robots."""
+        states = [(list(ores), list(robots))]
+
+        # attempt to build more robots
+        # we're assuming that we can built at most one each turn
+        for i, cost in enumerate(blueprint):
+            if can_build_robot(ores, cost):
+                states.append(
+                    (
+                        [o - c - (0 if i != j else 1)
+                         for j, (o, c) in enumerate(zip(ores, cost))],
+                        [r + (0 if i != j else 1)
+                         for j, r in enumerate(robots)],
+                    )
+                )
+
+        for (ores, robots) in states:
+            for i in range(len(ores)):
+                ores[i] += robots[i]
+
+            yield remaining - 1, tuple(ores), tuple(robots)
+
+
+    blueprint = """Blueprint 1: Each ore robot costs 4 ore.  Each clay robot costs 2 ore.  Each obsidian robot costs 3 ore and 14 clay.  Each geode robot costs 2 ore and 7 obsidian."""
+    parts = blueprint.strip().split()
+
+    # robot costs
+    blueprint = (
+        (
+            (int(parts[6]), 0, 0, 0), # ore
+            (int(parts[12]), 0, 0, 0), # clay
+            (int(parts[18]), int(parts[21]), 0, 0),  # obsidian
+            (int(parts[27]), 0, int(parts[30]), 0),  # geode
+        )
+    )
+
+    #                   Ores        Robots
+    #               Or Cl Ob Ge   Or Cl Ob Ge
+    queue = [(24, (0, 0, 0, 0), (1, 0, 0, 0))]
+    visited = {queue[0]: None}
+
+    while len(queue) != 0:
+        current = queue.pop(0)
+
+        if current[0] == 24 - depth:
+            continue
+
+        for next_state in next_states(*current, blueprint):
+            if next_state not in visited:
+                queue.append(next_state)
+                visited[next_state] = current
+
+    for k, v in visited.items():
+        if v == None:
+            del visited[k]
+            break
+
+    return nx.from_edgelist([(k, v) for (k, v) in visited.items()])

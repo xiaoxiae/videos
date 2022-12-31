@@ -1,5 +1,5 @@
 # block is_valid
-def is_valid(position):
+def is_position_valid(position):
     x, y = position
     return maze[y][x] != "#"
 # endblock
@@ -14,7 +14,7 @@ def next_states(position):
         nx = x + dx
         ny = y + dy
 
-        if is_valid((nx, ny)):
+        if is_position_valid((nx, ny)):
             states.append((nx, ny))
 
     return states

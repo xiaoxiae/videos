@@ -1,5 +1,5 @@
 # block is_valid
-def is_valid(position):
+def is_position_valid(position):
     x, y = position
     return maze[y][x] != "#"
 # endblock
@@ -13,7 +13,7 @@ def next_theseus_positions(position):
         nx = x + dx
         ny = y + dy
 
-        if is_valid((nx, ny)):
+        if is_position_valid((nx, ny)):
             states.append((nx, ny))
 
     return states
@@ -24,20 +24,44 @@ def next_theseus_positions(position):
 def move_towards(m, t):
     return +1 if m < t else 0 if m == t else -1
 
-def next_minotaur_position(t_pos, m_pos):
-    tx, ty = t_pos
-    mx, my = m_pos
+def next_minotaur_position(theseus, minotaur):
+    tx, ty = theseus
+    mx, my = minotaur
 
     for _ in range(2):
         # horizontal movement
         dx = move_towards(mx, tx)
-        if dx != 0 and is_valid((mx + dx, my)):
+        if dx != 0 and is_position_valid((mx + dx, my)):
             mx += dx
             continue
 
         # vertical movement
         dy = move_towards(my, ty)
-        if dy != 0 and is_valid((mx, my + dy)):
+        if dy != 0 and is_position_valid((mx, my + dy)):
+            my += dy
+            continue
+
+    return (mx, my)
+# endblock
+
+# block next_minotaur_position_move_forward_example
+def move_towards(m, t):
+    return +1 if m < t else 0 if m == t else -1
+
+print(move_towards(2, 3))  # returns +1  (2 -> 3)
+print(move_towards(5, 5))  # returns  0  (5 == 5)
+print(move_towards(4, 1))  # returns -1  (4 <- 1)
+
+
+
+
+        if dx != 0 and is_position_valid((mx + dx, my)):
+            mx += dx
+            continue
+
+        # vertical movement
+        dy = move_towards(my, ty)
+        if dy != 0 and is_position_valid((mx, my + dy)):
             my += dy
             continue
 
@@ -46,16 +70,16 @@ def next_minotaur_position(t_pos, m_pos):
 
 # block next_states
 def next_states(state):
-    t_pos, m_pos = state
+    t, m = state
+
     states = []
+    for new_t in next_theseus_positions(t):
+        new_m = next_minotaur_position(new_t, m)
 
-    for new_t_pos in next_theseus_positions(t_pos):
-        new_m_pos = next_minotaur_position(new_t_pos, m_pos)
-
-        if new_t_pos == new_m_pos:
+        if new_t == new_m:
             continue
 
-        states.append((new_t_pos, new_m_pos))
+        states.append((new_t, new_m))
 
     return states
 # endblock
