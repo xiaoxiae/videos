@@ -48,9 +48,9 @@ def next_minotaur_position(theseus, minotaur):
 def move_towards(m, t):
     return +1 if m < t else 0 if m == t else -1
 
-print(move_towards(2, 3))  # returns +1  (2 -> 3)
-print(move_towards(5, 5))  # returns  0  (5 == 5)
-print(move_towards(4, 1))  # returns -1  (4 <- 1)
+move_towards(2, 3)  # returns +1  (2 -> 3)
+move_towards(5, 5)  # returns  0  (5 == 5)
+move_towards(4, 1)  # returns -1  (4 <- 1)
 
 
 

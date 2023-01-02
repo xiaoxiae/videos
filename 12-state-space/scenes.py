@@ -2,11 +2,51 @@ from manim import *
 from utilities import *
 
 from random import uniform, seed
-from math import pi, sin
+from math import sin
 
 
 ROBOT_RATE_FUNC = lambda x: rush_into(x * 2) if x < 0.5 else rush_into((1 - x) * 2)
 MINERAL_RATE_FUNC = lambda x: 0 if x < 0.5 else slow_into((x - 0.5) * 4) if x < 0.75 else slow_into((1 - x) * 4)
+
+
+def cool_graphy_graphy(bs=1):
+    values = []
+
+    for f in [
+        "programs/graphs/results/bfs.txt",
+        "programs/graphs/results/bfs-wtb.txt",
+        "programs/graphs/results/bfs-wtb-max-prune.txt",
+        "programs/graphs/results/astar-best.txt",
+    ]:
+        with open(f) as fd:
+            values.append(int(fd.read().splitlines()[-1].split()[1]))
+
+    chart = BarChart(
+        values=values,
+        bar_names=["bfs", "prune v1", "prune v2", "A*"],
+        y_length=4,
+        x_length=9,
+        x_axis_config={"font_size": 36, "stroke_width": bs},
+        y_axis_config={"stroke_width": bs},
+        bar_colors=[
+            "#FF6962",
+            "#FF8989",
+            "#7ABD91",
+            "#5FA777",
+        ],
+        tips=True,
+        bar_stroke_width = bs,
+    )
+
+    c_bar_lbls = chart.get_bar_labels(font_size=48)
+
+    chart[2].remove(chart[2][3])
+
+    chart[1].set_z_index(100000)
+    chart[2].set_z_index(100000)
+
+    return chart, c_bar_lbls
+
 
 class Increment(Animation):
 
@@ -650,7 +690,7 @@ class BFSMinotaur(MovingCameraScene):
         self.play(Transform(highlight, CreateHighlightCodeLines(blocks["bfs_better"], [20, 21, 22, 23], offset=2)))
 
         # via the next_states function
-        #self.play(Transform(highlight, CreateHighlightCodeLine(blocks["bfs_better"], 20, start=20, end=40)))
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks["bfs_better"], 20, start=20, end=40)))
 
         self.play(
             AnimationGroup(
@@ -839,6 +879,13 @@ class BFSMinotaur(MovingCameraScene):
             Write(blocks_minotaur["next_minotaur_position"].code[:2]),
         )
 
+        highlight = CreateHighlightCodeLine(blocks_minotaur["next_minotaur_position"], 1, start=8, end=10)
+
+        self.play(FadeIn(highlight))
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks_minotaur["next_minotaur_position"], 1, start=25, end=26)))
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks_minotaur["next_minotaur_position"], 1, start=42, end=44)))
+        self.play(FadeOut(highlight))
+
         blocks_minotaur["next_minotaur_position_move_forward_example"].move_to(blocks_minotaur["next_minotaur_position"])
 
         self.camera.frame.save_state()
@@ -846,7 +893,7 @@ class BFSMinotaur(MovingCameraScene):
         self.play(
             AnimationGroup(
                 self.camera.frame.animate.move_to(blocks_minotaur["next_minotaur_position_move_forward_example"].code[3:6]).scale(0.5),
-                Write(blocks_minotaur["next_minotaur_position_move_forward_example"].code[3:6]),
+                FadeIn(blocks_minotaur["next_minotaur_position_move_forward_example"].code[3:6]),
                 lag_ratio=0.5,
             )
         )
@@ -868,6 +915,8 @@ class BFSMinotaur(MovingCameraScene):
         self.play(FadeIn(highlight))
 
         self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_minotaur_position"], [14, 15, 16, 17, 18], offset=2)))
+
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_minotaur_position"], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], offset=1)))
 
         self.play(FadeOut(highlight))
 
@@ -895,20 +944,6 @@ class BFSMinotaur(MovingCameraScene):
         self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_states"], [10], offset=2)))
 
         self.play(FadeOut(highlight))
-
-        self.play(
-            AnimationGroup(
-                AnimationGroup(
-                    FadeCode(blocks_minotaur["next_states"]),
-                    self.camera.frame.animate.move_to(blocks_minotaur["output"].background_mobject),
-                ),
-                AnimationGroup(
-                    FadeIn(blocks_minotaur["output"].background_mobject),
-                    Write(blocks_minotaur["output"].code),
-                ),
-                lag_ratio=0.5,
-            )
-        )
 
         maze_str = [
             "##########",
@@ -962,7 +997,10 @@ class BFSMinotaur(MovingCameraScene):
 
         self.play(
             AnimationGroup(
+                FadeCode(blocks_minotaur["next_states"]),
                 AnimationGroup(
+                    FadeIn(blocks_minotaur["output"].background_mobject),
+                    Write(blocks_minotaur["output"].code),
                     self.camera.frame.animate.move_to(VGroup(maze, blocks_minotaur['output'])).scale(0.9),
                     FadeIn(maze),
                     FadeIn(theseus),
@@ -1014,7 +1052,7 @@ class BFSMinotaur(MovingCameraScene):
                             lag_ratio=0.33,
                         ),
                         AnimationGroup(
-                            minotaur.animate.move_to(maze_dict[m]),  # TODO: split it into two moves
+                            minotaur.animate.move_to(maze_dict[m]),  # TODO: split it into two moves?
                             maze_dict[m].animate.set_fill(BLUE, 0.75).set_stroke_color(BLUE),
                             lag_ratio=0.33,
                         ),
@@ -1023,6 +1061,55 @@ class BFSMinotaur(MovingCameraScene):
                 )
 
             prev_m = m
+
+        bfs = Tex("BFS").scale(2.5)
+        bfs_full = Tex("(Breadth-first search)").scale(1.5).next_to(bfs, DOWN)
+
+        a = VGroup(bfs, bfs_full)
+
+        stop = Tex(r"\parbox{18em}{Solves problems that have \textit{states} where the goal is to get from the \textit{starting} state to an \textit{ending state} in the \textit{least amount of steps possible:}}")
+
+        l1 = Tex(r"\begin{itemize} \item shortest path \end{itemize}")
+        l2 = Tex(r"\begin{itemize} \item Theseus and the Minotaur \end{itemize}")
+
+        l = VGroup(l1, l2).arrange(DOWN, buff=0.25)
+        l2.align_to(l1, LEFT)
+
+        b = VGroup(stop, l).arrange(DOWN, buff=0.75)
+
+        VGroup(a, b).arrange(DOWN, buff=1).next_to(blocks_minotaur['bfs'], LEFT, buff=1.5)
+
+        self.play(
+            AnimationGroup(
+                FadeOut(highlight),
+                FadeOut(maze),
+                FadeOut(blocks_minotaur["output"].background_mobject),
+                FadeOut(blocks_minotaur["output"].code),
+                FadeOut(theseus),
+                FadeOut(minotaur),
+                FadeOut(door),
+                FadeOut(numbers_x),
+                FadeOut(numbers_y),
+                FadeOut(blocks_minotaur["next_states"]),
+                FadeOut(blocks_minotaur["start"]),
+                FadeOut(blocks_minotaur["next_minotaur_position"]),
+                FadeOut(blocks_minotaur["next_theseus_positions"]),
+            ),
+            AnimationGroup(
+                AnimationGroup(
+                    UnfadeCode(blocks_minotaur['bfs']),
+                    self.camera.frame.animate.move_to(VGroup(blocks_minotaur['bfs'], a, b)),
+                ),
+                Write(a),
+                lag_ratio=0.75,
+            ),
+        )
+
+        l.align_to(stop, LEFT).shift(RIGHT * 0.3)
+
+        self.play(Write(stop), run_time=2.5)
+        self.play(Write(l1), run_time=0.75)
+        self.play(Write(l2), run_time=1)
 
 
 class BFS(MovingCameraScene):
@@ -1153,10 +1240,16 @@ class BFS(MovingCameraScene):
 
         stop = Tex(r"\parbox{12em}{Allows us to support more complex ways of ending the BFS (multiple escape tiles).}").set_z_index(1000001).scale(0.5).next_to(highlight, DOWN)
 
+        pointless = Tex(r"\parbox{12em}{Is this pointless?}").set_z_index(1000001).scale(0.5).next_to(highlight, DOWN)
+
         self.camera.frame.save_state()
 
         self.play(self.camera.frame.animate.move_to(VGroup(highlight, stop)).scale(0.25))
-        self.play(FadeIn(stop))
+        self.play(FadeIn(pointless))
+        self.play(
+            FadeOut(pointless, shift=UP * 0.3),
+            FadeIn(stop, shift=UP * 0.3),
+        )
 
         self.play(
             AnimationGroup(
@@ -1173,9 +1266,10 @@ class BFS(MovingCameraScene):
         self.play(Write(blocks['bfs'].code[4]), run_time=1)
         self.play(Write(blocks['bfs'].code[5]), run_time=1)
 
-        self.play(Write(blocks['bfs'].code[7:10]), run_time=2.25)
+        self.play(Write(blocks['bfs'].code[7:10]), run_time=1.75)
 
-        self.play(Write(blocks['bfs'].code[11:16]), run_time=3)
+        self.play(Write(blocks['bfs'].code[11:14]), run_time=1.75)
+        self.play(Write(blocks['bfs'].code[14]), run_time=1)
 
         self.play(Write(blocks['bfs'].code[16]), run_time=1)
 
@@ -1276,7 +1370,7 @@ class BFS(MovingCameraScene):
         self.play(
             AnimationGroup(
                 FadeCode(blocks['bfs_better']),
-                self.camera.frame.animate.move_to(start_group),
+                self.camera.frame.animate.move_to(blocks['start'].code[22]),
                 UnfadeCode(blocks['start'], skip_lines=[22]),
                 lag_ratio=0.5,
             )
@@ -1292,15 +1386,6 @@ class BFS(MovingCameraScene):
         self.play(FadeOut(highlight))
 
         blocks["output"].align_to(blocks["start"], RIGHT)
-
-        self.play(
-            AnimationGroup(
-                FadeCode(blocks['start']),
-                self.camera.frame.animate.move_to(blocks['output']),
-                WriteCode(blocks['output']),
-                lag_ratio=0.5,
-            )
-        )
 
         maze_str = [
             "##########",
@@ -1345,11 +1430,13 @@ class BFS(MovingCameraScene):
 
         self.play(
             AnimationGroup(
+                FadeCode(blocks['start']),
                 AnimationGroup(
                     self.camera.frame.animate.move_to(VGroup(maze, blocks['output'])).scale(0.9),
                     FadeIn(maze),
                     FadeIn(theseus),
                     FadeIn(door),
+                    WriteCode(blocks['output']),
                 ),
                 AnimationGroup(
                     AnimationGroup(*[FadeIn(n) for n in numbers_x], lag_ratio=0.05),
@@ -1570,6 +1657,7 @@ class AOC(MovingCameraScene):
 class Robots(MovingCameraScene):
     @fade
     def construct(self):
+        self.next_section(skip_animations=True)
 
         robots = VGroup(*[
             SVGMobject("assets/robot-ore.svg"),
@@ -1608,14 +1696,24 @@ class Robots(MovingCameraScene):
             AnimationGroup(*[FadeIn(r, shift=DOWN * 0.25) for r in robots], lag_ratio=0.1)
         )
 
-        self.play(
-            AnimationGroup(*[FadeIn(m, shift=UP * 0.25) for m in minerals], lag_ratio=0.1),
-            AnimationGroup(*[FadeIn(m, shift=UP * 0.25) for m in mineral_counts], lag_ratio=0.1),
-        )
+        for i in range(4):
+            self.play(
+                FadeIn(minerals[i], shift=UP * 0.25),
+                FadeIn(mineral_counts[i], shift=UP * 0.25),
+                run_time=0.75
+            )
+
+        minute_text = Tex("Minute:").scale(1.5)
+        minute_count = Tex(r"\textbf{0}").scale(1.5).next_to(minute_text, RIGHT).align_to(minute_text, DOWN)
+
+        VGroup(minute_text, minute_count).next_to(minerals, UP, buff=1)
+
+        # TODO: check this
 
         self.play(
             AnimationGroup(
                 AnimationGroup(
+                    self.camera.frame.animate.move_to(VGroup(minute_text, robot_counts)),
                     robots[1].animate.set_opacity(BIG_OPACITY),
                     robots[2].animate.set_opacity(BIG_OPACITY),
                     robots[3].animate.set_opacity(BIG_OPACITY),
@@ -1626,24 +1724,9 @@ class Robots(MovingCameraScene):
                 ),
                 AnimationGroup(
                     *[FadeIn(c, shift=DOWN * 0.1) for c in robot_counts],
-                    lag_ratio=0.1
-                ),
-                lag_ratio=0.5,
-            ),
-        )
-
-        minute_text = Tex("Minute:").scale(1.5)
-        minute_count = Tex(r"\textbf{0}").scale(1.5).next_to(minute_text, RIGHT).align_to(minute_text, DOWN)
-
-        VGroup(minute_text, minute_count).next_to(minerals, UP, buff=1)
-
-        self.play(
-            AnimationGroup(
-                AnimationGroup(
                     Write(minute_text),
-                    self.camera.frame.animate.move_to(VGroup(minute_text, robot_counts)),
+                    FadeIn(minute_count),
                 ),
-                FadeIn(minute_count),
                 lag_ratio=0.5,
             ),
         )
@@ -1723,6 +1806,7 @@ class Robots(MovingCameraScene):
         self.play(
             FadeIn(gear, shift=RIGHT * 0.25),
             Transform(mineral_counts[0], Tex(r"\textbf{2}").move_to(mineral_counts[0])),
+            minerals[0].animate(rate_func=there_and_back).scale(0.75),
         )
 
         self.play(
@@ -1754,9 +1838,24 @@ class Robots(MovingCameraScene):
             minerals[3].animate.set_opacity(BIG_OPACITY),
             Transform(robot_counts[0], Tex(1).move_to(robot_counts[0])),
             Transform(robot_counts[1], Tex(0).move_to(robot_counts[1])),
+            Transform(mineral_counts[0], Tex(r"\textbf{0}").move_to(mineral_counts[0])),
             Transform(mineral_counts[1], Tex(r"\textbf{0}").move_to(mineral_counts[1])),
         )
         minute_count = minute_count_1
+
+        g = VGroup(minute_count, minute_text)
+        q = Tex(r"\textit{Maximize geodes in 24 minutes.}").move_to(g)
+
+        gc = g.copy()
+        cp = VGroup(gc, q).arrange(buff=2).move_to(g)
+
+        self.play(
+            AnimationGroup(
+                g.animate.move_to(gc),
+                Write(q, run_time=1.25),
+                lag_ratio=0.75,
+            )
+        )
 
         materials_array = [0, 0, 0, 0]
         robots_array = [1, 0, 0, 0]
@@ -1827,6 +1926,9 @@ class Robots(MovingCameraScene):
                         animations.append(
                             Transform(mineral_counts[j], Tex(r"\textbf{" + str(materials_array[j]) + "}").move_to(mineral_counts[j]))
                         )
+                        animations.append(
+                            minerals[j].animate(rate_func=there_and_back).scale(0.75),
+                        )
 
                 self.play(
                     *animations,
@@ -1876,6 +1978,10 @@ class Robots(MovingCameraScene):
 
         rect = get_fade_rect()
 
+        self.play(
+            Circumscribe(minerals[-1], color=WHITE, buff=-0.08, shape=Circle)
+        )
+
         canhe = Tex(r"\underline{What are the states/neighbours?}").scale(1.5).move_to(self.camera.frame).set_z_index(10000000)
 
         self.play(
@@ -1891,77 +1997,225 @@ class Robots(MovingCameraScene):
             FadeOut(canhe),
         )
 
-
-class RobotGraph(MovingCameraScene):
-    @fade
-    def construct(self):
-        import networkx as nx
-        import pydot
-        from networkx.drawing.nx_pydot import graphviz_layout
-
-        robots = VGroup(*[
-            SVGMobject("assets/robot-ore.svg"),
-            SVGMobject("assets/robot-clay.svg"),
-            SVGMobject("assets/robot-obsidian.svg"),
-            SVGMobject("assets/robot-geode.svg"),
-        ]).arrange(buff=0.8)
-
-        minerals = Group(*[
-            ImageMobject("assets/minerals/ore.png"),
-            ImageMobject("assets/minerals/clay.png"),
-            ImageMobject("assets/minerals/obsidian.png"),
-            ImageMobject("assets/minerals/geode.png"),
-        ])
-
+        # duplicit!!!
         def vertex_from_state(state):
             text = Tex("$$" + str(state) + "$$").set_z_index(10)
             g = Group(text)
 
-            if not config.quality.startswith("medium"):
-                start = 1 + len(str(state[0])) + 2
-                for i in range(4):
-                    s = start
-                    e = start + len(str(state[1][i]))
+            start = 1 + len(str(state[0])) + 2
+            for i in range(4):
+                s = start
+                e = start + len(str(state[1][i]))
 
-                    g.add(
-                        minerals[i].copy().set_height(text.get_height() * 0.5).next_to(text[0][s:e], UP, buff=0.05).set_z_index(10),
-                    )
+                g.add(
+                    minerals[i].copy().set_height(text.get_height() * 0.5).next_to(text[0][s:e], UP, buff=0.05).set_z_index(10),
+                )
 
-                    start += len(str(state[1][i])) + 1
+                start += len(str(state[1][i])) + 1
 
-                start += 2
-                for i in range(4):
-                    s = start
-                    e = start + len(str(state[2][i]))
+            start += 2
+            for i in range(4):
+                s = start
+                e = start + len(str(state[2][i]))
 
-                    g.add(
-                        robots[i].copy().set_height(text.get_height() * 0.5).next_to(text[0][s:e], UP, buff=0.05).set_z_index(10),
-                    )
+                g.add(
+                    robots[i].copy().set_height(text.get_height() * 0.5).next_to(text[0][s:e], UP, buff=0.05).set_z_index(10),
+                )
 
-                    start += len(str(state[2][i])) + 1
+                start += len(str(state[2][i])) + 1
 
             return g
 
-        def vertex_bg_from_vertex(vertex):
-            return SurroundingRectangle(vertex, corner_radius=0, color=BLACK, fill_color=BLACK, fill_opacity=1).set_z_index(5)
+        root = (24, (6, 41, 8, 9), (1, 4, 2, 2))
 
-        root = (24, (0, 0, 0, 0), (1, 0, 0, 0))
+        g = vertex_from_state(root).scale(1.5)
 
-        T = get_tree(8)
-        pos = graphviz_layout(get_tree(8), prog="neato", root=root)
+        g.move_to(self.camera.frame)
 
-        scale = 10
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    Transform(robots[0], g[0][0]),
+                    Transform(robots[0], g[1+4+0]),
+                    Transform(robots[1], g[1+4+1]),
+                    Transform(robots[2], g[1+4+2]),
+                    Transform(robots[3], g[1+4+3]),
+                    Transform(minerals[0], g[1+0]),
+                    Transform(minerals[1], g[1+1]),
+                    Transform(minerals[2], g[1+2]),
+                    Transform(minerals[3], g[1+3]),
+                    FadeTransform(mineral_counts[0], g[0][0][5]),
+                    FadeTransform(mineral_counts[1], g[0][0][7:9]),
+                    FadeTransform(mineral_counts[2], g[0][0][10]),
+                    FadeTransform(mineral_counts[3], g[0][0][12]),
+                    FadeTransform(robot_counts[0], g[0][0][16]),
+                    FadeTransform(robot_counts[1], g[0][0][18]),
+                    FadeTransform(robot_counts[2], g[0][0][20]),
+                    FadeTransform(robot_counts[3], g[0][0][22]),
+                ),
+                AnimationGroup(
+                    FadeIn(g[0][0][4]),
+                    FadeIn(g[0][0][6]),
+                    FadeIn(g[0][0][9]),
+                    FadeIn(g[0][0][11]),
+                    FadeIn(g[0][0][13]),
+                    FadeIn(g[0][0][14]),
+                    FadeIn(g[0][0][15]),
+                    FadeIn(g[0][0][17]),
+                    FadeIn(g[0][0][19]),
+                    FadeIn(g[0][0][21]),
+                    FadeIn(g[0][0][23]),
+                ),
+                lag_ratio=0.75
+            ),
+        )
 
-        lt = {k: [(v[0] - pos[root][0]) / scale, (v[1] - pos[root][1]) / scale, 0] for k, v in pos.items()}
+        self.next_section()
 
-        tree = Graph.from_networkx(T, layout=lt)
-        tree.rotate(-pi / 4, about_point=tree.vertices[root].get_center())
+        self.play(
+            AnimationGroup(
+                FadeOut(minute_text),
+                AnimationGroup(
+                    FadeTransform(minute_count[0][0], g[0][0][1]),
+                    FadeTransform(minute_count[0][1], g[0][0][2]),
+                    q.animate.move_to(Group(q, minute_text)),
+                ),
+                AnimationGroup(
+                    FadeIn(g[0][0][0]),
+                    FadeIn(g[0][0][3]),
+                    FadeIn(g[0][0][-1]),
+                ),
+                lag_ratio=0.5,
+            ),
+        )
 
-        state_objects = {k: vertex_from_state(k).move_to(tree.vertices[k]) for k in tree.vertices}
-        state_bgs = {k: vertex_bg_from_vertex(state_objects[k]) for k in tree.vertices}
+        self.play(
+            FadeOut(q),
+            FadeOut(robot_costs[:4]),  # I should probably repent
+        )
+
+
+        for o in self.mobjects:
+            self.remove(o)
+
+        tree, state_objects, state_bgs = actually_get_tree(25, root, 0.159)
+
+        self.camera.frame.scale(1/1.5)
+        self.camera.frame.move_to(state_objects[root])
 
         self.add(state_objects[root])
+
+        ng = Group(*[state_objects[s] for s in state_objects if s != root])
+
+        for s in state_bgs:
+            self.add(state_bgs[s])
+
+        states = [
+            root,
+            (25, (4, 31, 10, 11), (1, 4, 3, 2)),
+            (25, (3, 45, 10, 11), (2, 4, 2, 2)),
+            (25, (7, 45, 10, 11), (1, 4, 2, 2)),
+            (25, (5, 45, 3, 11), (1, 4, 2, 3)),
+            (25, (5, 45, 10, 11), (1, 5, 2, 2)),
+        ]
+
+        def get_edge(a, b):
+            return (a, b) if (a, b) in tree.edges else (b, a)
+
+        tree.suspend_updating()
+        tree.edges[get_edge(states[0], states[3])].rotate(pi)
+
+        robot_edges = Group(*[
+            robots[0].copy().set_height(state_objects[root].get_height() * 0.8).move_to(Group(state_objects[states[0]], state_objects[states[2]])),
+            robots[1].copy().set_height(state_objects[root].get_height() * 0.8).move_to(Group(state_objects[states[0]], state_objects[states[5]])),
+            robots[2].copy().set_height(state_objects[root].get_height() * 0.8).move_to(Group(state_objects[states[0]], state_objects[states[1]])),
+            robots[3].copy().set_height(state_objects[root].get_height() * 0.8).move_to(Group(state_objects[states[0]], state_objects[states[4]])),
+        ])
+
+        b = Tex("Branching factor").scale(3)
+        f = Tex("Average number of neighbouring states.").scale(1.5).next_to(b, DOWN, buff=0.5)
+
+        bf = VGroup(b, f).next_to(ng, LEFT, buff=3)
+
+        self.play(
+            AnimationGroup(
+                self.camera.frame.animate.move_to(ng).set_height(ng.get_height() * 1.3),
+                AnimationGroup(
+                    AnimationGroup(
+                    *[Create(tree.edges[e]) for e in tree.edges],
+                    FadeIn(ng),
+                    ),
+                    FadeIn(robot_edges),
+                    lag_ratio=0.25,
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(
+            AnimationGroup(
+                self.camera.frame.animate.move_to(Group(ng, bf)).set_width(Group(ng, bf).get_width() * 1.25),
+                FadeIn(b, run_time=1),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(Write(f, run_time=1.5))
+
+        def persistent(obj, anim=False):
+            scf = self.camera.frame
+            w, h = scf.get_width(), scf.get_height()
+
+            if anim:
+                return obj.animate.set_height(h * 0.06).align_to(scf, UP).align_to(scf, RIGHT).shift((LEFT + DOWN) * h * 0.1)
+            else:
+                return obj.set_height(h * 0.06).align_to(scf, UP).align_to(scf, RIGHT).shift((LEFT + DOWN) * h * 0.1)
+
+        # self.play(
+        #     AnimationGroup(
+        #         AnimationGroup(
+        #             FadeOut(f),
+        #             FadeOut(ng),
+        #             FadeOut(state_objects[root]),
+        #             *[FadeOut(tree.edges[e]) for e in tree.edges],
+        #             FadeOut(robot_edges),
+        #         ),
+        #         AnimationGroup(
+        #             persistent(b, anim=True),
+        #             *[FadeOut(state_bgs[s], run_time=0.25) for s in state_bgs],
+        #         ),
+        #         lag_ratio=0.5,
+        #     ),
+        # )
+
+
+class RobotGraph(MovingCameraScene):
+    @fade
+    def construct(self):
+        self.next_section(skip_animations=True)
+
+        #b = Tex("Branching factor")
+
+        #self.add(b)
+
+        #def persistent(obj, anim=False):
+        #    scf = self.camera.frame
+        #    w, h = scf.get_width(), scf.get_height()
+
+        #    if anim:
+        #        return obj.animate.set_height(h * 0.06).align_to(scf, UP).align_to(scf, RIGHT).shift((LEFT + DOWN) * h * 0.1)
+        #    else:
+        #        return obj.set_height(h * 0.06).align_to(scf, UP).align_to(scf, RIGHT).shift((LEFT + DOWN) * h * 0.1)
+
+        #b.add_updater(lambda x: persistent(x))
+
+        root = (0, (0, 0, 0, 0), (1, 0, 0, 0))
+
+        tree, state_objects, state_bgs = actually_get_tree(8, root, -pi / 4)
+
         self.add(state_bgs[root])
+
+        self.play(FadeIn(state_objects[root]))
 
         def neighbours(vertex):
             n = []
@@ -2009,6 +2263,8 @@ class RobotGraph(MovingCameraScene):
             for v in new_vertices:
                 self.add(state_bgs[v])
 
+            # offset = RIGHT * g.get_width() / 9
+
             self.play(
                 AnimationGroup(
                     self.camera.frame.animate(run_time=1.33333).move_to(g).set_width(g.get_width() * 1.5),
@@ -2018,4 +2274,365 @@ class RobotGraph(MovingCameraScene):
                     ),
                     lag_ratio=0.25,
                 )
+            )
+
+        self.next_section()
+
+        graph, labels = cool_graphy_graphy(15)
+
+        g = VGroup(graph, labels).set_height(self.camera.frame.get_height() * 0.26)
+
+        scf = self.camera.frame
+
+        g.align_to(scf, UP).align_to(scf, RIGHT).shift((DOWN * 2) * scf.get_height() * 0.05)
+
+        self.play(
+            AnimationGroup(
+                scf.animate.move_to(Group(g, *[state_objects[v] for v in vertices])),
+                AnimationGroup(
+                    Write(graph[1]),
+                    Write(graph[2]),
+                ),
+                AnimationGroup(
+                    FadeIn(graph[0][0]),
+                    FadeIn(labels[0]),
+                ),
+                lag_ratio=0.5,
+            ),
+        )
+
+
+class AStar(MovingCameraScene):
+    @fade
+    def construct(self):
+        self.next_section(skip_animations=True)  # LEAVE THIS; same as the start of the intro
+
+        with open("maze/mask.txt") as f:
+            contents = f.read().splitlines()
+
+        theseus = ImageMobject("assets/theseus-nobackground.png").set_height(0.8).set_z_index(100)
+        theseus_position = (22, 9)
+        theseus_text = Tex("Theseus").next_to(theseus, DOWN, buff=-0.08).scale(0.25)
+
+        theseus_miniature = ImageMobject("assets/theseus-nobackground-outline.png").set_height(0.8).move_to(RIGHT * (theseus_position[0] + 0.5) + DOWN * (theseus_position[1] + 0.5) + len(contents) / 2 * UP + len(contents[0]) / 2 * LEFT).set_z_index(1000000 + 1)
+
+        self.camera.frame.move_to(Group(theseus, theseus_text)).set_height(theseus.height * 2)
+
+        self.play(
+            AnimationGroup(
+                FadeIn(theseus),
+                FadeIn(theseus_text, lag_ratio=0.1),
+                lag_ratio=0.5,
+            )
+        )
+
+        minotaur = ImageMobject("assets/minotaur-nobackground.png").set_height(0.8).next_to(theseus, RIGHT, buff=0.3).set_z_index(100)
+        minotaur_position = (27, 9)
+        minotaur_text = Tex("Minotaur").next_to(minotaur, DOWN, buff=-0.08).scale(0.25)
+
+        minotaur_miniature = ImageMobject("assets/minotaur-nobackground-outline.png").set_height(0.8).move_to(RIGHT * (minotaur_position[0] + 0.5) + DOWN * (minotaur_position[1] + 0.5) + len(contents) / 2 * UP + len(contents[0]) / 2 * LEFT).set_z_index(1000000 + 1)
+
+        self.play(
+            AnimationGroup(
+                self.camera.frame.animate.move_to(Group(theseus, minotaur)).scale(1.25),
+                AnimationGroup(
+                    FadeIn(minotaur),
+                    FadeIn(minotaur_text, lag_ratio=0.1),
+                    lag_ratio=0.5,
+                ),
+                lag_ratio=0.25,
+            ),
+        )
+
+        maze, maze_dict = maze_to_vgroup(contents)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(theseus_text),
+                    FadeOut(minotaur_text),
+                ),
+                AnimationGroup(
+                    self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature)).set_height(maze.height * 0.3),
+                    FadeTransform(theseus, theseus_miniature),
+                    FadeTransform(minotaur, minotaur_miniature),
+                ),
+                AnimationGroup(
+                    FadeIn(maze),
+                ),
+                lag_ratio=0.5,
+                run_time=2,
+            )
+        )
+
+        self.play(
+            self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature.copy().shift(LEFT * 2))).scale(0.85),
+            minotaur_miniature.animate.shift(LEFT * 2),
+        )
+
+        for i in range(1):
+            self.play(
+                self.camera.frame.animate.move_to(Group(theseus_miniature.copy().shift(LEFT), minotaur_miniature.copy().shift(LEFT * 2))).scale(0.85),
+                minotaur_miniature.animate.shift(LEFT * 2),
+                theseus_miniature.animate.shift(LEFT),
+            )
+
+        rect = get_fade_rect()
+
+        canhe = Tex(r"\underline{Can he get out?}").scale(1.25).next_to(Group(theseus_miniature, minotaur_miniature), UP, buff=0.25).set_z_index(10000000)
+
+        self.play(
+            AnimationGroup(
+                FadeIn(rect),
+                AnimationGroup(
+                    self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature, canhe)),
+                    FadeIn(canhe, shift=UP * 0.25),
+                ),
+                lag_ratio=0.5
+            )
+        )
+
+        self.play(
+            FadeOut(rect),
+            FadeOut(canhe),
+            self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature)),
+        )
+
+        self.play(
+            Flash(minotaur_miniature, color=WHITE),
+            FadeOut(minotaur_miniature),
+        )
+
+        self.play(
+            self.camera.frame.animate.move_to(maze).set_height(maze.height * 1.25),
+            run_time=1.5,
+        )
+
+        shortest_path = [
+            (21, 9),
+            (22, 9),
+            (23, 9),
+            (24, 9),
+            (25, 9),
+            (26, 9),
+            (27, 9),
+            (27, 10),
+            (27, 11),
+            (27, 12),
+            (27, 13),
+            (27, 14),
+            (27, 15),
+            (28, 15),
+            (29, 15),
+            (30, 15),
+            (31, 15),
+            (32, 15),
+            (33, 15),
+            (34, 15),
+            (35, 15),
+            (36, 15),
+            (37, 15),
+            (37, 16),
+            (37, 17),
+            (38, 17),
+            (39, 17),
+            (39, 16),
+            (39, 15),
+            (40, 15),
+        ]
+
+        theseus_miniature.set_z_index(1)
+
+        self.play(
+            AnimationGroup(*[maze_dict[p].animate.set_fill(ORANGE, 0.75).set_stroke_color(ORANGE) for p in shortest_path], lag_ratio=0.02),
+        )
+
+        self.play(
+            AnimationGroup(*[maze_dict[p].animate.set_fill(WHITE, 0).set_stroke_color(WHITE) for p in shortest_path]),
+        )
+
+        bfs_text = Tex("BFS").scale(5).next_to(maze, RIGHT, buff=1.5).align_to(maze, UP).shift(DOWN)
+        astar_text = Tex("A*").scale(5).move_to(bfs_text)
+
+        q = Queue(scale=2).next_to(bfs_text, DOWN, buff=2)
+
+        self.play(
+            FadeIn(q),
+            FadeIn(bfs_text),
+            self.camera.frame.animate.move_to(Group(maze, theseus_miniature, q, bfs_text)),
+            run_time=1,
+        )
+
+        theseus_position = (theseus_position[0] - 1, theseus_position[1])
+
+        queue = [theseus_position]
+        discovered = {theseus_position: None}
+
+        def is_valid(position):
+            x, y = position
+            return 0 <= x < len(contents[0]) and 0 <= y < len(contents) and contents[y][x] != "#"
+
+        def next_states(position):
+            x, y = position
+            states = []
+
+            for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+                nx = x + dx
+                ny = y + dy
+
+                if is_valid((nx, ny)):
+                    states.append((nx, ny))
+
+            return states
+
+        def animate_discover(states):
+            return AnimationGroup(*[maze_dict[p].animate.set_fill(BLUE, 0.75).set_stroke_color(BLUE) for p in states])
+
+        def animate_leave(state):
+            return maze_dict[state].animate.set_fill(LIGHT_GRAY, 0.75).set_stroke_color(LIGHT_GRAY).set_z_index(3)
+
+        def animate_add_to_queue(states):
+            fade_froms = [maze_dict[s] for s in states]
+            state_texs = [Tex(s) for s in states]
+
+            return q.animate_add_from(state_texs, fade_froms)
+
+        def animate_pop_from_queue(state):
+            copy = maze_dict[state].copy().set_fill(WHITE, 0).set_stroke_color(WHITE).set_z_index(0.05)
+
+            return (AnimationGroup(
+                q.animate_remove_to(copy),
+                maze_dict[state].animate.set_fill(ORANGE, 0.75).set_stroke_color(ORANGE).set_z_index(2),
+            ), copy)
+
+        def stop_condition(state):
+            return state == escape
+
+        i = 1
+
+        def add_neighbours(position):
+            states = []
+            for next_state in next_states(position):
+                if next_state not in discovered:
+                    discovered[next_state] = position
+                    queue.append(next_state)
+                    states.append(next_state)
+
+            if len(states) != 0:
+                self.play(
+                    animate_leave(current),
+                    animate_discover(states),
+                    animate_add_to_queue(states),
+                )
+            else:
+                self.play(
+                    animate_leave(current),
+                )
+
+        def dist(a, b):
+            return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+        escape = (40, 15)
+
+        queue2 = [escape]
+        discovered2 = {escape: 0}
+
+        while len(queue2) != 0:
+            current = queue2.pop(0)
+
+            for next_state in next_states(current):
+                if next_state not in discovered2:
+                    discovered2[next_state] = dist(next_state, escape)
+                    queue2.append(next_state)
+
+        self.next_section()
+
+        all_colors = color_gradient([RED, GREEN], max(discovered2.values()) + 1)
+
+        self.play(
+            AnimationGroup(
+                *[AnimationGroup(*[maze_dict[p].animate(run_time=0.5).set_color(all_colors[d]).set_fill(all_colors[d], 0.75)
+                                   for p in discovered2.keys()
+                                   if discovered2[p] == d])
+                  for d in range(0, max(discovered2.values()) + 1)],
+                lag_ratio=0.045,
+            )
+        )
+
+        self.play(
+            Transform(bfs_text, astar_text),
+        )
+
+        self.play(
+            AnimationGroup(
+                *[AnimationGroup(*[maze_dict[p].animate(run_time=1, rate_func=there_and_back).set_color(all_colors[d]).set_fill(all_colors[d], 1)
+                                   for p in discovered2.keys()
+                                   if discovered2[p] == d])
+                  for d in range(0, max(discovered2.values()) + 1)],
+                lag_ratio=0.025,
+            )
+        )
+
+        self.play(
+            *[maze_dict[k].animate.set_fill(WHITE, 0).set_stroke_color(WHITE)
+              for k in discovered2],
+        )
+
+        self.play(
+            animate_discover([theseus_position]),
+            animate_add_to_queue([theseus_position]),
+        )
+
+        return
+
+
+class PlotTest(MovingCameraScene):
+    @fade
+    def construct(self):
+        #max_y = int(open("programs/graphs/results/bfs.txt").read().splitlines()[-1].split()[1])
+
+        #ax = Axes(
+        #    x_range=[10, 24],
+        #    y_range=[0, max_y],
+        #    tips=False,
+        #    axis_config={"include_numbers": False, "include_ticks": False},
+        #)
+
+        #graphs = VGroup()
+
+        #for f, color in [
+        #    ("programs/graphs/results/bfs.txt", RED),
+        #    ("programs/graphs/results/bfs-wtb.txt", ORANGE),
+        #    ("programs/graphs/results/bfs-wtb-max-prune.txt", BLUE),
+        #]:
+        #    with open(f) as fd:
+        #        contents = fd.read().splitlines()
+
+        #    graphs.add(ax.plot_line_graph(
+        #        x_values = [int(row.split()[0]) for row in contents],
+        #        y_values = [int(row.split()[1]) for row in contents],
+        #        line_color=color,
+        #    ))
+
+        #self.play(
+        #    Create(ax),
+        #    Create(graphs),
+        #)
+
+        graph, labels = cool_graphy_graphy(10)
+
+        self.play(
+            AnimationGroup(
+                FadeIn(graph[0][0]),
+                FadeIn(graph[1]),
+                FadeIn(graph[2]),
+                FadeIn(labels[0]),
+                lag_ratio=0.5,
+            )
+        )
+
+        for i in range(1, 4):
+            self.play(
+                FadeIn(graph[0][i]),
+                FadeIn(labels[i]),
             )

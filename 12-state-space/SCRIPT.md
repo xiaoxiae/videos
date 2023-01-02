@@ -50,15 +50,15 @@ The function will check each direction (left, right, up and down), and if the ne
 
 Given these two small functions, we can tackle the BFS itself.
 It will take two arguments: a starting state and a stop condition, which will be a function that takes in a state and returns True if it's an ending one, so the algorithm knows when to stop searching.
-You might be thinking that this is a bit pointless, since we could just pass the position of the escape and check against it when running the algorithm and while this is true, this allows us to support more complex ways of ending the BFS (say if there were multiple escapes). <!-- is this pointless? then transform into allows us -->
+You might be thinking that this is a bit pointless, since we could just pass the position of the escape and check against it when running the algorithm and while this is true, this allows us to support more complex ways of ending the BFS (say if there were multiple escapes).
 
 As we've previously discussed, the algorithm uses a queue of states to explore, beginning with the starting one.
 To record the states that we've already discovered and don't want to add to the queue again, we'll use Python's built-in set.
 
-The rest of the function essentially writes itself from the way we previously described the algorithm: while the queue isn't empty, we'll take a state from the queue, check the stop condition (possibly reporting a solution)<!-- faster write --> and add its undiscovered neighbouring states to the queue, marking them discovered to not add them to the queue again. <!-- marking them discovered separate -->
+The rest of the function essentially writes itself from the way we previously described the algorithm: while the queue isn't empty, we'll take a state from the queue, check the stop condition (possibly reporting a solution) and add its undiscovered neighbouring states to the queue, marking them discovered to not add them to the queue again.
 Finally, If we didn't find an ending state after exploring all of them, we'll report that no solution exists.
 
-Implemented like this, the algorithm is useless, because it just reports that the solution exists, not what it actually looks like. <!-- highlight solution found -->
+Implemented like this, the algorithm is useless, because it just reports that the solution exists, not what it actually looks like.
 We'd ideally like to see the path that Theseus took, and for that we'll need to slightly modify our code.
 Instead of just recording that we discovered a state, we'll remember from which state it was discovered so we can later backtrack.
 
@@ -72,8 +72,8 @@ Now we can add the backtracking code.
 There isn't anything too complicated here -- we start with the ending state and while it has a predecessor, we move to it and append it to the path.
 Finally, we print the path in reverse, because we'd like it printed from start to end.
 
-We can now call the BFS function with Theseus' starting position and a stop condition that returns True if the given state is the escape. <!-- the camera should be much more down -->
-As we see, Theseus can indeed get out of this particular maze. <!-- move immediately to the maze and solution found, not first write solution found -->
+We can now call the BFS function with Theseus' starting position and a stop condition that returns True if the given state is the escape.
+As we see, Theseus can indeed get out of this particular maze.
 
 ---
 Adding the Minotaur
@@ -105,63 +105,58 @@ Although the BFS function doesn't change, the way we call it does, since the sta
 We'll also rename the `next_states` function, because it now only returns the next possible positions of Theseus.
 
 To implement a proper `next_states` function for this problem, we'll first need a function that moves the Minotaur towards Theseus.
-To do this, we'll first write a small function that moves the Minotaur in one dimension, returning +1, 0 or -1 based on on how it should move horizontally or vertically to get closer to Theseus. <!-- highight +1 0 1 -->
-Just to see what the function does, here are a few examples of what it returns for specific input values. <!-- fade this in --> <!-- returns -> prints -->
+To do this, we'll first write a small function that moves the Minotaur in one dimension, returning +1, 0 or -1 based on on how it should move horizontally or vertically to get closer to Theseus.
+Just to see what the function does, here are a few examples of what it returns for specific input values.
 
-The main function for Minotaur movement then uses this function to attempt to move closer to Theseus horizontally and, if not successful, vertically, repeating twice. <!-- highlight repeating twice (the entire block) -->
+The main function for Minotaur movement then uses this function to attempt to move closer to Theseus horizontally and, if not successful, vertically, repeating twice.
 
 With these two functions, we can finally write the missing `next_states` function: given some state, Theseus attempts to move in all directions and Minotaur follows suit.
 If he catches Theseus, the state is invalid, else it's fine.
 
-Running the code now, we see that the path is quite a bit longer, since Theseus has to lead the Minotaur into a corner and only then escape. <!-- opět přímo vykreslit maze -->
+Running the code now, we see that the path is quite a bit longer, since Theseus has to lead the Minotaur into a corner and only then escape.
 
----
-Summary
----
+As you can see, we implemented a general algorithm to solve problems that have states where the goal is to get from the starting state to an ending state in the least amount of steps possible, like the shortest path problem and Theseus and the Minotaur problem.
 
-As you can see, we implemented a general algorithm to solve problems where you need to get from one state to another in the least amount of steps possible (i.e. explore the state space). <!-- TODO is in the code -->
-This is great, because problems that involve the state space are quite common and recognizing them will save you a lot of headache when trying to solve them in ways other than BFS. <!-- animace -->
+Now you might say that this algorithm is only useful for problems that involve a 2D board, but this can't be further from the truth.
 
 ---
 Advent of Code 2022 (day 19)
 ---
 
 \marginpar{\texttt{AOC}}
-And, just to show you that this is not limited to problems on a 2D board, here is a really fun one taken from the Advent of Code 2022, day 19.
+To convince you otherwise, here is a really fun problem taken from the Advent of Code 2022, day 19.
 
 \marginpar{\texttt{Robots}}
-There are 4 types of robots, each producing one of the following resources: ore, clay, obsidian and geode. <!-- split -->
-Each robot produces one resource per minute (so if you have 4 ore robots, they produce 4 ore a minute). <!-- combine showing minutes and robot count -->
-Besides this, you have a factory that can build a new robot in one minute, given a specific number of resources:
+There are 4 types of robots, each producing one of the following resources: ore, clay, obsidian and geode.
+Each robot produces one resource per minute (so if you have 4 ore robots, they produce 4 ore a minute). <!-- also fadeout the numbers of the resources; do this globally -->
+Besides this, you have a factory that can build a new robot in one minute:
+
 - the ore robot costs 4 ore
 - the clay robot costs 2 ore
 - the obsidian robot costs 3 ore and 14 clay and
 - the geode robot costs 2 ore and 7 obsidian
 
-The factory takes a whole minute building the robot, meaning that during a minute, the factory first subtracts the resources required to build the robot, the robots then produce their respective resources and finally the robot is finished. <!-- this has to be timed well -->
+The factory takes a whole minute building the robot, meaning that during a minute, the factory first subtracts the resources required to build the robot, the robots then produce their respective resources and finally the robot is finished.
 
 We start with one ore robot and no resources.
-By building the robots in a specific order, we want to maximize the number of geodes produced after the first 24 minutes. <!-- show this in the top right corner -->
+By building the robots in a specific order, we want to maximize the number of geodes produced after the first 24 minutes.
+For these costs of the robots, here is the optimal solution. <!-- speed it up (1/n) -->
 
-For these particular costs of the robots, here is the optimal solution.
-As you can see, the maximum number of geodes is 9. <!-- highlight the number of geodes -->
+As you can see, the maximum number of geodes is 9.
 
 Pause here and think of what the states are and how to get from one to another.
 
-The state here is the current number of resources and robots, but also the remaining time, since states with zero or negative remaining time are invalid. <!-- show t -->
-Getting from one state to another always means decreasing the remaining time by one, adding the resources that the robots acquired and attempting to build all possible robots. <!-- TODO: do this -->
-Here is what the graph of the first few states looks like.
+The states are the current number of resources and robots, but also the time, since states with negative time are invalid.
+Getting from one state to another always means increasing the time by one, adding the resources that the robots acquired and attempting to build all possible robots.
+
+This solution works but wouldn't terminate in a reasonable amount of time because of the branching factor, which is, for our purposes, the average number of neighbouring states.
 
 \marginpar{\texttt{RobotGraph}}
-This solution works but wouldn't terminate in a reasonable amount of time because of the branching factor.
-The branching factor is, for our purposes, the average number of neighbouring states.
-For our problem, this is about 5 since, in each minute, we can either do nothing or build one of the 4 types of robots.
+When going from the starting state, the problem doesn't branch too much initially, but the more resources you acquire, the more options you will have, so getting to depth 24 of this tree will take a very long time, since it has around 21 million nodes.
 
-While there problem doesn't branch too much initially, the more resources you acquire, the more options you will have, meaning that getting to depth 24 of this tree will be extremely slow with a simple BFS. <!-- add the graph from 0 to 24 here -->
-So is this entirely hopeless?
+So is the problem entirely hopeless?
 
-Well, no, there are a few things we can do.
-The techniques we'll look into are twofold: pruning and prioritization.
+Well, no, there are a few things we can do, namely pruning and prioritization.
 
 Let's first look at pruning.
 
@@ -172,19 +167,33 @@ Pruning
 Pruning is the technique of removing valid states from the search that you know aren't going to lead to the right solution.
 
 For example, let's look at a branch where only ore robots are built.
-It certainly is a valid branch but we know that it won't produce the correct result, because building more ore robots than a the highest requirement for ore is pointless (i.e. if the most amount of ore we can spend on constructing a robot is 3, it is sufficient to build only 3 ore robots).
+It certainly is a valid branch but we know that it won't produce the correct result, because building more ore robots than what's the highest requirement for ore is pointless (i.e. if the most amount of ore we can spend on a robot is 3, it is sufficient to build only 3 ore robots).
 We can therefore remove (or prune) states that build more robots than necessary and speed up the algorithm.
 
-Furthermore, when we do find states that obtain some geodes, we can start pruning states that couldn't improve this number even if they build a geode robot every minute, achieving furher speedup.
+Furthermore, when we do find states that obtain some geodes, we can start pruning states that couldn't obtain more even if they build a geode robot every minute, achieving further speedup.
 
-While these strategies do help, as the graph shows, we'll need something better and for that, let's go back to the shortest path problem.
+While these strategies do help, as the graphs show, we'll need something better to solve the problem for larger number of minutes and for that, let's go back to the shortest path problem.
 
 ---
-Prioritization
+Prioritization (A*)
 ---
 
-Until now, we used the good old BFS with a queue to process states.
-However, it might be a good idea to "prioritize" states that look more promising over others. <!-- animate by color states that are closer to the escape -->
-In this maze, states that are closer to the escape (in terms of their $(x, y)$) coordinates should be explored before those that are further.
+\marginpar{\texttt{AStar}}
+Remember that to solve it, we used breadth-first search which has a queue to process states it discovers.
+However, it might be a good idea to first explore (i.e. "prioritize") states that look more promising than others.
+In this maze, for example, states that are closer to the escape (in terms of their $(x, y)$ coordinates) should probably be explored before those that are further because there is a higher chance that they will lead to the escape.
 
-For us to do this, there are two things that we have to change:
+This is what the A* algorithm does -- it prioritizes states based on a heuristic function, which is an estimate of how far the state is from the end (in our case, the $(x, y)$ distance).
+I won't go into more detail here but if you're interested in a more in-depth look at A*, here is a fantastic video from Polylog that you should watch.
+
+Anyway, here is what happens when we use A* for our shortest path problem -- awesome, right?
+
+\marginpar{\texttt{AStar}}
+And for completeness, here is what happens when we use it for our Advent of Code problem.
+
+---
+Outro
+---
+
+And... that's it!
+I hope this video helped you understand how to effectively solve various problems that involve states
