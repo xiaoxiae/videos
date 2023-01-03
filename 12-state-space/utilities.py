@@ -277,7 +277,7 @@ def align_object_by_coords(obj, current, desired, animation=False):
     else:
         obj.shift(desired - current)
 
-def get_tree(depth, root=(0, (0, 0, 0, 0), (1, 0, 0, 0))):
+def get_tree(depth, root=(0, (0, 0, 0, 0), (1, 0, 0, 0)), force_expand=[]):
 
     def can_build_robot(ores, cost):
         for o, c in zip(ores, cost):
@@ -328,7 +328,7 @@ def get_tree(depth, root=(0, (0, 0, 0, 0), (1, 0, 0, 0))):
     while len(queue) != 0:
         current = queue.pop(0)
 
-        if current[0] == depth:
+        if current[0] >= depth and not current in force_expand:
             continue
 
         for next_state in next_states(*current, blueprint):
@@ -343,22 +343,26 @@ def get_tree(depth, root=(0, (0, 0, 0, 0), (1, 0, 0, 0))):
 
     return nx.from_edgelist([(k, v) for (k, v) in visited.items()])
 
-def actually_get_tree(depth, root, angle):
-    myrobots = VGroup(*[
-        SVGMobject("assets/robot-ore.svg"),
-        SVGMobject("assets/robot-clay.svg"),
-        SVGMobject("assets/robot-obsidian.svg"),
-        SVGMobject("assets/robot-geode.svg"),
-    ]).arrange(buff=0.8)
+def actually_get_tree(depth, root, angle, force_expand=[], only_layout=False):
+    if not only_layout:
+        myrobots = VGroup(*[
+            SVGMobject("assets/robot-ore.svg"),
+            SVGMobject("assets/robot-clay.svg"),
+            SVGMobject("assets/robot-obsidian.svg"),
+            SVGMobject("assets/robot-geode.svg"),
+        ]).arrange(buff=0.8)
 
-    myminerals = Group(*[
-        ImageMobject("assets/minerals/ore.png"),
-        ImageMobject("assets/minerals/clay.png"),
-        ImageMobject("assets/minerals/obsidian.png"),
-        ImageMobject("assets/minerals/geode.png"),
-    ])
+        myminerals = Group(*[
+            ImageMobject("assets/minerals/ore.png"),
+            ImageMobject("assets/minerals/clay.png"),
+            ImageMobject("assets/minerals/obsidian.png"),
+            ImageMobject("assets/minerals/geode.png"),
+        ])
 
-    def vertex_from_state(state):
+    def vertex_from_state(state, only_layout):
+        if only_layout:
+            return Dot()
+
         text = Tex("$$" + str(state) + "$$").set_z_index(10)
         g = Group(text)
 
@@ -387,10 +391,10 @@ def actually_get_tree(depth, root, angle):
         return g
 
     def vertex_bg_from_vertex(vertex):
-        return SurroundingRectangle(vertex, corner_radius=0, color=BLACK, fill_color=BLACK, fill_opacity=1).set_z_index(5).scale(1.0)
+        return SurroundingRectangle(vertex, corner_radius=0, color=BLACK, fill_color=BLACK, fill_opacity=1).set_z_index(5).scale(1.25)
 
-    T = get_tree(depth, root=root)
-    pos = graphviz_layout(get_tree(depth, root=root), prog="neato", root=root)
+    T = get_tree(depth, root=root, force_expand=force_expand)
+    pos = graphviz_layout(T, prog="neato", root=root)
 
     scale = 10
 
@@ -399,7 +403,7 @@ def actually_get_tree(depth, root, angle):
     tree = Graph.from_networkx(T, layout=lt)
     tree.rotate(angle, about_point=tree.vertices[root].get_center())
 
-    state_objects = {k: vertex_from_state(k).move_to(tree.vertices[k]) for k in tree.vertices}
+    state_objects = {k: vertex_from_state(k, only_layout).move_to(tree.vertices[k]) for k in tree.vertices}
     state_bgs = {k: vertex_bg_from_vertex(state_objects[k]) for k in tree.vertices}
 
     return tree, state_objects, state_bgs

@@ -86,12 +86,14 @@ def next_states(state):
 
 
 # block bfs
+from collections import deque
+
 def bfs(starting_state, stop_condition):
-    queue = [starting_state]
+    queue = deque([starting_state])
     discovered = {starting_state: None}
 
     while len(queue) != 0:
-        current = queue.pop(0)
+        current = queue.popleft()
 
         if stop_condition(current):
             print("Solution found!")
