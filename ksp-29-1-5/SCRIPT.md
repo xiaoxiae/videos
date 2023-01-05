@@ -16,10 +16,12 @@ INTRODUCTION
 
 \marginpar{\texttt{Intro}}
 Lučištníci stojící v řadě mají vyhlédnuté své cíle.
-Každý z nich míří lukem na nějaké místo, ale je nebezpečné, aby všichni stříleli najednou.
-Měli by střílet jen ti, jejichž dráhy palby se nekříží.
+Každý z nich míří lukem na nějaké místo, do kterého by rád vyslal svůj šíp, ale je nebezpečné, aby všichni stříleli najednou.
+Měli by proto střílet pouze ti, jejichž dráhy palby se nekříží.
 
-Naším cílem je vymyslet algoritmus, který ze všech lučištníků vybere co největší skupinu, jejíž dráhy střelby se nekříží -- jak na to?
+Tohle jsou například některé přípustné kombinace lučištníků, kde se dráhy palby nekříží, a tohle nějaké nepřípustné.
+
+Vaším cílem je vymyslet algoritmus, který ze všech lučištníků vybere co největší skupinu, jejíž dráhy střelby se nekříží -- jak na to?
 
 To nejpřímočařejší řešení (vyzkoušení všech možností) je nepřekvapivě dost pomalé -- skupin je celkově $2^n$ (každý lučištník může nebo nemusí střílet), což je i pro malá $n$ příliš mnoho.
 

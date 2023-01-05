@@ -1,4 +1,4 @@
-<what the video is about>
+An overview of algorithms that explore the state space (BFS, Dijkstra, A*).
 
 The A* video: TODO
 Advent of Code: https://adventofcode.com/
@@ -12,7 +12,7 @@ Timetable:
 ------------------
 
 Source code:
-https://github.com/xiaoxiae/videos/tree/master/12-state-space/>
+https://github.com/xiaoxiae/videos/tree/master/12-state-space/
 
 Music:
 <credit the music used>
@@ -26,6 +26,7 @@ sox (audio processing): http://sox.sourceforge.net/
 Inkscape (vector image editing): https://inkscape.org/
 Gimp (raster image editing): https://gimp.org/
 Midjourney (AI image generator): https://www.midjourney.com/home/
+Stable Diffusion (AI image generator): https://stablediffusionweb.com/
 
 Social media:
 Website (for other things I'm up to): https://slama.dev/
@@ -41,3 +42,6 @@ Also thanks to Matěj Kripner for valuable feedback.
 
 [EN] Wikipedia: State space search
 https://en.wikipedia.org/wiki/State_space_search
+
+[EN] Wikipedia: A* search algorithm
+https://en.wikipedia.org/wiki/A*_search_algorithm

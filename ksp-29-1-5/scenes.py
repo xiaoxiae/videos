@@ -2,6 +2,22 @@ from manim import *
 from utilities import *
 
 
+class SwitchZIndex(Animation):
+    """An animation that fades in an object... but colorfully."""
+
+    def __init__(self, mobject: Mobject, z_index, **kwargs):
+        self.original = mobject
+        self.z_index = z_index
+
+        super().__init__(mobject, **kwargs)
+
+    def interpolate_mobject(self, alpha: float) -> None:
+        new_alpha = self.rate_func(alpha)
+
+        if new_alpha > 0.5:
+            self.original.set_z_index(self.z_index)
+
+
 class Intro(MovingCameraScene):
     def construct(self):
         mapping = [2, 0, 3, 1, 5, 6, 5]
@@ -34,20 +50,20 @@ class Intro(MovingCameraScene):
             ),
         )
 
-        self.play(
-            AnimationGroup(
-                *[a.animate(rate_func=there_and_back, run_time=1.5).set_color(RED) for a in arrows],
-                lag_ratio=0.08,
-            ),
-            AnimationGroup(
-                *[a.animate(rate_func=there_and_back, run_time=1.5).set_color(RED) for a in upper_dots],
-                lag_ratio=0.08,
-            ),
-            AnimationGroup(
-                *[lower_dots[mapping[i]].animate(rate_func=there_and_back, run_time=1.5).set_color(RED) for i in range(N)],
-                lag_ratio=0.08,
-            ),
-        )
+        #self.play(
+        #    AnimationGroup(
+        #        *[a.animate(rate_func=there_and_back, run_time=1.5).set_color(RED) for a in arrows],
+        #        lag_ratio=0.08,
+        #    ),
+        #    AnimationGroup(
+        #        *[a.animate(rate_func=there_and_back, run_time=1.5).set_color(RED) for a in upper_dots],
+        #        lag_ratio=0.08,
+        #    ),
+        #    AnimationGroup(
+        #        *[lower_dots[mapping[i]].animate(rate_func=there_and_back, run_time=1.5).set_color(RED) for i in range(N)],
+        #        lag_ratio=0.08,
+        #    ),
+        #)
 
         arrows[1].set_z_index(1)
         arrows[2].set_z_index(1)
@@ -61,23 +77,31 @@ class Intro(MovingCameraScene):
         for a in lower_dots:
             a.save_state()
 
-        self.play(
-            arrows[0].animate.set_color(DARKER_GRAY),
-            arrows[3].animate.set_color(DARKER_GRAY),
-            arrows[5].animate.set_color(DARKER_GRAY),
-            arrows[1].animate.set_color(GREEN),
-            arrows[2].animate.set_color(GREEN),
-            arrows[4].animate.set_color(GREEN),
-            arrows[6].animate.set_color(GREEN),
-            upper_dots[1].animate.set_color(GREEN),
-            upper_dots[2].animate.set_color(GREEN),
-            upper_dots[4].animate.set_color(GREEN),
-            upper_dots[6].animate.set_color(GREEN),
-            lower_dots[mapping[1]].animate.set_color(GREEN),
-            lower_dots[mapping[2]].animate.set_color(GREEN),
-            lower_dots[mapping[4]].animate.set_color(GREEN),
-            lower_dots[mapping[6]].animate.set_color(GREEN),
-        )
+        def animate_combination(archers, colors):
+            mapping_set = set([mapping[i] for i in archers])
+            mapping_colors = {i:colors[index] for index, i in enumerate(archers)}
+            self.play(
+                *[arrows[i].animate.set_color(mapping_colors[i]) for i in archers],
+                *[arrows[i].animate.set_color(DARKER_GRAY) for i in range(N) if i not in archers],
+                *[upper_dots[i].animate.set_color(mapping_colors[i]) for i in archers],
+                *[upper_dots[i].animate.set_color(DARKER_GRAY) for i in range(N) if i not in archers],
+                #*[lower_dots[i].animate.set_color(mapping_colors[i]) for i in mapping_set],
+                #*[lower_dots[i].animate.set_color(DARKER_GRAY) for i in range(N) if i not in mapping_set],
+                *[SwitchZIndex(arrows[i], 1) for i in archers],
+                *[SwitchZIndex(arrows[i], 0) for i in range(N) if i not in archers],
+            )
+
+        animate_combination([1, 2, 4, 6], [GREEN] * 4)
+        self.wait(0.5)
+        animate_combination([1, 6], [GREEN] * 2)
+        self.wait(0.5)
+        animate_combination([0, 3, 4, 5], [GREEN] * 4)
+
+        self.wait(1)
+
+        animate_combination([1, 2, 4, 5, 6], colors=[GREEN] * 3 + [RED] * 2)
+        self.wait(0.5)
+        animate_combination([0, 1, 2, 3, 4, 5, 6], colors=[RED] * 7)
 
         blob = get_gray_blob()
 
@@ -113,7 +137,7 @@ class Intro(MovingCameraScene):
 
         def tex_above_upper_dots(v):
             g = VGroup(
-                *[Tex("\\texttt{" + i + "}").scale(0.75).set_color(WHITE if v == 0 else GREEN if i == "1" else DARKER_GRAY) for i in f(v)]
+                *[Tex("\\texttt{" + "Ne" if i == "0" else "Ano" + "}").scale(0.5).set_color(WHITE if v == 0 else GREEN if i == "1" else DARKER_GRAY) for i in f(v)]
             )
 
             for i, a in enumerate(g):
@@ -123,9 +147,17 @@ class Intro(MovingCameraScene):
 
         g = tex_above_upper_dots(0)
 
+        brace = BraceBetweenPoints(Dot().next_to(g[0], (UP + LEFT) * 0.1).get_center(),
+                                   Dot().next_to(g[-1], (UP + RIGHT) * 0.1).get_center(),
+                                   direction=UP)
+
+        count = Tex("$n$").next_to(brace, UP).scale(0.75)
+
         self.play(
             FadeIn(g, lag_ratio=0.1),
-            self.camera.frame.animate.move_to(VGroup(g, lower_dots))
+            FadeIn(brace, shift=UP * 0.2),
+            FadeIn(count, shift=UP * 0.2),
+            self.camera.frame.animate.move_to(VGroup(g, lower_dots, brace, count))
         )
 
         for a in arrows:
@@ -139,13 +171,15 @@ class Intro(MovingCameraScene):
             set_thingy = set(mapping[i] for i, ll in enumerate(f(i)) if ll == "1")
             self.play(
                 Transform(g, tex_above_upper_dots(i)),
-                AnimationGroup(
-                    *[a.animate.set_color(GREEN if f(i)[j] == "1" else DARKER_GRAY).set_z_index(1 if f(i)[j] == "1" else 0) for j, a in enumerate(arrows)]
-                ),
-                AnimationGroup(*[a.animate.set_color(GREEN if j in set_thingy else WHITE) for j, a in enumerate(lower_dots)]),
-                AnimationGroup(*[a.animate.set_color(GREEN if f(i)[j] == "1" else WHITE) for j, a in enumerate(upper_dots)]),
+                *[a.animate.set_color(GREEN if f(i)[j] == "1" else DARKER_GRAY) for j, a in enumerate(arrows)],
+                *[a.animate.set_color(GREEN if j in set_thingy else WHITE) for j, a in enumerate(lower_dots)],
+                *[a.animate.set_color(GREEN if f(i)[j] == "1" else DARKER_GRAY) for j, a in enumerate(upper_dots)],
+                *[SwitchZIndex(a, 1 if f(i)[j] == "1" else 0) for j, a in enumerate(arrows)],
                 run_time=1 / i,
             )
+
+            if i > 5:
+                return
 
         self.play(
             AnimationGroup(*[a.animate.restore() for a in arrows]),
@@ -217,3 +251,5 @@ class Intro(MovingCameraScene):
         )
 
         self.play(FadeOut(VGroup(*curved_arrows)))
+
+        return

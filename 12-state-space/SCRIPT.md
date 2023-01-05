@@ -11,7 +11,7 @@ header-includes:
 \vspace{1.5em}
 
 ---
-Introduction
+Introduction (BFS)
 ---
 
 \marginpar{\texttt{Intro}}
@@ -50,7 +50,7 @@ The function will check each direction (left, right, up and down), and if the ne
 
 **m6:** Given these two small functions, we can tackle the BFS itself.
 It will take two arguments: a starting state and a stop condition, which will be a function that takes in a state and returns True if it's an ending one, so the algorithm knows when to stop searching.
-You might be thinking that this is a bit pointless, since we could just pass the position of the escape and check against it when running the algorithm and while this is true, this allows us to support more complex ways of ending the BFS like multiple escape tiles.
+You might be thinking that this is a bit pointless, since we could just pass the position of the escape and check against it when running the algorithm and while this is true, this way allows us to support more complex ways of ending the BFS like multiple escape tiles.
 
 **m7:** As we've previously discussed, the algorithm uses a queue of states to explore, beginning with the starting one.
 To record the states that we've already discovered and don't want to add to the queue again, we'll use Python's built-in set.
@@ -68,14 +68,14 @@ When adding a new state, we'll make sure to remember its predecessor.
 
 **m11:** Now we can add the backtracking code.
 There isn't anything too complicated here -- we start with the ending state and while it has a predecessor, we move to it and append it to the path.
-Finally, we print the path in reverse, because we'd like it printed from start to end.
+Finally, we print the path in reverse, because we'd like it printed from start to end, not the other way around.
 
 **m12:** Also, I just have to point out that this is very poetic since it resembles the thread that Theseus was given by Midas' daughter Ariadne to escape the labyrinth in the original tale.
 
 **m13:** One small note here: for clarity of code, I wanted to exclude importing libraries, so I used a Python list as a queue here.
 That is a terrible idea, because popping from the beginning takes linear time -- in practice, you should use Python `collections` module and its `deque` class, which has a popleft operation that is constant.
 
-**m14:** Now we can finally call the BFS function with Theseus' starting position and a stop condition that returns True if the given state is the escape. <!-- zoom výš -- move to intro block -->
+**m14:** Now we can finally call the BFS function with Theseus' starting position and a stop condition that returns True if the given state is the escape.
 
 **m15:** As we see, Theseus can indeed escape this particular maze.
 
@@ -148,7 +148,7 @@ By building the robots in a specific order, we want to maximize the number of ge
 **a6:** Pause here and think of what the states are and how to get from one to another.
 
 **a7:** The states are the current number of resources and robots, but also the time, since we have to know when to stop exploring.
-Getting from one state to another always means increasing the time by one, adding the resources that the robots acquired and attempting to build all possible robots.
+Getting from one state to another always means increasing the time by one, adding the acquired resources and attempting to build all possible robots.
 
 **a8:** This solution works but wouldn't terminate in a reasonable amount of time because of the branching factor, which is the average number of neighbouring states.
 
@@ -166,10 +166,10 @@ Pruning
 **a12:** Pruning is the technique of removing valid states from the search that you know aren't going to lead to the right solution.
 
 **a13:** For example, let's think about a branch where only ore robots are built.
-It certainly is a valid branch but we know that it won't produce the correct result, because building more ore robots than what's the highest requirement for ore is pointless (i.e. if the most amount of ore we can spend on a robot is 3, it is sufficient only build 3 ore robots).
-We can therefore remove (or prune) this branch and others like it to speed up the algorithm.
+It certainly is a valid branch but we know that it won't produce the correct result, because building more ore robots than what's the highest requirement for ore is pointless.
+We can therefore remove this branch and others like it to speed up the algorithm.
 
-**a14:** As another example, when we do find states that obtain some geodes, we can start ignoring states that couldn't obtain more even if they build a geode robot every minute, achieving further speedup.
+**a14:** As another example, when we do find states that obtain some geodes, we can start ignoring other states that couldn't obtain more even if they build a geode robot every minute, achieving further speedup.
 
 **a15:** While these strategies do help, as the graphs show, we can do even better and for that, let's go back to the shortest path problem.
 
@@ -178,21 +178,49 @@ Prioritization (A*)
 ---
 
 \marginpar{\texttt{AStar}}
-**s1:** Remember that to solve it, we used breadth-first search which uses a queue to process states in the order they were discovered.
+**s1:** Remember that to solve it, we used breadth-first search, which uses a queue to process states in the order they were discovered.
 However, it might be a good idea to first explore (i.e. "prioritize") states that look more promising than others.
-In this maze, for example, states that are closer to the escape (in terms of their $(x, y)$ coordinates) should probably be explored before those that are further because there is a higher chance that they will lead to the escape.
+In this maze, for example, states that are closer to the escape (in terms of their $(x, y)$ coordinates) should probably be explored before those that are further, because there is a higher chance that they will lead to the escape.
 
-**s2:** This is what the A* algorithm does -- it prioritizes states based on a heuristic function, which is an estimate of how far the state is from the end (in our case, the $(x, y)$ distance).
+**s2:** This is what the A* algorithm does -- it uses a priority queue to prioritize states based on a heuristic function, which is an estimate of how far the state is from the end (in our case, the $(x, y)$ distance).
 I won't go into detail here but if you're interested in an in-depth look at A*, here is a fantastic video from Polylog that you should definitely watch.
 
 **s3:** Anyway, here is what happens when we use A* for our shortest path problem -- pretty awesome, right?
 
 \marginpar{\texttt{RobotGraph}}
-**s4:** For completeness, here is what happens when we use it for our Advent of Code problem -- amazing.
+**s4:** Here is what happens when we use it on our robots problem -- only 400 000 states, amazing.
+
+---
+Non-uniform edge costs (Dijkstra)
+---
+
+**d1:** There is one more thing I want to cover before the video ends -- what if distances between the states weren't equal?
+In the problems we've seen, it took exactly step to get from one state to another, but this doesn't need to be the case.
+What if, for example, you had a modified shortest path problem where you're allowed to break the wall, but it takes you 10 steps while regular moves take just 1?
+
+**d2:** Intuitively, we'd still like to use BFS, but now there is a problem -- the order in which the states are added to the queue no longer corresponds to the distance from the start because getting through the wall takes much longer.
+To fix it, we'll replace the regular queue with a priority queue (similar to A*) to always visit the state that is closest to the start.
+
+**d3:** We'll implement it using a heap from the `heapq` module, which is a data structure that can quickly return the smallest element -- exactly what we need.
+Besides the state itself, we'll also store its distance from the start so it can always return the smallest one.
+
+**d4:** The `next_states` function now has to be aware that different neighbouring states might have different distances and so it has to return both the neighbour and the distance to it.
+The distance to the neighbour is the distance from start to the current node, plus the distance from the current node to the neighbour.
+
+**d5:** Comparing the algorithms side by side, Dijkstra is just a more generalized version of BFS, with the core principle being the same -- get the closest state, add unexplored neighbours, repeat.
+
+**d6:** Solving our crowded maze problem, here is the shortest path from Theseus' starting position to the escape, breaking 4 walls in total and taking TODO steps.
+
+**d7:** And, as you might be thinking, since the core principle of BFS and Dijkstra are the same, we can again use A* to prioritize states that are closer to the escape, solving the problem in fewer steps.
 
 ---
 Outro
 ---
 
+**out1:** This is the end of the video.
+I hope it gave you the necessary tools for solving state space problems of all shapes and sizes. <!-- fade in frames from each of the problems -->
+If you have an interesting one that you'd like to share or you feel like I missed something, let me know in the comments.
 
-TODO: what to do here
+**out2:** Also, don't forget to check out the guys over at Polylog, since their channel's got some really interesting videos. <!-- fade in polylog logo bellow -->
+
+**out3:** Thank you for watching!
