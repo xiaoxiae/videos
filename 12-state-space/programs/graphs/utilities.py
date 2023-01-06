@@ -60,13 +60,16 @@ def get_tree(depth):
             if next_state not in visited:
                 queue.append(next_state)
                 visited[next_state] = current
+            else:
+                print(visited[next_state], next_state, current)
+                quit()
+
 
     for k, v in visited.items():
         if v == None:
             visited[k] = visited[k]
             break
 
-    print(depth, len(visited))
-
 for i in range(100):
+    print(i)
     get_tree(i)

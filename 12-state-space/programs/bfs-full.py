@@ -1,11 +1,8 @@
-# block is_valid
-def is_valid(position):
+def is_position_valid(position):
     x, y = position
     return maze[y][x] != "#"
-# endblock
 
 
-# block next_states
 def next_states(position):
     x, y = position
     states = []
@@ -14,38 +11,14 @@ def next_states(position):
         nx = x + dx
         ny = y + dy
 
-        if is_valid((nx, ny)):
+        if is_position_valid((nx, ny)):
             states.append((nx, ny))
 
     return states
-# endblock
 
-# block bfs
 def bfs(starting_state, stop_condition):
     queue = [starting_state]
     discovered = {starting_state}
-
-    i = 0
-    while len(queue) != 0:
-        i += 1
-        current = queue.pop(0)
-
-        if stop_condition(current):
-            print(f"Solution found in {i} steps!")
-            return
-
-        for next_state in next_states(current):
-            if next_state not in discovered:
-                queue.append(next_state)
-                discovered.add(current)
-
-    print("No solution!")
-# endblock
-
-# block bfs_mid
-def bfs(starting_state, stop_condition):
-    queue = [starting_state]
-    discovered = {starting_state: None}
 
     while len(queue) != 0:
         current = queue.pop(0)
@@ -57,18 +30,18 @@ def bfs(starting_state, stop_condition):
         for next_state in next_states(current):
             if next_state not in discovered:
                 queue.append(next_state)
-                discovered[next_state] = current
+                discovered.add(current)
 
     print("No solution!")
-# endblock
 
-# block bfs_better
+from collections import deque
+
 def bfs(starting_state, stop_condition):
-    queue = [starting_state]
+    queue = deque([starting_state])
     discovered = {starting_state: None}
 
     while len(queue) != 0:
-        current = queue.pop(0)
+        current = queue.popleft()
 
         if stop_condition(current):
             print("Solution found!")
@@ -89,18 +62,16 @@ def bfs(starting_state, stop_condition):
                 discovered[next_state] = current
 
     print("No solution!")
-# endblock
 
-# block start
 maze = [
     "##########",
-    "#       E#",
-    "#   #   ##",
+    "# #     E#",
+    "# # # ####",
     "# T #    #",
+    "### # ## #",
     "#   #    #",
-    "#   #    #",
-    "#   #    #",
-    "#  #     #",
+    "## ## # ##",
+    "#  #  #  #",
     "##########",
 ]
 
@@ -115,4 +86,3 @@ for y, row in enumerate(maze):
             escape = (x, y)
 
 bfs(theseus, lambda state: state == escape)
-# endblock

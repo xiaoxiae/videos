@@ -980,24 +980,26 @@ class BFSMinotaur(MovingCameraScene):
 
         maze_str = [
             "##########",
-            "#       E#",
-            "#   #   ##",
+            "# #     E#",
+            "# # # ####",
             "# T # M  #",
+            "### # ## #",
             "#   #    #",
-            "#   #    #",
-            "#   #    #",
-            "#  #     #",
+            "## ## # ##",
+            "#  #  #  #",
             "##########",
         ]
 
         solution = [
             ((2, 3), (6, 3)),
-            ((2, 4), (5, 4)),
+            ((3, 3), (5, 3)),
+            ((3, 4), (5, 4)),
+            ((3, 5), (5, 5)),
             ((2, 5), (5, 5)),
             ((2, 6), (5, 6)),
             ((2, 7), (4, 7)),
             ((2, 6), (4, 7)),
-            ((3, 6), (4, 7)),
+            ((2, 5), (4, 7)),
             ((3, 5), (4, 7)),
             ((3, 4), (4, 7)),
             ((3, 3), (4, 7)),
@@ -1006,8 +1008,8 @@ class BFSMinotaur(MovingCameraScene):
             ((4, 1), (4, 7)),
             ((5, 1), (5, 6)),
             ((6, 1), (6, 5)),
-            ((7, 1), (7, 4)),
-            ((8, 1), (8, 3)),
+            ((7, 1), (7, 5)),
+            ((8, 1), (8, 4)),
         ]
 
         maze, maze_dict = maze_to_vgroup(maze_str)
@@ -1502,13 +1504,13 @@ class BFS(MovingCameraScene):
 
         maze_str = [
             "##########",
-            "#       E#",
-            "#   #   ##",
+            "# #     E#",
+            "# # # ####",
             "# T #    #",
+            "### # ## #",
             "#   #    #",
-            "#   #    #",
-            "#   #    #",
-            "#  #     #",
+            "## ## # ##",
+            "#  #  #  #",
             "##########",
         ]
 
@@ -2636,7 +2638,7 @@ class RobotGraph(MovingCameraScene):
         )
 
         self.play(
-            self.camera.frame.animate.move_to(better_g).set_height(better_g.get_height() * 1.5),
+            self.camera.frame.animate.move_to(better_g).set_height(better_g.get_height() * 1.25),
         )
 
         self.play(
@@ -4203,3 +4205,31 @@ class LastScreen(MovingCameraScene):
                     Transform(robot_counts[j], Tex(robots_array[j]).move_to(robot_counts[j])),
                     run_time=1,
                 )
+
+
+class Outro(MovingCameraScene):
+    @fade
+    def construct(self):
+        slides = Group(*[
+            ImageMobject("assets/outro-images/1-bfs.png"),
+            ImageMobject("assets/outro-images/2-pruning.png"),
+            ImageMobject("assets/outro-images/3-astar.png"),
+            ImageMobject("assets/outro-images/4-dijkstra.png"),
+        ]).arrange_in_grid(rows=2, buff=(8, 8))
+
+        def sr(obj):
+            return SurroundingRectangle(obj, color=WHITE, stroke_width=15, buff=0)
+
+        for s, t in zip(slides, ["BFS", "Pruning", "A*", "Dijkstra"]):
+            s.add(sr(s))
+            s.add(Tex(t).next_to(s, UP, buff=2.5).scale(7))
+
+        self.camera.frame.move_to(slides).set_height(slides.get_height() * 1.25)
+
+        for i in slides:
+            self.play(FadeIn(i, shift=UP * 1.5))
+
+        self.wait()
+
+
+

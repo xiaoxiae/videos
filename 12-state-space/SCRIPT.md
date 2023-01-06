@@ -117,9 +117,12 @@ To see what the function does, here are a few examples of what it returns for sp
 **o11:** With these two functions, we can finally write `next_states`: given some state, Theseus attempts to move in all directions and Minotaur follows suit.
 If he catches Theseus, the state is invalid, else it's fine.
 
-**o12:** Running the code now, the path is quite a bit longer, since Theseus has to lead the Minotaur into a corner and only then escape, but escape he does.
+**o12:** Running the code now, the path is quite a bit longer.
+Before visualizing it, try to pause here for a minute and solve it yourself -- what should Theseus do?
 
-**o13:** This is very exciting -- we implemented a general algorithm to solve problems that have states where the goal is to get from one to another in the least amount of steps possible, like the shortest path problem and Theseus and the Minotaur problem.
+**o13:** It turns out that Theseus has to lead the Minotaur into a corner to gain additional distance and only then escape, but escape he does.
+
+**o14:** This is very exciting -- we implemented a general algorithm to solve problems that have states where the goal is to get from one to another in the least amount of steps possible, like the shortest path problem and Theseus and the Minotaur problem.
 
 ---
 Advent of Code 2022 (day 19)
@@ -153,7 +156,7 @@ Getting from one state to another always means increasing the time by one, addin
 **a8:** This solution works but wouldn't terminate in a reasonable amount of time because of the branching factor, which is the average number of neighbouring states.
 
 \marginpar{\texttt{RobotGraph}}
-**a9:** When going from the starting state, the problem doesn't branch too much initially, but the more resources are acquired, the more options there are, so getting to depth 24 of this tree will take a very long time, since it has around 21 million nodes.
+**a9:** When going from the starting state (which is one ore robot and no resources), the problem doesn't branch too much initially, but the more resources are acquired, the more options there are, so getting to depth 24 of this tree will take a very long time, since it has around 21 million nodes.
 
 **a10:** So is the problem entirely hopeless? Well, no, there are a few things we can do, namely pruning and prioritization.
 
@@ -189,25 +192,26 @@ I won't go into detail here but if you're interested in an in-depth look at A*, 
 
 \marginpar{\texttt{RobotGraph}}
 **s4:** Here is what happens when we use it on our robots problem -- only 400 000 states, amazing.
+The heuristic for robots is a bit more complicated, but essentially boils down to preferring states that have more rare resources (so geode, then obsidian, then clay and finally ore)
 
 ---
 Non-uniform edge costs (Dijkstra)
 ---
 
 **d1:** There is one more thing I want to cover before the video ends -- what if distances between the states weren't equal?
-In the problems we've seen, it took exactly step to get from one state to another, but this doesn't need to be the case.
-What if, for example, you had a modified shortest path problem where you're allowed to break the wall, but it takes you 10 steps while regular moves take just 1?
+In the problems we've seen, it took exactly step to get from one state to another, but this isn't always the case.
+What if, for example, you wanted to find the shortest path again where now you're allowed to break the wall, but it takes you 10 steps while regular moves take just 1?
 
 **d2:** Intuitively, we'd still like to use BFS, but now there is a problem -- the order in which the states are added to the queue no longer corresponds to the distance from the start because getting through the wall takes much longer.
 To fix it, we'll replace the regular queue with a priority queue (similar to A*) to always visit the state that is closest to the start.
 
-**d3:** We'll implement it using a heap from the `heapq` module, which is a data structure that can quickly return the smallest element -- exactly what we need.
-Besides the state itself, we'll also store its distance from the start so it can always return the smallest one.
+**d3:** We'll implement it using a heap, which is a data structure that can quickly return the smallest element -- exactly what we need.
+Besides the state itself, the heap must store the distance from the start so it knows which state is the smallest.
 
-**d4:** The `next_states` function now has to be aware that different neighbouring states might have different distances and so it has to return both the neighbour and the distance to it.
-The distance to the neighbour is the distance from start to the current node, plus the distance from the current node to the neighbour.
+**d4:** The `next_states` function has to now be aware that different neighbouring states might have different distances and so it has to return both the neighbour and the distance to it.
+The distance from the start to the neighbour is the distance from start to the current node, plus the distance from the current node to the neighbour.
 
-**d5:** Comparing the algorithms side by side, Dijkstra is just a more generalized version of BFS, with the core principle being the same -- get the closest state, add unexplored neighbours, repeat.
+**d5:** Comparing the algorithms side by side, Dijkstra is just a more generalized version of BFS, with the core principle being the same -- get the closest state, add unexplored neighbours and repeat.
 
 **d6:** Solving our crowded maze problem, here is the shortest path from Theseus' starting position to the escape, breaking 4 walls in total and taking TODO steps.
 
@@ -218,9 +222,9 @@ Outro
 ---
 
 **out1:** This is the end of the video.
-I hope it gave you the necessary tools for solving state space problems of all shapes and sizes. <!-- fade in frames from each of the problems -->
+I hope it gave you the necessary tools for solving state space problems of all shapes and sizes.
 If you have an interesting one that you'd like to share or you feel like I missed something, let me know in the comments.
 
-**out2:** Also, don't forget to check out the guys over at Polylog, since their channel's got some really interesting videos. <!-- fade in polylog logo bellow -->
+**out2:** Also, don't forget to check out the guys over at Polylog, since their channel's got some really interesting videos.
 
 **out3:** Thank you for watching!
