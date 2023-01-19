@@ -1,9 +1,11 @@
 # block is_valid
 def is_position_valid(position):
     x, y = position
-    return maze[y][x] != "#"
-# endblock
 
+    return 0 <= x < len(maze[0]) \
+        and 0 <= y < len(maze) \
+        and maze[y][x] != "#"
+# endblock
 
 # block next_states
 def next_states(position):

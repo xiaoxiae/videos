@@ -1,7 +1,10 @@
 # block is_valid
 def is_position_valid(position):
     x, y = position
-    return maze[y][x] != "#"
+
+    return 0 <= x < len(maze[0]) \
+        and 0 <= y < len(maze) \
+        and maze[y][x] != "#"
 # endblock
 
 # block next_theseus_positions

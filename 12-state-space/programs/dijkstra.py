@@ -5,6 +5,7 @@ def bfs(starting_state, stop_condition):
     queue = deque([starting_state])
     discovered = {starting_state: None}
 
+
     while len(queue) != 0:
         current = queue.popleft()
 
@@ -22,9 +23,14 @@ def bfs(starting_state, stop_condition):
             return
 
         for next_state in next_states(current):
+
+
             if next_state not in discovered:
+
                 queue.append(next_state)
+
                 discovered[next_state] = current
+
 
     print("No solution!")
 # endblock
@@ -32,12 +38,13 @@ def bfs(starting_state, stop_condition):
 # block dijkstra
 from heapq import heappush, heappop
 
-def bfs(starting_state, stop_condition):
+def dijkstra(starting_state, stop_condition):
     queue = [(0, starting_state)]
     discovered = {starting_state: None}
+    distance = {starting_state: 0}
 
     while len(queue) != 0:
-        d, current = heappop(queue)
+        d_start_to_curr, current = heappop(queue)
 
         if stop_condition(current):
             print("Solution found!")
@@ -52,10 +59,15 @@ def bfs(starting_state, stop_condition):
 
             return
 
-        for d_to_next, next_state in next_states(current):
-            if next_state not in discovered:
-                heappush(queue, (d + d_to_next, next_state))
+        for d_curr_to_next, next_state in next_states(current):
+            d_start_to_next = d_start_to_curr + d_curr_to_next
+
+            if next_state not in discovered \
+            or distance[next_state] > d_start_to_next:
+                heappush(queue, (d_start_to_next, next_state))
+
                 discovered[next_state] = current
+                distance[next_state] = d_start_to_next
 
     print("No solution!")
 # endblock

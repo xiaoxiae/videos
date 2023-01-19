@@ -41,17 +41,16 @@ def cool_graphy_graphy(bs=1):
             "#7ABD91",
             "#5FA777",
         ],
-        tips=True,
         bar_stroke_width = bs,
     )
 
-    labels = chart[1][3]
+    labels = chart[1][2]
 
-    chart[1].remove(chart[1][3])
+    chart[1].remove(chart[1][2])
 
     c_bar_lbls = chart.get_bar_labels(font_size=30)
 
-    chart[2].remove(chart[2][3])
+    chart[2].remove(chart[2][2])
 
     chart[1].set_z_index(100000)
     chart[2].set_z_index(100000)
@@ -239,13 +238,11 @@ class MinotaurMovement(MovingCameraScene):
         self.play(
             self.camera.frame.animate.move_to(Group(theseus_miniature.copy().shift(RIGHT), minotaur_miniature)),
             theseus_miniature.animate.shift(RIGHT),
-            run_time=FAST_RUNTIME,
         )
 
         self.play(
             self.camera.frame.animate.move_to(Group(theseus_miniature.copy(), minotaur_miniature.copy().shift(RIGHT))),
             minotaur_miniature.animate.shift(RIGHT),
-            run_time=FAST_RUNTIME,
         )
 
         self.wait(MINOTAUR_MOVE_DELAY)
@@ -566,7 +563,7 @@ class Intro(MovingCameraScene):
 
         def animate_add_to_queue(states):
             fade_froms = [maze_dict[s] for s in states]
-            state_texs = [Tex(s) for s in states]
+            state_texs = [Tex((a - 8, b)) for a, b in states]  # guess why -8 is here
 
             return q.animate_add_from(state_texs, fade_froms)
 
@@ -1246,6 +1243,12 @@ class BFS(MovingCameraScene):
             )
         )
 
+        highlight = CreateHighlightCodeLines(blocks['is_valid'], [3, 4], offset=8)
+
+        self.play(FadeIn(highlight))
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks['is_valid'], [5], offset=6)))
+        self.play(FadeOut(highlight))
+
         self.play(
             AnimationGroup(
                 FadeCode(blocks['is_valid']),
@@ -1739,11 +1742,14 @@ class AOC(MovingCameraScene):
         aoc[-42].add_updater(lambda x, dt: bob(42, x, dt))
 
         self.play(
-            FadeIn(aoc),
-            FadeIn(text),
+            Succession(
+                AnimationGroup(
+                    FadeIn(aoc),
+                    FadeIn(text),
+                ),
+                Wait(1.65),  # from cutting
+            )
         )
-
-        # TODO: WAIT
 
         highlight = CreateHighlight(aoc[0:50])
 
@@ -1759,12 +1765,13 @@ class AOC(MovingCameraScene):
 
         self.remove(text)
 
+        rect = get_fade_rect(opacity=1)
+
         self.play(
             AnimationGroup(
                 self.camera.frame.animate(run_time=1, rate_func=rush_into).scale(0.01),
                 AnimationGroup(
-                    FadeOut(aoc),
-                    FadeOut(highlight),
+                    FadeIn(rect),
                     run_time=0.2,
                 ),
                 lag_ratio=0.8,
@@ -1923,21 +1930,28 @@ class Robots(MovingCameraScene):
         minute_count = minute_count_1
 
         self.play(
-            FadeIn(gear, shift=RIGHT * 0.25),
-            Transform(mineral_counts[0], Tex(r"\textbf{2}").move_to(mineral_counts[0])),
-            minerals[0].animate(rate_func=there_and_back).scale(0.75),
+            Succession(
+                AnimationGroup(
+                    FadeIn(gear, shift=RIGHT * 0.25),
+                    Transform(mineral_counts[0], Tex(r"\textbf{2}").move_to(mineral_counts[0])),
+                    minerals[0].animate(rate_func=there_and_back).scale(0.75),
+                ),
+                Wait(2.58),
+            )
         )
 
-        # TODO: WAIT
 
         self.play(
-            robots[0].animate(rate_func=ROBOT_RATE_FUNC).next_to(minerals[0], DOWN, buff=0),
-            minerals[0].animate(rate_func=MINERAL_RATE_FUNC).shift(UP * 0.08),
-            Increment(mineral_counts[0], 6, 0.08),
-            run_time=1,
+            Succession(
+                AnimationGroup(
+                    robots[0].animate(rate_func=ROBOT_RATE_FUNC).next_to(minerals[0], DOWN, buff=0),
+                    minerals[0].animate(rate_func=MINERAL_RATE_FUNC).shift(UP * 0.08),
+                    Increment(mineral_counts[0], 6, 0.08),
+                    run_time=1,
+                ),
+                Wait(1.46),
+            )
         )
-
-        # TODO: WAIT
 
         self.play(
             robots[command].animate.set_opacity(1),
@@ -2846,11 +2860,17 @@ class BeegMaze(MovingCameraScene):
             return states
 
         def animate_discover(states):
-            return AnimationGroup(*[maze_dict[p].animate.set_fill(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE, 0.75).set_stroke_color(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE).set_z_index(5 if contents[p[1]][p[0]] == " " else 5.1) for p in states])
+            for p in states:
+                if contents[p[1]][p[0]] != " ":
+                    maze_dict[p].set_z_index(5000)
+
+            return AnimationGroup(*[maze_dict[p].animate.set_fill(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE, 0.75).set_stroke_color(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE) for p in states])
 
         def animate_leave(state):
             p = state
-            return maze_dict[state].animate.set_fill(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY, 0.75).set_stroke_color(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY).set_z_index(3 if contents[p[1]][p[0]] == " " else 3.1)
+            if contents[p[1]][p[0]] != " ":
+                maze_dict[p].set_z_index(3000)
+            return maze_dict[state].animate.set_fill(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY, 0.75).set_stroke_color(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY).set_z_index(3 if contents[p[1]][p[0]] == " " else 3000)
 
         def animate_add_to_queue(states):
             fade_froms = [maze_dict[s] for s in states]
@@ -2860,7 +2880,9 @@ class BeegMaze(MovingCameraScene):
 
         def animate_pop(state):
             p = state
-            return maze_dict[state].animate.set_fill(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN, 0.75).set_stroke_color(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN).set_z_index(2 if contents[p[1]][p[0]] == " " else 2.1)
+            if contents[p[1]][p[0]] != " ":
+                maze_dict[p].set_z_index(2000)
+            return maze_dict[state].animate.set_fill(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN, 0.75).set_stroke_color(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN).set_z_index(2 if contents[p[1]][p[0]] == " " else 2000)
 
         def stop_condition(state):
             return state == escape
@@ -2910,8 +2932,348 @@ class BeegMaze(MovingCameraScene):
             contents[y][x] = "#"
 
         self.play(
-            AnimationGroup(*[maze_dict[p].animate.set_fill(WHITE, 1).set_stroke_color(WHITE) for p in blocks], lag_ratio=0.02),
+            AnimationGroup(*[maze_dict[p].animate.set_fill(WHITE, 1).set_stroke_color(WHITE).set_z_index(10000) for p in blocks], lag_ratio=0.02),
         )
+
+        i = 0
+
+        ten = VGroup(maze_dict[(x, y)].copy().set_stroke_width(10).set_stroke_width(10).scale(1.75), Tex("10 steps").scale(2)).arrange(DOWN, buff=0.5)
+        one = VGroup(maze_dict[(x, y)].copy().set_fill(WHITE, 0).set_stroke_width(10).scale(1.75), Tex("1 step").scale(2)).arrange(DOWN, buff=0.5)
+
+        VGroup(ten, one).arrange(DOWN, buff=3).next_to(maze, RIGHT, buff=3)
+
+        self.play(
+            AnimationGroup(
+                self.camera.frame.animate.move_to(VGroup(maze, one, ten)),
+                AnimationGroup(
+                    FadeIn(ten),
+                    FadeIn(one),
+                ),
+                lag_ratio=0.5,
+            ),
+        )
+
+        rect = get_fade_rect()
+        problem = Tex(r"\textbf{Problem}: order in queue $\neq$ distance from start").scale(3.5).set_z_index(10000001)
+        solution = Tex(r"\textbf{Solution}: use a \textit{priority queue}").scale(3.5).set_z_index(10000001)
+
+        VGroup(problem, solution).arrange(DOWN, buff=1.5).move_to(self.camera.frame)
+
+        self.play(
+            AnimationGroup(
+                FadeIn(rect),
+                FadeIn(problem),
+                lag_ratio=0.5
+            )
+        )
+
+        self.play(
+            FadeIn(solution),
+        )
+
+        self.play(
+            FadeOut(rect),
+            FadeOut(problem),
+            FadeOut(solution),
+        )
+
+        self.next_section()
+
+        while len(queue) != 0:
+            distance, current = queue.pop(0)
+
+            i += 1
+
+            a = animate_pop(current)
+            self.play(a)
+
+            if stop_condition(current):
+                path = [current]
+                while discovered[current] is not None:
+                    current = discovered[current]
+                    path.append(current)
+
+                break
+
+            add_neighbours(distance, current)
+
+            queue = sorted(queue)
+
+        path = list(reversed(path))
+
+        self.play(
+            AnimationGroup(*[maze_dict[p].animate.set_fill(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN, 0.75).set_stroke_color(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN) for p in path], lag_ratio=0.02),
+        )
+
+
+class BeegMazeTransition(MovingCameraScene):
+    def construct(self):
+        self.next_section(skip_animations=True)  # don't remove
+
+        with open("maze/mask.txt") as f:
+            contents = f.read().splitlines()
+
+        theseus = ImageMobject("assets/theseus-nobackground.png").set_height(0.8).set_z_index(100)
+        theseus_position = (22, 9)
+        theseus_text = Tex("Theseus").next_to(theseus, DOWN, buff=-0.08).scale(0.25)
+
+        theseus_miniature = ImageMobject("assets/theseus-nobackground-outline.png").set_height(0.8).move_to(RIGHT * (theseus_position[0] + 0.5) + DOWN * (theseus_position[1] + 0.5) + len(contents) / 2 * UP + len(contents[0]) / 2 * LEFT).set_z_index(1000000 + 1)
+
+        self.camera.frame.move_to(Group(theseus, theseus_text)).set_height(theseus.height * 2)
+
+        self.play(
+            AnimationGroup(
+                FadeIn(theseus),
+                FadeIn(theseus_text, lag_ratio=0.1),
+                lag_ratio=0.5,
+            )
+        )
+
+        minotaur = ImageMobject("assets/minotaur-nobackground.png").set_height(0.8).next_to(theseus, RIGHT, buff=0.3).set_z_index(100)
+        minotaur_position = (27, 9)
+        minotaur_text = Tex("Minotaur").next_to(minotaur, DOWN, buff=-0.08).scale(0.25)
+
+        minotaur_miniature = ImageMobject("assets/minotaur-nobackground-outline.png").set_height(0.8).move_to(RIGHT * (minotaur_position[0] + 0.5) + DOWN * (minotaur_position[1] + 0.5) + len(contents) / 2 * UP + len(contents[0]) / 2 * LEFT).set_z_index(1000000 + 1)
+
+        self.play(
+            AnimationGroup(
+                self.camera.frame.animate.move_to(Group(theseus, minotaur)).scale(1.25),
+                AnimationGroup(
+                    FadeIn(minotaur),
+                    FadeIn(minotaur_text, lag_ratio=0.1),
+                    lag_ratio=0.5,
+                ),
+                lag_ratio=0.25,
+            ),
+        )
+
+        maze, maze_dict = maze_to_vgroup(contents)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeOut(theseus_text),
+                    FadeOut(minotaur_text),
+                ),
+                AnimationGroup(
+                    self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature)).set_height(maze.height * 0.3),
+                    FadeTransform(theseus, theseus_miniature),
+                    FadeTransform(minotaur, minotaur_miniature),
+                ),
+                AnimationGroup(
+                    FadeIn(maze),
+                ),
+                lag_ratio=0.5,
+                run_time=2,
+            )
+        )
+
+        self.play(
+            self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature.copy().shift(LEFT * 2))).scale(0.85),
+            minotaur_miniature.animate.shift(LEFT * 2),
+        )
+
+        for i in range(1):
+            self.play(
+                self.camera.frame.animate.move_to(Group(theseus_miniature.copy().shift(LEFT), minotaur_miniature.copy().shift(LEFT * 2))).scale(0.85),
+                minotaur_miniature.animate.shift(LEFT * 2),
+                theseus_miniature.animate.shift(LEFT),
+            )
+
+        rect = get_fade_rect()
+
+        canhe = Tex(r"\underline{Can he get out?}").scale(1.25).next_to(Group(theseus_miniature, minotaur_miniature), UP, buff=0.25).set_z_index(10000000)
+
+        self.play(
+            AnimationGroup(
+                FadeIn(rect),
+                AnimationGroup(
+                    self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature, canhe)),
+                    FadeIn(canhe, shift=UP * 0.25),
+                ),
+                lag_ratio=0.5
+            )
+        )
+
+        self.play(
+            FadeOut(rect),
+            FadeOut(canhe),
+            self.camera.frame.animate.move_to(Group(theseus_miniature, minotaur_miniature)),
+        )
+
+        self.play(
+            Flash(minotaur_miniature, color=WHITE),
+            FadeOut(minotaur_miniature),
+        )
+
+        self.play(
+            self.camera.frame.animate.move_to(maze).set_height(maze.height * 1.25),
+            run_time=1.5,
+        )
+
+        shortest_path = [
+            (21, 9),
+            (22, 9),
+            (23, 9),
+            (24, 9),
+            (25, 9),
+            (26, 9),
+            (27, 9),
+            (27, 10),
+            (27, 11),
+            (27, 12),
+            (27, 13),
+            (27, 14),
+            (27, 15),
+            (28, 15),
+            (29, 15),
+            (30, 15),
+            (31, 15),
+            (32, 15),
+            (33, 15),
+            (34, 15),
+            (35, 15),
+            (36, 15),
+            (37, 15),
+            (37, 16),
+            (37, 17),
+            (38, 17),
+            (39, 17),
+            (39, 16),
+            (39, 15),
+            (40, 15),
+        ]
+
+        theseus_miniature.set_z_index(10000)
+
+        self.play(
+            AnimationGroup(*[maze_dict[p].animate.set_fill(ORANGE, 0.75).set_stroke_color(ORANGE) for p in shortest_path], lag_ratio=0.02),
+        )
+
+        self.play(
+            AnimationGroup(*[maze_dict[p].animate.set_fill(WHITE, 0).set_stroke_color(WHITE) for p in shortest_path]),
+        )
+
+        bfs_text = Tex("BFS").scale(5).next_to(maze, RIGHT, buff=1.5).align_to(maze, UP).shift(DOWN)
+        astar_text = Tex("A*").scale(5).move_to(bfs_text)
+
+        q = Queue(scale=2).next_to(bfs_text, DOWN, buff=2)
+
+        self.play(
+            FadeIn(q),
+            FadeIn(bfs_text),
+            self.camera.frame.animate.move_to(Group(maze, theseus_miniature, q, bfs_text)),
+            run_time=1,
+        )
+
+        theseus_position = (theseus_position[0] - 1, theseus_position[1])
+
+        escape = (40, 15)
+
+        queue = [(0, theseus_position)]
+        discovered = {theseus_position: None}
+
+        def is_valid(position):
+            x, y = position
+            return 0 <= x < len(contents[0]) and 0 <= y < len(contents) and contents[y][x] != "."
+
+        def next_states(position):
+            x, y = position
+            states = []
+
+            for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+                nx = x + dx
+                ny = y + dy
+
+                if not is_valid((nx, ny)):
+                    continue
+
+                if contents[ny][nx] == " ":
+                    states.append((1, (nx, ny)))
+                else:
+                    states.append((10, (nx, ny)))
+
+            return states
+
+        def animate_discover(states):
+            for p in states:
+                if contents[p[1]][p[0]] != " ":
+                    maze_dict[p].set_z_index(5000)
+
+            return AnimationGroup(*[maze_dict[p].animate.set_fill(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE, 0.75).set_stroke_color(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE) for p in states])
+
+        def animate_leave(state):
+            p = state
+            if contents[p[1]][p[0]] != " ":
+                maze_dict[p].set_z_index(3000)
+            return maze_dict[state].animate.set_fill(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY, 0.75).set_stroke_color(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY).set_z_index(3 if contents[p[1]][p[0]] == " " else 3000)
+
+        def animate_add_to_queue(states):
+            fade_froms = [maze_dict[s] for s in states]
+            state_texs = [Tex(s) for s in states]
+
+            return q.animate_add_from(state_texs, fade_froms)
+
+        def animate_pop(state):
+            p = state
+            if contents[p[1]][p[0]] != " ":
+                maze_dict[p].set_z_index(2000)
+            return maze_dict[state].animate.set_fill(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN, 0.75).set_stroke_color(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN).set_z_index(2 if contents[p[1]][p[0]] == " " else 2000)
+
+        def stop_condition(state):
+            return state == escape
+
+        i = 1
+
+        def add_neighbours(distance, position):
+            states = []
+            for next_distance, next_state in next_states(position):
+                if next_state not in discovered:
+                    discovered[next_state] = position
+                    queue.append((distance + next_distance, next_state))
+                    states.append(next_state)
+
+            if len(states) != 0:
+                self.play(
+                    animate_leave(current),
+                    animate_discover(states),
+                )
+            else:
+                self.play(
+                    animate_leave(current),
+                )
+
+        self.play(
+            FadeOut(q),
+            FadeOut(bfs_text),
+            self.camera.frame.animate.move_to(maze),
+            run_time=1,
+        )
+
+        seed(0xBADBEED3)
+
+        for i in range(len(contents)):
+            contents[i] = list(contents[i])
+
+        blocks = []
+        for _ in range(40):
+            x, y = 0, 0
+
+            while contents[y][x] != " " or (x, y) == theseus_position or (x, y) == escape:
+                x, y = (randint(0, len(contents[0]) - 1), randint(0, len(contents) - 1))
+
+            blocks.append((x, y))
+            contents[y][x] = "#"
+
+
+        self.play(
+            AnimationGroup(*[maze_dict[p].animate.set_fill(WHITE, 1).set_stroke_color(WHITE).set_z_index(10000) for p in blocks], lag_ratio=0.02),
+        )
+
+        for x in range(len(contents[0])):
+            for y in range(len(contents)):
+                if is_valid((x, y)):
+                    maze_dict[(x, y)].save_state()
 
         i = 0
 
@@ -2979,6 +3341,18 @@ class BeegMaze(MovingCameraScene):
 
         self.play(
             AnimationGroup(*[maze_dict[p].animate.set_fill(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN, 0.75).set_stroke_color(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN) for p in path], lag_ratio=0.02),
+        )
+
+        self.next_section() # don't remove this
+
+        self.play(
+            FadeOut(ten),
+            FadeOut(one),
+            self.camera.frame.animate.move_to(maze),
+            *[maze_dict[(x, y)].animate.restore()
+                for x in range(len(contents[0]))
+                for y in range(len(contents))
+                if is_valid((x, y))]
         )
 
 
@@ -3179,11 +3553,17 @@ class BeegMazeAStarTho(MovingCameraScene):
             return states
 
         def animate_discover(states):
-            return AnimationGroup(*[maze_dict[p].animate.set_fill(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE, 0.75).set_stroke_color(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE).set_z_index(5 if contents[p[1]][p[0]] == " " else 5.1) for p in states])
+            for p in states:
+                if contents[p[1]][p[0]] != " ":
+                    maze_dict[p].set_z_index(5000)
+
+            return AnimationGroup(*[maze_dict[p].animate.set_fill(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE, 0.75).set_stroke_color(BLUE if contents[p[1]][p[0]] == " " else DARK_BLUE) for p in states])
 
         def animate_leave(state):
             p = state
-            return maze_dict[state].animate.set_fill(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY, 0.75).set_stroke_color(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY).set_z_index(3 if contents[p[1]][p[0]] == " " else 3.1)
+            if contents[p[1]][p[0]] != " ":
+                maze_dict[p].set_z_index(3000)
+            return maze_dict[state].animate.set_fill(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY, 0.75).set_stroke_color(LIGHT_GRAY if contents[p[1]][p[0]] == " " else GRAY).set_z_index(3 if contents[p[1]][p[0]] == " " else 3000)
 
         def animate_add_to_queue(states):
             fade_froms = [maze_dict[s] for s in states]
@@ -3193,7 +3573,9 @@ class BeegMazeAStarTho(MovingCameraScene):
 
         def animate_pop(state):
             p = state
-            return maze_dict[state].animate.set_fill(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN, 0.75).set_stroke_color(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN).set_z_index(2 if contents[p[1]][p[0]] == " " else 2.1)
+            if contents[p[1]][p[0]] != " ":
+                maze_dict[p].set_z_index(2000)
+            return maze_dict[state].animate.set_fill(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN, 0.75).set_stroke_color(ORANGE if contents[p[1]][p[0]] == " " else DARK_BROWN).set_z_index(2 if contents[p[1]][p[0]] == " " else 2000)
 
         def stop_condition(state):
             return state == escape
@@ -3245,7 +3627,7 @@ class BeegMazeAStarTho(MovingCameraScene):
             contents[y][x] = "#"
 
         self.play(
-            AnimationGroup(*[maze_dict[p].animate.set_fill(WHITE, 1).set_stroke_color(WHITE) for p in blocks], lag_ratio=0.02),
+            AnimationGroup(*[maze_dict[p].animate.set_fill(WHITE, 1).set_stroke_color(WHITE).set_z_index(10000) for p in blocks], lag_ratio=0.02),
         )
 
         queue2 = []
@@ -3255,9 +3637,6 @@ class BeegMazeAStarTho(MovingCameraScene):
             for y in range(100):
                 if is_valid((x, y)):
                     discovered2[(x, y)] = dist((x, y), escape)
-
-                    if contents[y][x] != "#":
-                        maze_dict[(x, y)].set_z_index(0.0001)
 
         all_colors = color_gradient([GREEN, RED], max(discovered2.values()) + 1)
 
@@ -3655,6 +4034,66 @@ class AStar(MovingCameraScene):
         )
 
 
+class DijkstraFixed(MovingCameraScene):
+    @fade
+    def construct(self):
+        blocks = code_parts_from_file("programs/dijkstra.py")
+
+        dijkstra = Tex("Dijkstra's algorithm").scale(1.65)
+        bfs = Tex("Breadth-First Search").scale(1.65)
+
+        code_web = align_code(
+            [
+                ("|", "c"),
+                dijkstra,
+                blocks["dijkstra"],
+            ],
+        )
+
+        code_web_2 = align_code(
+            [
+                ("|", "c"),
+                bfs,
+                blocks["bfs"],
+            ],
+        ).next_to(code_web, LEFT, buff=2.5)
+
+        self.add(code_web)
+        self.add(code_web_2)
+
+        sg = Group(code_web, code_web_2)
+
+        self.camera.frame.move_to(sg).set_height(sg.get_height() * 1.28)
+
+        def fadyfady(indexes, previous_indexes=[]):
+            return AnimationGroup(
+                *[blocks["dijkstra"].code[i].animate.set_opacity(BIG_OPACITY)
+                  for i in range(len(blocks["dijkstra"].code))
+                  if i not in indexes],
+                *[blocks["dijkstra"].code[i].animate.set_opacity(1)
+                  for i in range(len(blocks["dijkstra"].code))
+                  if i in indexes],
+                *[blocks["bfs"].code[i].animate.set_opacity(BIG_OPACITY)
+                  for i in range(len(blocks["bfs"].code))
+                  if i not in indexes],
+                *[blocks["bfs"].code[i].animate.set_opacity(1)
+                  for i in range(len(blocks["bfs"].code))
+                  if i in indexes],
+            )
+
+        self.play(
+            FadeIn(code_web),
+            FadeIn(code_web_2),
+        )
+
+        self.play(fadyfady([0, 3]))
+        self.play(fadyfady([8]))
+        self.play(fadyfady([23]))
+        self.play(fadyfady([24]))
+        self.play(fadyfady([26, 27, 28]))
+        self.play(fadyfady([5, 26, 27, 28, 31]))
+
+
 class Dijkstra(MovingCameraScene):
     @fade
     def construct(self):
@@ -3827,6 +4266,8 @@ class Dijkstra(MovingCameraScene):
 
         self.camera.frame.move_to(start_group).set_height(start_group.height * 1.2)
 
+        highlight.become(CreateHighlightCodeLine(blocks["dijkstra"], 24, start=25, end=34))
+
         a = VGroup(code_web, code_web_2)
 
         self.play(
@@ -3864,7 +4305,7 @@ class Outro(MovingCameraScene):
 class LastScreen(MovingCameraScene):
     @fade
     def construct(self):
-        self.next_section(skip_animations=True)
+        self.next_section(skip_animations=True) # don't remove
 
         self.camera.frame.save_state()
 
@@ -4079,7 +4520,7 @@ class LastScreen(MovingCameraScene):
         materials_array = [0, 0, 0, 0]
         robots_array = [1, 0, 0, 0]
 
-        self.next_section()
+        self.next_section() # don't remove
 
         commands = [
             None,
@@ -4115,6 +4556,17 @@ class LastScreen(MovingCameraScene):
             3,
             None,
         ]
+
+        ggg = Group(g, q, robot_costs)
+
+        tfw = Tex("Thanks for watching!").scale(3).next_to(ggg, UP, buff=2)
+
+        self.add(tfw)
+
+        l = Line(start=LEFT * 1000, end=RIGHT * 1000).next_to(tfw, DOWN, buff=0.5)
+        self.add(l)
+
+        self.camera.frame.move_to(Group(tfw, ggg)).scale(1.4),
 
         for i, command in enumerate(commands):
             minute_count_1 = Tex(r"\textbf{" + str(i + 1) + "}").scale(1.5).next_to(minute_text, RIGHT).align_to(minute_text, DOWN)
@@ -4230,6 +4682,3 @@ class Outro(MovingCameraScene):
             self.play(FadeIn(i, shift=UP * 1.5))
 
         self.wait()
-
-
-

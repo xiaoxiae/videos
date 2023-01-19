@@ -1,6 +1,6 @@
-An overview of algorithms that explore the state space (BFS, Dijkstra, A*).
+A visual introduction to algorithms that explore the state space (BFS, Dijkstra, A*).
 
-The A* video: TODO
+Polylog's A* video: TODO
 Advent of Code: https://adventofcode.com/
 
 ------------------
@@ -15,7 +15,10 @@ Source code:
 https://github.com/xiaoxiae/videos/tree/master/12-state-space/
 
 Music:
-<credit the music used>
+Thannoid (Normal + Swinging) by Blue Dot Sessions: https://app.sessions.blue/browse/track/126782
+Cases to Rest (Normal + Minimal) by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
+Are We Loose Yet (All Piano) by Blue Dot Sessions: https://app.sessions.blue/browse/track/153364
+Slider by Blue Dot Sessions: https://app.sessions.blue/browse/track/153362
 
 Software used:
 Manim (animation software): https://github.com/ManimCommunity/manim/
@@ -34,7 +37,7 @@ Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
 Inspired by Martin Mareš's Programming 1 Course exercises.
 
-Thanks to the awesome Polylog YouTube channel for collaborating on this video: https://www.youtube.com/@polylog7346
+Thanks to the guys at Polylog for collaborating on this video: https://www.youtube.com/@polylog7346
 
 Also thanks to Matěj Kripner for valuable feedback.
 

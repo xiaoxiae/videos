@@ -80,6 +80,7 @@ class Queue(VMobject):
             obj.set_height(actual_height)
             put_objs.append(obj.copy().next_to(put_objs[-1], DOWN, buff=self.buff))
         put_objs.pop(0)
+        put_objs = list(reversed(put_objs))
 
         other_objs = VGroup(*self.items)
         other_objs_new = other_objs.copy().set_height(len(other_objs) * actual_height + (len(other_objs) - 1) * self.buff).next_to(put_objs[-1], DOWN, buff=self.buff)
@@ -87,9 +88,9 @@ class Queue(VMobject):
         for obj, put_obj in zip(objs, put_objs):
             obj.move_to(put_obj)
 
-        self.items = objs + self.items
+        self.items = list(reversed(objs)) + self.items
 
-        lmao_scuffed = [self.top] + put_objs + list(other_objs_new)
+        lmao_scuffed = [self.top] + list(reversed(put_objs)) + list(other_objs_new)
 
         froms_copies = []
         for f in froms:
@@ -100,9 +101,9 @@ class Queue(VMobject):
         return AnimationGroup(
             AnimationGroup(
                 *[Transform(a, b) for a, b in zip(other_objs, other_objs_new)],
-            self.bot.animate.next_to(lmao_scuffed[-1], DOWN, buff=self.buff),
+                self.bot.animate.next_to(lmao_scuffed[-1], DOWN, buff=self.buff),
             ),
-            AnimationGroup(*[ReplacementTransform(o1, o2) for o1, o2 in zip(froms_copies, objs)], lag_ratio=0.1, run_time=1),
+            AnimationGroup(*[ReplacementTransform(o1, o2) for o1, o2 in reversed(list(zip(froms_copies, objs)))], lag_ratio=0.1, run_time=1),
             lag_ratio=0.25,
         )
 
@@ -180,11 +181,11 @@ def fade(f):
 
     return inner
 
-def get_fade_rect(*args):
+def get_fade_rect(*args, opacity=1 - BIG_OPACITY):
     if len(args) == 0:
-        return Square(fill_opacity=1 - BIG_OPACITY, color=BLACK).scale(1000).set_z_index(1000000)
+        return Square(fill_opacity=opacity, color=BLACK).scale(1000).set_z_index(1000000)
     else:
-        return SurroundingRectangle(VGroup(*args), fill_opacity=1 - BIG_OPACITY, color=BLACK).set_z_index(1000000)
+        return SurroundingRectangle(VGroup(*args), fill_opacity=opacity, color=BLACK).set_z_index(1000000)
 
 def maze_to_vgroup(contents):
     maze = VGroup()
