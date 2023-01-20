@@ -1,0 +1,1084 @@
+1
+00:00:00,116 --> 00:00:04,254
+Deep in the twisting maze of Minos, a lone Theseus seeks the mighty Minotaur.
+
+2
+00:00:04,254 --> 00:00:10,010
+After endless days of fruitless searching, Theseus locks eyes with the Minotaur in one of the maze’s many corridors.
+
+3
+00:00:10,010 --> 00:00:13,396
+The enraged Minotaur lets out a guttural howl a starts moving towards him.
+
+4
+00:00:14,347 --> 00:00:16,766
+This is rather unfortunate news,
+
+5
+00:00:16,766 --> 00:00:18,618
+because Theseus forgot his sword at home
+
+6
+00:00:18,618 --> 00:00:22,655
+and so his only option is to run away from the much faster but not very intelligent Minotaur.
+
+7
+00:00:23,773 --> 00:00:24,891
+Can he get out before he is caught?
+
+8
+00:00:26,192 --> 00:00:27,911
+Before solving this question,
+
+9
+00:00:27,911 --> 00:00:30,647
+let’s start by looking at a simple version where there is no Minotaur.
+
+10
+00:00:31,514 --> 00:00:34,734
+You might recognize this as one of the fundamental problems in computer science,
+
+11
+00:00:35,068 --> 00:00:36,720
+that is, finding the shortest path.
+
+12
+00:00:38,171 --> 00:00:40,974
+There are a number of algorithms that can help us solve this problem,
+
+13
+00:00:40,974 --> 00:00:43,993
+the simplest one being Breadth-first Search (or BFS for short).
+
+14
+00:00:44,961 --> 00:00:46,830
+The idea behind BFS is the following:
+
+15
+00:00:47,764 --> 00:00:50,517
+we have a queue of states to explore, starting with the initial one.
+
+16
+00:00:51,451 --> 00:00:55,205
+In this problem, the set of states (formally the state space)
+
+17
+00:00:55,205 --> 00:00:56,740
+are the positions Theseus can move to.
+
+18
+00:00:57,707 --> 00:01:00,427
+Each round, we’ll take a state from the queue,
+
+19
+00:01:00,427 --> 00:01:03,747
+add its undiscovered neighbouring states to the queue and repeat,
+
+20
+00:01:03,747 --> 00:01:06,433
+until the queue is either empty or we found what we’re looking for.
+
+21
+00:01:09,102 --> 00:01:10,036
+Speeding this up a bit,
+
+22
+00:01:14,090 --> 00:01:16,126
+we see that the algorithm indeed finds the shortest path.
+
+23
+00:01:18,211 --> 00:01:21,381
+From the visualizations, the algorithm seems intuitive,
+
+24
+00:01:21,397 --> 00:01:23,266
+but let’s actually try to implement it in Python.
+
+25
+00:01:24,350 --> 00:01:27,020
+The input will be a list of strings containing the rows of the maze.
+
+26
+00:01:27,887 --> 00:01:30,540
+We’ll need to extract the positions of Theseus and the escape,
+
+27
+00:01:30,540 --> 00:01:32,242
+which are denoted as T and E,
+
+28
+00:01:32,242 --> 00:01:33,343
+so let’s add some code to do that.
+
+29
+00:01:35,678 --> 00:01:37,697
+Now if you’ve never implemented BFS
+
+30
+00:01:37,697 --> 00:01:39,232
+then what to do next isn’t all that clear.
+
+31
+00:01:40,216 --> 00:01:42,752
+This can happen quite often when coding something new,
+
+32
+00:01:42,752 --> 00:01:45,672
+and a good way to overcome this is to write small functions
+
+33
+00:01:45,672 --> 00:01:46,940
+that seem like they could be useful.
+
+34
+00:01:47,674 --> 00:01:48,608
+For example,
+
+35
+00:01:48,608 --> 00:01:50,810
+we can write an is_position_valid function
+
+36
+00:01:50,810 --> 00:01:53,546
+that returns True if the position can be moved to
+
+37
+00:01:53,546 --> 00:01:55,965
+(i.e. is within the maze and isn’t a wall).
+
+38
+00:01:57,417 --> 00:01:59,102
+From the decription of the algorithm,
+
+39
+00:01:59,102 --> 00:02:02,989
+we’ll also need a next_states function that returns the neighbouring states of a given state.
+
+40
+00:02:04,023 --> 00:02:07,427
+The function will check each direction (left, right, up and down),
+
+41
+00:02:07,427 --> 00:02:11,097
+and if the new state is valid, it will be added to the list, which is returned at the end.
+
+42
+00:02:12,649 --> 00:02:15,435
+Given these two small functions, we can tackle the BFS itself
+
+43
+00:02:16,286 --> 00:02:18,004
+It will take two arguments:
+
+44
+00:02:18,004 --> 00:02:19,739
+a starting state and a stop condition,
+
+45
+00:02:20,657 --> 00:02:24,527
+which will be a function that takes in a state and returns True if it’s an ending one,
+
+46
+00:02:24,527 --> 00:02:26,196
+so the algorithm knows when to stop searching.
+
+47
+00:02:27,230 --> 00:02:28,948
+You might be thinking that this is a bit pointless,
+
+48
+00:02:29,682 --> 00:02:33,970
+since we could just pass the position of the escape and check against it when running the algorithm
+
+49
+00:02:33,970 --> 00:02:34,904
+and while this is true,
+
+50
+00:02:35,522 --> 00:02:39,809
+this way allows us to support more complex ways of ending the BFS like multiple escape tiles.
+
+51
+00:02:41,394 --> 00:02:42,846
+As we’ve previously discussed,
+
+52
+00:02:42,846 --> 00:02:45,265
+the algorithm uses a queue of states to explore,
+
+53
+00:02:45,265 --> 00:02:46,232
+beginning with the starting
+one.
+
+54
+00:02:47,167 --> 00:02:51,154
+To record the states that we’ve already discovered and don’t want to add to the queue again,
+
+55
+00:02:51,154 --> 00:02:52,138
+we’ll use Python’s built-in set.
+
+56
+00:02:53,406 --> 00:02:58,061
+The rest of the function essentially writes itself from the way we previously described the algorithm:
+
+57
+00:02:58,061 --> 00:02:59,746
+while the queue isn’t empty,
+
+58
+00:02:59,746 --> 00:03:01,781
+we’ll take a state from the queue,
+
+59
+00:03:01,781 --> 00:03:04,934
+check the stop condition (possibly reporting a solution)
+
+60
+00:03:04,934 --> 00:03:07,487
+and add its undiscovered neighbouring states to the queue,
+
+61
+00:03:07,487 --> 00:03:09,856
+marking them discovered to not add them to the queue again.
+
+62
+00:03:10,990 --> 00:03:14,811
+Finally, if we didn’t find an ending state after exploring all of them,
+
+63
+00:03:14,811 --> 00:03:16,312
+we’ll report that no solution exists.
+
+64
+00:03:18,081 --> 00:03:19,249
+Implemented like this,
+
+65
+00:03:19,249 --> 00:03:21,601
+the algorithm is... well... useless,
+
+66
+00:03:21,601 --> 00:03:23,970
+because it just reports that the solution exists,
+
+67
+00:03:23,970 --> 00:03:25,121
+not what it actually looks like.
+
+68
+00:03:25,772 --> 00:03:28,408
+We’d ideally like to see the path that Theseus took,
+
+69
+00:03:28,408 --> 00:03:30,526
+and for that we’ll need to slightly modify our code.
+
+70
+00:03:31,694 --> 00:03:34,280
+Instead of just recording that we discovered a state,
+
+71
+00:03:34,280 --> 00:03:37,350
+we’ll remember from which state it was discovered so we can later backtrack.
+
+72
+00:03:38,134 --> 00:03:38,851
+To do this,
+
+73
+00:03:38,851 --> 00:03:42,205
+we’ll use a dictionary instead of a set for storing discovered states,
+
+74
+00:03:42,205 --> 00:03:45,425
+with the keys being states themselves and values their predecessors
+
+75
+00:03:46,526 --> 00:03:48,878
+Since the initial state doesn’t have a predecessor,
+
+76
+00:03:48,878 --> 00:03:49,646
+we’ll make it None.
+
+77
+00:03:50,730 --> 00:03:52,265
+When discovering a new state,
+
+78
+00:03:52,265 --> 00:03:53,816
+we’ll make sure to remember its predecessor.
+
+79
+00:03:55,184 --> 00:03:57,053
+Finally, we can add the backtracking code.
+
+80
+00:03:58,238 --> 00:04:00,423
+There isn’t anything too complicated here –
+
+81
+00:04:00,423 --> 00:04:03,977
+we start with the ending state and while it has a predecessor,
+
+82
+00:04:03,977 --> 00:04:05,812
+we’ll move to it and append it to the path.
+
+83
+00:04:07,030 --> 00:04:09,382
+Finally, we print the path in reverse,
+
+84
+00:04:09,382 --> 00:04:12,051
+because we’d like it printed from start to end, not the other way around.
+
+85
+00:04:13,670 --> 00:04:14,871
+One small note here:
+
+86
+00:04:15,705 --> 00:04:18,408
+for clarity of code, I wanted to exclude importing libraries,
+
+87
+00:04:18,408 --> 00:04:20,043
+so I used a list as a queue here.
+
+88
+00:04:20,693 --> 00:04:24,063
+That is a terrible idea, because popping from the beginning takes linear time.
+
+89
+00:04:24,747 --> 00:04:29,502
+In practice, you should use Python collections module and its deque class,
+
+90
+00:04:29,502 --> 00:04:31,771
+which has a popleft operation that is constant.
+
+91
+00:04:33,823 --> 00:04:38,011
+Now we can finally call the BFS function  with Theseus’ starting position
+
+92
+00:04:38,011 --> 00:04:41,381
+and a stop condition that returns True if the given state is the escape.
+
+93
+00:04:42,632 --> 00:04:46,019
+And, as we see, Theseus can indeed escape this particular maze.
+
+94
+00:04:52,358 --> 00:04:53,760
+Let’s get back to the original problem.
+
+95
+00:04:54,777 --> 00:04:57,847
+For every move Theseus makes (left, right, up and down),
+
+96
+00:04:57,847 --> 00:04:58,614
+the Minotaur makes two.
+
+97
+00:04:59,799 --> 00:05:02,785
+Fortunately, the Minotaur isn’t particularly bright
+
+98
+00:05:02,785 --> 00:05:05,104
+and so it always moves directly towards Theseus,
+
+99
+00:05:05,104 --> 00:05:06,239
+wherever  he is in the maze.
+
+100
+00:05:06,956 --> 00:05:10,526
+He does this by first checking if he can move closer horizontally,
+
+101
+00:05:10,526 --> 00:05:11,995
+and if this is not the case
+
+102
+00:05:11,995 --> 00:05:13,963
+then he will try to do so vertically,
+
+103
+00:05:13,963 --> 00:05:14,580
+repeating twice.
+
+104
+00:05:16,182 --> 00:05:19,252
+Here are a few simulated moves for this particular configuration.
+
+105
+00:05:25,525 --> 00:05:29,746
+Try to pause here for a minute and think about how we could approach this seemingly more difficult problem.
+
+106
+00:05:32,815 --> 00:05:34,951
+The key idea is the following
+
+107
+00:05:34,951 --> 00:05:37,837
+in the previous task, the state was the position of Theseus.
+
+108
+00:05:38,838 --> 00:05:42,792
+Now, the state becomes a pair of positions of Theseus and the Minotaur.
+
+109
+00:05:44,010 --> 00:05:47,463
+In terms of their validity, they must be outside of the wall
+
+110
+00:05:47,463 --> 00:05:50,867
+and, additionally, Theseus’ position can’t equal Minotaur’s
+
+111
+00:05:50,867 --> 00:05:52,085
+because he would be dead.
+
+112
+00:05:53,252 --> 00:05:54,237
+Notice, however,
+
+113
+00:05:54,237 --> 00:05:56,606
+that the problem fundamentally didn’t change –
+
+114
+00:05:56,606 --> 00:05:59,909
+we still have a state which we can use to
+generate neighbouring states
+
+115
+00:05:59,909 --> 00:06:01,244
+and thus again use BFS.
+
+116
+00:06:02,295 --> 00:06:06,099
+Luckily, the way we wrote the function BFS was very general –
+
+117
+00:06:06,099 --> 00:06:08,851
+it doesn’t care about Theseus or the Minotaur;
+
+118
+00:06:08,851 --> 00:06:11,371
+it just takes an initial state and a stop condition,
+
+119
+00:06:11,371 --> 00:06:12,605
+whatever they might be,
+
+120
+00:06:12,605 --> 00:06:16,376
+and repeatedly adds and explores neighbouring states via the next_states function,
+
+121
+00:06:16,376 --> 00:06:18,878
+meaning that we c an reuse it to solve ourMinotaur problem.
+
+122
+00:06:20,346 --> 00:06:22,565
+For starters, let’s add the Minotaur to the maze.
+
+123
+00:06:24,700 --> 00:06:26,869
+We’ll have to find it, so let’s add some code to do that.
+
+124
+00:06:28,855 --> 00:06:30,923
+Although the BFS function doesn’t change,
+
+125
+00:06:30,923 --> 00:06:32,258
+the way we call it does,
+
+126
+00:06:32,258 --> 00:06:35,178
+since the state is now a (theseus, minotaur) tuple
+
+127
+00:06:35,178 --> 00:06:38,531
+and the stop condition only checks if Theseus escaped, not the Minotaur.
+
+128
+00:06:40,216 --> 00:06:42,118
+We’ll also rename the next_states function,
+
+129
+00:06:42,118 --> 00:06:45,088
+because now it only returns the next possible positions of Theseus.
+
+130
+00:06:46,472 --> 00:06:48,257
+To properly implement next_states,
+
+131
+00:06:48,257 --> 00:06:50,860
+we’ll first need a function that moves the Minotaur towards Theseus.
+
+132
+00:06:51,477 --> 00:06:52,145
+To do this,
+
+133
+00:06:52,395 --> 00:06:55,665
+we’ll write a small function that moves the Minotaur in just one dimension,
+
+134
+00:06:55,665 --> 00:06:57,900
+returning +1, 0 or -1.
+
+135
+00:06:58,901 --> 00:07:01,721
+Here are a few examples of what it returns for specific input values.
+
+136
+00:07:05,441 --> 00:07:10,680
+The main function for Minotaur movement then uses this function to attempt to move closer to Theseus horizontally
+
+137
+00:07:10,680 --> 00:07:13,783
+and, if not successful, vertically, repeating twice.
+
+138
+00:07:15,852 --> 00:07:19,772
+With these two functions, we can finally write next_states:
+
+139
+00:07:19,772 --> 00:07:20,890
+given some state,
+
+140
+00:07:20,890 --> 00:07:24,210
+Theseus attempts to move in all directions and Minotaur follows suit.
+
+141
+00:07:24,994 --> 00:07:28,164
+If he catches Theseus, the state is invalid, else it’s fine.
+
+142
+00:07:29,782 --> 00:07:32,685
+Running the code now, we see that the path is quite a bit longer.
+
+143
+00:07:33,836 --> 00:07:37,423
+Before visualizing it, try to pause here and solve the problem yourself –
+
+144
+00:07:37,423 --> 00:07:38,191
+what should Theseus do?
+
+145
+00:07:40,626 --> 00:07:45,965
+It turns out that Theseus has to lead the Minotaur into a corner to gain additional distance and only then escape,
+
+146
+00:07:45,965 --> 00:07:46,999
+but escape he does.
+
+147
+00:07:50,319 --> 00:07:52,054
+This is very exciting –
+
+148
+00:07:52,054 --> 00:07:55,508
+we implemented a general algorithm to solve problems that have states
+
+149
+00:07:55,508 --> 00:07:57,577
+where the
+goal is to get from one to another
+
+150
+00:07:57,577 --> 00:07:59,262
+in the least amount of steps possible,
+
+151
+00:07:59,262 --> 00:08:00,813
+like the shortest path problem
+
+152
+00:08:00,813 --> 00:08:02,148
+and Theseus and the Minotaur problem.
+
+153
+00:08:03,416 --> 00:08:07,370
+Now you might say that this algorithm is only useful for problems that involve a 2D board,
+
+154
+00:08:07,370 --> 00:08:08,337
+but this is not the case.
+
+155
+00:08:09,288 --> 00:08:10,273
+To convince you otherwise,
+
+156
+00:08:10,389 --> 00:08:11,190
+here is a 3D board...
+
+157
+00:08:11,190 --> 00:08:12,692
+nono, just kidding;
+
+158
+00:08:12,692 --> 00:08:16,445
+here is a really fun problem taken from the Advent of Code 2022, day 19.
+
+159
+00:08:17,580 --> 00:08:19,015
+There are 4 types of robots,
+
+160
+00:08:19,015 --> 00:08:21,384
+each producing one of the following resources:
+
+161
+00:08:21,384 --> 00:08:23,986
+ore, clay, obsidian and geode.
+
+162
+00:08:24,921 --> 00:08:27,406
+Each robot produces one resource per minute
+
+163
+00:08:27,406 --> 00:08:30,159
+(so if you have 4 ore robots, they produce 4 ore a minute).
+
+164
+00:08:31,460 --> 00:08:34,547
+Besides this, you have a factory that can build a new robot in one minute:
+
+165
+00:08:35,298 --> 00:08:37,133
+the ore robot costs 4 ore
+
+166
+00:08:37,133 --> 00:08:38,985
+the clay robot costs 2 ore
+
+167
+00:08:38,985 --> 00:08:41,320
+the obsidian robot costs 3 ore and 14 clay
+
+168
+00:08:41,320 --> 00:08:43,522
+and the geode robot costs 2 ore and 7 obsidian
+
+169
+00:08:44,357 --> 00:08:46,692
+The factory takes a whole minute building the robot,
+
+170
+00:08:46,692 --> 00:08:48,411
+meaning that during a minute,
+
+171
+00:08:48,411 --> 00:08:52,498
+the factory first subtracts the resources required to build the robot,
+
+172
+00:08:52,498 --> 00:08:55,067
+the robots then produce their respective resources
+
+173
+00:08:55,067 --> 00:08:56,269
+and finally the robot is finished
+
+174
+00:08:57,787 --> 00:09:00,039
+We start with an ore robot and no resources.
+
+175
+00:09:00,907 --> 00:09:03,009
+By building the robots in a specific order,
+
+176
+00:09:03,009 --> 00:09:06,312
+we want to maximize the number of geodes produced after the first 24 minutes.
+
+177
+00:09:08,364 --> 00:09:11,150
+For these costs of the robots, here is the optimal solution.
+
+178
+00:09:21,027 --> 00:09:23,296
+As you can see, the maximum number of geodes is 9.
+
+179
+00:09:24,747 --> 00:09:27,917
+Pause here and think of what the states are and how to get from one to another.
+
+180
+00:09:30,386 --> 00:09:33,356
+The states are the current number of resources and robots,
+
+181
+00:09:33,356 --> 00:09:34,724
+but also the time,
+
+182
+00:09:34,724 --> 00:09:36,309
+since we have to know when to stop exploring.
+
+183
+00:09:37,393 --> 00:09:41,464
+Getting from one state to another always means increasing the time by one,
+
+184
+00:09:41,464 --> 00:09:43,132
+adding the acquired resources
+
+185
+00:09:43,132 --> 00:09:44,884
+and attempting to build all possible robots.
+
+186
+00:09:46,352 --> 00:09:51,540
+This solution works but wouldn’t terminate in a reasonable amount of time because of the branching factor,
+
+187
+00:09:51,540 --> 00:09:53,192
+which is the average number of neighbouring states.
+
+188
+00:09:54,277 --> 00:09:57,947
+When going from the starting state (which is an ore robot and no resources),
+
+189
+00:09:57,947 --> 00:10:00,299
+the problem doesn’t branch
+too much initially,
+
+190
+00:10:00,299 --> 00:10:02,451
+but the more resources are acquired,
+
+191
+00:10:02,451 --> 00:10:04,420
+the more options there are,
+
+192
+00:10:04,420 --> 00:10:07,790
+so getting to depth 24 of this tree will take a very long time,
+
+193
+00:10:07,790 --> 00:10:09,358
+since it has around 21 million states.
+
+194
+00:10:10,610 --> 00:10:12,361
+So is the problem entirely hopeless?
+
+195
+00:10:13,212 --> 00:10:15,615
+Well, no, there are a few things we can do,
+
+196
+00:10:15,615 --> 00:10:17,450
+namely pruning and prioritization.
+
+197
+00:10:18,367 --> 00:10:19,201
+Let’s first look at pruning.
+
+198
+00:10:20,086 --> 00:10:24,824
+Pruning is the technique of removing valid states from the search that you know aren’t going to lead to the right solution.
+
+199
+00:10:26,058 --> 00:10:29,195
+For example, let’s think about a branch where only ore robots are built.
+
+200
+00:10:30,096 --> 00:10:32,064
+It certainly is a valid branch,
+
+201
+00:10:32,064 --> 00:10:34,200
+but we know that it won’t produce the correct result,
+
+202
+00:10:34,200 --> 00:10:37,803
+because building more ore robots than what’s the highest requirement for ore is pointless.
+
+203
+00:10:38,738 --> 00:10:42,124
+We can therefore remove this branch and others like it to speed up the algorithm.
+
+204
+00:10:43,376 --> 00:10:44,593
+As another example,
+
+205
+00:10:44,593 --> 00:10:47,113
+when we finally find states that obtain some geodes,
+
+206
+00:10:47,113 --> 00:10:49,999
+we can start ignoring other states that couldn’t obtain more
+
+207
+00:10:49,999 --> 00:10:52,118
+even if they build a geode robot every minute,
+
+208
+00:10:52,118 --> 00:10:53,069
+achieving further speedup.
+
+209
+00:10:54,820 --> 00:10:57,206
+While these strategies do help, as the graphs show,
+
+210
+00:10:57,206 --> 00:10:58,424
+we can do even better
+
+211
+00:10:58,424 --> 00:11:00,509
+and for that, let’s go back to the shortest path problem.
+
+212
+00:11:01,727 --> 00:11:04,013
+Remember that to solve it, we used BFS,
+
+213
+00:11:04,013 --> 00:11:06,499
+which uses a queue to process states in the order they were discovered.
+
+214
+00:11:07,650 --> 00:11:11,721
+However, it might be a good idea to first explore (i.e. “prioritize”)
+
+215
+00:11:11,721 --> 00:11:13,506
+states that look more promising than others.
+
+216
+00:11:14,407 --> 00:11:15,908
+In this maze, for example,
+
+217
+00:11:15,908 --> 00:11:19,395
+states that are closer to the escape (in terms of their (x, y) coordinates)
+
+218
+00:11:19,395 --> 00:11:21,897
+should probably be explored before those that are further,
+
+219
+00:11:21,897 --> 00:11:23,916
+because there is a higher chance that they will lead to the escape.
+
+220
+00:11:25,184 --> 00:11:27,937
+This is what the A* algorithm does –
+
+221
+00:11:27,937 --> 00:11:31,674
+it uses a priority queue to prioritize states based on a heuristic function,
+
+222
+00:11:31,674 --> 00:11:34,410
+which is an estimate of how far the state is from the end
+
+223
+00:11:34,410 --> 00:11:35,878
+(in our case, the (x, y) distance).
+
+224
+00:11:36,796 --> 00:11:37,997
+I won’t go into detail here
+
+225
+00:11:37,997 --> 00:11:40,383
+but if you’re interested in an in-depth look at A*,
+
+226
+00:11:40,383 --> 00:11:43,636
+here is a fantastic video from my friends at Polylog that you should definitely watch.
+
+227
+00:11:45,788 --> 00:11:48,874
+Anyway, here is what happens when we use A* for our shortest path problem.
+
+228
+00:11:57,349 --> 00:11:57,983
+Pretty awesome, right?
+
+229
+00:11:59,719 --> 00:12:03,406
+And here is what happens when we use it on our robots problem, in combination with pruning.
+
+230
+00:12:05,191 --> 00:12:07,159
+Only 400 000 states – amazing.
+
+231
+00:12:08,310 --> 00:12:11,731
+The heuristic here is preferring states that have more rare resources
+
+232
+00:12:11,731 --> 00:12:15,217
+(so first geode, then obsidian, then clay and finally ore).
+
+233
+00:12:18,287 --> 00:12:21,440
+There is one last thing I want to cover before the video ends –
+
+234
+00:12:21,440 --> 00:12:23,442
+what if distances between the states weren’t equal?
+
+235
+00:12:24,059 --> 00:12:25,327
+In the problems we’ve seen,
+
+236
+00:12:25,327 --> 00:12:28,080
+it took exactly step to get from one state to another,
+
+237
+00:12:28,080 --> 00:12:29,381
+but this isn’t always the case.
+
+238
+00:12:30,299 --> 00:12:32,752
+Say you wanted to find the shortest path in a maze like this
+
+239
+00:12:32,752 --> 00:12:34,186
+where you’re allowed to break the wall,
+
+240
+00:12:34,186 --> 00:12:36,605
+but it takes you 10 steps while regular moves take just 1.
+
+241
+00:12:37,740 --> 00:12:41,560
+Intuitively, we’d still like to use BFS, but now there is a problem –
+
+242
+00:12:41,560 --> 00:12:46,515
+the order in which the states are added to the queue no longer corresponds to the distance from the start
+
+243
+00:12:46,515 --> 00:12:48,634
+because getting through the wall takes much longer.
+
+244
+00:12:49,602 --> 00:12:54,156
+To fix it, we’ll replace the regular queue with a priority queue (similar to A*)
+
+245
+00:12:54,156 --> 00:12:56,125
+to always visit the state that is closest to the start.
+
+246
+00:12:57,109 --> 00:12:59,228
+Here is the implementation, side by side with the BFS implementation.
+
+247
+00:13:00,196 --> 00:13:03,632
+As you can see, the algorithms are very similar with only a few differences.
+
+248
+00:13:04,683 --> 00:13:06,735
+Dijkstra uses a heap instead of the deque,
+
+249
+00:13:06,735 --> 00:13:09,271
+which is a data structure that can quickly return its smallest element.
+
+250
+00:13:10,189 --> 00:13:13,342
+It uses it to always explore the element that is closest from the start.
+
+251
+00:13:14,477 --> 00:13:18,464
+The next_states function has to be aware that different neighbouring states can have different distances
+
+252
+00:13:18,464 --> 00:13:20,983
+and so it has to return both the neighbour and the distance to it.
+
+253
+00:13:22,084 --> 00:13:25,621
+The distance from the start to the neighbour is the distance from start to the current state,
+
+254
+00:13:25,621 --> 00:13:27,389
+plus the distance from the current state to the neighbour.
+
+255
+00:13:28,357 --> 00:13:33,112
+A given state can be discovered by multiple states with different distances before it is finally explored,
+
+256
+00:13:33,112 --> 00:13:36,131
+so we have to add it to the heap every time we find a way to get to it quicker.
+
+257
+00:13:37,066 --> 00:13:39,785
+To do this, we track the distances to each state using a dictionary.
+
+258
+00:13:40,936 --> 00:13:46,325
+There is a more efficient implementation that doesn’t require adding it to the heap multiple times but is beyond the scope of this video.
+
+259
+00:13:48,627 --> 00:13:49,945
+Solving our crowded maze problem,
+
+260
+00:13:56,135 --> 00:13:57,469
+here is the shortest path,
+
+261
+00:13:57,469 --> 00:14:00,656
+breaking 4 walls in total and taking exactly 69 steps.
+
+262
+00:14:00,656 --> 00:14:01,073
+Nice.
+
+263
+00:14:01,957 --> 00:14:03,609
+And, as you might be thinking,
+
+264
+00:14:03,609 --> 00:14:06,395
+since the core principle of BFS and Dijkstra are the same,
+
+265
+00:14:06,395 --> 00:14:09,782
+we can again use A* to prioritize states that are closer to the escape,
+
+266
+00:14:09,782 --> 00:14:10,983
+solving the problem in fewer steps.
+
+267
+00:14:20,776 --> 00:14:22,878
+This is the end of the video.
+
+268
+00:14:22,878 --> 00:14:26,665
+I hope it gave you the necessary tools for solving state space problems of all shapes and sizes.
+
+269
+00:14:27,316 --> 00:14:30,669
+If you have an interesting one that you’d like to share or you feel like I missed something,
+
+270
+00:14:30,669 --> 00:14:31,370
+let me know in the comments.
+

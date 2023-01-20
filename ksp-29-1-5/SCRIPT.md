@@ -26,8 +26,11 @@ Vaším cílem je vymyslet algoritmus, který ze všech lučištníků vybere co
 To nejpřímočařejší řešení (vyzkoušení všech možností) je nepřekvapivě dost pomalé -- skupin je celkově $2^n$ (každý lučištník může nebo nemusí střílet), což je i pro malá $n$ příliš mnoho.
 
 K rychlejšímu řešení provedeme jednoduché pozorování: nejlepší možné řešení končící daným lučištníkem je rozšířením nejlepšího řešení nějakého jeho předchůdce.
-Pokud tedy máme nejlepší řešení pro všechny předchůdce již spočítané, k rozšíření pro daného lučištníka je stačí všechna vyzkoušet a zvolit to nejlepší.
+Pokud tedy máme nejlepší řešení pro všechny předchůdce již spočítané, k rozšíření pro daného lučištníka je stačí všechna vyzkoušet a zvolit to nejlepší. <!-- animace posouvání šipky; udělat čáru a dát tam label již spočítané, pak jít šipkou a zkontrolovat to -->
 
-TODO: jak je tohle rychlé
+Začneme-li tedy od začátku tak pro každou šipku stačí projít všechny jí předcházející, což je 0, 1, 2, 3, ... N - 1
+Součet této řady je řádově $n^2$, což je výrazně lepší než předchozí exponenciální řešení.
+Ale existuje stále jedno rychlejší.
+Zkuste video pozastavit a nad problémem se zamyslet.
 
 TODO: optimální řešení

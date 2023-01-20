@@ -20,6 +20,7 @@ class SwitchZIndex(Animation):
 
 class Intro(MovingCameraScene):
     def construct(self):
+        self.next_section(skip_animations=True)
         mapping = [2, 0, 3, 1, 5, 6, 5]
 
         N = len(mapping)
@@ -135,9 +136,9 @@ class Intro(MovingCameraScene):
         def f(v):
             return bin(v)[2:].rjust(N, '0')
 
-        def tex_above_upper_dots(v):
+        def tex_above_upper_dots(v, bad):
             g = VGroup(
-                *[Tex("\\texttt{" + "Ne" if i == "0" else "Ano" + "}").scale(0.5).set_color(WHITE if v == 0 else GREEN if i == "1" else DARKER_GRAY) for i in f(v)]
+                *[Tex("\\texttt{" + "Ne" if i == "0" else "Ano" + "}").scale(0.5).set_color(WHITE if v == 0 else RED if ii in bad else GREEN if i == "1" else DARKER_GRAY) for ii, i in enumerate(f(v))]
             )
 
             for i, a in enumerate(g):
@@ -145,7 +146,7 @@ class Intro(MovingCameraScene):
 
             return g
 
-        g = tex_above_upper_dots(0)
+        g = tex_above_upper_dots(0, [])
 
         brace = BraceBetweenPoints(Dot().next_to(g[0], (UP + LEFT) * 0.1).get_center(),
                                    Dot().next_to(g[-1], (UP + RIGHT) * 0.1).get_center(),
@@ -169,25 +170,29 @@ class Intro(MovingCameraScene):
 
         for i in range(1, 2 ** N):
             set_thingy = set(mapping[i] for i, ll in enumerate(f(i)) if ll == "1")
+
+            ok = f(i)
+
+            bad = []
+            for a in range(N):
+                for b in range(a, N):
+                    if ok[a] != "1" or ok[b] != "1":
+                        continue
+
+                    if mapping[a] > mapping[b]:
+                        bad.append(a)
+                        bad.append(b)
+
             self.play(
-                Transform(g, tex_above_upper_dots(i)),
-                *[a.animate.set_color(GREEN if f(i)[j] == "1" else DARKER_GRAY) for j, a in enumerate(arrows)],
-                *[a.animate.set_color(GREEN if j in set_thingy else WHITE) for j, a in enumerate(lower_dots)],
-                *[a.animate.set_color(GREEN if f(i)[j] == "1" else DARKER_GRAY) for j, a in enumerate(upper_dots)],
+                Transform(g, tex_above_upper_dots(i, bad)),
+                *[a.animate.set_color(RED if j in bad else GREEN if f(i)[j] == "1" else DARKER_GRAY) for j, a in enumerate(arrows)],
+                *[a.animate.set_color(RED if j in bad else GREEN if f(i)[j] == "1" else DARKER_GRAY) for j, a in enumerate(upper_dots)],
                 *[SwitchZIndex(a, 1 if f(i)[j] == "1" else 0) for j, a in enumerate(arrows)],
                 run_time=1 / i,
             )
 
             if i > 5:
-                return
-
-        self.play(
-            AnimationGroup(*[a.animate.restore() for a in arrows]),
-            AnimationGroup(*[a.animate.restore() for a in upper_dots]),
-            AnimationGroup(*[a.animate.restore() for a in lower_dots]),
-            self.camera.frame.animate.move_to(VGroup(lower_dots, upper_dots)),
-            FadeOut(g, lag_ratio=0.1),
-        )
+                break
 
         deltas = [3, 1, -2, -2, -2, 0, 1, 2, -1, 1, -2, 1, 1, -1, -1, 2, 0, 0, 1, -4, 0]
         mapping_larger = [d + i for i, d in enumerate(deltas)]
@@ -202,12 +207,20 @@ class Intro(MovingCameraScene):
                                 tip_length=0.2
                                 ) for i, v in enumerate(mapping_larger)])
 
-        pozorovani = VGroup(Tex(r"Pozorování: \textit{nejlepší řešení je rozšířením nějakého předchozího.}")).next_to(upper_dots, UP, buff=0.5).scale(0.6)
+        pozorovani = VGroup(Tex(r"\large \textbf{Pozorování:} nejlepší řešení končící daným lučištníkem je rozšířením nějakého předchozího nejlepšího řešení.")).next_to(upper_dots, UP, buff=0.5).scale(0.5)
 
         self.play(
             AnimationGroup(
-                self.camera.frame.animate.scale(1.3),
                 AnimationGroup(
+                    FadeOut(g, lag_ratio=0.1),
+                    FadeOut(brace),
+                    FadeOut(count),
+                ),
+                AnimationGroup(
+                    AnimationGroup(*[a.animate.restore() for a in arrows]),
+                    AnimationGroup(*[a.animate.restore() for a in upper_dots]),
+                    AnimationGroup(*[a.animate.restore() for a in lower_dots]),
+                    self.camera.frame.animate.move_to(VGroup(lower_dots, upper_dots)).scale(1.3),
                     FadeIn(arrows_larger[:N_diff]),
                     FadeIn(arrows_larger[-N_diff:]),
                     FadeIn(upper_dots_larger[:N_diff]),
@@ -215,8 +228,8 @@ class Intro(MovingCameraScene):
                     FadeIn(lower_dots_larger[:N_diff]),
                     FadeIn(lower_dots_larger[-N_diff:]),
                 ),
-                lag_ratio=0.25,
-            )
+                lag_ratio=0.5,
+            ),
         )
 
         self.remove(*arrows)
@@ -227,29 +240,59 @@ class Intro(MovingCameraScene):
         self.add(upper_dots_larger)
         self.add(lower_dots_larger)
 
-        curved_arrows = [CurvedArrow(Dot().next_to(upper_dots_larger[4 + N_diff], UP, buff=0.05).get_center(), Dot().next_to(upper_dots_larger[4 - i + N_diff], UP, buff=0.05).get_center(), tip_length=0.15, angle = 1)
+        target = 4 + N_diff
+
+        curved_arrows = [CurvedArrow(
+            Dot().next_to(upper_dots_larger[target], UP, buff=0.05).get_center(),
+            Dot().next_to(upper_dots_larger[target - i], UP, buff=0.05).get_center(),
+            tip_length=0.15,
+            angle = 1).set_color(GRAY)
                          for i in range(1, 11)]
+
+        self.next_section()
 
         self.play(
             AnimationGroup(
                 AnimationGroup(
-                    arrows_larger[4 + N_diff].animate.set_color(ORANGE),
-                    upper_dots_larger[4 + N_diff].animate.set_color(ORANGE),
-                    lower_dots_larger[5 + N_diff].animate.set_color(ORANGE),
-                    self.camera.frame.animate.move_to(arrows_larger[4 + N_diff]),
+                    arrows_larger[target].animate.set_color(ORANGE),
+                    upper_dots_larger[target].animate.set_color(ORANGE),
+                    self.camera.frame.animate.move_to(arrows_larger[target]),
                 ),
                 AnimationGroup(*[Write(a) for a in curved_arrows], lag_ratio=0.1),
                 lag_ratio=0.5,
             )
         )
 
-        pozorovani.next_to(arrows_larger[4 + N_diff], DOWN, buff=1)
+        pozorovani.next_to(arrows_larger[target], DOWN, buff=1)
 
         self.play(
             FadeIn(pozorovani, shift=DOWN * 0.1),
-            self.camera.frame.animate.shift(DOWN * 0.1),
+            self.camera.frame.animate.shift(DOWN * 0.3),
         )
 
-        self.play(FadeOut(VGroup(*curved_arrows)))
+        curved_arrows[1].set_z_index(100)
+
+        arrows_larger[target - 2].set_z_index(100)
+        arrows_larger[target - 3].set_z_index(100)
+        arrows_larger[target - 5].set_z_index(100)
+        upper_dots_larger[target - 2].set_z_index(100)
+        upper_dots_larger[target - 3].set_z_index(100)
+        upper_dots_larger[target - 5].set_z_index(100)
+
+        # 2 lazy
+        self.play(
+            arrows_larger[target - 2].animate.set_color(GREEN),
+            arrows_larger[target - 3].animate.set_color(GREEN),
+            arrows_larger[target - 5].animate.set_color(GREEN),
+            upper_dots_larger[target - 2].animate.set_color(GREEN),
+            upper_dots_larger[target - 3].animate.set_color(GREEN),
+            upper_dots_larger[target - 5].animate.set_color(GREEN),
+            arrows_larger[target - 1].animate.set_color(DARK_GRAY),
+            arrows_larger[target - 4].animate.set_color(DARK_GRAY),
+            upper_dots_larger[target - 1].animate.set_color(DARK_GRAY),
+            upper_dots_larger[target - 4].animate.set_color(DARK_GRAY),
+            AnimationGroup(*[a.animate.set_color(DARK_GRAY) for i, a in enumerate(curved_arrows) if i != 1]),
+            curved_arrows[1].animate.set_color(WHITE),
+        )
 
         return

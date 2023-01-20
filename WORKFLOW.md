@@ -46,10 +46,10 @@ It could alternatively serve as a workflow document for anyone who would like to
 	- miniature/thumbnail
 	- playlist
 	- "show more":
-		- language (english)
+		- language (English)
 		- license (standard YouTube)
 2. step:
-	- subtitles: from file
+	- subtitles: from file (with timing)
 	- final screen (non-shorts) - import from the previous video
 4. step:
 	- make the video public

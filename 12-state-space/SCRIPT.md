@@ -16,9 +16,9 @@ Introduction (BFS)
 
 \marginpar{\texttt{Intro}}
 Deep in the twisting maze of Minos, a lone Theseus seeks the mighty Minotaur.
-After endless days of fruitless searchin, Theseus locks eyes with the Minotaur in one of the maze's many corridors.
+After endless days of fruitless searching, Theseus locks eyes with the Minotaur in one of the maze's many corridors.
 \marginpar{Tady nějaká vhodná dramatická hudba.}
-The enraged Minotaur lets out a gutteral howl a starts moving towards him.
+The enraged Minotaur lets out a guttural howl a starts moving towards him.
 This is rather unfortunate news, because Theseus forgot his sword at home and so his only option is to run away from the much faster but not very intelligent Minotaur -- can he get out before he is caught?
 
 Before solving this question, let's start by looking at a simple version where there is no Minotaur.
@@ -58,7 +58,7 @@ To record the states that we've already discovered and don't want to add to the 
 The rest of the function essentially writes itself from the way we previously described the algorithm: while the queue isn't empty, we'll take a state from the queue, check the stop condition (possibly reporting a solution) and add its undiscovered neighbouring states to the queue, marking them discovered to not add them to the queue again.
 Finally, if we didn't find an ending state after exploring all of them, we'll report that no solution exists.
 
-Implemented like this, the algorithm is useless, because it just reports that the solution exists, not what it actually looks like.
+Implemented like this, the algorithm is... well... useless, because it just reports that the solution exists, not what it actually looks like.
 We'd ideally like to see the path that Theseus took, and for that we'll need to slightly modify our code.
 Instead of just recording that we discovered a state, we'll remember from which state it was discovered so we can later backtrack.
 
@@ -66,12 +66,12 @@ To do this, we'll use a dictionary instead of a set for storing discovered state
 Since the initial state doesn't have a predecessor, we'll make it None.
 When discovering a new state, we'll make sure to remember its predecessor.
 
-Now we can add the backtracking code.
+Finally, we can add the backtracking code.
 There isn't anything too complicated here -- we start with the ending state and while it has a predecessor, we'll move to it and append it to the path.
 Finally, we print the path in reverse, because we'd like it printed from start to end, not the other way around.
 
 One small note here: for clarity of code, I wanted to exclude importing libraries, so I used a list as a queue here. <!-- highlight stuff -->
-That is a terrible idea, because popping from the beginning takes linear time -- in practice, you should use Python `collections` module and its `deque` class, which has a popleft operation that is constant. <!-- remove highlights here -->
+That is a terrible idea, because popping from the beginning takes linear time. In practice, you should use Python `collections` module and its `deque` class, which has a `popleft` operation that is constant. <!-- remove highlights here -->
 
 Now we can finally call the BFS function with Theseus' starting position and a stop condition that returns True if the given state is the escape.
 
@@ -98,15 +98,15 @@ In terms of their validity, they must be outside of the wall and, additionally, 
 Notice, however, that the problem fundamentally didn't change -- we still have a state which we can use to generate neighbouring states and thus again use BFS.
 
 \marginpar{\texttt{BFSMinotaur}}
-Luckily, the way we wrote the function BFS was very general -- it doesn't care about Theseus or the Minotaur; it just takes an initial state and a stop condition, whatever they might be, and repeatedly adds and explores neighbouring states via the `next_states` function, meaning that we can reuse it to solve our Minotaur problem!
+Luckily, the way we wrote the function BFS was very general -- it doesn't care about Theseus or the Minotaur; it just takes an initial state and a stop condition, whatever they might be, and repeatedly adds and explores neighbouring states via the `next_states` function, meaning that we can reuse it to solve our Minotaur problem.
 
 For starters, let's add the Minotaur to the maze.
 We'll have to find it, so let's add some code to do that.
 Although the BFS function doesn't change, the way we call it does, since the state is now a `(theseus, minotaur)` tuple and the stop condition only checks if Theseus escaped, not the Minotaur.
 
-We'll also rename the `next_states` function, because now it only returns the next possible positions of Theseus. To properly implement `next_states`, we'll frist need a function that moves the Minotaur towards Theseus.
+We'll also rename the `next_states` function, because now it only returns the next possible positions of Theseus. To properly implement `next_states`, we'll first need a function that moves the Minotaur towards Theseus.
 To do this, we'll write a small function that moves the Minotaur in just one dimension, returning +1, 0 or -1.
-To see what the function does, here are a few examples of what it returns for specific input values.
+Here are a few examples of what it returns for specific input values.
 
 The main function for Minotaur movement then uses this function to attempt to move closer to Theseus horizontally and, if not successful, vertically, repeating twice.
 
@@ -121,7 +121,7 @@ It turns out that Theseus has to lead the Minotaur into a corner to gain additio
 This is very exciting -- we implemented a general algorithm to solve problems that have states where the goal is to get from one to another in the least amount of steps possible, like the shortest path problem and Theseus and the Minotaur problem.
 
 ---
-Advent of Code 2022 (day 19)
+Robots!
 ---
 
 \marginpar{\texttt{AOC}}
@@ -165,7 +165,7 @@ Pruning
 Pruning is the technique of removing valid states from the search that you know aren't going to lead to the right solution.
 
 For example, let's think about a branch where only ore robots are built.
-It certainly is a valid branch but we know that it won't produce the correct result, because building more ore robots than what's the highest requirement for ore is pointless.
+It certainly is a valid branch, but we know that it won't produce the correct result, because building more ore robots than what's the highest requirement for ore is pointless.
 We can therefore remove this branch and others like it to speed up the algorithm.
 
 As another example, when we finally find states that obtain some geodes, we can start ignoring other states that couldn't obtain more even if they build a geode robot every minute, achieving further speedup.
@@ -184,14 +184,14 @@ In this maze, for example, states that are closer to the escape (in terms of the
 This is what the A* algorithm does -- it uses a priority queue to prioritize states based on a heuristic function, which is an estimate of how far the state is from the end (in our case, the $(x, y)$ distance).
 I won't go into detail here but if you're interested in an in-depth look at A*, here is a fantastic video from my friends at Polylog that you should definitely watch.
 
-Anyway, here is what happens when we use A* for our shortest path problem -- pretty awesome, right?
+Anyway, here is what happens when we use A* for our shortest path problem. Pretty awesome, right?
 
 \marginpar{\texttt{RobotGraph}}
-And here is what happens when we use it on our robots problem (in combination with pruning) -- only 400 000 states, amazing.
+And here is what happens when we use it on our robots problem, in combination with pruning. Only 400 000 states -- amazing.
 The heuristic here is preferring states that have more rare resources (so first geode, then obsidian, then clay and finally ore).
 
 ---
-Non-uniform edge costs (Dijkstra)
+Varying state distances (Dijkstra)
 ---
 
 \marginpar{\texttt{BeegMaze}}
@@ -203,7 +203,8 @@ Intuitively, we'd still like to use BFS, but now there is a problem -- the order
 To fix it, we'll replace the regular queue with a priority queue (similar to A*) to always visit the state that is closest to the start.
 
 \marginpar{\texttt{Dijkstra}}
-Here is the implementation, side by side with the BFS implementation -- as you can see, the algorithms are very similar with only a few differences.
+Here is the implementation, side by side with the BFS implementation.
+As you can see, the algorithms are very similar with only a few differences.
 
 Dijkstra uses a heap instead of the deque, which is a data structure that can quickly return its smallest element.
 It uses it to always explore the element that is closest from the start.

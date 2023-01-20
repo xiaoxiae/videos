@@ -1,13 +1,19 @@
 A visual introduction to algorithms that explore the state space (BFS, Dijkstra, A*).
 
-Polylog's A* video: TODO
-Advent of Code: https://adventofcode.com/
+@polylog7346's A* video: https://youtu.be/A60q6dcoCjw
+Advent of Code: https://adventofcode.com/2022/
 
 ------------------
 
 Timetable:
-0:00 - <something>
-1:36 - <something else>
+0:00 - Introduction (BFS)
+1:18 - Implementation
+4:52 - Adding the Minotaur
+8:03 - Robots!
+10:18 - Pruning
+10:54 - Prioritization (A*)
+12:17 - Varying state distances (Dijkstra)
+14:20 - Outro
 
 ------------------
 
