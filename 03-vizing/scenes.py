@@ -7,9 +7,10 @@ class BeforeIntro(Scene):
         tutte=nx.tutte_graph()
         complete=nx.complete_graph(8)
 
-        A = Graph.from_networkx(petersen, layout="spring", layout_scale=2).shift(UP * 1.5 + LEFT * 3)
+        A = Graph.from_networkx(petersen, layout="planar", layout_scale=2).shift(UP * 1.5 + LEFT * 3)
         B = Graph.from_networkx(tutte, layout="spring", layout_scale=2.5).rotate(PI / 4).shift(DOWN * 2)
         C = Graph.from_networkx(complete, layout="circular", layout_scale=1.5).shift(UP * 1.5 + RIGHT * 3)
+
 
         self.play(
                 Write(A),
@@ -857,3 +858,114 @@ class Outro(Scene):
             )
         self.play(Write(g), rate_func=lambda t: smooth(1-t))
         self.remove(g)
+
+
+class Thumbnail(MovingCameraScene):
+    def construct(self):
+        self.next_section(skip_animations=True)
+
+        petersen=nx.petersen_graph()
+        #tutte=nx.tutte_graph()
+        complete=nx.complete_graph(8)
+
+        #A = Graph.from_networkx(petersen, layout="spring", layout_scale=2).shift(UP * 1.5 + LEFT * 3)
+        #B = Graph.from_networkx(tutte, layout="spring", layout_scale=2.5).rotate(PI / 4).shift(DOWN * 2)
+        C = Graph.from_networkx(complete, layout="circular", layout_scale=1.5).shift(UP * 1.5 + RIGHT * 3)
+
+        vertices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        edges = [(1, 2),
+                 (1, 6),
+                 (1, 5),
+                 (2, 3),
+                 (2, 7),
+                 (3, 8),
+                 (3, 4),
+                 (4, 5),
+                 (4, 9),
+                 (5, 10),
+                 (6, 8),
+                 (6, 9),
+                 (7, 9),
+                 (7, 10),
+                 (8, 10),
+                 ]
+        lt = {
+            1: Dot().shift(UP).get_center(),
+            2: Dot().shift(UP).rotate_about_origin(2 * PI / 5).get_center(),
+            3: Dot().shift(UP).rotate_about_origin(2 * PI / 5 * 2).get_center(),
+            4: Dot().shift(UP).rotate_about_origin(2 * PI / 5 * 3).get_center(),
+            5: Dot().shift(UP).rotate_about_origin(2 * PI / 5 * 4).get_center(),
+            6: Dot().shift(UP * 0.5).get_center(),
+            7: Dot().shift(UP * 0.5).rotate_about_origin(2 * PI / 5).get_center(),
+            8: Dot().shift(UP * 0.5).rotate_about_origin(2 * PI / 5 * 2).get_center(),
+            9: Dot().shift(UP * 0.5).rotate_about_origin(2 * PI / 5 * 3).get_center(),
+            10: Dot().shift(UP * 0.5).rotate_about_origin(2 * PI / 5 * 4).get_center(),
+        }
+        A = Graph(vertices, edges, layout=lt, layout_scale=3).scale(1.5)
+
+        self.play(
+                Write(A),
+                Write(C),
+                )
+
+        self.play(
+                    A.edges[(1, 2) ].animate.set_color(YELLOW),
+                    A.edges[(1, 6) ].animate.set_color(BLUE),
+                    A.edges[(1, 5) ].animate.set_color(ORANGE),
+                    A.edges[(2, 3) ].animate.set_color(GREEN),
+                    A.edges[(2, 7) ].animate.set_color(RED),
+                    A.edges[(3, 8) ].animate.set_color(ORANGE),
+                    A.edges[(3, 4) ].animate.set_color(BLUE),
+                    A.edges[(4, 5) ].animate.set_color(RED),
+                    A.edges[(4, 9) ].animate.set_color(YELLOW),
+                    A.edges[(5, 10)].animate.set_color(GREEN),
+                    A.edges[(6, 8) ].animate.set_color(RED),
+                    A.edges[(6, 9) ].animate.set_color(GREEN),
+                    A.edges[(7, 9) ].animate.set_color(ORANGE),
+                    A.edges[(7, 10)].animate.set_color(BLUE),
+                    A.edges[(8, 10)].animate.set_color(YELLOW),
+                    C.edges[(0, 1)].animate.set_color(RED),
+                    C.edges[(0, 2)].animate.set_color(GREEN),
+                    C.edges[(0, 3)].animate.set_color(BLUE),
+                    C.edges[(0, 4)].animate.set_color(ORANGE),
+                    C.edges[(0, 5)].animate.set_color(PINK),
+                    C.edges[(0, 6)].animate.set_color(WHITE),
+                    C.edges[(0, 7)].animate.set_color(GRAY),
+                    C.edges[(1, 2)].animate.set_color(WHITE),
+                    C.edges[(1, 3)].animate.set_color(GREEN),
+                    C.edges[(1, 4)].animate.set_color(GRAY),
+                    C.edges[(1, 5)].animate.set_color(ORANGE),
+                    C.edges[(1, 6)].animate.set_color(BLUE),
+                    C.edges[(1, 7)].animate.set_color(PINK),
+                    C.edges[(2, 3)].animate.set_color(ORANGE),
+                    C.edges[(2, 4)].animate.set_color(PINK),
+                    C.edges[(2, 5)].animate.set_color(BLUE),
+                    C.edges[(2, 6)].animate.set_color(GRAY),
+                    C.edges[(2, 7)].animate.set_color(RED),
+                    C.edges[(3, 4)].animate.set_color(RED),
+                    C.edges[(3, 5)].animate.set_color(GRAY),
+                    C.edges[(3, 6)].animate.set_color(PINK),
+                    C.edges[(3, 7)].animate.set_color(WHITE),
+                    C.edges[(4, 5)].animate.set_color(WHITE),
+                    C.edges[(4, 6)].animate.set_color(GREEN),
+                    C.edges[(4, 7)].animate.set_color(BLUE),
+                    C.edges[(5, 6)].animate.set_color(RED),
+                    C.edges[(5, 7)].animate.set_color(GREEN),
+                    C.edges[(6, 7)].animate.set_color(ORANGE),
+                    )
+
+        self.next_section()
+
+        g = Group(A, C).arrange(buff=1.2).move_to(ORIGIN)
+
+        a = Tex("Vizing's Theorem").scale(2).next_to(g, UP, buff=0.8)
+        self.add(a)
+
+        fg = Group(a, g)
+
+        self.camera.frame.move_to(fg).set_height(fg.get_height() * 1.4)
+
+
+        self.wait()
+
+

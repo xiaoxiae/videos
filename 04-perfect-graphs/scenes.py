@@ -1930,3 +1930,63 @@ class Theorem2(Scene):
                 FadeIn(image2),
                 )
 
+
+class Thumbnail(MovingCameraScene):
+    def construct(self):
+        seed(0xdeadbeef)
+
+        self.next_section(skip_animations=True)
+        a = nx.complete_graph(5)
+        A = Graph.from_networkx(a, layout="circular", layout_scale=0.8).scale(2)
+        A.shift(LEFT * 2.5 + UP * 1.2)
+
+        b = nx.windmill_graph(3, 4)
+        B = Graph.from_networkx(b, layout="spring", layout_scale=0.8).scale(2)
+        B.shift(RIGHT * 2.5 + UP * 1.2)
+
+        seven = 6   # I'm definitely
+        five = 4    # going to jail
+        c = nx.algorithms.bipartite.generators.random_graph(seven, five, 0.5)
+        #lt = {i:[(i * 0.5 if i < seven else ((i - 6.5) * 6/five * 0.5)) - 3.5/2,-2 if i < seven else -2.6,0] for i in range(12)}
+        lt = nx.bipartite_layout(c, [n for (i, n) in enumerate(c.nodes) if i < seven], align='horizontal', aspect_ratio=0.35)
+
+        for k in lt:
+            lt[k] = np.array([lt[k][0], lt[k][1], 0])
+
+        C = Graph.from_networkx(c, layout=lt, layout_scale=0.8).scale(2)
+
+        C.vertices[6].shift(LEFT * 0.25)
+        C.vertices[7].shift(LEFT * 0.5)
+        C.vertices[8].shift(RIGHT * 0.5)
+        C.vertices[9].shift(RIGHT * 0.25)
+
+        Group(A, C, B).arrange(buff=0.8)
+        A.scale(0.8)
+        B.scale(0.8)
+
+        self.play(Write(A), Write(B), Write(C))
+
+        a_coloring = get_coloring(A.vertices, A.edges)
+        b_coloring = get_coloring(B.vertices, B.edges)
+        c_coloring = get_coloring(C.vertices, C.edges)
+
+        self.play(
+            *[A.vertices[v].animate.set_color(a_coloring[v]) for v in a_coloring],
+            *[B.vertices[v].animate.set_color(b_coloring[v]) for v in b_coloring],
+            *[C.vertices[v].animate.set_color(c_coloring[v]) for v in c_coloring],
+        )
+
+        a = Tex("Weak Perfect")
+        b = Tex("Graph Theorem").next_to(a, DOWN)
+
+        g = Group(a, b).scale(2.5).next_to(Group(A, B, C), UP, buff=1.2)
+
+        self.add(g)
+
+        self.next_section()
+
+        fg = Group(g, A, B, C)
+
+        self.camera.frame.move_to(fg).set_height(fg.get_height() * 1.4)
+
+        self.wait()

@@ -1705,3 +1705,25 @@ class TransparentLPSAT2(MovingCameraScene):
         tex = Tex("LP-SAT").scale(1.3).align_to(self.camera.frame, UP).align_to(self.camera.frame, RIGHT).shift((DOWN + LEFT) * 0.8)
 
         self.play(Write(tex))
+
+
+class Thumbnail(MovingCameraScene):
+
+    def construct(self):
+        a = Tex("The Remarkable").scale(1.55)
+
+        formula = Tex(r"$$(\mathrm{B} \kern-0.25em\lor\kern-0.25em \mathrm{E} \kern-0.25em\lor\kern-0.25em \mathrm{S} \kern-0.25em\lor\kern-0.25em \mathrm{T}) \land (\mathrm{S} \kern-0.25em\lor\kern-0.4em \mathrm{A} \kern-0.4em\lor\kern-0.25em \mathrm{T})$$").scale(2.2)
+        c = Tex("Algorithm").scale(1.75)
+
+        for i in [2, 4, 6, 9, 12, 14]:
+            formula[0][i].scale(0.75)
+
+        for i in [1, 3, 5, 7, 11, 13, 15]:
+            formula[0][i].set_color(GREEN)
+
+        self.add(formula, a, c)
+        a.next_to(formula, UP, buff=0.7).align_to(formula, LEFT)
+        c.next_to(formula, DOWN, buff=0.5).align_to(formula, RIGHT)
+
+
+        self.wait()

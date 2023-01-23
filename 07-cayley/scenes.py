@@ -824,3 +824,117 @@ class Outro(Scene):
                 *[g.edges[e].animate.set_opacity(1) for e in s1],
             )
 
+
+class Thumbnail(MovingCameraScene):
+    def construct(self):
+        self.next_section(skip_animations=True)
+
+        n_max = 8
+
+        eeee = 1.2
+
+        g = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.7 * eeee).scale(GRAPH_SCALE / eeee)
+
+        g_background = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.7 * eeee).scale(GRAPH_SCALE / eeee)
+
+        n_max = 7
+
+        eeee = 2
+
+        g2 = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.4 * eeee).scale(GRAPH_SCALE / eeee)
+
+        g2_background = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.4 * eeee).scale(GRAPH_SCALE / eeee)
+
+        n_max = 5
+
+        g3 = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.25 * eeee).scale(GRAPH_SCALE / eeee).rotate(PI / 4)
+
+        g3_background = Graph([i for i in range(n_max-1)],
+            [(i, j) for i in range(n_max-1) for j in range(n_max-1) if i < j],
+            layout="circular", layout_scale=0.25 * eeee).scale(GRAPH_SCALE / eeee).rotate(PI / 4)
+
+
+
+        for e in g_background.edges:
+            g_background.edges[e].set_color(HIDDEN_COLOR)
+        for v in g_background.vertices:
+            g_background.vertices[v].set_color(HIDDEN_COLOR)
+
+        for e in g2_background.edges:
+            g2_background.edges[e].set_color(HIDDEN_COLOR)
+        for v in g2_background.vertices:
+            g2_background.vertices[v].set_color(HIDDEN_COLOR)
+
+        for e in g3_background.edges:
+            g3_background.edges[e].set_color(HIDDEN_COLOR)
+        for v in g3_background.vertices:
+            g3_background.vertices[v].set_color(HIDDEN_COLOR)
+
+        g.shift(LEFT * 2.5)
+        g_background.shift(LEFT * 2.5)
+
+        g2.shift(RIGHT * 2.7 + UP * 1.5)
+        g2_background.shift(RIGHT * 2.7 + UP * 1.5)
+
+        g3.shift(RIGHT * 2.7 + DOWN * 2)
+        g3_background.shift(RIGHT * 2.7 + DOWN * 2)
+
+        g2.align_to(g, UP)
+        g2_background.align_to(g, UP)
+
+        g3.align_to(g, DOWN)
+        g3_background.align_to(g, DOWN)
+
+        self.play(
+                Write(g),
+                Write(g2),
+                Write(g3),
+                )
+
+        self.add(g_background)
+        self.add(g)
+        self.add(g2_background)
+        self.add(g2)
+        self.add(g3_background)
+        self.add(g3)
+
+        seed(2)
+        st1 = list(yield_spanning_trees(g.vertices, g.edges))
+        st2 = list(yield_spanning_trees(g2.vertices, g.edges))
+        st3 = list(yield_spanning_trees(g3.vertices, g.edges))
+        shuffle(st1)
+        shuffle(st2)
+        shuffle(st3)
+
+        for s1, s2, s3 in list(zip(st1, st2, st3))[:10]:
+            self.play(
+                *[g.edges[e].animate.set_opacity(0) for e in g.edges if e not in s1],
+                *[g.edges[e].animate.set_opacity(1) for e in s1],
+                *[g2.edges[e].animate.set_opacity(0) for e in g2.edges if e not in s2],
+                *[g2.edges[e].animate.set_opacity(1) for e in s2],
+                *[g3.edges[e].animate.set_opacity(0) for e in g3.edges if e not in s3],
+                *[g3.edges[e].animate.set_opacity(1) for e in s3],
+            )
+
+        self.next_section()
+
+        gr = Group(g_background, g, g2_background, g2, g3_background, g3).scale(0.7)
+
+        a = Tex("Cayley's Formula").scale(2).next_to(gr, UP, buff=0.8)
+        self.add(a)
+
+        fg = Group(a, gr)
+
+        self.camera.frame.move_to(fg).set_height(fg.get_height() * 1.4)
+
+        self.wait()

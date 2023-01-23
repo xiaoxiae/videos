@@ -4682,3 +4682,436 @@ class Outro(MovingCameraScene):
             self.play(FadeIn(i, shift=UP * 1.5))
 
         self.wait()
+
+
+class Thumbnail(MovingCameraScene):
+    @fade
+    def construct(self):
+        self.next_section(skip_animations=True) # don't remove
+        blocks = code_parts_from_file("programs/bfs.py")
+
+        bfs = Tex("Breadth-First Search").scale(1.65)
+
+        code_web = align_code(
+            [
+                ("-", "c"),
+                [
+                    ("|", "c"),
+                    bfs,
+                    blocks["start"],
+                    blocks["output"],
+                ],
+                [
+                    ("|", "l"),
+                    blocks["is_valid"],
+                    blocks["next_states"],
+                    blocks["bfs_deque"],
+                ]
+            ],
+        )
+
+        start_group = VGroup(bfs, blocks['start'].background_mobject)
+
+        blocks["output"].align_to(blocks["start"], RIGHT)
+
+        self.camera.frame.move_to(blocks["bfs_deque"]).set_height(blocks["bfs_deque"].height * 1.2)
+
+        self.add(*code_web)
+
+        self.remove(blocks["output"])
+
+        self.play(
+            FadeCode(blocks["start"]),
+            FadeCode(blocks["is_valid"]),
+            FadeCode(blocks["next_states"]),
+        )
+
+        highlight = CreateHighlightCodeLine(blocks["bfs_deque"], 2, start=8, end=38)
+
+        self.play(FadeIn(highlight))
+
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks["bfs_deque"], [22, 23, 24, 25], offset=2)))
+
+        # via the next_states function
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks["bfs_deque"], 22, start=20, end=40)))
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeCode(blocks['bfs_deque']),
+                    FadeOut(highlight),
+                ),
+                self.camera.frame.animate.move_to(start_group),
+                UnfadeCode(blocks['start']),
+                lag_ratio=0.5,
+            )
+        )
+
+        blocks_minotaur = code_parts_from_file("programs/minotaur.py")
+
+        bfs_copy = bfs.copy()
+
+        code_web_minotaur = align_code(
+            [
+                ("-", "c"),
+                [
+                    ("|", "c"),
+                    bfs_copy,
+                    blocks_minotaur["start"],
+                    blocks_minotaur["output"],
+                ],
+                [
+                    ("|", "l"),
+                    blocks_minotaur["is_valid"],
+                    blocks_minotaur["next_theseus_positions"],
+                    blocks_minotaur["next_minotaur_position"],
+                    blocks_minotaur["next_states"],
+                    blocks_minotaur["bfs"],
+                ]
+            ],
+        )
+        blocks_minotaur["output"].align_to(blocks_minotaur["start"], RIGHT)
+
+        align_object_by_coords(
+            code_web_minotaur,
+            blocks_minotaur["start"],
+            blocks_minotaur["start"].copy().move_to(blocks["start"]).align_to(blocks["start"], UP).align_to(blocks["start"], RIGHT),
+        )
+
+        blocks_minotaur["start_partial"].move_to(blocks["start"])
+
+        blocks_minotaur["start_partial_2"].set_z_index(10)
+
+        self.camera.frame.save_state()
+
+        self.play(
+            self.camera.frame.animate.move_to(blocks_minotaur["start_partial"].code[0:10]).scale(0.5)
+        )
+
+        self.play(
+            FadeIn(blocks_minotaur["start_partial"]),
+            Flash(blocks_minotaur["start_partial"].code[4][8], color=blocks_minotaur["start_partial"].code[4][8].color, flash_radius=0.175),
+        )
+
+        self.play(self.camera.frame.animate.restore())
+
+        blocks_minotaur["start_partial_2"].move_to(blocks_minotaur["start_partial"]).align_to(blocks_minotaur["start_partial"], UP)
+
+        #  hackish
+        for mobject in self.mobjects:
+            self.remove(mobject)
+
+        self.add(blocks["is_valid"])
+        self.add(blocks["next_states"])
+        self.add(bfs)
+        self.add(blocks["bfs_deque"])
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeTransform(blocks_minotaur["start_partial"].background_mobject, blocks_minotaur["start_partial_2"].background_mobject),
+                    Transform(blocks_minotaur["start_partial"].code[:14], blocks_minotaur["start_partial_2"].code[:14]),
+                    Transform(blocks_minotaur["start_partial"].code[14:21], blocks_minotaur["start_partial_2"].code[15:22]),
+                    Transform(blocks_minotaur["start_partial"].code[21:], blocks_minotaur["start_partial_2"].code[24:]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["start_partial_2"]),
+                ),
+                AnimationGroup(
+                    Write(blocks_minotaur["start_partial_2"].code[14]),
+                    Write(blocks_minotaur["start_partial_2"].code[22:24]),
+                    run_time=1,
+                ),
+                lag_ratio=0.75,
+            )
+        )
+
+        blocks_minotaur["start"].set_z_index(20)
+        blocks_minotaur["start_partial_2"].set_z_index(20)
+        blocks_minotaur["start_partial_2"].background_mobject.set_z_index(0)
+        blocks_minotaur["start_this_sucks"].background_mobject.set_z_index(1)
+
+        blocks_minotaur["start"].align_to(blocks_minotaur["start_partial_2"], LEFT)
+        blocks_minotaur["start_this_sucks"].align_to(blocks_minotaur["start"], LEFT).align_to(blocks_minotaur["start"], UP)
+
+        highlight = CreateHighlightCodeLine(blocks_minotaur["start"], -3, start=1).set_z_index(1000)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeTransform(blocks_minotaur["start_partial_2"].background_mobject, blocks_minotaur["start_this_sucks"].background_mobject),
+                    Transform(blocks_minotaur["start_partial"].code[-1][4:12], blocks_minotaur["start"].code[-3][2:10]),
+                    *[Transform(blocks_minotaur["start_partial"].code[-1][12 + i], blocks_minotaur["start"].code[-2][0 + i]) for i in range(20)],
+                    Transform(blocks_minotaur["start_partial"].code[-1][33:-1], blocks_minotaur["start"].code[-2][24:]),
+                    Transform(blocks_minotaur["start_partial"].code[-1][-1], blocks_minotaur["start"].code[-1][-1]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["start_this_sucks"]),
+                ),
+                AnimationGroup(
+                    Write(blocks_minotaur["start"].code[-3][:2]),
+                    Write(blocks_minotaur["start"].code[-3][10:]),
+                    Write(blocks_minotaur["start"].code[-2][20:23]),
+                    run_time=1,
+                ),
+                lag_ratio=0.75,
+            )
+        )
+
+        self.play(FadeIn(highlight))
+
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks_minotaur["start"], -2, start=1).set_z_index(1000)))
+
+        # hackish
+        for mobject in self.mobjects:
+            self.remove(mobject)
+
+        self.add(blocks["is_valid"])
+        self.add(blocks["next_states"])
+        self.add(bfs)
+        self.add(blocks_minotaur["start"])
+        self.add(blocks["bfs_deque"])
+
+        blocks_minotaur["start"].background_mobject.become(blocks_minotaur["start_this_sucks"].background_mobject)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeCode(blocks_minotaur['start']),
+                    FadeOut(highlight),
+                ),
+                self.camera.frame.animate.move_to(blocks['next_states']),
+                UnfadeCode(blocks['next_states']),
+                lag_ratio=0.5,
+            )
+        )
+
+        ntp_copy = blocks_minotaur['next_theseus_positions'].copy().move_to(blocks['next_states'])
+
+        self.play(
+            FadeTransform(blocks['next_states'].code[0][9:9+6], ntp_copy.code[0][9:9+17]),
+            Transform(blocks['next_states'].code[0][9+6:], ntp_copy.code[0][9+17:]),
+        )
+
+        # hackish
+        for mobject in self.mobjects:
+            self.remove(mobject)
+
+        self.add(blocks["is_valid"])
+        self.add(ntp_copy)
+        self.add(bfs)
+        self.add(blocks_minotaur["start"])
+        self.add(blocks["bfs_deque"])
+
+        blocks_minotaur['is_valid'].set_opacity(BIG_OPACITY)
+        blocks_minotaur['next_theseus_positions'].set_opacity(BIG_OPACITY)
+        blocks_minotaur['bfs'].set_opacity(BIG_OPACITY)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    Transform(blocks['is_valid'], blocks_minotaur['is_valid']),
+                    Transform(ntp_copy, blocks_minotaur['next_theseus_positions']),
+                    Transform(blocks['bfs_deque'], blocks_minotaur["bfs"]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["next_minotaur_position"].background_mobject),
+                ),
+                AnimationGroup(
+                    FadeIn(blocks_minotaur["next_minotaur_position"].background_mobject),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(
+            Write(blocks_minotaur["next_minotaur_position"].code[:2]),
+        )
+
+        highlight = CreateHighlightCodeLine(blocks_minotaur["next_minotaur_position"], 1, start=8, end=10)
+
+        self.play(FadeIn(highlight), run_time=0.5)
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks_minotaur["next_minotaur_position"], 1, start=25, end=26)), run_time=0.5)
+        self.play(Transform(highlight, CreateHighlightCodeLine(blocks_minotaur["next_minotaur_position"], 1, start=42, end=44)), run_time=0.5)
+        self.play(FadeOut(highlight), run_time=0.5)
+
+        blocks_minotaur["next_minotaur_position_move_forward_example"].move_to(blocks_minotaur["next_minotaur_position"])
+
+        self.camera.frame.save_state()
+
+        self.play(
+            AnimationGroup(
+                self.camera.frame.animate.move_to(blocks_minotaur["next_minotaur_position_move_forward_example"].code[3:6]).scale(0.5),
+                FadeIn(blocks_minotaur["next_minotaur_position_move_forward_example"].code[3:6]),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(
+            AnimationGroup(
+                FadeOut(blocks_minotaur["next_minotaur_position_move_forward_example"].code[3:6]),
+                self.camera.frame.animate.restore(),
+                lag_ratio=0.5,
+            )
+        )
+
+        self.play(
+            Write(blocks_minotaur["next_minotaur_position"].code[2:]),
+        )
+
+        highlight = CreateHighlightCodeLines(blocks_minotaur["next_minotaur_position"], [8, 9, 10, 11, 12], offset=2)
+
+        self.play(FadeIn(highlight))
+
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_minotaur_position"], [14, 15, 16, 17, 18], offset=2)))
+
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_minotaur_position"], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], offset=1)))
+
+        self.play(FadeOut(highlight))
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeCode(blocks_minotaur["next_minotaur_position"]),
+                    self.camera.frame.animate.move_to(blocks_minotaur["next_states"].background_mobject),
+                ),
+                AnimationGroup(
+                    FadeIn(blocks_minotaur["next_states"].background_mobject),
+                    Write(blocks_minotaur["next_states"].code),
+                ),
+                lag_ratio=0.5,
+            )
+        )
+
+        highlight = CreateHighlightCodeLines(blocks_minotaur["next_states"], [1], offset=1)
+
+        self.play(FadeIn(highlight))
+
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_states"], [4], offset=1)))
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_states"], [5], offset=2)))
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_states"], [7, 8], offset=2)))
+        self.play(Transform(highlight, CreateHighlightCodeLines(blocks_minotaur["next_states"], [10], offset=2)))
+
+        self.play(FadeOut(highlight))
+
+        maze_str = [
+            "##########",
+            "# #     E#",
+            "# # # ####",
+            "# T # M  #",
+            "### # ## #",
+            "#   #    #",
+            "## ## # ##",
+            "#  #  #  #",
+            "##########",
+        ]
+
+        solution = [
+            ((2, 3), (6, 3)),
+            ((3, 3), (5, 3)),
+            ((3, 4), (5, 4)),
+            ((3, 5), (5, 5)),
+            ((2, 5), (5, 5)),
+            ((2, 6), (5, 6)),
+            ((2, 7), (4, 7)),
+            ((2, 6), (4, 7)),
+            ((2, 5), (4, 7)),
+            ((3, 5), (4, 7)),
+            ((3, 4), (4, 7)),
+            ((3, 3), (4, 7)),
+            ((3, 2), (4, 7)),
+            ((3, 1), (4, 7)),
+            ((4, 1), (4, 7)),
+            ((5, 1), (5, 6)),
+            ((6, 1), (6, 5)),
+            ((7, 1), (7, 5)),
+            ((8, 1), (8, 4)),
+        ]
+
+        maze, maze_dict = maze_to_vgroup(maze_str)
+
+        maze.next_to(blocks_minotaur['output'], LEFT, buff=ALIGN_SPACING)
+        maze.align_to(blocks_minotaur['output'], UP)
+
+        theseus = ImageMobject("assets/theseus-nobackground-outline.png").set_height(0.8).move_to(maze_dict[(solution[0][0])]).set_z_index(10000000)
+        minotaur = ImageMobject("assets/minotaur-nobackground-outline.png").set_height(0.8).move_to(maze_dict[(solution[0][1])]).set_z_index(10000000)
+
+        door = ImageMobject("assets/door-outline.png").set_height(0.8).move_to(maze_dict[(solution[-1][0])]).set_z_index(10000000000000000000000000)
+
+        numbers_x = VGroup(*[Tex(str(i), color=BLACK).scale(0.85).move_to(maze_dict[(i, 0)]).set_z_index(1000000000)
+                             for i in range(1, len(maze_str[0]) - 1)
+                            ])
+
+        numbers_y = VGroup(*[Tex(str(i), color=BLACK).scale(0.85).move_to(maze_dict[(0, i)]).set_z_index(1000000000)
+                             for i in range(1, len(maze_str) - 1)
+                            ])
+
+        self.play(
+            AnimationGroup(
+                FadeCode(blocks_minotaur["next_states"]),
+                AnimationGroup(
+                    FadeIn(blocks_minotaur["output"].background_mobject),
+                    Write(blocks_minotaur["output"].code),
+                    self.camera.frame.animate.move_to(VGroup(maze, blocks_minotaur['output'])).scale(0.9),
+                    FadeIn(maze),
+                    FadeIn(theseus),
+                    FadeIn(minotaur),
+                    FadeIn(door),
+                ),
+                AnimationGroup(
+                    AnimationGroup(*[FadeIn(n) for n in numbers_x], lag_ratio=0.05),
+                    AnimationGroup(*[FadeIn(n) for n in numbers_y], lag_ratio=0.05),
+                ),
+                lag_ratio=0.5,
+            ),
+        )
+
+        highlight = CreateHighlightCodeLine(blocks_minotaur["output"], 1)
+
+        prev_m = None
+        for i, (t, m) in enumerate(solution):
+            anim = None
+
+            if i == 0:
+                anim = FadeIn(highlight)
+            else:
+                anim = Transform(highlight, CreateHighlightCodeLine(blocks_minotaur["output"], i + 1))
+
+            anim2 = None
+            if t == solution[-1][0]:
+                anim2 = theseus.animate.set_opacity(0).move_to(maze_dict[t])
+            else:
+                anim2 = theseus.animate.move_to(maze_dict[t])
+
+            run_time = 1 if i <= 2 else FAST_RUNTIME
+
+            if prev_m == m:
+                maze_dict[t].set_z_index(0.05)
+                self.play(
+                    AnimationGroup(
+                        AnimationGroup(anim, anim2),
+                        maze_dict[t].animate.set_fill(ORANGE, 0.75).set_stroke_color(ORANGE),
+                        lag_ratio=0.33,
+                    ),
+                    run_time=run_time,
+                )
+            else:
+                maze_dict[t].set_z_index(0.05)
+                maze_dict[m].set_z_index(0.05)
+                self.play(
+                    AnimationGroup(
+                        AnimationGroup(
+                            AnimationGroup(anim, anim2),
+                            maze_dict[t].animate.set_fill(ORANGE, 0.75).set_stroke_color(ORANGE),
+                            lag_ratio=0.33,
+                        ),
+                        AnimationGroup(
+                            minotaur.animate.move_to(maze_dict[m]),
+                            maze_dict[m].animate.set_fill(BLUE, 0.75).set_stroke_color(BLUE),
+                            lag_ratio=0.33,
+                        ),
+                        lag_ratio=0.25,
+                    ),
+                    run_time=run_time,
+                )
+
+            prev_m = m
+
+        self.next_section() # don't remove
+
+        self.wait()
+
