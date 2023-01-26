@@ -9,19 +9,18 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
-If I gave you a graph and told you to calculate all of its vertex colorings using $n$ colors, what would you do?
+If I gave you a graph and told you to calculate different ways of coloring its vertices such that adjacent vertices have different colors, what would you do?
 
 You could just bruteforce the solution but that's too boring.
-Instead, we'll use this crazy equation to calculate what is called a Tutte polynomial for this graph.
-If we now plug in $n$ for $x$ and $0$ for $y$, we get the exact number of colorings.
+Instead, we'll calculate what is called a chromatic polynomial for this graph.
+If we plug in $n$ for any $x$, we get the exact number of colorings -- cool, right?
 
-Neat, right?
-But that's not all:
+This, however, is just a specialized form of the much more interesting Tutte polynomial.
+This two-variate polynomial is fascinating because
 
 - $x=1, y=1$ counts the number of spanning trees,
-- $x=1, y=2$ counts the number of spanning subgraphs,
 - $x=2, y=0$ counts the number of acyclic orientations
 
-it is also used for simulating network failures, modelling behavior of ferromagnets, calculating the number of nowhere-zero flows... it's useful.
+and much more -- it is used for measuring network reliability, for calculating linear codes and even has ties to quantum field theory.
 
-The general idea of why it is so powerful is that it contains information regarding the number of connected components for all of its edge subsets, which turns out to be sufficient for calculating all of the things I mentioned before.
+If you found this interesting, I'd recommend you check out this neat handbook, written by many experts in the field, which contains a great overview of this polynomial's many fascinating uses.
