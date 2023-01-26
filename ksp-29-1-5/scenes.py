@@ -3,7 +3,6 @@ from utilities import *
 
 
 class SwitchZIndex(Animation):
-    """An animation that fades in an object... but colorfully."""
 
     def __init__(self, mobject: Mobject, z_index, **kwargs):
         self.original = mobject
@@ -20,7 +19,6 @@ class SwitchZIndex(Animation):
 
 class Intro(MovingCameraScene):
     def construct(self):
-        self.next_section(skip_animations=True)
         mapping = [2, 0, 3, 1, 5, 6, 5]
 
         N = len(mapping)
@@ -129,7 +127,7 @@ class Intro(MovingCameraScene):
                     AnimationGroup(*[a.animate.restore() for a in upper_dots]),
                     AnimationGroup(*[a.animate.restore() for a in lower_dots]),
                 ),
-                lag_ratio=0.5,
+                lag_ratio=0.2,
             ),
         )
 
@@ -191,9 +189,6 @@ class Intro(MovingCameraScene):
                 run_time=1 / i,
             )
 
-            if i > 5:
-                break
-
         deltas = [3, 1, -2, -2, -2, 0, 1, 2, -1, 1, -2, 1, 1, -1, -1, 2, 0, 0, 1, -4, 0]
         mapping_larger = [d + i for i, d in enumerate(deltas)]
 
@@ -242,30 +237,26 @@ class Intro(MovingCameraScene):
 
         target = 4 + N_diff
 
-        curved_arrows = [CurvedArrow(
-            Dot().next_to(upper_dots_larger[target], UP, buff=0.05).get_center(),
-            Dot().next_to(upper_dots_larger[target - i], UP, buff=0.05).get_center(),
-            tip_length=0.15,
-            angle = 1).set_color(GRAY)
+        def build_arrow(i, j):
+            return CurvedArrow(
+            Dot().next_to(upper_dots_larger[i], UP, buff=0.05).get_center(),
+            Dot().next_to(upper_dots_larger[j], UP, buff=0.05).get_center(),
+            tip_length=0.15, angle = 1).set_color(GRAY)
+            
+
+        curved_arrows = [build_arrow(target, target - i)
                          for i in range(1, 11)]
 
-        self.next_section()
-
         self.play(
-            AnimationGroup(
-                AnimationGroup(
-                    arrows_larger[target].animate.set_color(ORANGE),
-                    upper_dots_larger[target].animate.set_color(ORANGE),
-                    self.camera.frame.animate.move_to(arrows_larger[target]),
-                ),
-                AnimationGroup(*[Write(a) for a in curved_arrows], lag_ratio=0.1),
-                lag_ratio=0.5,
-            )
+            arrows_larger[target].animate.set_color(ORANGE),
+            upper_dots_larger[target].animate.set_color(ORANGE),
+            self.camera.frame.animate.move_to(arrows_larger[target]),
         )
 
         pozorovani.next_to(arrows_larger[target], DOWN, buff=1)
 
         self.play(
+            AnimationGroup(*[Write(a) for a in curved_arrows], lag_ratio=0.1),
             FadeIn(pozorovani, shift=DOWN * 0.1),
             self.camera.frame.animate.shift(DOWN * 0.3),
         )
@@ -295,4 +286,138 @@ class Intro(MovingCameraScene):
             curved_arrows[1].animate.set_color(WHITE),
         )
 
-        return
+        arrows_larger[target + 1].set_z_index(1)
+
+        self.play(
+            FadeOut(VGroup(*curved_arrows)),
+            arrows_larger[target - 2].animate.set_color(WHITE),
+            arrows_larger[target - 3].animate.set_color(WHITE),
+            arrows_larger[target - 5].animate.set_color(WHITE),
+            arrows_larger[target - 1].animate.set_color(WHITE),
+            arrows_larger[target - 4].animate.set_color(WHITE),
+            arrows_larger[target].animate.set_color(WHITE),
+            arrows_larger[target + 1].animate.set_color(ORANGE),
+            upper_dots_larger[target - 2].animate.set_color(WHITE),
+            upper_dots_larger[target - 3].animate.set_color(WHITE),
+            upper_dots_larger[target - 5].animate.set_color(WHITE),
+            upper_dots_larger[target - 1].animate.set_color(WHITE),
+            upper_dots_larger[target - 4].animate.set_color(WHITE),
+            upper_dots_larger[target].animate.set_color(WHITE),
+            upper_dots_larger[target + 1].animate.set_color(ORANGE),
+            self.camera.frame.animate.shift(-upper_dots_larger[target].get_center() + upper_dots_larger[target + 1].get_center()),
+            pozorovani.animate.shift(-upper_dots_larger[target].get_center() + upper_dots_larger[target + 1].get_center()),
+        )
+
+        a = build_arrow(target + 1, target).set_color(WHITE)
+
+        self.play(
+            Write(a),
+            arrows_larger[target - 2].animate.set_color(GREEN),
+            arrows_larger[target - 3].animate.set_color(GREEN),
+            arrows_larger[target - 5].animate.set_color(GREEN),
+            arrows_larger[target].animate.set_color(GREEN),
+            upper_dots_larger[target - 2].animate.set_color(GREEN),
+            upper_dots_larger[target - 3].animate.set_color(GREEN),
+            upper_dots_larger[target - 5].animate.set_color(GREEN),
+            upper_dots_larger[target].animate.set_color(GREEN),
+            arrows_larger[target - 1].animate.set_color(DARK_GRAY),
+            arrows_larger[target - 4].animate.set_color(DARK_GRAY),
+            upper_dots_larger[target - 1].animate.set_color(DARK_GRAY),
+            upper_dots_larger[target - 4].animate.set_color(DARK_GRAY),
+        )
+
+        self.play(
+            Transform(a, build_arrow(target + 1, target - 1).set_color(WHITE)),
+            arrows_larger[target].animate.set_color(WHITE),
+            upper_dots_larger[target].animate.set_color(WHITE),
+            arrows_larger[target - 1].animate.set_color(GREEN),
+            upper_dots_larger[target - 1].animate.set_color(GREEN),
+            arrows_larger[target - 2].animate.set_color(DARK_GRAY),
+            upper_dots_larger[target - 2].animate.set_color(DARK_GRAY),
+        )
+
+        self.play(
+            Transform(a, build_arrow(target + 1, target - 2).set_color(WHITE)),
+            arrows_larger[target - 1].animate.set_color(WHITE),
+            upper_dots_larger[target - 1].animate.set_color(WHITE),
+            arrows_larger[target - 2].animate.set_color(GREEN),
+            upper_dots_larger[target - 2].animate.set_color(GREEN),
+        )
+
+        self.play(
+            Transform(a, build_arrow(target + 1, target - 3).set_color(WHITE)),
+            arrows_larger[target - 2].animate.set_color(WHITE),
+            upper_dots_larger[target - 2].animate.set_color(WHITE),
+        )
+
+        self.play(
+            Transform(a, build_arrow(target + 1, target - 4).set_color(WHITE)),
+            arrows_larger[target - 3].animate.set_color(WHITE),
+            upper_dots_larger[target - 3].animate.set_color(WHITE),
+            arrows_larger[target - 4].animate.set_color(GREEN),
+            upper_dots_larger[target - 4].animate.set_color(GREEN),
+        )
+
+        self.play(
+            FadeOut(a),
+            upper_dots_larger.animate.set_color(WHITE),
+            arrows_larger.animate.set_color(WHITE),
+        )
+
+        todo = VGroup(upper_dots_larger, lower_dots_larger, arrows_larger)
+
+        self.play(
+            todo.animate.align_to(Dot().move_to(self.camera.frame.get_center()), LEFT),
+            run_time=1.5,
+        )
+
+        delta = (-upper_dots_larger[target].get_center() + upper_dots_larger[target + 1].get_center())
+
+        to_fade = VGroup()
+
+        fr = 3
+
+        for i in range(len(upper_dots_larger)):
+            if i > len(upper_dots_larger) / 2:
+                t = Tex(f"$n\kern-0.1em-\kern-0.1em{len(upper_dots_larger) - i}$").next_to(upper_dots_larger[i], UP).scale(0.5)
+            else:
+                t = Tex(str(i)).next_to(upper_dots_larger[i], UP).scale(0.5)
+
+
+            p = Tex("+").next_to(upper_dots_larger[i], UP).scale(0.35)
+
+            if i == 0:
+                self.play(
+                    FadeIn(t),
+                )
+
+            else:
+                p.shift(-delta / 2)
+
+                if i > fr:
+                    to_fade.add(t)
+                    to_fade.add(p)
+                else:
+                    self.play(
+                        FadeIn(t),
+                        FadeIn(p),
+                        self.camera.frame.animate.shift(delta),
+                        pozorovani.animate.shift(delta),
+                    )
+
+        tfl = len(to_fade)
+
+        self.play(
+            self.camera.frame.animate.shift(delta * (len(upper_dots_larger) - 1 - fr)),
+            pozorovani.animate.shift(delta * (len(upper_dots_larger) - 1 - fr)),
+            *[Succession(Wait(smooth(i / tfl) * 1), FadeIn(to_fade[i])) for i in range(tfl)],
+            run_time=1.5,
+        )
+
+        n2 = Tex(r"$\approx \qquad \mathcal{O}(n^2)$").scale(0.5).next_to(to_fade, RIGHT, buff=0.45)
+        n2[0][1:].scale(1.5)
+
+        self.play(
+            Write(n2),
+        )
+
