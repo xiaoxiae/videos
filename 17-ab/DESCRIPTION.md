@@ -31,5 +31,8 @@ Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
 ------------------
 
+[EN] frozenca/BTree: open-source C++ B-tree implementation:
+https://github.com/frozenca/BTree
+
 [CZ] Martin Mareš: Průvodce labyrintem algoritmů:
-https://url.com
+http://pruvodce.ucw.cz/

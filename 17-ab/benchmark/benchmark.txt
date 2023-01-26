@@ -1,0 +1,136 @@
+Balanced tree test
+
+Warming up complete...
+frozenca::BTreeSet test (fanout 2)
+Time to insert 1000000 elements:
+Average : 6031.36ms,
+Stdev   : 406.317ms,
+95%     : 6745.89ms,
+99%     : 6745.89ms,
+99.9%   : 6745.89ms,
+Time to lookup 1000000 elements:
+Average : 4598.16ms,
+Stdev   : 277.798ms,
+95%     : 5038.8ms,
+99%     : 5038.8ms,
+99.9%   : 5038.8ms,
+Time to erase 1000000 elements:
+Average : 6624.19ms,
+Stdev   : 496.522ms,
+95%     : 7907.94ms,
+99%     : 7907.94ms,
+99.9%   : 7907.94ms,
+frozenca::BTreeSet test (fanout 4)
+Time to insert 1000000 elements:
+Average : 3901.96ms,
+Stdev   : 133.89ms,
+95%     : 4088.46ms,
+99%     : 4088.46ms,
+99.9%   : 4088.46ms,
+Time to lookup 1000000 elements:
+Average : 3217.08ms,
+Stdev   : 166.199ms,
+95%     : 3410.41ms,
+99%     : 3410.41ms,
+99.9%   : 3410.41ms,
+Time to erase 1000000 elements:
+Average : 4521.31ms,
+Stdev   : 166.442ms,
+95%     : 4791.72ms,
+99%     : 4791.72ms,
+99.9%   : 4791.72ms,
+frozenca::BTreeSet test (fanout 8)
+Time to insert 1000000 elements:
+Average : 4039.79ms,
+Stdev   : 712.098ms,
+95%     : 4649.51ms,
+99%     : 4649.51ms,
+99.9%   : 4649.51ms,
+Time to lookup 1000000 elements:
+Average : 3526.33ms,
+Stdev   : 525.443ms,
+95%     : 4005.46ms,
+99%     : 4005.46ms,
+99.9%   : 4005.46ms,
+Time to erase 1000000 elements:
+Average : 4877.49ms,
+Stdev   : 634.676ms,
+95%     : 5416.65ms,
+99%     : 5416.65ms,
+99.9%   : 5416.65ms,
+frozenca::BTreeSet test (fanout 16)
+Time to insert 1000000 elements:
+Average : 4506.44ms,
+Stdev   : 45.5343ms,
+95%     : 4573.91ms,
+99%     : 4573.91ms,
+99.9%   : 4573.91ms,
+Time to lookup 1000000 elements:
+Average : 4131.83ms,
+Stdev   : 72.702ms,
+95%     : 4244.19ms,
+99%     : 4244.19ms,
+99.9%   : 4244.19ms,
+Time to erase 1000000 elements:
+Average : 5075.58ms,
+Stdev   : 76.0595ms,
+95%     : 5187.48ms,
+99%     : 5187.48ms,
+99.9%   : 5187.48ms,
+frozenca::BTreeSet test (fanout 32)
+Time to insert 1000000 elements:
+Average : 5317.65ms,
+Stdev   : 155.863ms,
+95%     : 5539.88ms,
+99%     : 5539.88ms,
+99.9%   : 5539.88ms,
+Time to lookup 1000000 elements:
+Average : 4753.36ms,
+Stdev   : 176.319ms,
+95%     : 4984.93ms,
+99%     : 4984.93ms,
+99.9%   : 4984.93ms,
+Time to erase 1000000 elements:
+Average : 5673.69ms,
+Stdev   : 175.918ms,
+95%     : 5946.77ms,
+99%     : 5946.77ms,
+99.9%   : 5946.77ms,
+frozenca::BTreeSet test (fanout 64)
+Time to insert 1000000 elements:
+Average : 6892.73ms,
+Stdev   : 697.535ms,
+95%     : 7849.7ms,
+99%     : 7849.7ms,
+99.9%   : 7849.7ms,
+Time to lookup 1000000 elements:
+Average : 6662.03ms,
+Stdev   : 648.05ms,
+95%     : 7504.01ms,
+99%     : 7504.01ms,
+99.9%   : 7504.01ms,
+Time to erase 1000000 elements:
+Average : 7169.42ms,
+Stdev   : 776.337ms,
+95%     : 8414.15ms,
+99%     : 8414.15ms,
+99.9%   : 8414.15ms,
+frozenca::BTreeSet test (fanout 128)
+Time to insert 1000000 elements:
+Average : 9242.8ms,
+Stdev   : 357.903ms,
+95%     : 9816.27ms,
+99%     : 9816.27ms,
+99.9%   : 9816.27ms,
+Time to lookup 1000000 elements:
+Average : 8909.75ms,
+Stdev   : 260.27ms,
+95%     : 9391.9ms,
+99%     : 9391.9ms,
+99.9%   : 9391.9ms,
+Time to erase 1000000 elements:
+Average : 8461.89ms,
+Stdev   : 176.589ms,
+95%     : 8728.34ms,
+99%     : 8728.34ms,
+99.9%   : 8728.34ms,
