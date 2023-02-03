@@ -17,29 +17,28 @@ Timetable:
 
 ------------------
 
-Source code:
-https://github.com/xiaoxiae/videos/tree/master/12-state-space/
+Source code: https://github.com/xiaoxiae/videos/tree/master/12-state-space/
 
 Music:
-Thannoid (Normal + Swinging) by Blue Dot Sessions: https://app.sessions.blue/browse/track/126782
-Cases to Rest (Normal + Minimal) by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
-Are We Loose Yet (All Piano) by Blue Dot Sessions: https://app.sessions.blue/browse/track/153364
-Slider by Blue Dot Sessions: https://app.sessions.blue/browse/track/153362
+► Thannoid (Normal + Swinging) by Blue Dot Sessions: https://app.sessions.blue/browse/track/126782
+► Cases to Rest (Normal + Minimal) by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
+► Are We Loose Yet (All Piano) by Blue Dot Sessions: https://app.sessions.blue/browse/track/153364
+► Slider by Blue Dot Sessions: https://app.sessions.blue/browse/track/153362
 
 Software used:
-Manim (animation software): https://github.com/ManimCommunity/manim/
-Kdenlive (video cutting): https://kdenlive.org/en/
-ffmpeg (audio/video processing): https://ffmpeg.org/
-arecord (audio recording): https://linux.die.net/man/1/arecord
-sox (audio processing): http://sox.sourceforge.net/
-Inkscape (vector image editing): https://inkscape.org/
-Gimp (raster image editing): https://gimp.org/
-Midjourney (AI image generator): https://www.midjourney.com/home/
-Stable Diffusion (AI image generator): https://stablediffusionweb.com/
+► Manim (animation software): https://github.com/ManimCommunity/manim/
+► Kdenlive (video cutting): https://kdenlive.org/en/
+► ffmpeg (audio/video processing): https://ffmpeg.org/
+► arecord (audio recording): https://linux.die.net/man/1/arecord
+► sox (audio processing): http://sox.sourceforge.net/
+► Inkscape (vector image editing): https://inkscape.org/
+► Gimp (raster image editing): https://gimp.org/
+► Midjourney (AI image generator): https://www.midjourney.com/home/
+► Stable Diffusion (AI image generator): https://stablediffusionweb.com/
 
 Social media:
-Website (for other things I'm up to): https://slama.dev/
-Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
+► Website (for other things I'm up to): https://slama.dev/
+► Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
 Inspired by Martin Mareš's Programming 1 Course exercises.
 
