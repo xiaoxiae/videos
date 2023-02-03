@@ -1,5 +1,5 @@
 ---
-title: The (a,b)-tree – most elegant search data structure
+title: The most elegant search data structure | (a,b)-trees
 subtitle: Video Script
 author: Tomáš Sláma
 header-includes:
@@ -50,7 +50,7 @@ In a binary tree, if you want to find a key (for example 4), you go left if the 
 For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and you follow the edge between the keys where it should be, again either finding it or getting to a leaf. <!-- show the search in the a,b tree; make it have values 1,2,3,4,5... -->
 
 $(a,b)$-trees address a number of shortcomings of binary trees, mainly the fact that they can easily become unbalanced -- repeatedly inserting items into a binary tree without other operations can make them lean to one side, rendering all operations significantly slower. <!-- show the imbalance -- keep inserting smaller values -->
-There are a number of ways to address this problem, but they are pretty messy and not as elegant as $(a,b)$-trees.
+There are a number of ways to address this problem (like the aforementioned AVL trees), but they are not nearly as elegant as $(a,b)$-trees.
 
 So, without further ado, let's dive in.
 
@@ -65,12 +65,10 @@ Each key separates two subtrees, the left one having keys that are less than it 
 
 The parameters $a$ and $b$ denote the number of children each non-leaf node can have.
 This is therefore a $(2,4)$-tree, since each node has between $2$ and $4$ children.
-There is one exception, which is the root -- while nodes can have between $a$ and $b$ children, the root can have between $2$ and $b$ children.
-This seems a little arbitrary but it will make sense as we go through the tree's operations. <!-- make a list of the axioms to the left -->
+There is one exception, which is the root -- while nodes can have between $a$ and $b$ children, the root can have between $2$ and $b$ children, otherwise building $(a,b)$-trees certain numbers of keys wouldn't be possible.
 
-To keep the operations on the tree fast, we require all leafs to be in the same depth. <!-- yet again, write this to the right -->
-This, in combination with the restriction on the number of children, forces the tree to have logarithmic depth (in the number of its keys).
-Feel free to pause here and prove this yourself, it's a nice sanity check.
+To keep the operations on the tree fast, we require all leafs to be in the same depth -- this forces the tree to have logarithmic depth (in the number of keys).
+Feel free to pause here and prove this yourself as a sanity check.
 
 And, finally, we require that $a \ge 2$ and $b \ge 2a - 1$.
 The limit on $a$ is intuitive, since we don't want the tree to have non-leaf nodes with no keys.
@@ -93,7 +91,7 @@ To search for a key, we start in the root node and do the following:
 
 - find where in the current node the key should be (using either normal or binary search):
 	- if it's there, we're done!
-	- if it's not there, follow the edge between the keys where it should be and repeat
+	- if it's not there, go to the subtree between the keys where it should be and repeat
 
 Eventually, we'll either find it, or arrive in a leaf, at which point we know it's not present in the tree.
 
@@ -107,14 +105,14 @@ INSERTION
 Let's now try to insert a key.
 
 Assuming that the key is not present, we'll run search and end up in one of the tree's leafs.
-Now we simply insert the key to the leaf's parent node, additionally creating a new leaf.
+Then we simply insert the key to the leaf's parent node, creating a new leaf in the process.
 
 If this didn't break the condition on the number of children of a node (i.e. if the node still has at most $b$ children), we're done.
 Otherwise, we split the node in two (down the middle) and, since this adds a new child to the node above, we move the middle key up
 Since this might make the node above break the condition, we have to repeat the process until we reach the root.
 
-This is where the $b \ge 2a - 1$ condition comes in handy, since splitting the node down the middle and removing one key makes the sides have at least $\lfloor b / 2 \rfloor$ nodes, which is at least $a$.
-Also, if we split the root node, we'll have to create a new root node that will have only two children, which we can only do because the root node can have between $2$ and $b$ children.
+This is where the $b \ge 2a - 1$ condition comes in handy, since splitting the node down the middle and removing one key makes the sides have at least $\lfloor b / 2 \rfloor$ nodes, which the condition ensures is at least $a$.
+Also, if we happen to split the root node, we'll have to create a new root node that will have two children, which we can do because the root node can have between $2$ and $b$ children.
 
 
 ---
@@ -123,26 +121,37 @@ DELETION
 
 As for deletion, it is a little trickier.
 
-Let's again assume that the key is present and we run search to find it.
+Let's assume that the key is present and we run search to find it.
 
-If it's in the second to last layer, we can simply delete it, along with one of the leafs.
-If it's not, we'll do it the same way as removing a key from a binary tree: we'll replace it with with the leftmost key of its right subtree and thus reducing the problem to the previous case.
+If it's in the second to last layer, we can simply delete it, along with one of its leafs.
+If it's not, we'll use the same trick as when removing a key from a binary tree: we'll replace it with the leftmost key of its right subtree, thus reducing the problem to the previous case.
+Pause here and think about why we can even do this operation -- can't this make the keys in a node unsorted?
 
-Either of those two could have broken the condition on the number of children of a node, having less than $a$ children. TODO: the two cases fml
+Now either of those two could have made the node have less than $a$ children.
+Assuming that there is a node to the left of ours (if not, we'll proceed symetrically), we can do one of the following two things to fix this problem, based on how many keys the neighbouring node has:
+
+- merge the two nodes nodes or
+- take one of its keys
+
+If the neighbouring node has $a$ children, we can't take a key, so we'll have to merge.
+This removes a key from the node above, which might again break its condition, so we'll have to recursively fix the same problem on the node above.
+
+Otherwise, if it has more than $a$ children, we'll just take its rightmost key and we're done.
 
 
 ---
 PERFORMANCE
 ---
 
-One thing that makes $(a,b)$-trees great is the fact that they are very cache-friendly.
+One thing that makes $(a,b)$-trees great is the fact that they are very cache-friendly, and here is why.
 
-To simplify: a cache is made up of lines of some size (usually 64B).
+Essentially, a cache is made up of lines of some size (usually 64B).
 The speed of retrieving a single byte from the cache is the same as retrieving an entire line, meaning that the parameters $a,b$ can be chosen such that a node fits into a single cache line, which drastically speeds up the operations.
 
 To show you what I mean by 'drastic', I used an open-source C++ $(a,b)$-tree implementation (link in the description) to run benchmarks on my laptop for varying $a$ and $b$.
-As the graph shows, the best choice is a $(4,8)$-tree.
-This makes sense, since the size of my laptop's cache lines is 64B and a node of a $(4,8)$-tree is just $8$ 64b pointers to its children, which takes up exactly 64B.
+
+The graph shows a very complex behavior that I'm not going to explain, but the most important thing is that the best parameter choice is a $(8,16)$-tree.
+This makes sense, since the size of my laptop's cache lines is 64B, and a node of a $(4,8)$-tree is just $8$ 64b pointers to its children, which takes up exactly 64B.
 
 
 ---

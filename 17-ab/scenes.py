@@ -1,12 +1,21 @@
 from manim import *
+from utilities import *
 
 
 class Intro(Scene):
     def construct(self):
-        text = Tex("\Huge Intro")
 
-        self.play(Write(text))
-        self.play(FadeOut(text))
+        tree = ABTree(
+            2, 3,
+            [
+                [[4, 7]],
+                [[1, 3], [6], [9]],
+                [None, None, None, None, None, None, None],
+            ]
+        )
+
+        self.play(Write(tree))
+
 
 class Graphs(Scene):
     def construct(self):
