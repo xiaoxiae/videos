@@ -145,7 +145,7 @@ class Introo(MovingCameraScene):
         )
 
         f = lambda i: float(chromatic(g_nx.nodes, g_nx.edges).subs(x, i))
-        graph = ax.plot(f, x_range=[-0.35, 3.10, 0.1])  # TODO: value 0.01
+        graph = ax.plot(f, x_range=[-0.35, 3.10, 0.01])
 
         a = Dot(ax.c2p(0, 0)).scale(1.5).set_z_index(1)
         b = Dot(ax.c2p(1, 0)).scale(1.5).set_z_index(1)
@@ -450,14 +450,14 @@ class TP(ThreeDScene):
         self.add(st)
         self.add(ori)
 
-        self.wait()
+        self.wait(5.2)
         self.play(
             FadeIn(a),
             st.animate.set_opacity(1)
         )
-        self.wait()
+        self.wait(1.86666)
         self.play(
             FadeIn(b),
             ori.animate.set_opacity(1)
         )
-        self.wait()
+        self.wait(2.7666666)

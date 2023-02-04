@@ -9,14 +9,15 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
-If I gave you this graph and told you to calculate all of its vertex colorings using $n$ colors, what would you do?
+Imagine you're given $n$ colors and a graph.
+Your task is to find the number of colorings of vertices such that adjacent vertices have different colors -- what would you do?
 
 You could try to bruteforce the solution, but that would only work for smaller $n$s.
 Instead, we can calculate what is called a chromatic polynomial for this graph.
 If we plug in $n$ for any $x$, we get the exact number of colorings -- cool, right?
 
-This, however, is just a form of the much more interesting Tutte polynomial.
-This two-variate polynomial is fascinating because
+This, however, is just a special case of the much more interesting Tutte polynomial.
+This two-variate polynomial is fascinating because, besides colorings:
 
 - $x=1, y=1$ counts the number of spanning trees,
 - $x=2, y=0$ counts the number of acyclic orientations
