@@ -262,6 +262,9 @@ T(G) &= x^{6} + 3 x^{5} \\[-0.1cm]
 
         c = Tex(f"$$\chi(G) = {polynomial_to_tex(chromatic(g_nx.nodes, g_nx.edges))}$$").next_to(beeg_g, DOWN, buff=-0.2)
 
+        shitty_code_delta = 0.5
+        c.shift(DOWN * shitty_code_delta)
+
         c[0][2].set_opacity(0)
         cin = g.copy().set_color(WHITE).move_to(c[0][2]).set_height(c[0][2].get_height())
 
@@ -298,7 +301,11 @@ T(G) &= x^{6} + 3 x^{5} \\[-0.1cm]
         )
 
         p[0][2].set_opacity(0)
+
+        c.shift(UP * shitty_code_delta)
         p.next_to(c, DOWN, buff=4)
+        c.shift(DOWN * shitty_code_delta)
+
         idkman = g.copy().set_color(WHITE).move_to(p[0][2]).set_height(p[0][2].get_height()).shift(DOWN * 0.04)
 
         self.play(
@@ -419,7 +426,7 @@ class TP(ThreeDScene):
 
         surface.scale(1.2, about_point=ORIGIN)
         surface.set_style(fill_opacity=1, stroke_color=WHITE)
-        surface.set_fill_by_checkerboard(DARK_GRAY, DARKER_GRAY, opacity=1)
+        surface.set_fill_by_checkerboard(GREEN_C, GREEN_E, opacity=1)
         axes = ThreeDAxes()
 
         spanning = f(1, 1)[-1] / scale
@@ -450,14 +457,14 @@ class TP(ThreeDScene):
         self.add(st)
         self.add(ori)
 
-        self.wait(5.2)
+        self.wait(5.083333)
         self.play(
             FadeIn(a),
             st.animate.set_opacity(1)
         )
-        self.wait(1.86666)
+        self.wait(1.7)
         self.play(
             FadeIn(b),
             ori.animate.set_opacity(1)
         )
-        self.wait(2.7666666)
+        self.wait(3.33333)

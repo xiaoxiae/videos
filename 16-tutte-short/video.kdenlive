@@ -5,6 +5,10 @@
   <property name="length">1080</property>
   <property name="eof">pause</property>
   <property name="resource">video/Introo.mp4</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -31,16 +35,11 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname"/>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">2</property>
   <property name="kdenlive:id">3</property>
-  <property name="kdenlive:file_size">4163768</property>
-  <property name="kdenlive:file_hash">68471c63d5c57ccea66e14a50a82644d</property>
+  <property name="kdenlive:file_size">4110034</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">709</property>
@@ -51,11 +50,16 @@
   <property name="meta.media.color_range">mpeg</property>
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
+  <property name="kdenlive:file_hash">4b83edc5b5b62c8246997be7c4c9b638</property>
  </producer>
  <producer id="producer2" in="00:00:00.000" out="00:00:11.817">
   <property name="length">710</property>
   <property name="eof">pause</property>
   <property name="resource">video/TP.mp4</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">59.9983</property>
@@ -82,16 +86,11 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname"/>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">2</property>
   <property name="kdenlive:id">4</property>
-  <property name="kdenlive:file_size">6060881</property>
-  <property name="kdenlive:file_hash">341894ea3e0bd27b2f6b94f7be70014f</property>
+  <property name="kdenlive:file_size">4139884</property>
   <property name="meta.media.frame_rate_num">2181120</property>
   <property name="meta.media.frame_rate_den">36353</property>
   <property name="meta.media.colorspace">709</property>
@@ -102,11 +101,16 @@
   <property name="meta.media.color_range">mpeg</property>
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
+  <property name="kdenlive:file_hash">cc94cdeee3bffd3c4d863091409e0411</property>
  </producer>
- <producer id="producer5" in="00:00:00.000" out="00:00:01.983">
+ <producer id="producer4" in="00:00:00.000" out="00:00:01.983">
   <property name="length">120</property>
   <property name="eof">pause</property>
   <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/8dff18832a70d54217650c23ab5e4f42.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -134,10 +138,6 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">1.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
@@ -214,7 +214,11 @@
  <producer id="producer12" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/1a1932df4ed0e1e225731efeed2187b6.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/77c8ab9239a5199c18a61be8f9469991.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -242,16 +246,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">10.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">7</property>
-  <property name="kdenlive:file_size">177605</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/1a1932df4ed0e1e225731efeed2187b6.mkv</property>
+  <property name="kdenlive:file_size">181371</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/77c8ab9239a5199c18a61be8f9469991.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/10.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -307,7 +307,7 @@
   <property name="kdenlive:original.kdenlive:file_size">177605</property>
   <property name="kdenlive:original.kdenlive:file_hash">1a1932df4ed0e1e225731efeed2187b6</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">1a1932df4ed0e1e225731efeed2187b6</property>
+  <property name="kdenlive:file_hash">77c8ab9239a5199c18a61be8f9469991</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -322,7 +322,11 @@
  <producer id="producer15" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -350,16 +354,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">11.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">8</property>
-  <property name="kdenlive:file_size">153007</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="kdenlive:file_size">153889</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/11.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -415,7 +415,7 @@
   <property name="kdenlive:original.kdenlive:file_size">153007</property>
   <property name="kdenlive:original.kdenlive:file_hash">1f1b7efe38fa7e8601cb38cd3ee2acf3</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">1f1b7efe38fa7e8601cb38cd3ee2acf3</property>
+  <property name="kdenlive:file_hash">4a009cf2077928ee8ec0ed403d943072</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -427,10 +427,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer13" in="00:00:00.000" out="00:00:00.983">
+ <producer id="producer14" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/488f4e575975a334d875f814912b1ac0.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/3d837a2ec1dda3dcb6d2e3c1b9888ba7.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -458,16 +462,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">12.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">9</property>
-  <property name="kdenlive:file_size">248180</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/488f4e575975a334d875f814912b1ac0.mkv</property>
+  <property name="kdenlive:file_size">249398</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/3d837a2ec1dda3dcb6d2e3c1b9888ba7.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/12.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -523,7 +523,7 @@
   <property name="kdenlive:original.kdenlive:file_size">248180</property>
   <property name="kdenlive:original.kdenlive:file_hash">488f4e575975a334d875f814912b1ac0</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">488f4e575975a334d875f814912b1ac0</property>
+  <property name="kdenlive:file_hash">3d837a2ec1dda3dcb6d2e3c1b9888ba7</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -535,10 +535,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer14" in="00:00:00.000" out="00:00:01.733">
+ <producer id="producer17" in="00:00:00.000" out="00:00:01.733">
   <property name="length">105</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/81e0da60a88621e3753be6841989b7bf.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/685d6cd27fdb6a7f7feb340dafd480c7.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -566,16 +570,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">13.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">10</property>
-  <property name="kdenlive:file_size">595466</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/81e0da60a88621e3753be6841989b7bf.mkv</property>
+  <property name="kdenlive:file_size">594770</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/685d6cd27fdb6a7f7feb340dafd480c7.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/13.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -631,7 +631,7 @@
   <property name="kdenlive:original.kdenlive:file_size">595466</property>
   <property name="kdenlive:original.kdenlive:file_hash">81e0da60a88621e3753be6841989b7bf</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">81e0da60a88621e3753be6841989b7bf</property>
+  <property name="kdenlive:file_hash">685d6cd27fdb6a7f7feb340dafd480c7</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -646,7 +646,11 @@
  <producer id="producer16" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/4b4eea2842d35116db06caa29c38b231.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/b5a18906ece0fe3ed131bd2c42e6dda6.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -674,16 +678,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">14.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">11</property>
-  <property name="kdenlive:file_size">268765</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4b4eea2842d35116db06caa29c38b231.mkv</property>
+  <property name="kdenlive:file_size">268694</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/b5a18906ece0fe3ed131bd2c42e6dda6.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/14.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -739,7 +739,7 @@
   <property name="kdenlive:original.kdenlive:file_size">268765</property>
   <property name="kdenlive:original.kdenlive:file_hash">4b4eea2842d35116db06caa29c38b231</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">4b4eea2842d35116db06caa29c38b231</property>
+  <property name="kdenlive:file_hash">b5a18906ece0fe3ed131bd2c42e6dda6</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -751,10 +751,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer4" in="00:00:00.000" out="00:00:01.483">
+ <producer id="producer5" in="00:00:00.000" out="00:00:01.483">
   <property name="length">90</property>
   <property name="eof">pause</property>
   <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/0b89cd57b68835ad6c09b14c719bfc6c.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -782,10 +786,6 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">2.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
@@ -859,10 +859,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer6" in="00:00:00.000" out="00:00:01.733">
+ <producer id="producer7" in="00:00:00.000" out="00:00:01.733">
   <property name="length">105</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/eb9d0e5bf0ea9a77bbb7776fed1462bd.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/695d4306b48eaf03c176a5064fb0a496.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -890,16 +894,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">3.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">13</property>
-  <property name="kdenlive:file_size">441722</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/eb9d0e5bf0ea9a77bbb7776fed1462bd.mkv</property>
+  <property name="kdenlive:file_size">439492</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/695d4306b48eaf03c176a5064fb0a496.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/3.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -955,7 +955,7 @@
   <property name="kdenlive:original.kdenlive:file_size">430866</property>
   <property name="kdenlive:original.kdenlive:file_hash">295fa29a793835a789d13ab985aeb422</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">eb9d0e5bf0ea9a77bbb7776fed1462bd</property>
+  <property name="kdenlive:file_hash">695d4306b48eaf03c176a5064fb0a496</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -967,10 +967,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer7" in="00:00:00.000" out="00:00:01.483">
+ <producer id="producer6" in="00:00:00.000" out="00:00:01.483">
   <property name="length">90</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/3e7606f1125d60f98e1b317cb1cdfb3e.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/4d22d89945bd727c8c39259ea1b14d0e.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -998,16 +1002,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">4.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">14</property>
-  <property name="kdenlive:file_size">525924</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/3e7606f1125d60f98e1b317cb1cdfb3e.mkv</property>
+  <property name="kdenlive:file_size">530993</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4d22d89945bd727c8c39259ea1b14d0e.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/4.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1063,7 +1063,7 @@
   <property name="kdenlive:original.kdenlive:file_size">524875</property>
   <property name="kdenlive:original.kdenlive:file_hash">8d02e5c2dad60165adddbcbd80de5983</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">3e7606f1125d60f98e1b317cb1cdfb3e</property>
+  <property name="kdenlive:file_hash">4d22d89945bd727c8c39259ea1b14d0e</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1075,10 +1075,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer17" in="00:00:00.000" out="00:00:01.483">
+ <producer id="producer9" in="00:00:00.000" out="00:00:01.483">
   <property name="length">90</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/0e2252fd226443696d8a5f3ce1e5fc5b.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/c9eb4cfc599b0ae4c62ed5f5d3350177.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1106,16 +1110,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">5.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">15</property>
-  <property name="kdenlive:file_size">784619</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/0e2252fd226443696d8a5f3ce1e5fc5b.mkv</property>
+  <property name="kdenlive:file_size">725948</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/c9eb4cfc599b0ae4c62ed5f5d3350177.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/5.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1171,7 +1171,7 @@
   <property name="kdenlive:original.kdenlive:file_size">779743</property>
   <property name="kdenlive:original.kdenlive:file_hash">c96ca6538f13bbeec3e8daee0e503fb8</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">0e2252fd226443696d8a5f3ce1e5fc5b</property>
+  <property name="kdenlive:file_hash">c9eb4cfc599b0ae4c62ed5f5d3350177</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1183,10 +1183,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer9" in="00:00:00.000" out="00:00:00.983">
+ <producer id="producer8" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/16ecf3a2cc0a3382bf035fed3e36b2e1.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/827e185e90d0bb989b814a35eed532d1.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1214,16 +1218,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">6.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">16</property>
-  <property name="kdenlive:file_size">88308</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/16ecf3a2cc0a3382bf035fed3e36b2e1.mkv</property>
+  <property name="kdenlive:file_size">88587</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/827e185e90d0bb989b814a35eed532d1.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/6.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1279,7 +1279,7 @@
   <property name="kdenlive:original.kdenlive:file_size">88308</property>
   <property name="kdenlive:original.kdenlive:file_hash">16ecf3a2cc0a3382bf035fed3e36b2e1</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">16ecf3a2cc0a3382bf035fed3e36b2e1</property>
+  <property name="kdenlive:file_hash">827e185e90d0bb989b814a35eed532d1</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1291,10 +1291,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer8" in="00:00:00.000" out="00:00:00.983">
+ <producer id="producer10" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/a5ef829cffb2353fb09522934d10fcf5.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/d019db71da5e81158b5014c3ac6aea84.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1322,16 +1326,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">7.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">17</property>
-  <property name="kdenlive:file_size">105305</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/a5ef829cffb2353fb09522934d10fcf5.mkv</property>
+  <property name="kdenlive:file_size">107400</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/d019db71da5e81158b5014c3ac6aea84.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/7.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1395,7 +1395,7 @@
     }
 ]
 </property>
-  <property name="kdenlive:file_hash">a5ef829cffb2353fb09522934d10fcf5</property>
+  <property name="kdenlive:file_hash">d019db71da5e81158b5014c3ac6aea84</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1407,10 +1407,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer10" in="00:00:00.000" out="00:00:00.983">
+ <producer id="producer11" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/7e571bbff82af06057ad50092f544a43.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/7c309e082dae9cb3c39390dfc374ac0c.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1438,16 +1442,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">8.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">19</property>
-  <property name="kdenlive:file_size">246094</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/7e571bbff82af06057ad50092f544a43.mkv</property>
+  <property name="kdenlive:file_size">242222</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/7c309e082dae9cb3c39390dfc374ac0c.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/8.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1503,7 +1503,7 @@
   <property name="kdenlive:original.kdenlive:file_size">246094</property>
   <property name="kdenlive:original.kdenlive:file_hash">7e571bbff82af06057ad50092f544a43</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">7e571bbff82af06057ad50092f544a43</property>
+  <property name="kdenlive:file_hash">7c309e082dae9cb3c39390dfc374ac0c</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1515,10 +1515,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer11" in="00:00:00.000" out="00:00:00.983">
+ <producer id="producer13" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1546,16 +1550,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">9.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">21</property>
-  <property name="kdenlive:file_size">210510</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="kdenlive:file_size">209007</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/9.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1611,7 +1611,7 @@
   <property name="kdenlive:original.kdenlive:file_size">210510</property>
   <property name="kdenlive:original.kdenlive:file_hash">a4e21c6b966cb0c8b74723c1f1ed57c4</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">a4e21c6b966cb0c8b74723c1f1ed57c4</property>
+  <property name="kdenlive:file_hash">d79a8bd0cd9125d90b74d4f882060bb9</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1623,10 +1623,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer258" in="00:00:00.000" out="00:00:05.183">
-  <property name="length">312</property>
+ <producer id="producer259" in="00:00:00.000" out="00:00:05.067">
+  <property name="length">305</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/cf0e2f25d22dd650cb777553026e8d8d.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/b3d40459298c287e3361889e2c0d8169.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1643,7 +1647,7 @@
   <property name="meta.attr.0.stream.HANDLER_NAME.markup">VideoHandler</property>
   <property name="meta.attr.0.stream.VENDOR_ID.markup">[0][0][0][0]</property>
   <property name="meta.attr.0.stream.ENCODER.markup">Lavc59.37.100 mjpeg</property>
-  <property name="meta.attr.0.stream.DURATION.markup">00:00:05.200000000</property>
+  <property name="meta.attr.0.stream.DURATION.markup">00:00:05.084000000</property>
   <property name="meta.attr.COMMENT.markup">Rendered with Manim Community v0.17.2</property>
   <property name="meta.attr.MAJOR_BRAND.markup">isom</property>
   <property name="meta.attr.MINOR_VERSION.markup">512</property>
@@ -1654,16 +1658,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">1.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">22</property>
-  <property name="kdenlive:file_size">2528158</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/cf0e2f25d22dd650cb777553026e8d8d.mkv</property>
+  <property name="kdenlive:file_size">2475864</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/b3d40459298c287e3361889e2c0d8169.mkv</property>
   <property name="kdenlive:originalurl">video/TP/1.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1719,7 +1719,7 @@
   <property name="kdenlive:original.kdenlive:file_size">496674</property>
   <property name="kdenlive:original.kdenlive:file_hash">10c27a93ec8ae839b8120c738298f9b3</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">cf0e2f25d22dd650cb777553026e8d8d</property>
+  <property name="kdenlive:file_hash">b3d40459298c287e3361889e2c0d8169</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1731,10 +1731,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer18" in="00:00:00.000" out="00:00:00.983">
+ <producer id="producer258" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/8ffebd691a9ba0acd2ef3c06235f76c0.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/67561c055e3babafa8d4155569f18617.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1762,16 +1766,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">2.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">23</property>
-  <property name="kdenlive:file_size">514735</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/8ffebd691a9ba0acd2ef3c06235f76c0.mkv</property>
+  <property name="kdenlive:file_size">514446</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/67561c055e3babafa8d4155569f18617.mkv</property>
   <property name="kdenlive:originalurl">video/TP/2.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1827,7 +1827,7 @@
   <property name="kdenlive:original.kdenlive:file_size">514076</property>
   <property name="kdenlive:original.kdenlive:file_hash">579f36ee9bf98b42fd40a20d927b2a81</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">8ffebd691a9ba0acd2ef3c06235f76c0</property>
+  <property name="kdenlive:file_hash">67561c055e3babafa8d4155569f18617</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1839,10 +1839,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer19" in="00:00:00.000" out="00:00:01.850">
-  <property name="length">112</property>
+ <producer id="producer19" in="00:00:00.000" out="00:00:01.683">
+  <property name="length">102</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/6fb45c9db765a24191029439687a3425.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/723df456c0c782e09240f6d5296e3441.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1859,7 +1863,7 @@
   <property name="meta.attr.0.stream.HANDLER_NAME.markup">VideoHandler</property>
   <property name="meta.attr.0.stream.VENDOR_ID.markup">[0][0][0][0]</property>
   <property name="meta.attr.0.stream.ENCODER.markup">Lavc59.37.100 mjpeg</property>
-  <property name="meta.attr.0.stream.DURATION.markup">00:00:01.867000000</property>
+  <property name="meta.attr.0.stream.DURATION.markup">00:00:01.700000000</property>
   <property name="meta.attr.COMMENT.markup">Rendered with Manim Community v0.17.2</property>
   <property name="meta.attr.MAJOR_BRAND.markup">isom</property>
   <property name="meta.attr.MINOR_VERSION.markup">512</property>
@@ -1870,16 +1874,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">3.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">24</property>
-  <property name="kdenlive:file_size">935567</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/6fb45c9db765a24191029439687a3425.mkv</property>
+  <property name="kdenlive:file_size">848645</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/723df456c0c782e09240f6d5296e3441.mkv</property>
   <property name="kdenlive:originalurl">video/TP/3.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -1935,7 +1935,7 @@
   <property name="kdenlive:original.kdenlive:file_size">533199</property>
   <property name="kdenlive:original.kdenlive:file_hash">53b2b8def3a6a585e84421e046f51da1</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">6fb45c9db765a24191029439687a3425</property>
+  <property name="kdenlive:file_hash">723df456c0c782e09240f6d5296e3441</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -1947,10 +1947,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer20" in="00:00:00.000" out="00:00:00.983">
+ <producer id="producer18" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/68c5e82431186f0e55304dfa79db850a.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/3df7bad560d5d2a90a153f633166c986.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -1978,16 +1982,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">4.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">25</property>
-  <property name="kdenlive:file_size">569636</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/68c5e82431186f0e55304dfa79db850a.mkv</property>
+  <property name="kdenlive:file_size">559125</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/3df7bad560d5d2a90a153f633166c986.mkv</property>
   <property name="kdenlive:originalurl">video/TP/4.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -2043,7 +2043,7 @@
   <property name="kdenlive:original.kdenlive:file_size">554649</property>
   <property name="kdenlive:original.kdenlive:file_hash">6074a5e97bfee849382484b32c3391da</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">68c5e82431186f0e55304dfa79db850a</property>
+  <property name="kdenlive:file_hash">3df7bad560d5d2a90a153f633166c986</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -2055,10 +2055,14 @@
   <property name="meta.media.top_field_first">0</property>
   <property name="meta.media.progressive">1</property>
  </producer>
- <producer id="producer259" in="00:00:00.000" out="00:00:02.750">
-  <property name="length">166</property>
+ <producer id="producer20" in="00:00:00.000" out="00:00:03.317">
+  <property name="length">200</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/ff46a7f737e441fa7773d42d7219ed3b.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/2f37dadb24f0d084eb297fea3b6fbdca.mkv</property>
+  <property name="audio_index">-1</property>
+  <property name="video_index">0</property>
+  <property name="mute_on_pause">0</property>
+  <property name="mlt_service">avformat-novalidate</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
   <property name="meta.media.0.stream.frame_rate">60</property>
@@ -2075,7 +2079,7 @@
   <property name="meta.attr.0.stream.HANDLER_NAME.markup">VideoHandler</property>
   <property name="meta.attr.0.stream.VENDOR_ID.markup">[0][0][0][0]</property>
   <property name="meta.attr.0.stream.ENCODER.markup">Lavc59.37.100 mjpeg</property>
-  <property name="meta.attr.0.stream.DURATION.markup">00:00:02.767000000</property>
+  <property name="meta.attr.0.stream.DURATION.markup">00:00:03.334000000</property>
   <property name="meta.attr.COMMENT.markup">Rendered with Manim Community v0.17.2</property>
   <property name="meta.attr.MAJOR_BRAND.markup">isom</property>
   <property name="meta.attr.MINOR_VERSION.markup">512</property>
@@ -2086,16 +2090,12 @@
   <property name="meta.media.sample_aspect_den">1</property>
   <property name="aspect_ratio">1</property>
   <property name="format">3</property>
-  <property name="audio_index">-1</property>
-  <property name="video_index">0</property>
-  <property name="mute_on_pause">0</property>
-  <property name="mlt_service">avformat-novalidate</property>
   <property name="kdenlive:clipname">5.mp4</property>
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">28</property>
-  <property name="kdenlive:file_size">1516175</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/ff46a7f737e441fa7773d42d7219ed3b.mkv</property>
+  <property name="kdenlive:file_size">1814376</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/2f37dadb24f0d084eb297fea3b6fbdca.mkv</property>
   <property name="kdenlive:originalurl">video/TP/5.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -2151,7 +2151,7 @@
   <property name="kdenlive:original.kdenlive:file_size">543124</property>
   <property name="kdenlive:original.kdenlive:file_hash">0dbc9ad84fb8aa41da81ec21658b0bce</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">ff46a7f737e441fa7773d42d7219ed3b</property>
+  <property name="kdenlive:file_hash">2f37dadb24f0d084eb297fea3b6fbdca</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
   <property name="meta.media.colorspace">601</property>
@@ -9383,7 +9383,7 @@
   <property name="kdenlive:folder.299.302">stems</property>
   <property name="kdenlive:folder.308.311">stems</property>
   <property name="kdenlive:folder.308.318">variations</property>
-  <property name="kdenlive:docproperties.activeTrack">4</property>
+  <property name="kdenlive:docproperties.activeTrack">1</property>
   <property name="kdenlive:docproperties.audioChannels">2</property>
   <property name="kdenlive:docproperties.audioTarget">-1</property>
   <property name="kdenlive:docproperties.compositing">1</property>
@@ -9447,7 +9447,7 @@
 ]
 </property>
   <property name="kdenlive:docproperties.kdenliveversion">22.12.1</property>
-  <property name="kdenlive:docproperties.position">1201</property>
+  <property name="kdenlive:docproperties.position">3675</property>
   <property name="kdenlive:docproperties.previewextension"/>
   <property name="kdenlive:docproperties.previewparameters"/>
   <property name="kdenlive:docproperties.profile">/home/xiaoxiae/.local/share/kdenlive/profiles/customprofile2</property>
@@ -9457,7 +9457,25 @@
   <property name="kdenlive:docproperties.proxyminsize">1000</property>
   <property name="kdenlive:docproperties.proxyparams"/>
   <property name="kdenlive:docproperties.proxyresize">640</property>
-  <property name="kdenlive:docproperties.scrollPos">2357</property>
+  <property name="kdenlive:docproperties.rendercategory">Generic (HD for web, mobile devices...)</property>
+  <property name="kdenlive:docproperties.rendercustomquality">-1</property>
+  <property name="kdenlive:docproperties.renderendguide">-1</property>
+  <property name="kdenlive:docproperties.renderexportaudio">0</property>
+  <property name="kdenlive:docproperties.rendermode">0</property>
+  <property name="kdenlive:docproperties.renderplay">0</property>
+  <property name="kdenlive:docproperties.renderpreview">0</property>
+  <property name="kdenlive:docproperties.renderprofile">MP4-H264/AAC</property>
+  <property name="kdenlive:docproperties.renderratio">1</property>
+  <property name="kdenlive:docproperties.renderrescale">0</property>
+  <property name="kdenlive:docproperties.renderrescaleheight">1920</property>
+  <property name="kdenlive:docproperties.renderrescalewidth">1080</property>
+  <property name="kdenlive:docproperties.renderspeed">6</property>
+  <property name="kdenlive:docproperties.renderstartguide">-1</property>
+  <property name="kdenlive:docproperties.rendertcoverlay">0</property>
+  <property name="kdenlive:docproperties.rendertctype">-1</property>
+  <property name="kdenlive:docproperties.rendertwopass">0</property>
+  <property name="kdenlive:docproperties.renderurl">/home/xiaoxiae/video.mp4</property>
+  <property name="kdenlive:docproperties.scrollPos">0</property>
   <property name="kdenlive:docproperties.seekOffset">30000</property>
   <property name="kdenlive:docproperties.version">1.04</property>
   <property name="kdenlive:docproperties.verticalzoom">1</property>
@@ -9470,25 +9488,25 @@
   <property name="xml_retain">1</property>
   <entry producer="producer3" in="00:00:00.000" out="00:00:17.983"/>
   <entry producer="producer2" in="00:00:00.000" out="00:00:11.817"/>
-  <entry producer="producer5" in="00:00:00.000" out="00:00:01.983"/>
+  <entry producer="producer4" in="00:00:00.000" out="00:00:01.983"/>
   <entry producer="producer12" in="00:00:00.000" out="00:00:00.983"/>
   <entry producer="producer15" in="00:00:00.000" out="00:00:00.983"/>
-  <entry producer="producer13" in="00:00:00.000" out="00:00:00.983"/>
-  <entry producer="producer14" in="00:00:00.000" out="00:00:01.733"/>
+  <entry producer="producer14" in="00:00:00.000" out="00:00:00.983"/>
+  <entry producer="producer17" in="00:00:00.000" out="00:00:01.733"/>
   <entry producer="producer16" in="00:00:00.000" out="00:00:00.983"/>
-  <entry producer="producer4" in="00:00:00.000" out="00:00:01.483"/>
-  <entry producer="producer6" in="00:00:00.000" out="00:00:01.733"/>
-  <entry producer="producer7" in="00:00:00.000" out="00:00:01.483"/>
-  <entry producer="producer17" in="00:00:00.000" out="00:00:01.483"/>
-  <entry producer="producer9" in="00:00:00.000" out="00:00:00.983"/>
+  <entry producer="producer5" in="00:00:00.000" out="00:00:01.483"/>
+  <entry producer="producer7" in="00:00:00.000" out="00:00:01.733"/>
+  <entry producer="producer6" in="00:00:00.000" out="00:00:01.483"/>
+  <entry producer="producer9" in="00:00:00.000" out="00:00:01.483"/>
   <entry producer="producer8" in="00:00:00.000" out="00:00:00.983"/>
   <entry producer="producer10" in="00:00:00.000" out="00:00:00.983"/>
   <entry producer="producer11" in="00:00:00.000" out="00:00:00.983"/>
-  <entry producer="producer258" in="00:00:00.000" out="00:00:05.183"/>
+  <entry producer="producer13" in="00:00:00.000" out="00:00:00.983"/>
+  <entry producer="producer259" in="00:00:00.000" out="00:00:05.067"/>
+  <entry producer="producer258" in="00:00:00.000" out="00:00:00.983"/>
+  <entry producer="producer19" in="00:00:00.000" out="00:00:01.683"/>
   <entry producer="producer18" in="00:00:00.000" out="00:00:00.983"/>
-  <entry producer="producer19" in="00:00:00.000" out="00:00:01.850"/>
-  <entry producer="producer20" in="00:00:00.000" out="00:00:00.983"/>
-  <entry producer="producer259" in="00:00:00.000" out="00:00:02.750"/>
+  <entry producer="producer20" in="00:00:00.000" out="00:00:03.317"/>
   <entry producer="producer21" in="00:00:00.000" out="00:02:12.333"/>
   <entry producer="producer22" in="00:00:00.000" out="00:04:06.350"/>
   <entry producer="producer23" in="00:00:00.000" out="00:03:48.850"/>
@@ -9790,6 +9808,7 @@
     <property name="kdenlive_id">fadeout</property>
     <property name="gain">1</property>
     <property name="end">0</property>
+    <property name="kdenlive:collapsed">0</property>
    </filter>
   </entry>
  </playlist>
@@ -9887,15 +9906,23 @@
    <property name="kdenlive:id">332</property>
   </entry>
   <blank length="00:00:00.750"/>
-  <entry producer="producer261" in="00:01:27.917" out="00:01:33.567">
+  <entry producer="producer261" in="00:01:27.917" out="00:01:29.667">
    <property name="kdenlive:id">332</property>
   </entry>
-  <blank length="00:00:00.300"/>
-  <entry producer="producer261" in="00:01:36.233" out="00:01:39.433">
+  <blank length="00:00:00.167"/>
+  <entry producer="producer261" in="00:01:29.850" out="00:01:33.567">
+   <property name="kdenlive:id">332</property>
+  </entry>
+  <blank length="00:00:00.367"/>
+  <entry producer="producer261" in="00:01:36.300" out="00:01:39.433">
    <property name="kdenlive:id">332</property>
   </entry>
   <blank length="00:00:00.467"/>
-  <entry producer="producer261" in="00:01:39.917" out="00:01:45.617">
+  <entry producer="producer261" in="00:01:39.917" out="00:01:41.750">
+   <property name="kdenlive:id">332</property>
+  </entry>
+  <blank length="00:00:00.567"/>
+  <entry producer="producer261" in="00:01:42.333" out="00:01:45.617">
    <property name="kdenlive:id">332</property>
   </entry>
   <blank length="00:00:01.450"/>
@@ -9934,9 +9961,10 @@
   <filter id="filter5">
    <property name="window">75</property>
    <property name="max_gain">20dB</property>
+   <property name="level">5.02471</property>
    <property name="mlt_service">volume</property>
    <property name="internal_added">237</property>
-   <property name="disable">1</property>
+   <property name="disable">0</property>
   </filter>
   <filter id="filter6">
    <property name="channel">-1</property>
@@ -10177,7 +10205,7 @@
  <producer id="producer264" in="00:00:00.000" out="00:00:01.733">
   <property name="length">105</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/eb9d0e5bf0ea9a77bbb7776fed1462bd.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/695d4306b48eaf03c176a5064fb0a496.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -10213,8 +10241,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">13</property>
-  <property name="kdenlive:file_size">441722</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/eb9d0e5bf0ea9a77bbb7776fed1462bd.mkv</property>
+  <property name="kdenlive:file_size">439492</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/695d4306b48eaf03c176a5064fb0a496.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/3.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -10270,7 +10298,7 @@
   <property name="kdenlive:original.kdenlive:file_size">430866</property>
   <property name="kdenlive:original.kdenlive:file_hash">295fa29a793835a789d13ab985aeb422</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">eb9d0e5bf0ea9a77bbb7776fed1462bd</property>
+  <property name="kdenlive:file_hash">695d4306b48eaf03c176a5064fb0a496</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -10288,7 +10316,7 @@
  <producer id="producer265" in="00:00:00.000" out="00:00:01.483">
   <property name="length">90</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/3e7606f1125d60f98e1b317cb1cdfb3e.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/4d22d89945bd727c8c39259ea1b14d0e.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -10324,8 +10352,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">14</property>
-  <property name="kdenlive:file_size">525924</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/3e7606f1125d60f98e1b317cb1cdfb3e.mkv</property>
+  <property name="kdenlive:file_size">530993</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4d22d89945bd727c8c39259ea1b14d0e.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/4.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -10381,7 +10409,7 @@
   <property name="kdenlive:original.kdenlive:file_size">524875</property>
   <property name="kdenlive:original.kdenlive:file_hash">8d02e5c2dad60165adddbcbd80de5983</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">3e7606f1125d60f98e1b317cb1cdfb3e</property>
+  <property name="kdenlive:file_hash">4d22d89945bd727c8c39259ea1b14d0e</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -10399,7 +10427,7 @@
  <producer id="producer266" in="00:00:00.000" out="00:00:09.983">
   <property name="length">600</property>
   <property name="eof">pause</property>
-  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/16ecf3a2cc0a3382bf035fed3e36b2e1.mkv</property>
+  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/827e185e90d0bb989b814a35eed532d1.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -10431,9 +10459,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.1</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/16ecf3a2cc0a3382bf035fed3e36b2e1.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/827e185e90d0bb989b814a35eed532d1.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/16ecf3a2cc0a3382bf035fed3e36b2e1.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/827e185e90d0bb989b814a35eed532d1.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/6.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -10453,7 +10481,7 @@
  <producer id="producer267" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/16ecf3a2cc0a3382bf035fed3e36b2e1.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/827e185e90d0bb989b814a35eed532d1.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -10489,8 +10517,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">16</property>
-  <property name="kdenlive:file_size">88308</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/16ecf3a2cc0a3382bf035fed3e36b2e1.mkv</property>
+  <property name="kdenlive:file_size">88587</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/827e185e90d0bb989b814a35eed532d1.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/6.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -10546,7 +10574,7 @@
   <property name="kdenlive:original.kdenlive:file_size">88308</property>
   <property name="kdenlive:original.kdenlive:file_hash">16ecf3a2cc0a3382bf035fed3e36b2e1</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">16ecf3a2cc0a3382bf035fed3e36b2e1</property>
+  <property name="kdenlive:file_hash">827e185e90d0bb989b814a35eed532d1</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -10564,7 +10592,7 @@
  <producer id="producer268" in="00:00:00.000" out="00:00:01.983">
   <property name="length">120</property>
   <property name="eof">pause</property>
-  <property name="resource">0.500000:/home/xiaoxiae/.cache/kdenlive/proxy/a5ef829cffb2353fb09522934d10fcf5.mkv</property>
+  <property name="resource">0.500000:/home/xiaoxiae/.cache/kdenlive/proxy/d019db71da5e81158b5014c3ac6aea84.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -10596,9 +10624,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.5</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/a5ef829cffb2353fb09522934d10fcf5.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/d019db71da5e81158b5014c3ac6aea84.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/a5ef829cffb2353fb09522934d10fcf5.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/d019db71da5e81158b5014c3ac6aea84.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/7.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -10618,7 +10646,7 @@
  <producer id="producer269" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/a5ef829cffb2353fb09522934d10fcf5.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/d019db71da5e81158b5014c3ac6aea84.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -10654,8 +10682,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">17</property>
-  <property name="kdenlive:file_size">105305</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/a5ef829cffb2353fb09522934d10fcf5.mkv</property>
+  <property name="kdenlive:file_size">107400</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/d019db71da5e81158b5014c3ac6aea84.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/7.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -10719,7 +10747,7 @@
     }
 ]
 </property>
-  <property name="kdenlive:file_hash">a5ef829cffb2353fb09522934d10fcf5</property>
+  <property name="kdenlive:file_hash">d019db71da5e81158b5014c3ac6aea84</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -10737,7 +10765,7 @@
  <producer id="producer270" in="00:00:00.000" out="00:00:04.983">
   <property name="length">300</property>
   <property name="eof">pause</property>
-  <property name="resource">0.200000:/home/xiaoxiae/.cache/kdenlive/proxy/7e571bbff82af06057ad50092f544a43.mkv</property>
+  <property name="resource">0.200000:/home/xiaoxiae/.cache/kdenlive/proxy/7c309e082dae9cb3c39390dfc374ac0c.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -10769,9 +10797,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.2</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/7e571bbff82af06057ad50092f544a43.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/7c309e082dae9cb3c39390dfc374ac0c.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/7e571bbff82af06057ad50092f544a43.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/7c309e082dae9cb3c39390dfc374ac0c.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/8.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -10791,7 +10819,7 @@
  <producer id="producer271" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/7e571bbff82af06057ad50092f544a43.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/7c309e082dae9cb3c39390dfc374ac0c.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -10827,8 +10855,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">19</property>
-  <property name="kdenlive:file_size">246094</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/7e571bbff82af06057ad50092f544a43.mkv</property>
+  <property name="kdenlive:file_size">242222</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/7c309e082dae9cb3c39390dfc374ac0c.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/8.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -10884,7 +10912,7 @@
   <property name="kdenlive:original.kdenlive:file_size">246094</property>
   <property name="kdenlive:original.kdenlive:file_hash">7e571bbff82af06057ad50092f544a43</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">7e571bbff82af06057ad50092f544a43</property>
+  <property name="kdenlive:file_hash">7c309e082dae9cb3c39390dfc374ac0c</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -10902,7 +10930,7 @@
  <producer id="producer272" in="00:00:00.000" out="00:00:00.483">
   <property name="length">30</property>
   <property name="eof">pause</property>
-  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -10934,9 +10962,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">2</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/9.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -10956,7 +10984,7 @@
  <producer id="producer273" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/1a1932df4ed0e1e225731efeed2187b6.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/77c8ab9239a5199c18a61be8f9469991.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -10992,8 +11020,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">7</property>
-  <property name="kdenlive:file_size">177605</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/1a1932df4ed0e1e225731efeed2187b6.mkv</property>
+  <property name="kdenlive:file_size">181371</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/77c8ab9239a5199c18a61be8f9469991.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/10.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -11049,7 +11077,7 @@
   <property name="kdenlive:original.kdenlive:file_size">177605</property>
   <property name="kdenlive:original.kdenlive:file_hash">1a1932df4ed0e1e225731efeed2187b6</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">1a1932df4ed0e1e225731efeed2187b6</property>
+  <property name="kdenlive:file_hash">77c8ab9239a5199c18a61be8f9469991</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -11067,7 +11095,7 @@
  <producer id="producer274" in="00:00:00.000" out="00:00:00.483">
   <property name="length">30</property>
   <property name="eof">pause</property>
-  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -11099,9 +11127,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">2</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/11.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -11111,7 +11139,7 @@
  <producer id="producer275" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/488f4e575975a334d875f814912b1ac0.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/3d837a2ec1dda3dcb6d2e3c1b9888ba7.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -11147,8 +11175,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">9</property>
-  <property name="kdenlive:file_size">248180</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/488f4e575975a334d875f814912b1ac0.mkv</property>
+  <property name="kdenlive:file_size">249398</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/3d837a2ec1dda3dcb6d2e3c1b9888ba7.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/12.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -11204,7 +11232,7 @@
   <property name="kdenlive:original.kdenlive:file_size">248180</property>
   <property name="kdenlive:original.kdenlive:file_hash">488f4e575975a334d875f814912b1ac0</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">488f4e575975a334d875f814912b1ac0</property>
+  <property name="kdenlive:file_hash">3d837a2ec1dda3dcb6d2e3c1b9888ba7</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -11222,7 +11250,7 @@
  <producer id="producer276" in="00:00:00.000" out="00:00:01.733">
   <property name="length">105</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/81e0da60a88621e3753be6841989b7bf.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/685d6cd27fdb6a7f7feb340dafd480c7.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -11258,8 +11286,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">10</property>
-  <property name="kdenlive:file_size">595466</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/81e0da60a88621e3753be6841989b7bf.mkv</property>
+  <property name="kdenlive:file_size">594770</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/685d6cd27fdb6a7f7feb340dafd480c7.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/13.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -11315,7 +11343,7 @@
   <property name="kdenlive:original.kdenlive:file_size">595466</property>
   <property name="kdenlive:original.kdenlive:file_hash">81e0da60a88621e3753be6841989b7bf</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">81e0da60a88621e3753be6841989b7bf</property>
+  <property name="kdenlive:file_hash">685d6cd27fdb6a7f7feb340dafd480c7</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -11333,7 +11361,7 @@
  <producer id="producer277" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/4b4eea2842d35116db06caa29c38b231.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/b5a18906ece0fe3ed131bd2c42e6dda6.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -11369,8 +11397,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">11</property>
-  <property name="kdenlive:file_size">268765</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4b4eea2842d35116db06caa29c38b231.mkv</property>
+  <property name="kdenlive:file_size">268694</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/b5a18906ece0fe3ed131bd2c42e6dda6.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/14.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -11426,7 +11454,7 @@
   <property name="kdenlive:original.kdenlive:file_size">268765</property>
   <property name="kdenlive:original.kdenlive:file_hash">4b4eea2842d35116db06caa29c38b231</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">4b4eea2842d35116db06caa29c38b231</property>
+  <property name="kdenlive:file_hash">b5a18906ece0fe3ed131bd2c42e6dda6</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -11458,7 +11486,7 @@
    <property name="kdenlive:id">14</property>
   </entry>
   <blank length="00:00:05.100"/>
-  <entry producer="producer266" in="00:00:00.000" out="00:00:05.183">
+  <entry producer="producer266" in="00:00:00.000" out="00:00:05.067">
    <property name="kdenlive:id">16</property>
    <filter id="filter8">
     <property name="frame">0</property>
@@ -11472,7 +11500,7 @@
   <entry producer="producer267" in="00:00:00.000" out="00:00:00.983">
    <property name="kdenlive:id">16</property>
   </entry>
-  <entry producer="producer268" in="00:00:00.000" out="00:00:01.850">
+  <entry producer="producer268" in="00:00:00.000" out="00:00:01.683">
    <property name="kdenlive:id">17</property>
    <filter id="filter9">
     <property name="frame">0</property>
@@ -11486,7 +11514,7 @@
   <entry producer="producer269" in="00:00:00.000" out="00:00:00.983">
    <property name="kdenlive:id">17</property>
   </entry>
-  <entry producer="producer270" in="00:00:00.000" out="00:00:03.033">
+  <entry producer="producer270" in="00:00:00.000" out="00:00:03.317">
    <property name="kdenlive:id">19</property>
    <filter id="filter10">
     <property name="frame">0</property>
@@ -11530,11 +11558,11 @@
   <entry producer="producer275" in="00:00:00.000" out="00:00:00.983">
    <property name="kdenlive:id">9</property>
   </entry>
-  <blank length="00:00:05.867"/>
+  <blank length="00:00:05.417"/>
   <entry producer="producer276" in="00:00:00.000" out="00:00:01.733">
    <property name="kdenlive:id">10</property>
   </entry>
-  <blank length="00:00:07.167"/>
+  <blank length="00:00:07.617"/>
   <entry producer="producer277" in="00:00:00.000" out="00:00:00.983">
    <property name="kdenlive:id">11</property>
   </entry>
@@ -11663,7 +11691,7 @@
  <producer id="producer279" in="00:00:00.000" out="00:00:17.483">
   <property name="length">1050</property>
   <property name="eof">pause</property>
-  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/eb9d0e5bf0ea9a77bbb7776fed1462bd.mkv</property>
+  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/695d4306b48eaf03c176a5064fb0a496.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -11695,9 +11723,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.1</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/eb9d0e5bf0ea9a77bbb7776fed1462bd.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/695d4306b48eaf03c176a5064fb0a496.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/eb9d0e5bf0ea9a77bbb7776fed1462bd.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/695d4306b48eaf03c176a5064fb0a496.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/3.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -11717,7 +11745,7 @@
  <producer id="producer280" in="00:00:00.000" out="00:00:02.983">
   <property name="length">180</property>
   <property name="eof">pause</property>
-  <property name="resource">0.500000:/home/xiaoxiae/.cache/kdenlive/proxy/3e7606f1125d60f98e1b317cb1cdfb3e.mkv</property>
+  <property name="resource">0.500000:/home/xiaoxiae/.cache/kdenlive/proxy/4d22d89945bd727c8c39259ea1b14d0e.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -11749,9 +11777,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.5</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/3e7606f1125d60f98e1b317cb1cdfb3e.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/4d22d89945bd727c8c39259ea1b14d0e.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/3e7606f1125d60f98e1b317cb1cdfb3e.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4d22d89945bd727c8c39259ea1b14d0e.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/4.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -11771,7 +11799,7 @@
  <producer id="producer281" in="00:00:00.000" out="00:00:04.983">
   <property name="length">300</property>
   <property name="eof">pause</property>
-  <property name="resource">0.300000:/home/xiaoxiae/.cache/kdenlive/proxy/0e2252fd226443696d8a5f3ce1e5fc5b.mkv</property>
+  <property name="resource">0.300000:/home/xiaoxiae/.cache/kdenlive/proxy/c9eb4cfc599b0ae4c62ed5f5d3350177.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -11803,9 +11831,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.3</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/0e2252fd226443696d8a5f3ce1e5fc5b.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/c9eb4cfc599b0ae4c62ed5f5d3350177.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/0e2252fd226443696d8a5f3ce1e5fc5b.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/c9eb4cfc599b0ae4c62ed5f5d3350177.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/5.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -11825,7 +11853,7 @@
  <producer id="producer282" in="00:00:00.000" out="00:00:01.483">
   <property name="length">90</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/0e2252fd226443696d8a5f3ce1e5fc5b.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/c9eb4cfc599b0ae4c62ed5f5d3350177.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -11861,8 +11889,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">5</property>
   <property name="kdenlive:id">15</property>
-  <property name="kdenlive:file_size">784619</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/0e2252fd226443696d8a5f3ce1e5fc5b.mkv</property>
+  <property name="kdenlive:file_size">725948</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/c9eb4cfc599b0ae4c62ed5f5d3350177.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/5.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -11918,7 +11946,7 @@
   <property name="kdenlive:original.kdenlive:file_size">779743</property>
   <property name="kdenlive:original.kdenlive:file_hash">c96ca6538f13bbeec3e8daee0e503fb8</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">0e2252fd226443696d8a5f3ce1e5fc5b</property>
+  <property name="kdenlive:file_hash">c9eb4cfc599b0ae4c62ed5f5d3350177</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -11936,7 +11964,7 @@
  <producer id="producer283" in="00:00:00.000" out="00:00:00.483">
   <property name="length">30</property>
   <property name="eof">pause</property>
-  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -11968,9 +11996,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">2</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/a4e21c6b966cb0c8b74723c1f1ed57c4.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/d79a8bd0cd9125d90b74d4f882060bb9.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/9.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -11990,7 +12018,7 @@
  <producer id="producer284" in="00:00:00.000" out="00:00:00.483">
   <property name="length">30</property>
   <property name="eof">pause</property>
-  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="resource">2.000000:/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -12022,19 +12050,29 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">2</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/1f1b7efe38fa7e8601cb38cd3ee2acf3.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4a009cf2077928ee8ec0ed403d943072.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/11.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
   <property name="kdenlive:id">8</property>
   <property name="warp_pitch">0</property>
+  <property name="meta.media.frame_rate_num">60</property>
+  <property name="meta.media.frame_rate_den">1</property>
+  <property name="meta.media.colorspace">601</property>
+  <property name="meta.media.color_trc">2</property>
+  <property name="meta.media.has_b_frames">0</property>
+  <property name="meta.media.width">640</property>
+  <property name="meta.media.height">1138</property>
+  <property name="meta.media.color_range">full</property>
+  <property name="meta.media.top_field_first">0</property>
+  <property name="meta.media.progressive">1</property>
  </producer>
  <producer id="producer285" in="00:00:00.000" out="00:00:17.483">
   <property name="length">1050</property>
   <property name="eof">pause</property>
-  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/81e0da60a88621e3753be6841989b7bf.mkv</property>
+  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/685d6cd27fdb6a7f7feb340dafd480c7.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -12066,19 +12104,29 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.1</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/81e0da60a88621e3753be6841989b7bf.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/685d6cd27fdb6a7f7feb340dafd480c7.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/81e0da60a88621e3753be6841989b7bf.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/685d6cd27fdb6a7f7feb340dafd480c7.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/13.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
   <property name="kdenlive:id">10</property>
   <property name="warp_pitch">0</property>
+  <property name="meta.media.frame_rate_num">60</property>
+  <property name="meta.media.frame_rate_den">1</property>
+  <property name="meta.media.colorspace">601</property>
+  <property name="meta.media.color_trc">2</property>
+  <property name="meta.media.has_b_frames">0</property>
+  <property name="meta.media.width">640</property>
+  <property name="meta.media.height">1138</property>
+  <property name="meta.media.color_range">full</property>
+  <property name="meta.media.top_field_first">0</property>
+  <property name="meta.media.progressive">1</property>
  </producer>
  <producer id="producer286" in="00:00:00.000" out="00:00:09.983">
   <property name="length">600</property>
   <property name="eof">pause</property>
-  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/4b4eea2842d35116db06caa29c38b231.mkv</property>
+  <property name="resource">0.100000:/home/xiaoxiae/.cache/kdenlive/proxy/b5a18906ece0fe3ed131bd2c42e6dda6.mkv</property>
   <property name="aspect_ratio">1</property>
   <property name="meta.media.nb_streams">1</property>
   <property name="meta.media.0.stream.type">video</property>
@@ -12110,9 +12158,9 @@
   <property name="video_index">0</property>
   <property name="mute_on_pause">1</property>
   <property name="warp_speed">0.1</property>
-  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/4b4eea2842d35116db06caa29c38b231.mkv</property>
+  <property name="warp_resource">/home/xiaoxiae/.cache/kdenlive/proxy/b5a18906ece0fe3ed131bd2c42e6dda6.mkv</property>
   <property name="mlt_service">timewarp</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/4b4eea2842d35116db06caa29c38b231.mkv</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/b5a18906ece0fe3ed131bd2c42e6dda6.mkv</property>
   <property name="kdenlive:originalurl">video/Introo/14.mp4</property>
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
@@ -12126,6 +12174,8 @@
   <property name="meta.media.width">640</property>
   <property name="meta.media.height">1138</property>
   <property name="meta.media.color_range">full</property>
+  <property name="meta.media.top_field_first">0</property>
+  <property name="meta.media.progressive">1</property>
  </producer>
  <playlist id="playlist6">
   <blank length="00:00:02.000"/>
@@ -12187,7 +12237,7 @@
    <property name="kdenlive:id">8</property>
   </entry>
   <blank length="00:00:01.000"/>
-  <entry producer="producer285" in="00:00:00.000" out="00:00:05.850">
+  <entry producer="producer285" in="00:00:00.000" out="00:00:05.400">
    <property name="kdenlive:id">10</property>
    <filter id="filter17">
     <property name="frame">0</property>
@@ -12199,7 +12249,7 @@
    </filter>
   </entry>
   <blank length="00:00:01.750"/>
-  <entry producer="producer286" in="00:00:00.000" out="00:00:07.150">
+  <entry producer="producer286" in="00:00:00.000" out="00:00:07.600">
    <property name="kdenlive:id">11</property>
    <filter id="filter18">
     <property name="frame">0</property>
@@ -12207,6 +12257,7 @@
     <property name="freeze_before">0</property>
     <property name="mlt_service">freeze</property>
     <property name="kdenlive_id">freeze</property>
+    <property name="kdenlive:collapsed">0</property>
    </filter>
   </entry>
  </playlist>
@@ -12220,10 +12271,10 @@
   <track hide="audio" producer="playlist6"/>
   <track hide="audio" producer="playlist7"/>
  </tractor>
- <producer id="producer287" in="00:00:00.000" out="00:00:05.183">
-  <property name="length">312</property>
+ <producer id="producer287" in="00:00:00.000" out="00:00:05.067">
+  <property name="length">305</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/cf0e2f25d22dd650cb777553026e8d8d.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/b3d40459298c287e3361889e2c0d8169.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -12244,7 +12295,7 @@
   <property name="meta.attr.0.stream.HANDLER_NAME.markup">VideoHandler</property>
   <property name="meta.attr.0.stream.VENDOR_ID.markup">[0][0][0][0]</property>
   <property name="meta.attr.0.stream.ENCODER.markup">Lavc59.37.100 mjpeg</property>
-  <property name="meta.attr.0.stream.DURATION.markup">00:00:05.200000000</property>
+  <property name="meta.attr.0.stream.DURATION.markup">00:00:05.084000000</property>
   <property name="meta.attr.COMMENT.markup">Rendered with Manim Community v0.17.2</property>
   <property name="meta.attr.MAJOR_BRAND.markup">isom</property>
   <property name="meta.attr.MINOR_VERSION.markup">512</property>
@@ -12259,8 +12310,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">22</property>
-  <property name="kdenlive:file_size">2528158</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/cf0e2f25d22dd650cb777553026e8d8d.mkv</property>
+  <property name="kdenlive:file_size">2475864</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/b3d40459298c287e3361889e2c0d8169.mkv</property>
   <property name="kdenlive:originalurl">video/TP/1.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -12316,7 +12367,7 @@
   <property name="kdenlive:original.kdenlive:file_size">496674</property>
   <property name="kdenlive:original.kdenlive:file_hash">10c27a93ec8ae839b8120c738298f9b3</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">cf0e2f25d22dd650cb777553026e8d8d</property>
+  <property name="kdenlive:file_hash">b3d40459298c287e3361889e2c0d8169</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -12334,7 +12385,7 @@
  <producer id="producer288" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/8ffebd691a9ba0acd2ef3c06235f76c0.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/67561c055e3babafa8d4155569f18617.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -12370,8 +12421,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">23</property>
-  <property name="kdenlive:file_size">514735</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/8ffebd691a9ba0acd2ef3c06235f76c0.mkv</property>
+  <property name="kdenlive:file_size">514446</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/67561c055e3babafa8d4155569f18617.mkv</property>
   <property name="kdenlive:originalurl">video/TP/2.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -12427,7 +12478,7 @@
   <property name="kdenlive:original.kdenlive:file_size">514076</property>
   <property name="kdenlive:original.kdenlive:file_hash">579f36ee9bf98b42fd40a20d927b2a81</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">8ffebd691a9ba0acd2ef3c06235f76c0</property>
+  <property name="kdenlive:file_hash">67561c055e3babafa8d4155569f18617</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -12442,10 +12493,10 @@
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
  </producer>
- <producer id="producer289" in="00:00:00.000" out="00:00:01.850">
-  <property name="length">112</property>
+ <producer id="producer289" in="00:00:00.000" out="00:00:01.683">
+  <property name="length">102</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/6fb45c9db765a24191029439687a3425.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/723df456c0c782e09240f6d5296e3441.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -12466,7 +12517,7 @@
   <property name="meta.attr.0.stream.HANDLER_NAME.markup">VideoHandler</property>
   <property name="meta.attr.0.stream.VENDOR_ID.markup">[0][0][0][0]</property>
   <property name="meta.attr.0.stream.ENCODER.markup">Lavc59.37.100 mjpeg</property>
-  <property name="meta.attr.0.stream.DURATION.markup">00:00:01.867000000</property>
+  <property name="meta.attr.0.stream.DURATION.markup">00:00:01.700000000</property>
   <property name="meta.attr.COMMENT.markup">Rendered with Manim Community v0.17.2</property>
   <property name="meta.attr.MAJOR_BRAND.markup">isom</property>
   <property name="meta.attr.MINOR_VERSION.markup">512</property>
@@ -12481,8 +12532,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">24</property>
-  <property name="kdenlive:file_size">935567</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/6fb45c9db765a24191029439687a3425.mkv</property>
+  <property name="kdenlive:file_size">848645</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/723df456c0c782e09240f6d5296e3441.mkv</property>
   <property name="kdenlive:originalurl">video/TP/3.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -12538,7 +12589,7 @@
   <property name="kdenlive:original.kdenlive:file_size">533199</property>
   <property name="kdenlive:original.kdenlive:file_hash">53b2b8def3a6a585e84421e046f51da1</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">6fb45c9db765a24191029439687a3425</property>
+  <property name="kdenlive:file_hash">723df456c0c782e09240f6d5296e3441</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -12556,7 +12607,7 @@
  <producer id="producer290" in="00:00:00.000" out="00:00:00.983">
   <property name="length">60</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/68c5e82431186f0e55304dfa79db850a.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/3df7bad560d5d2a90a153f633166c986.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -12592,8 +12643,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">25</property>
-  <property name="kdenlive:file_size">569636</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/68c5e82431186f0e55304dfa79db850a.mkv</property>
+  <property name="kdenlive:file_size">559125</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/3df7bad560d5d2a90a153f633166c986.mkv</property>
   <property name="kdenlive:originalurl">video/TP/4.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -12649,7 +12700,7 @@
   <property name="kdenlive:original.kdenlive:file_size">554649</property>
   <property name="kdenlive:original.kdenlive:file_hash">6074a5e97bfee849382484b32c3391da</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">68c5e82431186f0e55304dfa79db850a</property>
+  <property name="kdenlive:file_hash">3df7bad560d5d2a90a153f633166c986</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -12664,10 +12715,10 @@
   <property name="set.test_audio">1</property>
   <property name="set.test_image">0</property>
  </producer>
- <producer id="producer291" in="00:00:00.000" out="00:00:02.750">
-  <property name="length">166</property>
+ <producer id="producer291" in="00:00:00.000" out="00:00:03.317">
+  <property name="length">200</property>
   <property name="eof">pause</property>
-  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/ff46a7f737e441fa7773d42d7219ed3b.mkv</property>
+  <property name="resource">/home/xiaoxiae/.cache/kdenlive/proxy/2f37dadb24f0d084eb297fea3b6fbdca.mkv</property>
   <property name="audio_index">-1</property>
   <property name="video_index">0</property>
   <property name="mute_on_pause">0</property>
@@ -12688,7 +12739,7 @@
   <property name="meta.attr.0.stream.HANDLER_NAME.markup">VideoHandler</property>
   <property name="meta.attr.0.stream.VENDOR_ID.markup">[0][0][0][0]</property>
   <property name="meta.attr.0.stream.ENCODER.markup">Lavc59.37.100 mjpeg</property>
-  <property name="meta.attr.0.stream.DURATION.markup">00:00:02.767000000</property>
+  <property name="meta.attr.0.stream.DURATION.markup">00:00:03.334000000</property>
   <property name="meta.attr.COMMENT.markup">Rendered with Manim Community v0.17.2</property>
   <property name="meta.attr.MAJOR_BRAND.markup">isom</property>
   <property name="meta.attr.MINOR_VERSION.markup">512</property>
@@ -12703,8 +12754,8 @@
   <property name="kdenlive:clip_type">2</property>
   <property name="kdenlive:folderid">20</property>
   <property name="kdenlive:id">28</property>
-  <property name="kdenlive:file_size">1516175</property>
-  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/ff46a7f737e441fa7773d42d7219ed3b.mkv</property>
+  <property name="kdenlive:file_size">1814376</property>
+  <property name="kdenlive:proxy">/home/xiaoxiae/.cache/kdenlive/proxy/2f37dadb24f0d084eb297fea3b6fbdca.mkv</property>
   <property name="kdenlive:originalurl">video/TP/5.mp4</property>
   <property name="kdenlive:original.mlt_type">producer</property>
   <property name="kdenlive:original.in">0</property>
@@ -12760,7 +12811,7 @@
   <property name="kdenlive:original.kdenlive:file_size">543124</property>
   <property name="kdenlive:original.kdenlive:file_hash">0dbc9ad84fb8aa41da81ec21658b0bce</property>
   <property name="kdenlive:original.backup">1</property>
-  <property name="kdenlive:file_hash">ff46a7f737e441fa7773d42d7219ed3b</property>
+  <property name="kdenlive:file_hash">2f37dadb24f0d084eb297fea3b6fbdca</property>
   <property name="xml">was here</property>
   <property name="meta.media.frame_rate_num">60</property>
   <property name="meta.media.frame_rate_den">1</property>
@@ -12777,7 +12828,7 @@
  </producer>
  <playlist id="playlist8">
   <blank length="00:00:25.617"/>
-  <entry producer="producer287" in="00:00:00.000" out="00:00:05.183">
+  <entry producer="producer287" in="00:00:00.000" out="00:00:05.067">
    <property name="kdenlive:id">22</property>
    <filter id="filter19">
     <property name="mlt_service">crop</property>
@@ -12835,7 +12886,7 @@
     <property name="kdenlive:collapsed">0</property>
    </filter>
   </entry>
-  <entry producer="producer289" in="00:00:00.000" out="00:00:01.850">
+  <entry producer="producer289" in="00:00:00.000" out="00:00:01.683">
    <property name="kdenlive:id">24</property>
    <filter id="filter24">
     <property name="mlt_service">crop</property>
@@ -12885,7 +12936,7 @@
     <property name="kdenlive:collapsed">0</property>
    </filter>
   </entry>
-  <entry producer="producer291" in="00:00:00.000" out="00:00:02.750">
+  <entry producer="producer291" in="00:00:00.000" out="00:00:03.317">
    <property name="kdenlive:id">28</property>
    <filter id="filter28">
     <property name="mlt_service">crop</property>
@@ -12909,18 +12960,18 @@
     <property name="distort">0</property>
     <property name="kdenlive:collapsed">0</property>
    </filter>
-   <filter id="filter30" in="00:00:01.767" out="00:00:02.767">
+   <filter id="filter30" in="00:00:02.817" out="00:00:03.317">
     <property name="start">1</property>
     <property name="level">1</property>
     <property name="mlt_service">brightness</property>
     <property name="kdenlive_id">fade_to_black</property>
-    <property name="alpha">00:00:00.000=1;00:00:01.000=0</property>
+    <property name="alpha">00:00:00.000=1;00:00:00.500=0</property>
     <property name="kdenlive:collapsed">0</property>
    </filter>
   </entry>
  </playlist>
  <playlist id="playlist9"/>
- <tractor id="tractor4" in="00:00:00.000" out="00:00:37.433">
+ <tractor id="tractor4" in="00:00:00.000" out="00:00:37.717">
   <property name="kdenlive:trackheight">67</property>
   <property name="kdenlive:timeline_active">1</property>
   <property name="kdenlive:collapsed">0</property>
@@ -12992,6 +13043,12 @@
    <property name="mlt_service">panner</property>
    <property name="internal_added">237</property>
    <property name="start">0.5</property>
+   <property name="disable">1</property>
+  </filter>
+  <filter id="filter33">
+   <property name="mlt_service">avfilter.subtitles</property>
+   <property name="internal_added">237</property>
+   <property name="av.filename">/tmp/1675441618084.srt</property>
    <property name="disable">1</property>
   </filter>
  </tractor>

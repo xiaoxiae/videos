@@ -1,0 +1,96 @@
+1
+00:00:00,000 --> 00:00:02,466
+Imagine you’re given n colors and a graph.
+
+2
+00:00:02,466 --> 00:00:05,200
+Your task is to find the number of colorings of vertices
+
+3
+00:00:05,200 --> 00:00:07,783
+such that adjacent vertices have different colors –
+
+4
+00:00:07,783 --> 00:00:08,366
+what would you do?
+
+5
+00:00:09,383 --> 00:00:11,283
+You could try to bruteforce the solution,
+
+6
+00:00:11,283 --> 00:00:12,833
+but that would only work for smaller ns.
+
+7
+00:00:13,933 --> 00:00:17,016
+Instead, we can calculate what is called a chromatic polynomial for this graph.
+
+8
+00:00:17,833 --> 00:00:19,416
+If we plug in n for any x,
+
+9
+00:00:19,416 --> 00:00:20,900
+we get the exact number of colorings.
+
+10
+00:00:21,400 --> 00:00:22,200
+Cool, right?
+
+11
+00:00:23,200 --> 00:00:26,783
+This, however, is just a special case of the much more interesting Tutte polynomial.
+
+12
+00:00:27,550 --> 00:00:30,916
+This two-variate polynomial is fascinating because besides colorings,
+
+13
+00:00:30,916 --> 00:00:33,550
+(x = 1, y = 1) counts the number of spanning trees,
+
+14
+00:00:33,550 --> 00:00:36,166
+(x = 2, y = 0) counts the number of acyclic orientations
+
+15
+00:00:36,166 --> 00:00:37,199
+and much more –
+
+16
+00:00:37,200 --> 00:00:39,516
+it is used for measuring network reliability,
+
+17
+00:00:39,516 --> 00:00:41,300
+for calculating linear codes
+
+18
+00:00:41,300 --> 00:00:42,900
+and even has ties to quantum field theory.
+
+19
+00:00:44,416 --> 00:00:46,333
+If you found this interesting and want to know more
+
+20
+00:00:46,333 --> 00:00:47,916
+(like how to actually calculate it),
+
+21
+00:00:47,916 --> 00:00:49,816
+I’d recommend you check out this neat handbook,
+
+22
+00:00:49,816 --> 00:00:51,466
+written by many experts in the field,
+
+23
+00:00:51,466 --> 00:00:54,516
+which contains a great overview of this polynomial’s many fascinating uses.
+
+24
+00:00:55,600 --> 00:00:57,050
+In any case, thanks for watching!
+

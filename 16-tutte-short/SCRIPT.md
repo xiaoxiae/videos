@@ -1,5 +1,5 @@
 ---
-title: Undirected graphs can't equal a polynomial... right?
+title: Undirected graphs can't equal a polynomial... or can they?
 subtitle: Video Script
 author: Tomáš Sláma
 header-includes:
