@@ -41,15 +41,15 @@ INTRODUCTION
 
 Wow that was a weird dream.
 
-Anyway, in today's video, I'll introduce you to $(a,b)$-trees, which are a more generalized version of binary search trees. <!-- first write a,b tree and then show an actual a,b tree -->
-As you can see, they are no longer binary -- each node has a variable number of keys, depending on the values of $a$ and $b$. <!-- highlight the node and key -->
+Anyway, in today's video, I'll introduce you to $(a,b)$-trees, which are a more generalized version of binary search trees.
+As you can see, they are no longer binary, since certain nodes have more than two children.
 
-Just like binary trees, they are used for storing and quickly locating items based on their keys. <!-- show a binary tree containing the same information -->
-In a binary tree, if you want to find a key (for example 4), you go left if the key in the current node is larger, otherwise you go right, eventually either finding the key or reaching a leaf, at which point you know the key is not present. <!-- show target: 4 and path in the binary tree -->
+Just like binary trees, they are used for quickly storing and locating items based on their keys.
+If you want to find a key (for example 5) in a binary tree, you start in the root and go right if the target is larger than the current node, else you go left, eventually either finding the key or reaching a leaf, at which point you know the key is not present. <!-- show target: 4 and path in the binary tree; the a,b tree should be faded, show target below text -->
 
-For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and you follow the edge between the keys where it should be, again either finding it or getting to a leaf. <!-- show the search in the a,b tree; make it have values 1,2,3,4,5... -->
+For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and you follow the edge between the keys where it should be, again either finding it or getting to a leaf. <!-- same as binary tree -->
 
-$(a,b)$-trees address a number of shortcomings of binary trees, mainly the fact that they can easily become unbalanced -- repeatedly inserting items into a binary tree without other operations can make them lean to one side, rendering all operations significantly slower. <!-- show the imbalance -- keep inserting smaller values -->
+$(a,b)$-trees address a number of shortcomings of binary trees, mainly the fact that they can easily become unbalanced -- repeatedly inserting items into a binary tree without other operations can make them lean to one side, rendering all operations significantly slower. <!-- show the imbalance -- keep inserting larger values -->
 There are a number of ways to address this problem (like the aforementioned AVL trees), but they are not nearly as elegant as $(a,b)$-trees.
 
 So, without further ado, let's dive in.
