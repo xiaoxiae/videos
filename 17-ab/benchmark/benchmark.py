@@ -21,18 +21,18 @@ while i < len(lines):
 
 data = np.array(data)
 
-print(data)
+n = 64
 
 fig, ax = plt.subplots()
-ax.plot(data[:,0], data[:,1], label="Insert")
-ax.plot(data[:,0], data[:,2], label="Search")
-ax.plot(data[:,0], data[:,3], label="Delete")
+ax.plot(data[:,0][:n], data[:,1][:n], label="Insert")
+ax.plot(data[:,0][:n], data[:,2][:n], label="Search")
+ax.plot(data[:,0][:n], data[:,3][:n], label="Delete")
 
 ax.legend()
 
 ax.set_xlabel(r'Value for $a$ (and $b = 2a$)')
-ax.set_xticks(data[:,0])
-ax.set_xticklabels([int(d) for d in data[:,0]])
+ax.set_xticks(data[:,0][:n])
+ax.set_xticklabels([int(d) for d in data[:,0][:n]])
 ax.set_ylabel(r'Average operation time (in $\mu s$)')
 
 plt.gcf().set_size_inches(9, 6)

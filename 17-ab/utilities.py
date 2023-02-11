@@ -2,23 +2,24 @@ from manim import *
 from typing import *
 
 
-BIG_OPACITY = 0.2
+BIG_OPACITY = 0.15
 FAST_RUNTIME = 0.33
 
 
 KEYS_IN_NODE_BUFF = 0.3
 
 
-def _create_node(keys):
+def create_node(keys, fill_background=True):
     # leaf
     if keys is None:
-        keys_vgroup = Dot().set_opacity(0)
+        keys_vgroup = Dot().set_opacity(0).scale(0.8)
 
-        corner_width = 0.0
+        corner_width = 0.01
         lr_buff=0
         ud_buff=0
     else:
-        keys_vgroup = VGroup(*[Tex(str(k)) for k in keys]).arrange(buff=KEYS_IN_NODE_BUFF)
+        keys_vgroup = VGroup(*[Tex(str(k)) for k in keys]).arrange(buff=KEYS_IN_NODE_BUFF)\
+            .set_z_index(2)
 
         corner_width = 0.35
         lr_buff=-0.1
@@ -46,19 +47,20 @@ def _create_node(keys):
                                     down + right,
                                     down + right]).set_z_index(1)
 
+    if fill_background:
+        border.set_opacity(1).set_fill_color(BLACK)
+
     return VGroup(keys_vgroup, border)
 
-
 class ABTree(VMobject):
-
-    def _create_edges(self, node):
+    def _create_edges(self, node, fill_background=True):
         node_keys = self.nodes_to_keys[node]
 
         top = VGroup(*[Dot().scale(0.001)
                        for _ in range(len(node_keys) + 1)])\
                 .arrange(RIGHT, KEYS_IN_NODE_BUFF)\
                 .move_to(node)\
-                .align_to(node, DOWN)
+                .align_to(node, DOWN)\
 
         node_subtree = self.node_subtree_mobjects[node]
 
@@ -75,10 +77,13 @@ class ABTree(VMobject):
     def node_by_index(self, layer: int, position: int):
         return self.layer_mobjects[layer][position]
 
+    def edges_by_node_index(self, layer: int, position: int):
+        return self.node_edges[self.node_by_index(layer, position)]
+
     def subtree_by_index(self, layer: int, position: int):
         return self.node_subtree_mobjects[self.layer_mobjects[layer][position]]
 
-    def __init__(self, a, b, layers: List[List[List[int]]], **kwargs):
+    def __init__(self, layers: List[List[List[int]]], fill_background=True, **kwargs):
         super().__init__(**kwargs)
 
         leafs_layer = []
@@ -86,9 +91,6 @@ class ABTree(VMobject):
             leafs_layer += [None] * (len(node) + 1)
 
         layers.append(leafs_layer)
-
-        self.a = a
-        self.b = b
 
         self.layers = layers
         self.layer_mobjects = VGroup()
@@ -99,7 +101,7 @@ class ABTree(VMobject):
         for layer in layers:
             layer_mobject = VGroup()
             for node in layer:
-                node_mobject = _create_node(node)
+                node_mobject = create_node(node, fill_background)
 
                 self.nodes_to_keys[node_mobject] = node
                 layer_mobject.add(node_mobject)
@@ -146,10 +148,13 @@ class ABTree(VMobject):
 
         self.node_edges = {}
         self.edges = VGroup()
+        self.nodes = list(self.nodes_to_keys)
 
-        self.node_mobjects = list(self.nodes_to_keys)
+        self.leafs = VGroup()
+        for leaf in self.layer_mobjects[-1]:
+            self.leafs.add(leaf)
 
-        for node in self.node_mobjects:
+        for node in self.nodes:
             if self.nodes_to_keys[node] is None:
                 self.node_edges[node] = None
                 continue
@@ -161,3 +166,10 @@ class ABTree(VMobject):
 
         self.add(self.layer_mobjects)
         self.add(self.edges)
+
+
+def get_fade_rect(*args, opacity=1 - BIG_OPACITY, z_index=100):
+    if len(args) == 0:
+        return Square(fill_opacity=opacity, color=BLACK).scale(1000).set_z_index(z_index)
+    else:
+        return SurroundingRectangle(VGroup(*args), fill_opacity=opacity, color=BLACK).set_z_index(z_index)

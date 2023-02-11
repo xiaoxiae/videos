@@ -1721,9 +1721,22 @@ class Thumbnail(MovingCameraScene):
         for i in [1, 3, 5, 7, 11, 13, 15]:
             formula[0][i].set_color(GREEN)
 
+        opacity = 0.2
+
         self.add(formula, a, c)
         a.next_to(formula, UP, buff=0.7).align_to(formula, LEFT)
         c.next_to(formula, DOWN, buff=0.5).align_to(formula, RIGHT)
 
+        lp = Tex(r"\Large LP-SAT").scale(1.5).set_opacity(opacity)\
+                .move_to(formula).align_to(formula, RIGHT).shift(UP * 2.5)
+        lp[0][0:3].set_color(RED)
+        rand = Tex(r"\Large RAND-SAT").scale(1.5).set_opacity(opacity)\
+                .move_to(formula).align_to(formula, LEFT).shift(DOWN * 2.5)
+        rand[0][0:5].set_color(RED)
+
+        a1 = Arrow(ORIGIN, UP * 1.5).scale(0.8).next_to(rand, UP, buff=0.4).set_opacity(opacity)
+        a2 = Arrow(ORIGIN, DOWN * 1.5).scale(0.8).next_to(lp, DOWN, buff=0.4).set_opacity(opacity)
+
+        self.add(lp, rand, a1, a2)
 
         self.wait()
