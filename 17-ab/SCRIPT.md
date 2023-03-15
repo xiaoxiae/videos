@@ -10,6 +10,12 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
+<!--
+TODO: dark gray -> darker gray
+TODO: target fadeins vs writes (fadeins better?)
+-->
+
+
 
 ---
 FEVER DREAM
@@ -47,10 +53,10 @@ If we want to find a key (for example 5) in a binary tree, we start in the root 
 In this case, the key is found.
 However, if we tried the same with a key that isn't in the tree, we soon reach a leaf, at which point we know the key is not present.
 
-For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and we follow the edge between the keys where it should be, again either finding it or getting to a leaf. <!-- again animate getting to a leaf -->
+For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and we follow the edge where it should be, again either finding it or getting to a leaf. <!-- again animate getting to a leaf -->
 
 $(a,b)$-trees address a number of shortcomings of binary trees, mainly the fact that they can easily become unbalanced -- repeatedly inserting items into a binary tree without other operations can make them lean to one side, rendering all operations significantly slower.
-There are a number of ways to address this problem (like AVL trees or R&B trees), but they are not nearly as elegant as $(a,b)$-trees. <!-- show -->
+There are a number of ways to address this problem (like AVL trees or R&B trees), but they are not nearly as elegant as $(a,b)$-trees.
 
 So, without further ado, let's dive in.
 
@@ -65,16 +71,16 @@ This is an $(a,b)$-tree.
 It is made up of nodes, which contain keys that are always sorted from left to right.
 The only exception are the leafs, which don't contain any keys.
 
-Each key separates two subtrees, the left one having keys that are less than it and the right one having keys that are greater than it.
+Each key separates two subtrees, the left one having smaller keys and the right one having larger.
 
-The parameters $a$ and $b$ denote the number of children each non-leaf node can have.
+The parameters $a$ and $b$ denote the number of children each non-leaf node can have, with $a$ being the minimum and $b$ the maximum.
 This is therefore a $(2,4)$-tree, since each node has between $2$ and $4$ children.
-There is one exception, which is the root -- while other nodes can have between $a$ and $b$ children, the root can have between $2$ and $b$ children, otherwise building $(a,b)$-trees containing certain numbers of keys wouldn't be possible.
+There is one exception, which is the root -- while other nodes can have between $a$ and $b$ children, the root can have between $2$ and $b$ children, otherwise building $(a,b)$-trees with certain numbers of keys wouldn't be possible.
 
-To keep the operations on the tree fast, there are some things the tree must satisfy at all times, the first being that all leafs to be in the same depth -- this forces the tree to have logarithmic depth (in the number of keys).
-Feel free to pause here and prove this yourself as a sanity check.
+To keep the operations on the tree fast, there are some things the tree must satisfy at all times.
+Firstly, all leafs must be on the same layer, which forces the tree to have logarithmic depth.
 
-The second condition is that $a \ge 2$ and $b \ge 2a - 1$.
+Secondly, $a \ge 2$ and $b \ge 2a - 1$.
 The limit on $a$ is intuitive, since we don't want the tree to have nodes with 0 keys (other than leafs).
 The limit on $b$ is a little more cryptic, but will make sense when we start looking into the tree's operations.
 
@@ -91,36 +97,46 @@ SEARCH
 
 \marginpar{\texttt{Search}}
 
+<!-- TODO: case one: present, case two, not present -->
+
 Let's start with the simplest operation, searching.
 We've already seen an example, but let's cover it more formally.
 
-To search for a key, we start in the root and do the following:
+To search for a key, we start in the root and do the following: first, find where in the current node the key should be:
+- if it's not there (as in this case), go to the subtree where it should be and repeat the process <!-- TODO: ORANGE color? -->
+- on the other hand, if it's there, we're done!
 
-- first, find where in the current node the key should be (using either normal or binary search):
-	- if it's there, we're done!
-	- if it's not there, go to the subtree where it should be and repeat
-
-Eventually, we'll either find it, or arrive in a leaf, at which point we know it's not present in the tree.
-
-Since we visited each layer at most once, the operation runs in time $\mathcal{O}(\log n)$.
+Let's see what happens when we search for a key that isn't in the tree.
+Again, we repeat the steps... ending up in a leaf with nowhere else to go, so we know with absolute certainty that the key is not present.
 
 
 ---
 INSERTION
 ---
 
-Let's now try to insert a key.
+\marginpar{\texttt{Insertion}}
 
-Assuming that the key is not present, we'll run search and end up in one of the tree's leafs.
-Then we simply insert the key to the leaf's parent node, creating a new leaf in the process.
+Since just searching for keys is boring, let's try to insert one.
 
-Now it might seem like we're be done, but remember that a node can have at most $b$ children.
-If this is still the case then great, we're actually done.
-Otherwise, we split the node in two (down the middle) and, since this adds a new child to the node above, we move the middle key up.
-Since this might make the node above break the condition, we have to repeat the process until we reach the root.
+Assuming that the key is not present, we'll run search and end up in one of the tree's leafs. <!-- TODO: again red color, just like previously -->
+Then we simply insert the key into the leaf's parent node, creating a new leaf in the process.
 
-This is where the cryptic $b \ge 2a - 1$ condition comes in handy, since splitting the node down the middle and removing one key makes the sides have at least $\lfloor b / 2 \rfloor$ nodes, which the condition ensures is at least $a$.
-Also, if we happen to split the root node, we'll have to create a new root node that will have two children, which we can only do because the root node can have between $2$ and $b$ children.
+Now it might seem like we're be done, but remember that a node can have at most $b$ children, which this node doesn't satisfy.
+
+Pause here and try to solve this problem; chances are the first thing you think of is the correct solution.
+
+That's right, the answer is violence!
+We split the node down the middle, moving one key up to accomodate for the newly created node.
+This might make the node above break the condition (which luckily hasn't happened here), so we have to repeat the process until there are no more broken nodes. <!-- highlight the top node -->
+
+Let's insert a few more values to better illustrate what the operation does to the tree.
+
+Notice here that splitting the root node is a somewhat special case since it creates a new root node.
+
+While all this seems sensible, what we've done here is only possible thanks to our carefuly selected conditions:
+
+The first is tha $b \ge 2a - 1$, since removing a key and splitting a node down the middle makes the sides have at least $\lfloor (b + 1 - 1) / 2 \rfloor$ nodes, which the condition ensures is at least $a$
+The second is the root can have $2$ or more children, which happens when it's split.
 
 
 ---
