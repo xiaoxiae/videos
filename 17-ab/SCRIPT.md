@@ -118,24 +118,26 @@ INSERTION
 
 Since just searching for keys is boring, let's try to insert one.
 
-Assuming that the key is not present, we'll run search and end up in one of the tree's leafs. <!-- TODO: again red color, just like previously -->
+Assuming that it's not present, we'll run search and end up in one of the tree's leafs.
 Then we simply insert the key into the leaf's parent node, creating a new leaf in the process.
 
-Now it might seem like we're be done, but remember that a node can have at most $b$ children, which this node doesn't satisfy.
+Now it might seem like we're be done, but remember that a node can have at most $b$ children, which this node now doesn't satisfy.
 
 Pause here and try to solve this problem; chances are the first thing you think of is the correct solution.
 
-That's right, the answer is violence!
+That's right, the answer is violence! <!-- PG-13 text -->
 We split the node down the middle, moving one key up to accomodate for the newly created node.
 This might make the node above break the condition (which luckily hasn't happened here), so we have to repeat the process until there are no more broken nodes. <!-- highlight the top node -->
 
+<!-- red color when the node breaks the condition -->
 Let's insert a few more values to better illustrate what the operation does to the tree.
 
-Notice here that splitting the root node is a somewhat special case since it creates a new root node.
+As you may have noticed, splitting the root node is a somewhat special case since it creates a new root node.
 
 While all this seems sensible, what we've done here is only possible thanks to our carefuly selected conditions:
 
-The first is tha $b \ge 2a - 1$, since removing a key and splitting a node down the middle makes the sides have at least $\lfloor (b + 1 - 1) / 2 \rfloor$ nodes, which the condition ensures is at least $a$
+<!-- TODO: animate conditions -->
+The first is that $b \ge 2a - 1$, since removing a key and splitting a node down the middle makes the sides have at least $\lfloor (b + 1 - 1) / 2 \rfloor$ nodes, which the condition ensures is at least $a$
 The second is the root can have $2$ or more children, which happens when it's split.
 
 
@@ -147,19 +149,21 @@ As for deletion, it is a little trickier.
 
 Let's assume that the key is present and we run search to find it.
 
-If it's in the second to last layer, we can simply delete it, along with one of its leafs.
-If it's not, we'll use the same trick as when removing a key from a binary tree: we'll replace it with the leftmost key of its right subtree, thus reducing the problem to the previous case.
+If it's in the layer above leafs, we can simply delete it, along with one of its leafs.
+If it's not (when removing the root, for example), we'll use the same trick as when removing a key from a binary tree: we'll replace it with the leftmost key of its right subtree, thus reducing the problem to the previous case.
 If you haven't seen this trick before, feel free to pause here and make sure that this operation makes sense.
+<!-- delete root (but swap with 5) -->
 
 After removing the key, we could again break the condition on the number of children, this time having less than $a$.
-Since the node has at least one other an adjacent node, we can do one of two things to fix our problem:
+Since the node has at least one other adjacent node, we can do one of two things to fix our problem:
 
-- merge the two nodes or
-- steal one of the adjacent node's keys
+- either merge the two nodes or,
+- steal one of the adjacent node's keys (resorting to crime again)
 
 If the neighbouring node has $a$ children, we can't just steal a key, so we'll have to merge.
-This removes a key from the node above, moving it down, which might again break its condition, so we'll have to recursively fix the same problem on the node above.
+This moves a key from the node above, which might again break its condition, so we'll have to recursively fix the same problem on the node above.
 
+<!-- delete -->
 Otherwise, if it has more than $a$ children, we'll just take its key and we're done.
 
 

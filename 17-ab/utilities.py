@@ -249,6 +249,155 @@ class ABTree(VMobject):
     def is_index_leaf(self, layer: int, position: int):
         return layer == len(self.layers) - 1
 
+    def search_but_like_animate(self, target_int: int, scene, scale=1, speedup=1, no_cleanup=False):
+        target = Tex(f"${str(target_int)}$").next_to(self.node_by_index(0, 0), UP).scale(1.2).set_z_index(100)
+        thicc = 6
+
+        self.save_state()
+
+        def get_tmp(keys, index):
+            n = len(keys) + 1
+            tmp = ABTree(
+                [
+                    [keys + [0]],
+                ],
+                fill_background=False,
+            ).scale(scale)
+            tmp.node_by_index(0, 0).move_to(self.node_by_index(*index))
+
+            return tmp
+
+        def get_qs(tmp, keys):
+            n = len(keys) + 1
+            qs = VGroup(*[Tex("?") for _ in range(n)])\
+                    .set_color(GRAY).set_z_index(15).scale(0.9)
+
+            for i in range(n):
+                qs[i].move_to(tmp.node_by_index(0, 0)[0][i])
+
+                if i == 0:
+                    qs[i].align_to(tmp.node_by_index(0, 0)[0][i], LEFT)
+
+                if i == n - 1:
+                    qs[i].align_to(tmp.node_by_index(0, 0)[0][i], RIGHT)
+
+            return qs
+
+        scene.play(
+            FadeIn(target, shift=UP * 0.1),
+        )
+
+        # same code as search
+        current_index = (0, 0)
+        current = self.nodes_to_keys[self.node_by_index(*current_index)]
+
+        while True:
+            tmp = get_tmp(current, current_index)
+            qs = get_qs(tmp, current)
+            n = len(current) + 1
+
+            # save original node shape and positions
+            self.node_by_index(*current_index)[1].save_state()
+            for i in range(n - 1):
+                self.node_by_index(*current_index)[0][i].save_state()
+
+            scene.play(
+                AnimationGroup(
+                    AnimationGroup(
+                        Transform(self.node_by_index(*current_index)[1], tmp.node_by_index(0, 0)[1]),
+                        *[self.node_by_index(*current_index)[0][i].animate.move_to(VGroup(qs[i], qs[i + 1])) for i in range(n - 1)]
+                    ),
+                    FadeIn(qs),
+                    lag_ratio=0.5,
+                ),
+                run_time=1/speedup,
+            )
+
+            for i, e2 in enumerate(current + [float('inf')]):
+                color = BLUE
+                if target_int < e2:
+                    if current_index[0] == len(self.layers) - 2:
+                        color = RED
+                    else:
+                        color = ORANGE
+
+                scene.play(
+                    self.node_by_index(*current_index)[0].animate.set_color(WHITE),
+                    target.animate.move_to(qs[i]).align_to(target, DOWN).set_color(WHITE if color is not RED else RED),
+                    self.edges_by_node_index(*current_index)[i].animate.set_color(color).set_stroke_width(thicc),
+                    qs[i].animate.set_color(color),
+                    run_time=(1 if i == 0 else 0.66) / speedup
+                )
+
+                if target_int < e2:
+                    break
+
+                scene.play(
+                    target.animate.move_to(self.node_by_index(*current_index)[0][i]).align_to(target, DOWN).set_color(GREEN if target_int == e2 else WHITE),
+                    qs.animate.set_color(GRAY),
+                    self.node_by_index(*current_index)[0][i].animate.set_color(GREEN if target_int == e2 else BLUE),
+                    *[e.animate.set_color(WHITE).set_stroke_width(4) for e in self.edges_by_node_index(*current_index)],
+                    run_time=0.66 / speedup,
+                )
+
+                if target_int == e2:
+                    break
+
+            old_index = current_index
+
+            where_we_ended_up = i
+
+            current_index = self.index_neighbours[current_index][i]
+            current = self.nodes_to_keys[self.node_by_index(*current_index)]
+
+            # we're in a leaf!
+            if current is None or target_int == e2:
+                if no_cleanup:
+                    return target, qs
+
+                scene.play(
+                    AnimationGroup(
+                        AnimationGroup(
+                            FadeOut(qs),
+                            FadeOut(target),
+                        ),
+                        self.animate.restore(),
+                        lag_ratio=0.5,
+                    )
+                )
+
+                return
+
+            bezier = CubicBezier(
+                target.get_center(),
+                Dot().move_to(self.node_by_index(*current_index)).align_to(target, DOWN).get_center(),
+                Dot().move_to(self.node_by_index(*current_index)).align_to(target, DOWN).get_center(),
+                target.copy().next_to(self.node_by_index(*current_index), UP).get_center(),
+            )
+
+            tmp2 = get_tmp(current, current_index)
+            qs2 = get_qs(tmp2, current)
+            new_n = len(current) + 1
+
+            scene.play(
+                MoveAlongPath(target, bezier),
+                self.node_by_index(*old_index)[1].animate.restore().set_stroke_color(DARKER_GRAY),
+                *[self.node_by_index(*old_index)[0][i].animate.restore().set_color(DARKER_GRAY) for i in range(n - 1)],
+
+                *[self.subtree_by_index(*n).animate.set_color(DARKER_GRAY)
+                  for i, n in zip(range(n), self.index_neighbours[old_index])
+                  if i != where_we_ended_up],
+
+                *[e.animate.set_color(DARKER_GRAY).set_stroke_width(4)
+                  for e in self.edges_by_node_index(*old_index)],
+
+                FadeOut(qs),
+
+                run_time=1/speedup,
+            )
+
+        return current_index
+
     def search(self, e1) -> Tuple[Tuple[int, int], int]:
         """Return the position of where an element is/should be in the tree."""
         current_index = (0, 0)
@@ -267,17 +416,19 @@ class ABTree(VMobject):
 
         return current_index
 
-    def bubble_insert(self, b, scale=1, pause_between_shift=False) -> Animation:
+    def bubble_insert(self, b, scale=1, pause_between_shift=False):
         """Return an animation that bubbles a full node up after insertion (or null if the tree is fine)."""
-        target = None
+        # b can be either the limit, in which case 
+        if isinstance(b, int):
+            target = None
 
-        for i, layer in enumerate(self.layers[:-1]):
-            for j, node in enumerate(layer):
-                if len(node) == b:
-                    target = (i, j)
+            for i, layer in enumerate(self.layers[:-1]):
+                for j, node in enumerate(layer):
+                    if len(node) == b:
+                        target = (i, j)
 
-        if target is None:
-            return
+            if target is None:
+                return
 
         i, j = target
 
@@ -307,7 +458,7 @@ class ABTree(VMobject):
         if i == 0:
             new_layers.insert(0, [[mid]])
 
-            new_ab_tree = ABTree(new_layers).scale(scale).align_to(self, DOWN)
+            new_ab_tree = ABTree(new_layers, fill_background=False).scale(scale).align_to(self, DOWN)
 
             to_split_a = (i + 1, j)
             to_split_b = (i + 1, j + 1)
@@ -371,7 +522,7 @@ class ABTree(VMobject):
 
             mid_parent_index = new_layers[ip][jp].index(mid)
 
-            new_ab_tree = ABTree(new_layers).scale(scale).move_to(self).align_to(self, DOWN)
+            new_ab_tree = ABTree(new_layers, fill_background=False).scale(scale).move_to(self).align_to(self, DOWN)
 
             aaa_short = create_node(new_ab_tree.layers[i][j], half=LEFT).scale(scale)
             bbb_short = create_node(new_ab_tree.layers[i][j + 1], half=RIGHT).scale(scale)
@@ -457,7 +608,26 @@ class ABTree(VMobject):
                 ),
             ), new_ab_tree
 
-    def insert(self, element, scale=1, transform_instead=None) -> Animation:
+    def delete(self, element, scale=1, tree_transform_function=None):
+        where_to_delete = self.search(element)
+
+        new_layers = deepcopy(self.layers)[:-1]
+        new_layers[where_to_delete[0]][where_to_delete[1]].remove(element)
+
+        new_ab_tree = ABTree(new_layers, fill_background=False).scale(scale).move_to(self).align_to(self, UP)
+
+        if tree_transform_function is not None:
+            tree_transform_function(new_ab_tree)
+
+        tree_to_return = new_ab_tree.copy()
+
+        # that's right, I'm cheating and you can't stop me
+        a, _ = new_ab_tree.insert(element, scale=scale, tree_transform_function=lambda x: x.become(self.copy()))
+
+        return AnimationGroup(a, rate_func = lambda x: 1 - x), tree_to_return
+
+
+    def insert(self, element, scale=1, transform_instead=None, tree_transform_function=None):
         """A function that animates inserting an element into the tree. DOESN'T BALANCE, use balance_insert for this!"""
         where_to_put = self.reversed_index_neighbours[self.search(element)]
 
@@ -477,7 +647,10 @@ class ABTree(VMobject):
         index_in_layer_end = index_in_layer + len(self.layers[-2][j]) + 1
         index_in_layer += index
 
-        new_ab_tree = ABTree(new_layers).scale(scale).move_to(self).align_to(self, UP)
+        new_ab_tree = ABTree(new_layers, fill_background=False).scale(scale).move_to(self).align_to(self, UP)
+
+        if tree_transform_function is not None:
+            tree_transform_function(new_ab_tree)
 
         tree_indices = []
 
