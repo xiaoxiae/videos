@@ -10,7 +10,12 @@ FAST_RUNTIME = 0.33
 KEYS_IN_NODE_BUFF = 0.3
 
 
+DARK_COLOR = DARKER_GRAY
+
+
 def create_node(keys, fill_background=True, half=None, short=False):
+    oops = False
+
     # leaf
     if keys is None:
         keys_vgroup = Dot().set_opacity(0).scale(0.8)
@@ -19,8 +24,16 @@ def create_node(keys, fill_background=True, half=None, short=False):
         lr_buff=0
         ud_buff=0
     else:
+        if len(keys) == 0:
+            oops = True
+            keys = [0]
+
         keys_vgroup = VGroup(*[Tex(str(k)) for k in keys]).arrange(buff=KEYS_IN_NODE_BUFF)\
             .set_z_index(2)
+
+        if oops:
+            keys_vgroup[0].stretch_to_fit_width(keys_vgroup[0].get_width() / 2)
+            keys = []
 
         corner_width = 0.35
         lr_buff=-0.1
@@ -109,6 +122,9 @@ def create_node(keys, fill_background=True, half=None, short=False):
         border.set_opacity(1).set_fill_color(BLACK)
 
     if half is None:
+        if oops:
+            keys_vgroup = VGroup()
+
         return VGroup(keys_vgroup, border)
     else:
         return border
@@ -325,6 +341,7 @@ class ABTree(VMobject):
                     self.node_by_index(*current_index)[0].animate.set_color(WHITE),
                     target.animate.move_to(qs[i]).align_to(target, DOWN).set_color(WHITE if color is not RED else RED),
                     self.edges_by_node_index(*current_index)[i].animate.set_color(color).set_stroke_width(thicc),
+                    self.subtree_by_index(*current_index)[1][i].animate.set_color(color),
                     qs[i].animate.set_color(color),
                     run_time=(1 if i == 0 else 0.66) / speedup
                 )
@@ -337,6 +354,7 @@ class ABTree(VMobject):
                     qs.animate.set_color(GRAY),
                     self.node_by_index(*current_index)[0][i].animate.set_color(GREEN if target_int == e2 else BLUE),
                     *[e.animate.set_color(WHITE).set_stroke_width(4) for e in self.edges_by_node_index(*current_index)],
+                    self.subtree_by_index(*current_index)[1].animate.set_color(WHITE),
                     run_time=0.66 / speedup,
                 )
 
@@ -388,6 +406,10 @@ class ABTree(VMobject):
                   for i, n in zip(range(n), self.index_neighbours[old_index])
                   if i != where_we_ended_up],
 
+                *[self.subtree_by_index(*n).animate.set_color(WHITE)
+                  for i, n in zip(range(n), self.index_neighbours[old_index])
+                  if i == where_we_ended_up],
+
                 *[e.animate.set_color(DARKER_GRAY).set_stroke_width(4)
                   for e in self.edges_by_node_index(*old_index)],
 
@@ -416,9 +438,48 @@ class ABTree(VMobject):
 
         return current_index
 
-    def bubble_insert(self, b, scale=1, pause_between_shift=False):
+    def bubble_delete(self, a, scale=1, pause_between_shift=False, tree_transform_function=None):
+        if isinstance(a, int):
+            target = None
+
+            for i, layer in enumerate(self.layers[:-1]):
+                for j, node in enumerate(layer):
+                    if len(node) == a - 2:
+                        target = (i, j)
+
+            if target is None:
+                return
+        else:
+            target = a
+
+        i, j = target
+
+        to_merge_index = (i, j)
+        to_merge_parent_index = self.reversed_index_neighbours[to_merge_index]
+
+        for index, child in enumerate(self.index_neighbours[to_merge_parent_index]):
+            if child == to_merge_index:
+                break
+
+        new_layers = deepcopy(self.layers)[:-1]
+        from_top = new_layers[to_merge_parent_index[0]][to_merge_parent_index[1]].pop(index)
+        from_l = new_layers[to_merge_index[0]].pop(to_merge_index[1] + 1)
+
+        new_layers[to_merge_index[0]][to_merge_index[1]] += [from_top]
+        new_layers[to_merge_index[0]][to_merge_index[1]] += from_l
+
+        new_ab_tree = ABTree(new_layers, fill_background=False).scale(scale).move_to(self).align_to(self, UP)
+
+        if tree_transform_function:
+            tree_transform_function(new_ab_tree)
+
+        # that's right, I'm cheating and you can't stop me
+        a, t = new_ab_tree.bubble_insert(to_merge_index, scale=scale, pause_between_shift=pause_between_shift, tree_transform_function=tree_transform_function)
+
+        return AnimationGroup(a, rate_func = lambda x: 1 - x), new_ab_tree
+
+    def bubble_insert(self, b, scale=1, pause_between_shift=False, tree_transform_function=None):
         """Return an animation that bubbles a full node up after insertion (or null if the tree is fine)."""
-        # b can be either the limit, in which case 
         if isinstance(b, int):
             target = None
 
@@ -429,6 +490,8 @@ class ABTree(VMobject):
 
             if target is None:
                 return
+        else:
+            target = b
 
         i, j = target
 
@@ -459,6 +522,9 @@ class ABTree(VMobject):
             new_layers.insert(0, [[mid]])
 
             new_ab_tree = ABTree(new_layers, fill_background=False).scale(scale).align_to(self, DOWN)
+
+            if tree_transform_function:
+                tree_transform_function(new_ab_tree)
 
             to_split_a = (i + 1, j)
             to_split_b = (i + 1, j + 1)
@@ -523,6 +589,9 @@ class ABTree(VMobject):
             mid_parent_index = new_layers[ip][jp].index(mid)
 
             new_ab_tree = ABTree(new_layers, fill_background=False).scale(scale).move_to(self).align_to(self, DOWN)
+
+            if tree_transform_function:
+                tree_transform_function(new_ab_tree)
 
             aaa_short = create_node(new_ab_tree.layers[i][j], half=LEFT).scale(scale)
             bbb_short = create_node(new_ab_tree.layers[i][j + 1], half=RIGHT).scale(scale)
@@ -609,7 +678,12 @@ class ABTree(VMobject):
             ), new_ab_tree
 
     def delete(self, element, scale=1, tree_transform_function=None):
-        where_to_delete = self.search(element)
+        orig_element = element
+
+        if isinstance(element, int):
+            where_to_delete = self.search(element)
+        else:
+            where_to_delete, element = element
 
         new_layers = deepcopy(self.layers)[:-1]
         new_layers[where_to_delete[0]][where_to_delete[1]].remove(element)
@@ -622,14 +696,17 @@ class ABTree(VMobject):
         tree_to_return = new_ab_tree.copy()
 
         # that's right, I'm cheating and you can't stop me
-        a, _ = new_ab_tree.insert(element, scale=scale, tree_transform_function=lambda x: x.become(self.copy()))
+        a, _ = new_ab_tree.insert(orig_element, scale=scale, tree_transform_function=lambda x: x.become(self.copy()))
 
         return AnimationGroup(a, rate_func = lambda x: 1 - x), tree_to_return
 
 
     def insert(self, element, scale=1, transform_instead=None, tree_transform_function=None):
         """A function that animates inserting an element into the tree. DOESN'T BALANCE, use balance_insert for this!"""
-        where_to_put = self.reversed_index_neighbours[self.search(element)]
+        if isinstance(element, int):
+            where_to_put = self.reversed_index_neighbours[self.search(element)]
+        else:
+            where_to_put, element = element
 
         new_layers = deepcopy(self.layers)[:-1]  # remove leafs
         new_layers[where_to_put[0]][where_to_put[1]].append(element)
@@ -787,3 +864,25 @@ class MoveAndFade(Animation):
     def interpolate_mobject(self, alpha: float) -> None:
         point = self.path.point_from_proportion(self.rate_func(alpha))
         self.mobject.become(self.original.copy().move_to(point).set_opacity(1 - alpha * 1.2))
+
+
+def align_object_by_coords(obj, current, desired, animation=False):
+    """Align an object such that it's current coordinate coordinate will be the desired."""
+    if isinstance(current, Mobject):
+        current = current.get_center()
+
+    if isinstance(desired, Mobject):
+        desired = desired.get_center()
+
+    if animation:
+        return obj.animate.shift(desired - current)
+    else:
+        obj.shift(desired - current)
+
+
+def CreateHighlight(obj):
+    return SurroundingRectangle(
+        obj,
+        color=YELLOW,
+        fill_opacity=0.15
+    ).set_z_index(1)
