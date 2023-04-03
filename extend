@@ -19,8 +19,8 @@ video = cv2.VideoCapture(arguments.input)
 
 rd, gd, bd = list(map(int, arguments.color.strip().split(",")))
 
-def to_ffmpeg_filter(n):
-    return f"eq(n\,{n})"
+def range_to_filter(r):
+    return f"between(n\,{min(r)}\,{max(r)})"
 
 def is_valid_color(frame):
     r, g, b = frame.mean(axis=0).mean(axis=0)
@@ -30,23 +30,32 @@ def is_valid_color(frame):
             return False
     return True
 
-print("Filtering frames")
+print("Filtering frames...")
 
 frame_number = 0
 frames_to_filter = []
+current_range = []
+
 
 while(True):
     ret, frame = video.read()
 
     if ret:
         if not is_valid_color(frame):
-            frames_to_filter.append(frame_number)
+            current_range.append(frame_number)
+        else:
+            if len(current_range) != 0:
+                frames_to_filter.append(current_range)
+                current_range = []
 
         frame_number += 1
     else:
         break
 
-select_command = "+".join([to_ffmpeg_filter(n) for n in frames_to_filter])
+if len(current_range) != 0:
+    frames_to_filter.append(current_range)
+
+select_command = "+".join([range_to_filter(n) for n in frames_to_filter])
 
 command = [
     "ffmpeg", "-i", arguments.input,
