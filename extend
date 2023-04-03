@@ -1,0 +1,61 @@
+#!/bin/python3
+import argparse
+import cv2
+import os
+from subprocess import Popen
+
+parser = argparse.ArgumentParser(
+    description="A script for extending still solid frames in a video."
+)
+
+parser.add_argument("-i", "--input", help="the input video name")
+parser.add_argument("-o", "--output", help="the output video name")
+parser.add_argument("-c", "--color", help="the color to extend (defaults to 0,255,0)", default="0,255,0")
+parser.add_argument("-t", "--threshold", help="how close the frames have to be to the color (defaults to 30)", default=30)
+
+arguments = parser.parse_args()
+
+video = cv2.VideoCapture(arguments.input)
+
+rd, gd, bd = list(map(int, arguments.color.strip().split(",")))
+
+def to_ffmpeg_filter(n):
+    return f"eq(n\,{n})"
+
+def is_valid_color(frame):
+    r, g, b = frame.mean(axis=0).mean(axis=0)
+
+    for a, b in [[r, rd], [g, gd], [b, bd]]:
+        if abs(a - b) > arguments.threshold:
+            return False
+    return True
+
+print("Filtering frames")
+
+frame_number = 0
+frames_to_filter = []
+
+while(True):
+    ret, frame = video.read()
+
+    if ret:
+        if not is_valid_color(frame):
+            frames_to_filter.append(frame_number)
+
+        frame_number += 1
+    else:
+        break
+
+select_command = "+".join([to_ffmpeg_filter(n) for n in frames_to_filter])
+
+command = [
+    "ffmpeg", "-i", arguments.input,
+    "-vf", f"select='{select_command}'",
+    "-vsync", "cfr",
+    "-c:a", "copy", arguments.output
+]
+
+process = Popen(command).communicate()
+
+video.release()
+cv2.destroyAllWindows()

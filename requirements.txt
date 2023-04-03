@@ -1,4 +1,5 @@
 manim
+opencv-python
 pulp
 pyloudnorm
 pysoundfile
