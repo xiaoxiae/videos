@@ -13,6 +13,89 @@ KEYS_IN_NODE_BUFF = 0.3
 DARK_COLOR = DARKER_GRAY
 
 
+def get_benchmark_graph():
+    def get_benchmark_data():
+        with open("benchmark/benchmark.txt") as f:
+            lines = f.read().splitlines()
+
+        lines = lines[2:]
+        data = []
+
+        i = 0
+        while i < len(lines):
+            b = int(lines[i].split()[-1][:-1])
+            insert = float(lines[i + 2].split()[-1][:-3]) / 1000000 * 1e3
+            search = float(lines[i + 2 + 6].split()[-1][:-3]) / 1000000 * 1e3
+            delete = float(lines[i + 2 + 6 + 6].split()[-1][:-3]) / 1000000 * 1e3
+
+            data.append((b, insert, search, delete))
+
+            i += 19
+
+        return np.array(data)
+
+    n = 70
+    data = get_benchmark_data()[:n]
+
+    ax = Axes(
+        x_range=[0, len(data), 10],
+        y_range=[0, 7, 1],
+        x_length=8.5,
+        y_length=4.3,
+        tips=False,
+        axis_config={"include_numbers": True},
+    )
+
+    # NOTE: copy-pasted
+    ax_more_nums = Axes(
+        x_range=[0, len(data), 1],
+        y_range=[0, 7, 1],
+        x_length=8.5,
+        y_length=4.3,
+        tips=False,
+        axis_config={"include_numbers": True},
+    )
+
+    g1 = ax.plot_line_graph(x_values=data[:,0], y_values=data[:,1], line_color=RED, add_vertex_dots=False).set_z_index(10)
+    g2 = ax.plot_line_graph(x_values=data[:,0], y_values=data[:,2], line_color=GREEN, add_vertex_dots=False).set_z_index(10)
+    g3 = ax.plot_line_graph(x_values=data[:,0], y_values=data[:,3], line_color=BLUE, add_vertex_dots=False).set_z_index(10)
+
+    y_label = ax.get_y_axis_label(
+        Tex(r"Average operation {\bf time} (in $\mu$s)").scale(0.65).rotate(90 * DEGREES),
+        edge=LEFT,
+        direction=LEFT,
+        buff=0.3,
+    )
+
+    x_label = ax.get_x_axis_label(
+        Tex(r"Value for $\mathbf{a}$ ($b = 2a$)").scale(0.65),
+        edge=DOWN,
+        direction=DOWN,
+        buff=0.3,
+    )
+
+    texts = VGroup(
+        Tex("Insertion").set_color(RED),
+        Tex("Search").set_color(GREEN),
+        Tex("Deletion").set_color(BLUE),
+    ).arrange(DOWN)
+    texts[1].align_to(texts[0], RIGHT)
+    texts[2].align_to(texts[0], RIGHT)
+
+    texts.scale(0.8).align_to(ax[0][1], RIGHT).shift(DOWN * 0.7)
+
+    ax_more_nums[0][1].remove(ax_more_nums[0][1][0])
+
+    for x in ax_more_nums[0][1][1:]:
+        x.scale(0.5).set_color(GRAY).set_z_index(-1)
+
+    l1 = ax.get_vertical_line(ax.c2p(7, data[7][1], 0), color=RED).set_z_index(-1)
+    l2 = ax.get_vertical_line(ax.c2p(8, data[8][2] - 0.1, 0), color=GREEN).set_z_index(-1)
+    l3 = ax.get_vertical_line(ax.c2p(12, data[12][3] - 0.1, 0), color=BLUE).set_z_index(-1)
+
+    return ax, x_label, y_label, g1, g2, g3, texts, l1, l2, l3, ax_more_nums
+
+
 def create_node(keys, fill_background=True, half=None, short=False):
     oops = False
 
@@ -146,12 +229,16 @@ class ABTree(VMobject):
         self.nodes_to_keys = {}
 
         self.index_neighbours = {}
+        self.keys = VGroup()
 
         # create node objects
         for layer in layers:
             layer_mobject = VGroup()
             for node in layer:
                 node_mobject = create_node(node, fill_background)
+
+                for key in node_mobject[0]:
+                    self.keys.add(key)
 
                 self.nodes_to_keys[node_mobject] = node
                 layer_mobject.add(node_mobject)
@@ -207,6 +294,7 @@ class ABTree(VMobject):
 
         self.node_edges = {}
         self.edges = VGroup()
+        self.edges_individually = VGroup()
         self.nodes = list(self.nodes_to_keys)
 
         self.leafs = VGroup()
@@ -220,6 +308,7 @@ class ABTree(VMobject):
 
             edges = self._create_edges(node)
             self.edges.add(edges)
+            self.edges_individually.add(*edges)
             self.node_subtree_mobjects[node].add(edges)
 
 
