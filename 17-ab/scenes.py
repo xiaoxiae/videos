@@ -7,6 +7,143 @@ from math import sqrt
 S = 1.4
 
 
+class Usage(MovingCameraScene):
+    @fade
+    def construct(self):
+        ab = ABTree(
+            [
+                [[4, 6]],
+                [[1, 2, 3], [5], [7, 8]],
+            ],
+            fill_background=False,
+        ).scale(1.8)
+
+        self.add(ab)
+
+        r = Square(fill_opacity=1, color=RED).scale(10)
+
+        i = r
+        for j in [(0, 0), (1, 0), (1, 1), (1, 2)]:
+            i = Difference(i, ab.node_by_index(*j)[1], fill_opacity=1, color=BLACK).set_z_index(1)
+
+        ab.node_mobjects.set_z_index(2)
+        ab.edges.set_z_index(2)
+        ab.keys.set_z_index(0)
+
+        self.add(i)
+
+        self.play(
+            Write(ab),
+        )
+
+        a = Tex("Why")
+        b = Tex("should")
+        c = Tex("I")
+        d = Tex("care?")
+
+        text = VGroup(a, b, c, d).scale(1.5).set_z_index(0)
+
+        a.move_to(ab.node_by_index(0, 0)[0]).shift(DOWN * 0.08)
+        b.move_to(ab.node_by_index(1, 0)[0])
+        c.move_to(ab.node_by_index(1, 1)[0])
+        d.move_to(ab.node_by_index(1, 2)[0])
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    FadeIn(a, shift=DOWN * 1),
+                    FadeOut(ab.node_by_index(0, 0)[0], shift=DOWN * 1),
+                ),
+                AnimationGroup(
+                    FadeIn(b, shift=DOWN * 1),
+                    FadeOut(ab.node_by_index(1, 0)[0], shift=DOWN * 1),
+                ),
+                AnimationGroup(
+                    FadeIn(c, shift=DOWN * 1),
+                    FadeOut(ab.node_by_index(1, 1)[0], shift=DOWN * 1),
+                ),
+                AnimationGroup(
+                    FadeIn(d, shift=DOWN * 1),
+                    FadeOut(ab.node_by_index(1, 2)[0], shift=DOWN * 1),
+                ),
+                lag_ratio=0.1,
+            ),
+        )
+
+        self.camera.frame.save_state()
+
+        def f(index, title, items, scale=1, special=None):
+            self.play(
+                self.camera.frame.animate.move_to(ab.node_by_index(2, index)).scale(scale)
+            )
+
+            fs_title = Tex(title).scale(1.7).set_z_index(10000)
+            fs = VGroup(*[Tex(item) for item in items]).set_z_index(10000)
+
+            for i in range(1, len(items)):
+                fs[i].align_to(fs[0], LEFT).shift(DOWN * 0.7 * i)
+
+            fs_group = VGroup(fs_title, fs).arrange(DOWN, buff=0.7).scale(0.08)
+
+            fs_group.move_to(self.camera.frame)
+
+            self.play(FadeIn(fs_title))
+
+            for i in range(len(items)):
+                if special == 1 and i in [1, 2]:
+                    self.play(
+                        Write(fs[i][0][:-5], stroke_width=0.2, run_time=0.75),
+                    )
+                else:
+                    self.play(
+                        Write(fs[i], stroke_width=0.2, run_time=0.75),
+                    )
+
+            if special == 1:
+                self.play(
+                    FadeIn(fs[1][0][-5:], stroke_width=0.2, run_time=1),
+                    FadeIn(fs[2][0][-5:], stroke_width=0.2, run_time=1),
+                )
+
+        f(
+            6,
+            r"\underline{File systems}",
+            [
+                r"\begin{itemize} \item Apple's \textbf{APFS} \end{itemize}",
+                r"\begin{itemize} \item Microsoft's \textbf{NTFS} \end{itemize}",
+                r"\begin{itemize} \item Linux's \textbf{Ext4} \end{itemize}"
+            ],
+            scale=0.08
+        )
+
+        f(
+            7,
+            r"\underline{Containers}",
+            [
+                r"\begin{itemize} \item \textbf{Rust} \end{itemize}",
+                r"\begin{itemize} \item \textbf{C++} (R\&B) \end{itemize}",
+                r"\begin{itemize} \item \textbf{Java} (R\&B) \end{itemize}"
+            ],
+            special=1,
+        )
+
+        f(
+            8,
+            r"\underline{Databases}",
+            [
+                r"\begin{itemize} \item \textbf{Microsoft SQL} \end{itemize}",
+                r"\begin{itemize} \item \textbf{Oracle} \end{itemize}",
+                r"\begin{itemize} \item \textbf{MySQL} \end{itemize}",
+                r"\begin{itemize} \item \textbf{SQLite} \end{itemize}"
+            ],
+        )
+
+        self.play(
+            self.camera.frame.animate.restore(),
+        )
+
+
+
 class Fever(MovingCameraScene):
     @fade
     def construct(self):
@@ -2366,6 +2503,5 @@ class SelectingAB(MovingCameraScene):
             FadeIn(paper),
             self.camera.frame.animate.move_to(Group(t, paper)).scale(1.3)
         )
-
 
 

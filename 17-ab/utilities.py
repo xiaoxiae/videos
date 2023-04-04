@@ -1,5 +1,4 @@
 from manim import *
-from typing import *
 from copy import deepcopy
 
 
@@ -214,7 +213,7 @@ def create_node(keys, fill_background=True, half=None, short=False):
 
 
 class ABTree(VMobject):
-    def __init__(self, layers: List[List[List[int]]], fill_background=True, **kwargs):
+    def __init__(self, layers, fill_background=True, **kwargs):
         super().__init__(**kwargs)
 
         leafs_layer = []
@@ -229,6 +228,7 @@ class ABTree(VMobject):
         self.nodes_to_keys = {}
 
         self.index_neighbours = {}
+        self.node_mobjects = VGroup()
         self.keys = VGroup()
 
         # create node objects
@@ -242,6 +242,7 @@ class ABTree(VMobject):
 
                 self.nodes_to_keys[node_mobject] = node
                 layer_mobject.add(node_mobject)
+                self.node_mobjects.add(node_mobject)
             self.layer_mobjects.add(layer_mobject)
 
         self.node_subtree_mobjects = {}
@@ -509,7 +510,7 @@ class ABTree(VMobject):
 
         return current_index
 
-    def search(self, e1) -> Tuple[Tuple[int, int], int]:
+    def search(self, e1):
         """Return the position of where an element is/should be in the tree."""
         current_index = (0, 0)
         current = self.nodes_to_keys[self.node_by_index(*current_index)]

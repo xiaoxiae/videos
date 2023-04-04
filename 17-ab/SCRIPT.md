@@ -182,7 +182,7 @@ While it doesn't really matter in terms of theoretical analysis since all of the
 
 Code runs on real hardware and the main way to make it fast is to make it cache-friendly -- ideally, a node should fit into a single cache line, regardless of its size.
 
-For example, my cache lines are $64B$, which means that they can hold at most $8$ $64b$ values.
+For example, my cache lines are $64B$, which means that they can hold at most $64$ $8b$ values.
 A node consists of keys and pointers to its children, each of which is a $64b$ number, meaning that the maximum $b$ value is $4$, making $a$ at most $2$.
 
 To test this, I used an open-source $(a,b)$-tree implementation (link in the description) to run benchmarks on all of the common operations for varying sizes of $a$ and $b$.
@@ -196,9 +196,19 @@ There is much more to this and if you're interested, I linked a paper that cover
 
 
 ---
+USAGE
+---
+
+Now that you know what an $(a,b)$-tree is, you might say Tom this is pretty cool but why should I care?
+Well, to really convince you that this isn't just some useless piece of computer science theory, you are likely using some sort of an $(a,b)$-tree right now as you're watching this video and he is why.
+They are widely used by filesystems for indexing files, including Apple's APFS, Microsoft's NTFS and Linux's Ext4.
+They are also used by a number of languages for dictionary and set implementations, including Rust, C++ and Java (ok, technically, the last two use R&B trees, but those are actually just $(a,b)$-trees, so I think it counts).
+And, last but not least, database systems like Microsoft SQL, Oracle, MySQL and SQLite all use them for storing their data.
+
+
+---
 OUTRO
 ---
 
-And that's it.
-Thanks for watching!
-
+And that's all I have.
+I hope you found this somewhat interesting and thanks for watching!
