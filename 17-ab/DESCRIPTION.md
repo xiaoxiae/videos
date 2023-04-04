@@ -36,3 +36,8 @@ http://pruvodce.ucw.cz/
 
 [EN] frozenca/BTree: open-source C++ B-tree implementation:
 https://github.com/frozenca/BTree
+
+[EN] Wikipedia: (a,b)-tree-related articles:
+https://en.wikipedia.org/wiki/(a,b)-tree
+https://en.wikipedia.org/wiki/B%2B_tree
+https://en.wikipedia.org/wiki/B-tree
