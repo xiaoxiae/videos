@@ -180,16 +180,16 @@ And there you have it, we've covered the common operations of the $(a,b)$-tree.
 Now that we know how they work, one question still remains -- what should we set $a$ and $b$ to?
 While it doesn't really matter in terms of theoretical analysis since all of the operations will be logarithmic, it very much does matter in practice.
 
-Code runs on real hardware and the main way to make it fast is to make it cache-friendly -- ideally, a node should fit into a single cache line, regardless of its size. <!-- fix the line going past-- align to -->
+Code runs on real hardware and the main way to make it fast is to make it cache-friendly -- ideally, a node should fit into a single cache line, regardless of its size.
 
 For example, my cache lines are $64B$, which means that they can hold at most $8$ $64b$ values.
-For them to fit the node, which consists of keys and pointers to its children, the maximum $b$ value is $4$, making $a$ at most $2$. <!-- animation of what a node is? -->
+A node consists of keys and pointers to its children, each of which is a $64b$ number, meaning that the maximum $b$ value is $4$, making $a$ at most $2$.
 
 To test this, I used an open-source $(a,b)$-tree implementation (link in the description) to run benchmarks on all of the common operations for varying sizes of $a$ and $b$.
 Plotting the runtimes, I got a result that I didn't really expect -- it seems that the optimal value for $a,b$ is different for each of the operations and is definitely not $2,4$.
 
-This is because the cache lines computation is an simplification of how a modern CPU behaves and there could be number a of reasons for this result. <!-- TODO from here -->
-Firstly, the library stores keys and values separately, which theoretically increases the optimal $a,b$ values by a factor of two.
+This is because the cache lines computation is an simplification of how a modern CPU behaves and there could be number a of reasons for this result.
+Firstly, the library stores keys and values in separate arrays, which theoretically increases the optimal $a,b$ values by a factor of two.
 Secondly, the behavior largely depends on the way the structure is used, which in my case consisted of $n$ insertions, $n$ searches and finally $n$ deletions for $n = 1\ 000\ 000$ and might not be representative of other uses.
 
 There is much more to this and if you're interested, I linked a paper that covers this in great detail in the description, but the main point that you should take away is that while theory is good, real world is a mess that no amount of computations can spare you from.
@@ -199,5 +199,6 @@ There is much more to this and if you're interested, I linked a paper that cover
 OUTRO
 ---
 
-If you've made it this far, you're awesome and I thank you for watching.  <!-- todo better -->
+And that's it.
+Thanks for watching!
 

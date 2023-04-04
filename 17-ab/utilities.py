@@ -525,6 +525,7 @@ class ABTree(VMobject):
             current_index = self.index_neighbours[current_index][i]
             current = self.nodes_to_keys[self.node_by_index(*current_index)]
 
+
         return current_index
 
     def bubble_delete(self, a, scale=1, pause_between_shift=False, tree_transform_function=None):
@@ -594,7 +595,7 @@ class ABTree(VMobject):
         to_split_a = to_split_index
         to_split_b = (i, j + 1)
 
-        mid_index = len(to_split) // 2 - 1
+        mid_index = len(to_split) // 2 - (1 if len(to_split) % 2 == 0 else 0)
         a, mid, b = to_split[:mid_index], to_split[mid_index], to_split[mid_index + 1:]
 
         a_length = len(a)
@@ -695,76 +696,162 @@ class ABTree(VMobject):
                 a = Succession(Wait(1.25), Transform(self.node_by_index(*to_split_index)[0][mid_index],
                             new_ab_tree.node_by_index(*parent)[0][mid_parent_index]))
 
-            return AnimationGroup(
-                AnimationGroup(
-                # resize parent
-                Transform(self.node_by_index(*parent)[1],
-                          new_ab_tree.node_by_index(*parent)[1]),
+            # if the parent has a parent, we have to transform everything else in the tree
+            # clean code btw lmao
+            if parent in self.reversed_index_neighbours:
+                ipp, jpp = self.reversed_index_neighbours[parent]
 
-                    # lord forgive me
-                FadeOut(self.node_by_index(*to_split_index)[1], run_time=0.001),
-
-                # split borders
-                Transform(aaa, aaa_short),
-                Transform(bbb, bbb_short),
-
-                # other parent subtrees + edges
-                *[Transform(self.subtree_by_index(*parent)[1][k],
-                            new_ab_tree.subtree_by_index(*parent)[1][k])
-                  for k in range(0, mid_parent_index)],
-                *[Transform(self.edges_by_node_index(*parent)[k],
-                            new_ab_tree.edges_by_node_index(*parent)[k])
-                  for k in range(0, mid_parent_index)],
-                *[Transform(self.subtree_by_index(*parent)[1][k],
-                            new_ab_tree.subtree_by_index(*parent)[1][k + 1])
-                  for k in range(mid_parent_index + 1, len(self.subtree_by_index(*parent)[1]))],
-                *[Transform(self.edges_by_node_index(*parent)[k],
-                            new_ab_tree.edges_by_node_index(*parent)[k + 1])
-                  for k in range(mid_parent_index, len(self.edges_by_node_index(*parent)))],
-                Transform(self.edges_by_node_index(*parent)[mid_parent_index].copy(),
-                            new_ab_tree.edges_by_node_index(*parent)[mid_parent_index]),
-
-                # move number up
-                a,
-
-                Transform(self.node_by_index(*to_split_index)[0][:mid_index],
-                            new_ab_tree.node_by_index(*to_split_a)[0]),
-
-                Transform(self.node_by_index(*to_split_index)[0][mid_index + 1:],
-                            new_ab_tree.node_by_index(*to_split_b)[0]),
-
-                # move numbers in parent
-                *[Transform(self.node_by_index(*parent)[0][k],
-                            new_ab_tree.node_by_index(*parent)[0][k])
-                  for k in range(0, mid_parent_index)],
-                *[Transform(self.node_by_index(*parent)[0][k],
-                            new_ab_tree.node_by_index(*parent)[0][k + 1])
-                  for k in range(mid_parent_index, len(self.node_by_index(*parent)[0]))],
-
-                # to split subtrees
-                *[Transform(self.subtree_by_index(*to_split_index)[1][k],
-                            new_ab_tree.subtree_by_index(*to_split_a)[1][k])
-                  for k in range(a_length + 1)],
-                *[Transform(self.subtree_by_index(*to_split_index)[1][k + a_length + 1],
-                            new_ab_tree.subtree_by_index(*to_split_b)[1][k])
-                  for k in range(b_length + 1)],
-                *[Transform(self.edges_by_node_index(*to_split_index)[k],
-                            new_ab_tree.edges_by_node_index(*to_split_a)[k])
-                  for k in range(a_length + 1)],
-                *[Transform(self.edges_by_node_index(*to_split_index)[k + a_length + 1],
-                            new_ab_tree.edges_by_node_index(*to_split_b)[k])
-                  for k in range(b_length + 1)],
-                ),
-                AnimationGroup(
-                    Wait(1),
+                return AnimationGroup(
                     AnimationGroup(
-                        FadeIn(new_ab_tree.node_by_index(*to_split_a)[1]),
-                        FadeIn(new_ab_tree.node_by_index(*to_split_b)[1]),
-                        run_time=0.75,
+                    # resize parent
+                    Transform(self.node_by_index(*parent)[1],
+                              new_ab_tree.node_by_index(*parent)[1]),
+
+                        # lord forgive me
+                    FadeOut(self.node_by_index(*to_split_index)[1], run_time=0.001),
+
+                    # split borders
+                    Transform(aaa, aaa_short),
+                    Transform(bbb, bbb_short),
+
+                    # THIS IS ADDED NEWLY HERE
+                    *[Transform(self.subtree_by_index(ip, k),
+                                new_ab_tree.subtree_by_index(ip, k))
+                      for k in range(len(self.layers[ip]))
+                      if k != jp],
+                    Transform(self.edges_by_node_index(ipp, jpp),
+                                new_ab_tree.edges_by_node_index(ipp, jpp)),
+
+                    # other parent subtrees + edges
+                    *[Transform(self.subtree_by_index(*parent)[1][k],
+                                new_ab_tree.subtree_by_index(*parent)[1][k])
+                      for k in range(0, mid_parent_index)],
+                    *[Transform(self.edges_by_node_index(*parent)[k],
+                                new_ab_tree.edges_by_node_index(*parent)[k])
+                      for k in range(0, mid_parent_index)],
+                    *[Transform(self.subtree_by_index(*parent)[1][k],
+                                new_ab_tree.subtree_by_index(*parent)[1][k + 1])
+                      for k in range(mid_parent_index + 1, len(self.subtree_by_index(*parent)[1]))],
+                    *[Transform(self.edges_by_node_index(*parent)[k],
+                                new_ab_tree.edges_by_node_index(*parent)[k + 1])
+                      for k in range(mid_parent_index, len(self.edges_by_node_index(*parent)))],
+                    Transform(self.edges_by_node_index(*parent)[mid_parent_index].copy(),
+                                new_ab_tree.edges_by_node_index(*parent)[mid_parent_index]),
+
+                    # move number up
+                    a,
+
+                    Transform(self.node_by_index(*to_split_index)[0][:mid_index],
+                                new_ab_tree.node_by_index(*to_split_a)[0]),
+
+                    Transform(self.node_by_index(*to_split_index)[0][mid_index + 1:],
+                                new_ab_tree.node_by_index(*to_split_b)[0]),
+
+                    # move numbers in parent
+                    *[Transform(self.node_by_index(*parent)[0][k],
+                                new_ab_tree.node_by_index(*parent)[0][k])
+                      for k in range(0, mid_parent_index)],
+                    *[Transform(self.node_by_index(*parent)[0][k],
+                                new_ab_tree.node_by_index(*parent)[0][k + 1])
+                      for k in range(mid_parent_index, len(self.node_by_index(*parent)[0]))],
+
+                    # to split subtrees
+                    *[Transform(self.subtree_by_index(*to_split_index)[1][k],
+                                new_ab_tree.subtree_by_index(*to_split_a)[1][k])
+                      for k in range(a_length + 1)],
+                    *[Transform(self.subtree_by_index(*to_split_index)[1][k + a_length + 1],
+                                new_ab_tree.subtree_by_index(*to_split_b)[1][k])
+                      for k in range(b_length + 1)],
+                    *[Transform(self.edges_by_node_index(*to_split_index)[k],
+                                new_ab_tree.edges_by_node_index(*to_split_a)[k])
+                      for k in range(a_length + 1)],
+                    *[Transform(self.edges_by_node_index(*to_split_index)[k + a_length + 1],
+                                new_ab_tree.edges_by_node_index(*to_split_b)[k])
+                      for k in range(b_length + 1)],
                     ),
-                    lag_ratio=0.6,
-                ),
-            ), new_ab_tree
+                    AnimationGroup(
+                        Wait(1),
+                        AnimationGroup(
+                            FadeIn(new_ab_tree.node_by_index(*to_split_a)[1]),
+                            FadeIn(new_ab_tree.node_by_index(*to_split_b)[1]),
+                            run_time=0.75,
+                        ),
+                        lag_ratio=0.6,
+                    ),
+                ), new_ab_tree
+
+            # if not, the regular split happens
+            else:
+                return AnimationGroup(
+                    AnimationGroup(
+                    # resize parent
+                    Transform(self.node_by_index(*parent)[1],
+                              new_ab_tree.node_by_index(*parent)[1]),
+
+                        # lord forgive me
+                    FadeOut(self.node_by_index(*to_split_index)[1], run_time=0.001),
+
+                    # split borders
+                    Transform(aaa, aaa_short),
+                    Transform(bbb, bbb_short),
+
+                    # other parent subtrees + edges
+                    *[Transform(self.subtree_by_index(*parent)[1][k],
+                                new_ab_tree.subtree_by_index(*parent)[1][k])
+                      for k in range(0, mid_parent_index)],
+                    *[Transform(self.edges_by_node_index(*parent)[k],
+                                new_ab_tree.edges_by_node_index(*parent)[k])
+                      for k in range(0, mid_parent_index)],
+                    *[Transform(self.subtree_by_index(*parent)[1][k],
+                                new_ab_tree.subtree_by_index(*parent)[1][k + 1])
+                      for k in range(mid_parent_index + 1, len(self.subtree_by_index(*parent)[1]))],
+                    *[Transform(self.edges_by_node_index(*parent)[k],
+                                new_ab_tree.edges_by_node_index(*parent)[k + 1])
+                      for k in range(mid_parent_index, len(self.edges_by_node_index(*parent)))],
+                    Transform(self.edges_by_node_index(*parent)[mid_parent_index].copy(),
+                                new_ab_tree.edges_by_node_index(*parent)[mid_parent_index]),
+
+                    # move number up
+                    a,
+
+                    Transform(self.node_by_index(*to_split_index)[0][:mid_index],
+                                new_ab_tree.node_by_index(*to_split_a)[0]),
+
+                    Transform(self.node_by_index(*to_split_index)[0][mid_index + 1:],
+                                new_ab_tree.node_by_index(*to_split_b)[0]),
+
+                    # move numbers in parent
+                    *[Transform(self.node_by_index(*parent)[0][k],
+                                new_ab_tree.node_by_index(*parent)[0][k])
+                      for k in range(0, mid_parent_index)],
+                    *[Transform(self.node_by_index(*parent)[0][k],
+                                new_ab_tree.node_by_index(*parent)[0][k + 1])
+                      for k in range(mid_parent_index, len(self.node_by_index(*parent)[0]))],
+
+                    # to split subtrees
+                    *[Transform(self.subtree_by_index(*to_split_index)[1][k],
+                                new_ab_tree.subtree_by_index(*to_split_a)[1][k])
+                      for k in range(a_length + 1)],
+                    *[Transform(self.subtree_by_index(*to_split_index)[1][k + a_length + 1],
+                                new_ab_tree.subtree_by_index(*to_split_b)[1][k])
+                      for k in range(b_length + 1)],
+                    *[Transform(self.edges_by_node_index(*to_split_index)[k],
+                                new_ab_tree.edges_by_node_index(*to_split_a)[k])
+                      for k in range(a_length + 1)],
+                    *[Transform(self.edges_by_node_index(*to_split_index)[k + a_length + 1],
+                                new_ab_tree.edges_by_node_index(*to_split_b)[k])
+                      for k in range(b_length + 1)],
+                    ),
+                    AnimationGroup(
+                        Wait(1),
+                        AnimationGroup(
+                            FadeIn(new_ab_tree.node_by_index(*to_split_a)[1]),
+                            FadeIn(new_ab_tree.node_by_index(*to_split_b)[1]),
+                            run_time=0.75,
+                        ),
+                        lag_ratio=0.6,
+                    ),
+                ), new_ab_tree
 
     def delete(self, element, scale=1, tree_transform_function=None):
         orig_element = element
