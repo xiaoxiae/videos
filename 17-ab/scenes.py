@@ -27,7 +27,7 @@ class Usage(MovingCameraScene):
             i = Difference(i, ab.node_by_index(*j)[1], fill_opacity=1, color=BLACK).set_z_index(1)
 
         ab.node_mobjects.set_z_index(2)
-        ab.edges.set_z_index(2)
+        ab.edges.set_z_index(1.99)
         ab.keys.set_z_index(0)
 
         self.add(i)
@@ -41,12 +41,15 @@ class Usage(MovingCameraScene):
         c = Tex("I")
         d = Tex("care?")
 
+        d_ex = Tex("care!")
+
         text = VGroup(a, b, c, d).scale(1.5).set_z_index(0)
 
         a.move_to(ab.node_by_index(0, 0)[0]).shift(DOWN * 0.08)
         b.move_to(ab.node_by_index(1, 0)[0])
         c.move_to(ab.node_by_index(1, 1)[0])
         d.move_to(ab.node_by_index(1, 2)[0])
+        d_ex.move_to(d).scale(1.5)
 
         self.play(
             AnimationGroup(
@@ -138,8 +141,15 @@ class Usage(MovingCameraScene):
             ],
         )
 
+        self.remove(d)
+        self.add(d_ex)
+
+        ab.edges_by_node_index(0, 0).set_color(DARK_COLOR)
+        ab.subtree_by_index(1, 1).set_color(DARK_COLOR)
+        c.set_color(DARK_COLOR)
+
         self.play(
-            self.camera.frame.animate.restore(),
+            self.camera.frame.animate.move_to(ab.subtree_by_index(1, 2)).scale(5)
         )
 
 
@@ -341,8 +351,6 @@ class Intro(MovingCameraScene):
             ab_tree.node_by_index(1, 2).animate.set_color(WHITE),
             ab_tree.node_edges[ab_tree.node_by_index(1, 2)].animate.set_color(WHITE),
         )
-
-        # TODO: wave
 
         keys = VGroup(*(list(ab_tree.keys) + list(binary_tree.keys)))
 
@@ -1148,8 +1156,6 @@ class Basics(MovingCameraScene):
 
         for row in ops_list:
             self.play(FadeIn(row, shift=RIGHT * 0.25))
-
-        # TODO: convert this to insertion start
 
 
 class Outro(MovingCameraScene):
@@ -2023,7 +2029,7 @@ class Deletion(MovingCameraScene):
             tree.subtree_by_index(2, 2).animate.set_color(BLUE),
         )
 
-        # TODO: yikes
+        # NOTE: yikes
         self.play(
             Transform(tree.subtree_by_index(1, 0), tree_to_transform.subtree_by_index(1, 0)),
             Transform(tree.edges_by_node_index(0, 0), tree_to_transform.edges_by_node_index(0, 0)),
