@@ -60,6 +60,7 @@ select_command = "+".join([range_to_filter(n) for n in frames_to_filter])
 command = [
     "ffmpeg", "-i", arguments.input,
     "-vf", f"select='{select_command}'",
+    "-crf", "10",  # re-encoding bad
     "-vsync", "cfr",
     "-c:a", "copy", arguments.output
 ]
