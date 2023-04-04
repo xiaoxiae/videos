@@ -21,6 +21,7 @@ Software used:
 ► arecord (audio recording): https://linux.die.net/man/1/arecord
 ► sox (audio processing): http://sox.sourceforge.net/
 ► Inkscape (vector image editing): https://inkscape.org/
+<maybe remove>► Stable Diffusion (image generation): https://stablediffusionweb.com/
 
 Social media:
 ► Website (for other things I'm up to): https://slama.dev/
