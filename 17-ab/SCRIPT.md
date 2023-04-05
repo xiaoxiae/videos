@@ -10,6 +10,7 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
+<!-- TODO: 4:20: remind of the invariants -->
 
 ---
 FEVER DREAM
@@ -163,6 +164,7 @@ b) steal one of the adjacent node's keys
 
 If the adjacent node has $a$ children (like in this case), we can't just steal a key since it would bring the adjacent node below the limit, so we'll have to merge, which looks as follows.
 Notice that this moves a key from the node above, which might again break its condition (similar to insert), so we might have to recursively fix the same problem in the nodes above.
+As a sanity check, the merged node will have $a - 1 + a$ children, which is, again thanks to our inequality, at most $b$, making it valid.
 
 To see the other case in action, let's remove another key.
 As we see, its adjacent node has more than $a$ children, meaning that we can steal the closest neighbouring key.

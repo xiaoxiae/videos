@@ -360,16 +360,29 @@ class Intro(MovingCameraScene):
             max_x = max(k.get_x(), max_x)
 
         wait_scale = 0.5
+        runtime = 1.25
 
         self.play(
-            *[
-              Succession(
-                Wait((k.get_x() - min_x) / (max_x - min_x) * wait_scale),
-                k.animate(rate_func=there_and_back, run_time=1.25).scale(1.25).set_color(GREEN),
-              )
-              for k in keys]
+            ab_tree.skeleton.animate(
+                rate_func=lambda t: there_and_back_with_pause(t),
+                run_time = wait_scale * 3 + runtime,
+            ).set_color(DARK_COLOR),
+            binary_tree.skeleton.animate(
+                rate_func=lambda t: there_and_back_with_pause(t),
+                run_time = wait_scale * 3 + runtime,
+            ).set_color(DARK_COLOR),
+            Succession(
+                Wait(wait_scale),
+                AnimationGroup(
+                    *[
+                      Succession(
+                        Wait((k.get_x() - min_x) / (max_x - min_x) * wait_scale),
+                        k.animate(rate_func=there_and_back, run_time=runtime).scale(1.35).set_color(WHITE),
+                      )
+                      for k in keys]
+                ),
+            )
         )
-
 
         #useful = Tex(r"\textit{Used for quickly storing and locating items based on their keys.}")\
         #        .move_to(group_cp).align_to(ab[0], DOWN).shift(DOWN * 0.5).scale(0.65)
@@ -1253,13 +1266,58 @@ class Thumbnail(MovingCameraScene):
 
         self.add(text, bg)
 
+        self.camera.frame.scale(0.95)
+
+        self.wait()
+
+
+class Thumbnail2(MovingCameraScene):
+    def construct(self):
+        ab = ABTree(
+            [
+                [[123]],
+                [[1, 2], [4, 56]],
+            ],
+            layer_buffer=0.2,
+        ).scale(2.5)
+
+        self.add(ab)
+
+        the = Tex("\sc The").scale(0.85)
+        a = Tex("\sc (a,b)")
+        trees = Tex("\sc Tree")
+        dash = Tex("-").set_color(BLACK).scale(1.6).stretch_to_fit_height(Tex("-").get_height() * 2)
+
+        text = VGroup(the, a, trees, dash).scale(2.2)
+
+        bg = Square(fill_opacity=1).set_z_index(-1).set_color_by_gradient(("#264653", "#2A9D8F", "#E9C46A", "#F4A261", "#E76F51"))\
+                .stretch_to_fit_width(self.camera.frame.get_width())\
+                .stretch_to_fit_height(self.camera.frame.get_height())
+        ab.set_color(BLACK)
+
+        for e in ab.edges_individually:
+            e.scale(1.25).set_stroke_width(15)
+
+        ab.node_by_index(0, 0)[0].become(the.move_to(ab.node_by_index(0, 0)[0]))
+        ab.node_by_index(1, 0)[0].become(a.move_to(ab.node_by_index(1, 0)[0]))
+        ab.node_by_index(1, 1)[0].become(trees.move_to(ab.node_by_index(1, 1)[0]))
+
+        dash.scale(1.35)
+        dash.move_to(VGroup(
+            Dot().next_to(ab.node_by_index(1, 0), RIGHT),
+            Dot().next_to(ab.node_by_index(1, 1), LEFT),
+        )).shift(LEFT * 0.115)
+
+        self.add(text, bg)
+
+        self.camera.frame.scale(0.73)
+
         self.wait()
 
 
 class Search(MovingCameraScene):
     @fade
     def construct(self):
-
         ab_tree = ABTree(
             [
                 [[1, 3]],
@@ -1975,11 +2033,86 @@ class Deletion(MovingCameraScene):
             tree.edges_by_node_index(1, 1).animate.set_color(BLUE),
         )
 
+        self.camera.frame.save_state()
+
         self.play(
             tree.node_by_index(1, 1).animate.set_color(WHITE),
             tree.edges_by_node_index(1, 1).animate.set_color(WHITE),
-            a[0].animate.set_color(DARK_COLOR),
-            a[1].animate.set_color(WHITE),
+        )
+
+        b1 = BraceBetweenPoints(
+            Dot().align_to(tree.node_by_index(3, 4), LEFT + DOWN).shift(LEFT * 0.1).get_center(),
+            Dot().align_to(tree.node_by_index(3, 4), RIGHT + DOWN).shift(RIGHT * 0.1).get_center(),
+            DOWN,
+        )
+        b1.stretch_to_fit_height(b1.get_height() / 1.5)
+        b2 = BraceBetweenPoints(
+            Dot().align_to(tree.node_by_index(3, 5), LEFT + DOWN).shift(LEFT * 0.1).get_center(),
+            Dot().align_to(tree.node_by_index(3, 6), RIGHT + DOWN).shift(RIGHT * 0.1).get_center(),
+            DOWN,
+        )
+        b2.stretch_to_fit_height(b2.get_height() / 1.5)
+        ap1 = Tex("$$a - 1$$").scale(0.6).next_to(b1, DOWN, buff=0.03)
+        ap2 = Tex("$$a$$").scale(0.6).next_to(b2, DOWN, buff=0.03).align_to(ap1, DOWN)
+
+        self.play(
+            self.camera.frame.animate.move_to(tree.subtree_by_index(2, 2)).scale(0.65).shift(DOWN * 0.5),
+            tree.edges_by_node_index(1, 1).animate.set_color(DARK_COLOR),
+            tree.subtree_by_index(2, 3).animate.set_color(DARK_COLOR),
+        )
+
+        self.play(
+            AnimationGroup(
+                FadeIn(b1, shift=DOWN * 0.25),
+                FadeIn(ap1),
+                lag_ratio=0.5,
+            ),
+            run_time=1,
+        )
+
+        self.play(
+            AnimationGroup(
+                FadeIn(b2, shift=DOWN * 0.25),
+                FadeIn(ap2),
+                lag_ratio=0.5,
+            ),
+            run_time=1,
+        )
+
+        eq = Tex(r"$$a - 1 + a = 2a - 1 \le b$$").move_to(tree.subtree_by_index(2, 2))\
+            .align_to(VGroup(ap2, ap1), UP).scale(0.8)
+
+        self.play(
+            FadeOut(b1),
+            FadeOut(b2),
+            AnimationGroup(
+                AnimationGroup(
+                    Transform(ap1[0][0], eq[0][0]),
+                    Transform(ap1[0][1], eq[0][1]),
+                    Transform(ap1[0][2], eq[0][2]),
+                    Transform(ap2, eq[0][4]),
+                ),
+                FadeIn(eq[0][3]),
+                lag_ratio=0.5,
+            ),
+        )
+
+        self.play(
+            Write(eq[0][5:]),
+        )
+
+        a[0].set_color(DARK_COLOR)
+        a[1].set_color(WHITE)
+
+        self.play(
+            self.camera.frame.animate.restore(),
+            FadeOut(eq),
+            tree.edges_by_node_index(1, 1).animate.set_color(WHITE),
+            tree.subtree_by_index(2, 3).animate.set_color(WHITE),
+            FadeOut(ap1[0][0]),
+            FadeOut(ap1[0][1]),
+            FadeOut(ap1[0][2]),
+            FadeOut(ap2),
         )
 
         for mobject in self.mobjects:
