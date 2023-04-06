@@ -98,9 +98,20 @@ def get_benchmark_graph():
 def create_node(keys, fill_background=True, half=None, short=False):
     oops = False
 
-    # leaf
+    # leaf or string for thumbnail
     if keys is None:
         keys_vgroup = Dot().set_opacity(0).scale(0.8)
+
+        corner_width = 0.01
+        lr_buff=0
+        ud_buff=0
+    elif len(keys) == 1 and isinstance(keys[0], str):
+
+        text = Tex(keys[0]).scale(0.35).set_z_index(10000)
+        keys_vgroup = VGroup(
+            Dot().set_opacity(0).scale(0.75).next_to(text, LEFT, buff=-0.15),
+            Dot().set_opacity(0).scale(0.75).next_to(text, RIGHT, buff=-0.15),
+        )
 
         corner_width = 0.01
         lr_buff=0
@@ -207,22 +218,26 @@ def create_node(keys, fill_background=True, half=None, short=False):
         if oops:
             keys_vgroup = VGroup()
 
+        if keys is not None and len(keys) == 1 and isinstance(keys[0], str):
+            keys_vgroup = VGroup(text)
+
         return VGroup(keys_vgroup, border)
     else:
         return border
 
 
 class ABTree(VMobject):
-    def __init__(self, layers, fill_background=True, leaf_buffer=0.25, node_buffer=0.4, layer_buffer=0.4, **kwargs):
+    def __init__(self, layers, fill_background=True, add_leafs=True, leaf_buffer=0.25, node_buffer=0.4, layer_buffer=0.4, **kwargs):
         super().__init__(**kwargs)
 
         self.skeleton = VGroup()
 
-        leafs_layer = []
-        for node in layers[-1]:
-            leafs_layer += [None] * (len(node) + 1)
+        if add_leafs:
+            leafs_layer = []
+            for node in layers[-1]:
+                leafs_layer += [None] * (len(node) + 1)
 
-        layers.append(leafs_layer)
+            layers.append(leafs_layer)
 
         self.layers = layers
         self.layer_mobjects = VGroup()
@@ -363,13 +378,22 @@ class ABTree(VMobject):
         self.save_state()
 
         def get_tmp(keys, index, fill=False):
-            n = len(keys) + 1
-            tmp = ABTree(
-                [
-                    [keys + [0]],
-                ],
-                fill_background=fill,
-            ).scale(scale)
+            n = len(keys or []) + 1
+            if n != 1:
+                tmp = ABTree(
+                    [
+                        [keys + [0]],
+                    ],
+                    fill_background=fill,
+                ).scale(scale)
+            else:
+                tmp = ABTree(
+                    [
+                        [None],
+                    ],
+                    fill_background=fill,
+                    add_leafs=False,
+                ).scale(scale)
             tmp.node_by_index(0, 0).move_to(self.node_by_index(*index))
 
             return tmp
@@ -399,7 +423,7 @@ class ABTree(VMobject):
         current = self.nodes_to_keys[self.node_by_index(*current_index)]
 
         bgs = []
-        for i in range(len(self.layers[:-1])):
+        for i in range(len(self.layers)):
             for j in range(len(self.layers[i])):
                 crt = self.nodes_to_keys[self.node_by_index(*(i, j))]
                 tmpp = get_tmp(crt, (i, j), fill=True)
@@ -455,7 +479,12 @@ class ABTree(VMobject):
                     target.animate.move_to(self.node_by_index(*current_index)[0][i]).align_to(target, DOWN).set_color(GREEN if target_int == e2 else WHITE),
                     qs.animate.set_color(GRAY),
                     self.node_by_index(*current_index)[0][i].animate.set_color(GREEN if target_int == e2 else BLUE),
-                    *[e.animate.set_color(WHITE).set_stroke_width(4).scale(1/1.2) for e in self.edges_by_node_index(*current_index)],
+                    *[e.animate.set_color(WHITE).set_stroke_width(4)
+                      for j, e in enumerate(self.edges_by_node_index(*current_index))
+                      if i != j],
+                    *[e.animate.set_color(WHITE).set_stroke_width(4).scale(1/1.2)
+                      for j, e in enumerate(self.edges_by_node_index(*current_index))
+                      if i == j],
                     self.subtree_by_index(*current_index)[1].animate.set_color(WHITE),
                     run_time=0.66 / speedup,
                 )
@@ -472,11 +501,8 @@ class ABTree(VMobject):
 
             # we're in a leaf!
             if current is None or target_int == e2:
-                for b in bgs:
-                    scene.remove(b)
-
                 if no_cleanup:
-                    return target, qs
+                    return target, qs, bgs
 
                 scene.play(
                     AnimationGroup(
@@ -489,7 +515,7 @@ class ABTree(VMobject):
                     )
                 )
 
-                return
+                return bgs
 
             bezier = CubicBezier(
                 target.get_center(),
@@ -523,10 +549,7 @@ class ABTree(VMobject):
                 run_time=1/speedup,
             )
 
-        for b in bgs:
-            scene.remove(b)
-
-        return current_index
+        return bgs
 
     def search(self, e1):
         """Return the position of where an element is/should be in the tree."""

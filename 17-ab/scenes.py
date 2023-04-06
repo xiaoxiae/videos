@@ -821,7 +821,7 @@ class Basics(MovingCameraScene):
         nums = VGroup()
 
         ab = VGroup(Tex(r"\underline{$(a,b)$-tree}").scale(1.25), ab_tree).arrange(DOWN, buff=1.2)
-        two_four = Tex(r"\underline{$(2,4)$-tree}").scale(1.25).move_to(ab[0])
+        two_four = Tex(r"\underline{$(2,4)$-tree}").scale(1.25).move_to(ab[0]).set_color(BLUE)
 
         self.camera.frame.scale(0.8)
 
@@ -882,7 +882,7 @@ class Basics(MovingCameraScene):
         )
 
         symbols = VGroup(
-            Tex("$<$", stroke_width=1.5).scale(0.4).move_to(ab_tree.node_by_index(0, 0)[0][0:2]),
+            Tex("$<$", stroke_width=1.5).scale(0.4).move_to(ab_tree.node_by_index(0, 0)[0][0:2]).shift(LEFT * 0.035),
             Tex("$<$", stroke_width=1.5).scale(0.4).move_to(ab_tree.node_by_index(1, 2)[0][0:2]),
             Tex("$<$", stroke_width=1.5).scale(0.4).move_to(ab_tree.node_by_index(1, 2)[0][1:3]),
         )
@@ -970,32 +970,41 @@ class Basics(MovingCameraScene):
         ab_tree.save_state()
         symbols.save_state()
 
+        counts_scale = 0.5
+
         counts = VGroup(
-            Tex("3").move_to(ab_tree.node_by_index(0, 0)).scale(1).set_z_index(10),
-            Tex("2").move_to(ab_tree.node_by_index(1, 0)).scale(1).set_z_index(10),
-            Tex("2").move_to(ab_tree.node_by_index(1, 1)).scale(1).set_z_index(10),
-            Tex("4").move_to(ab_tree.node_by_index(1, 2)).scale(1).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 0)).scale(0.24).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 1)).scale(0.24).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 2)).scale(0.24).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 3)).scale(0.24).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 4)).scale(0.24).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 5)).scale(0.24).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 6)).scale(0.24).set_z_index(10),
-            #Tex("0").move_to(ab_tree.node_by_index(2, 7)).scale(0.24).set_z_index(10),
-        ).set_color(BLUE)
+            Tex(r"\textbf{3}").move_to(ab_tree.node_by_index(0, 0)).scale(counts_scale).set_z_index(10),
+            Tex(r"\textbf{2}").move_to(ab_tree.node_by_index(1, 0)).scale(counts_scale).set_z_index(10),
+            Tex(r"\textbf{2}").move_to(ab_tree.node_by_index(1, 1)).scale(counts_scale).set_z_index(10),
+            Tex(r"\textbf{4}").move_to(ab_tree.node_by_index(1, 2)).scale(counts_scale).set_z_index(10),
+        ).set_color(BLACK)
+
+        counts_circles = VGroup(
+            Circle(fill_opacity=1).scale(0.25 * counts_scale).set_color(BLUE).set_z_index(9).move_to(counts[0]),
+            Circle(fill_opacity=1).scale(0.25 * counts_scale).set_color(BLUE).set_z_index(9).move_to(counts[1]),
+            Circle(fill_opacity=1).scale(0.25 * counts_scale).set_color(BLUE).set_z_index(9).move_to(counts[2]),
+            Circle(fill_opacity=1).scale(0.25 * counts_scale).set_color(BLUE).set_z_index(9).move_to(counts[3]),
+        )
+
+        counts_combined = VGroup(
+            VGroup(counts[0], counts_circles[0]).next_to(ab_tree.node_by_index(0, 0), DOWN, buff=0).shift(UP * 0.1),
+            VGroup(counts[1], counts_circles[1]).next_to(ab_tree.node_by_index(1, 0), DOWN, buff=0).shift(UP * 0.1),
+            VGroup(counts[2], counts_circles[2]).next_to(ab_tree.node_by_index(1, 1), DOWN, buff=0).shift(UP * 0.1),
+            VGroup(counts[3], counts_circles[3]).next_to(ab_tree.node_by_index(1, 2), DOWN, buff=0).shift(UP * 0.1),
+        )
 
         self.play(
             AnimationGroup(
                 AnimationGroup(
-                    ab_tree.node_by_index(0, 0)[0].animate.set_opacity(0),
-                    ab_tree.node_by_index(1, 0)[0].animate.set_opacity(0),
-                    ab_tree.node_by_index(1, 1)[0].animate.set_opacity(0),
-                    ab_tree.node_by_index(1, 2)[0].animate.set_opacity(0),
-                    symbols.animate.set_opacity(0),
+                    ab_tree.node_by_index(0, 0)[0].animate.set_color(DARK_COLOR),
+                    ab_tree.node_by_index(1, 0)[0].animate.set_color(DARK_COLOR),
+                    ab_tree.node_by_index(1, 1)[0].animate.set_color(DARK_COLOR),
+                    ab_tree.node_by_index(1, 2)[0].animate.set_color(DARK_COLOR),
+                    symbols.animate.set_color(DARK_COLOR),
                 ),
                 AnimationGroup(
                     FadeIn(counts),
+                    FadeIn(counts_circles),
                     ab_tree.edges_by_node_index(0, 0).animate.set_color(BLUE),
                     ab_tree.edges_by_node_index(1, 0).animate.set_color(BLUE),
                     ab_tree.edges_by_node_index(1, 1).animate.set_color(BLUE),
@@ -1045,7 +1054,10 @@ class Basics(MovingCameraScene):
         counts.save_state()
 
         self.play(
-            counts.animate.set_color(DARK_COLOR),
+            counts_circles[0].animate.set_color(DARK_COLOR),
+            counts_circles[1].animate.set_color(DARK_COLOR),
+            counts_circles[2].animate.set_color(DARK_COLOR),
+            counts_circles[3].animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(0, 0).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(1, 0).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(1, 1).animate.set_color(DARK_COLOR),
@@ -1058,14 +1070,13 @@ class Basics(MovingCameraScene):
 
         self.play(
             ab_tree.animate.restore(),
-            counts.animate.restore(),
+            counts_circles[0].animate.set_color(BLUE),
             ab_tree.node_by_index(1, 0).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(1, 1).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(1, 2).animate.set_color(DARK_COLOR),
             ab_tree.edges_by_node_index(1, 0).animate.set_color(DARK_COLOR),
             ab_tree.edges_by_node_index(1, 1).animate.set_color(DARK_COLOR),
             ab_tree.edges_by_node_index(1, 2).animate.set_color(DARK_COLOR),
-            counts[1:].animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(2, 0).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(2, 1).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(2, 2).animate.set_color(DARK_COLOR),
@@ -1080,25 +1091,21 @@ class Basics(MovingCameraScene):
             FadeIn(non_root),
         )
 
-        ab_tree.node_by_index(0, 0)[0].set_color(WHITE),
-        ab_tree.node_by_index(1, 0)[0].set_color(WHITE),
-        ab_tree.node_by_index(1, 1)[0].set_color(WHITE),
-        ab_tree.node_by_index(1, 2)[0].set_color(WHITE),
-
         self.play(
             AnimationGroup(
                 AnimationGroup(
                     ab_tree.animate(lag_ratio=0).set_color(WHITE),
-                    FadeOut(counts, lag_ratio=0),
+                    FadeOut(counts_combined, lag_ratio=0),
                 ),
                 AnimationGroup(
-                    ab_tree.node_by_index(0, 0)[0].animate.set_opacity(1),
-                    ab_tree.node_by_index(1, 0)[0].animate.set_opacity(1),
-                    ab_tree.node_by_index(1, 1)[0].animate.set_opacity(1),
-                    ab_tree.node_by_index(1, 2)[0].animate.set_opacity(1),
+                    ab_tree.node_by_index(0, 0)[0].animate.set_color(WHITE),
+                    ab_tree.node_by_index(1, 0)[0].animate.set_color(WHITE),
+                    ab_tree.node_by_index(1, 1)[0].animate.set_color(WHITE),
+                    ab_tree.node_by_index(1, 2)[0].animate.set_color(WHITE),
+                    FadeOut(symbols),
                     lag_ratio=0,
                 ),
-                lag_ratio=0.5,
+                lag_ratio=0.0,
             ),
         )
 
@@ -1112,6 +1119,9 @@ class Basics(MovingCameraScene):
         ).arrange(DOWN, buff=0.2).scale(txt_scale)
 
         reqs = VGroup(reqs_title, reqs_list).arrange(DOWN, buff=0.3)
+
+        reqs_list[1][0][1:4].set_color(BLUE)
+        reqs_list[1][0][5:].set_color(BLUE)
 
         ops_title = Tex(r"\textbf{Operations}").scale(title_scale)
         ops_list = VGroup(
@@ -1234,7 +1244,7 @@ class Thumbnail(MovingCameraScene):
         ab = ABTree(
             [
                 [[1, 3]],
-                [["0"], ["0"], [4, 5, 6]],
+                [[0], [0], [4, 5, 6]],
             ],
         ).scale(2.5)
 
@@ -1315,6 +1325,101 @@ class Thumbnail2(MovingCameraScene):
         self.wait()
 
 
+class Thumbnail3(MovingCameraScene):
+    def construct(self):
+        ab = ABTree(
+            [
+                [[123]],
+                [[111], [2345]],
+                [[r"\textit{most}"], [r"\textit{elegant}"], [r"\textit{search}"], [r"\textit{structure}"]],
+            ],
+            layer_buffer=0.2,
+            node_buffer=0.3,
+            add_leafs=False,
+        ).scale(2.5)
+
+        self.add(ab)
+
+        the = Tex("\sc The").scale(0.85)
+        a = Tex("\sc (a,b)")
+        trees = Tex("\sc Tree")
+        dash = Tex("-").scale(1.6).stretch_to_fit_height(Tex("-").get_height() * 2)
+
+        text = VGroup(the, a, trees, dash).scale(2.2)
+
+        for e in ab.edges_individually:
+            e.scale(1.4).set_stroke_width(6)
+
+        # hack
+        ab.edges_individually[-1].scale(0.001)
+        ab.edges_individually[-2].scale(0.001)
+        ab.edges_individually[-3].scale(0.001)
+        ab.edges_individually[-4].scale(0.001)
+
+        #ab.edges_by_node_index(1, 0).set_color(GRAY)
+        #ab.edges_by_node_index(1, 1).set_color(GRAY)
+        #ab.node_by_index(2, 0)[0].set_color(GRAY)
+        #ab.node_by_index(2, 1)[0].set_color(GRAY)
+        #ab.node_by_index(2, 2)[0].set_color(GRAY)
+        #ab.node_by_index(2, 3)[0].set_color(GRAY)
+        #ab.node_by_index(2, 0)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 1)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 2)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 3)[1].set_stroke_color(GRAY)
+
+        ab.node_by_index(2, 1)[0][0].shift(DOWN * 0.035)
+
+        ab.node_by_index(2, 0)[0].scale(0.9)
+        ab.node_by_index(2, 1)[0].scale(0.9)
+        ab.node_by_index(2, 2)[0].scale(0.9)
+        ab.node_by_index(2, 3)[0].scale(0.9)
+
+        bee = SVGMobject("assets/bee.svg")\
+                .scale(0.9).move_to(ab.node_by_index(1, 0)[0])\
+                .rotate(PI / 15)\
+                .shift(UP * 0.7 + LEFT * 0.9)
+
+        self.add(bee)
+
+        cache = SVGMobject("assets/cache_line.svg")\
+                .scale(1.05).move_to(ab.node_by_index(1, 1)[0])\
+                .rotate(-PI / 20)\
+                .shift(UP * 0.6 + RIGHT * 1.05)
+
+        self.add(cache)
+
+        cache[1].set_color(GREEN)
+        cache[2].set_color(GREEN)
+
+        ab.node_by_index(0, 0)[0].become(the.move_to(ab.node_by_index(0, 0)[0]))
+        ab.node_by_index(1, 0)[0].become(a.move_to(ab.node_by_index(1, 0)[0]))
+        ab.node_by_index(1, 1)[0].become(trees.move_to(ab.node_by_index(1, 1)[0]))
+
+        dash.scale(1.15)
+        dash.move_to(VGroup(
+            Dot().next_to(ab.node_by_index(1, 0), RIGHT),
+            Dot().next_to(ab.node_by_index(1, 1), LEFT),
+        )).shift(LEFT * 0.115)
+
+        x = VGroup(
+            Tex(r"\textit{most}"),
+            Tex(r"\textit{elegant}"),
+        ).arrange(DOWN).next_to(the, LEFT, buff=1.5).scale(0.8)
+
+        y = VGroup(
+            Tex(r"\textit{search}"),
+            Tex(r"\textit{structure}"),
+        ).arrange(DOWN).next_to(the, RIGHT, buff=1.5).scale(0.8)
+
+        #self.add(text, x, y)
+
+        self.add(text)
+
+        self.camera.frame.scale(0.73)
+
+        self.wait()
+
+
 class Search(MovingCameraScene):
     @fade
     def construct(self):
@@ -1336,8 +1441,11 @@ class Search(MovingCameraScene):
             )
         )
 
-        ab_tree.search_but_like_animate(5, self, scale=S)
-        ab_tree.search_but_like_animate(7, self, scale=S, speedup=2)
+        bgs = ab_tree.search_but_like_animate(5, self, scale=S)
+        self.play(FadeOut(VGroup(*bgs), run_time=0.1))
+
+        bgs = ab_tree.search_but_like_animate(7, self, scale=S, speedup=2)
+        self.play(FadeOut(VGroup(*bgs), run_time=0.1))
 
 
 class Insertion(MovingCameraScene):
@@ -1362,7 +1470,7 @@ class Insertion(MovingCameraScene):
             FadeIn(ins, shift=LEFT * 3.7),
         )
 
-        target, qs = ab_tree.search_but_like_animate(7, self, scale=S, speedup=5, no_cleanup=True)
+        target, qs, bgs = ab_tree.search_but_like_animate(7, self, scale=S, speedup=5, no_cleanup=True)
 
         def darken_our_tree(tree):
             tree.subtree_by_index(1, 0).set_color(DARK_COLOR)
@@ -1373,6 +1481,7 @@ class Insertion(MovingCameraScene):
         anim, tree = ab_tree.insert(7, scale=S, transform_instead=target, tree_transform_function=darken_our_tree)
 
         self.play(
+            FadeOut(VGroup(*bgs)),
             AnimationGroup(
                 FadeOut(qs),
                 anim,
@@ -1557,7 +1666,7 @@ class Deletion(MovingCameraScene):
             FadeIn(ins, shift=LEFT * 3.7),
         )
 
-        target, qs = ab_tree.search_but_like_animate(7, self, scale=S, speedup=5, no_cleanup=True)
+        target, qs, bgs = ab_tree.search_but_like_animate(7, self, scale=S, speedup=5, no_cleanup=True)
 
         def darken_our_tree(tree):
             tree.subtree_by_index(1, 0).set_color(DARK_COLOR)
@@ -1568,6 +1677,7 @@ class Deletion(MovingCameraScene):
         anim, tree = ab_tree.insert(7, scale=S, transform_instead=target, tree_transform_function=darken_our_tree)
 
         self.play(
+            FadeOut(VGroup(*bgs)),
             AnimationGroup(
                 FadeOut(qs),
                 anim,
@@ -1752,7 +1862,7 @@ class Deletion(MovingCameraScene):
 
         self.add(ab_tree, dl)
 
-        target, qs = ab_tree.search_but_like_animate(9, self, scale=S, speedup=5, no_cleanup=True)
+        target, qs, bgs = ab_tree.search_but_like_animate(9, self, scale=S, speedup=5, no_cleanup=True)
 
         def darken_our_tree(tree):
             tree.subtree_by_index(1, 0).set_color(DARK_COLOR)
@@ -1772,6 +1882,7 @@ class Deletion(MovingCameraScene):
         anim, tree = ab_tree.delete(9, scale=S, tree_transform_function=darken_our_tree)
 
         self.play(
+            FadeOut(VGroup(*bgs)),
             FadeOut(target),
             FadeOut(qs),
             anim,

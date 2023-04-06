@@ -10,8 +10,6 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
-<!-- TODO: 4:20: remind of the invariants -->
-
 ---
 FEVER DREAM
 ---
@@ -48,7 +46,7 @@ If we want to find a key (for example 5) in a binary tree, we start in the root 
 In this case, the key is found.
 However, if we tried the same with a key that isn't in the tree, we soon reach a leaf, at which point we know the key is not present.
 
-For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and we follow the edge where it should be, again either finding it or getting to a leaf.
+For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and we follow the edge between the keys where it should be, again either finding it or getting to a leaf.
 
 $(a,b)$-trees address a number of shortcomings of binary trees, mainly the fact that they can easily become unbalanced -- repeatedly inserting items into a binary tree without other operations can make them lean to one side, rendering all operations significantly slower.
 There are ways to address this problem (like AVL trees or R&B trees), but they are not nearly as elegant as $(a,b)$-trees.
@@ -120,7 +118,7 @@ Since just searching for keys is boring, let's try to insert one.
 Assuming that it's not present, we'll again run search and end up in one of the tree's leafs.
 Then we simply insert the key into the leaf's parent node, creating a new leaf in the process.
 
-Now it might seem like we're be done, but remember that a node can have at most $b$ children, which this node now doesn't satisfy.
+Now it might seem like we're be done, but remember that since this is an $(a,b)$-tree, a node can have at most $b$ children, making the one that we just modified invalid.
 
 Pause here and try to solve this problem; chances are the first thing you think of is the correct solution.
 

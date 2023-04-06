@@ -27,7 +27,7 @@ Social media:
 ► Website (for other things I'm up to): https://slama.dev/
 ► Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
-Thanks to Matěj Kripner, guys at @polylog7346, and TODO for feedback.
+Thanks to Matěj Kripner, František Voldřich, guys at @polylog7346 and TODO for feedback.
 
 ------------------
 
