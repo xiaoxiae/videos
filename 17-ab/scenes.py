@@ -273,6 +273,83 @@ class Fever(MovingCameraScene):
             self.camera.frame.animate.shift(UP * 0.75),
         )
 
+
+class IntroFix(MovingCameraScene):
+    @fade
+    def construct(self):
+        # NOTE: CORRECT
+        self.next_section(skip_animations=True)
+
+        ab_tree = ABTree(
+            [
+                [[2, 4]],
+                [[1], [3], [5, 6, 7]],
+            ],
+            fill_background=False,
+        )
+
+        binary_tree = ABTree(
+            [
+                [[4]],
+                [[2], [6]],
+                [[1], [3], [5], [7]],
+            ],
+            fill_background=False,
+        )
+
+        ab = VGroup(Tex(r"\underline{$(a,b)$-tree}").scale(1.25), ab_tree).arrange(DOWN, buff=1)
+        bst = VGroup(Tex(r"\underline{binary search tree}").scale(1.25), binary_tree).arrange(DOWN, buff=1.2)
+
+        ab.move_to(self.camera.frame.get_center())
+        bst.move_to(self.camera.frame.get_center())
+
+        self.camera.frame.scale(0.95)
+
+        S = 0.8
+
+        self.camera.frame.scale(S)
+
+        self.play(
+            Write(ab),
+        )
+
+        group_cp = VGroup(ab.copy(), bst).arrange(buff=1.15)
+        group_cp[0].align_to(group_cp[1], UP)
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    ab[0].animate.move_to(group_cp[0][0]),
+                    ab[1].animate.move_to(group_cp[0][1]).align_to(bst, DOWN),
+                    self.camera.frame.animate.scale(1/S),
+                ),
+                FadeIn(bst),
+                lag_ratio=0.5,
+            ),
+        )
+
+        # NOTE: CORRECT
+        self.next_section()
+
+        ab[0].set_z_index(10000)
+        s = Square(fill_opacity=1, stroke_width=0).set_color(BLACK).set_width(ab[0].get_width()).set_z_index(100).move_to(ab[0]).align_to(ab[0], DOWN)
+        self.add(s)
+        bbp = Tex(r"B or B\texttt{+}").scale(1.25).next_to(ab[0], DOWN, buff=0.1)
+
+        self.add(bbp)
+        bbp.shift(UP * 1)
+
+        self.play(
+            bbp.animate.shift(DOWN * 1),
+        )
+
+        self.play(
+            bbp.animate.shift(UP * 1),
+        )
+
+
+
+
 class Intro(MovingCameraScene):
     @fade
     def construct(self):
@@ -995,13 +1072,13 @@ class Basics(MovingCameraScene):
 
         self.play(
             AnimationGroup(
-                AnimationGroup(
-                    ab_tree.node_by_index(0, 0)[0].animate.set_color(DARK_COLOR),
-                    ab_tree.node_by_index(1, 0)[0].animate.set_color(DARK_COLOR),
-                    ab_tree.node_by_index(1, 1)[0].animate.set_color(DARK_COLOR),
-                    ab_tree.node_by_index(1, 2)[0].animate.set_color(DARK_COLOR),
-                    symbols.animate.set_color(DARK_COLOR),
-                ),
+                #AnimationGroup(
+                #    ab_tree.node_by_index(0, 0)[0].animate.set_color(DARK_COLOR),
+                #    ab_tree.node_by_index(1, 0)[0].animate.set_color(DARK_COLOR),
+                #    ab_tree.node_by_index(1, 1)[0].animate.set_color(DARK_COLOR),
+                #    ab_tree.node_by_index(1, 2)[0].animate.set_color(DARK_COLOR),
+                #    symbols.animate.set_color(DARK_COLOR),
+                #),
                 AnimationGroup(
                     FadeIn(counts),
                     FadeIn(counts_circles),
@@ -1066,6 +1143,7 @@ class Basics(MovingCameraScene):
             ab_tree.edges_by_node_index(1, 0).animate.set_color(DARK_COLOR),
             ab_tree.edges_by_node_index(1, 1).animate.set_color(DARK_COLOR),
             ab_tree.edges_by_node_index(1, 2).animate.set_color(DARK_COLOR),
+            symbols.animate.set_color(DARK_COLOR),
         )
 
         self.play(
@@ -1085,6 +1163,7 @@ class Basics(MovingCameraScene):
             ab_tree.node_by_index(2, 5).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(2, 6).animate.set_color(DARK_COLOR),
             ab_tree.node_by_index(2, 7).animate.set_color(DARK_COLOR),
+            symbols[0].animate.set_color(WHITE),
         )
 
         self.play(
@@ -1092,21 +1171,9 @@ class Basics(MovingCameraScene):
         )
 
         self.play(
-            AnimationGroup(
-                AnimationGroup(
-                    ab_tree.animate(lag_ratio=0).set_color(WHITE),
-                    FadeOut(counts_combined, lag_ratio=0),
-                ),
-                AnimationGroup(
-                    ab_tree.node_by_index(0, 0)[0].animate.set_color(WHITE),
-                    ab_tree.node_by_index(1, 0)[0].animate.set_color(WHITE),
-                    ab_tree.node_by_index(1, 1)[0].animate.set_color(WHITE),
-                    ab_tree.node_by_index(1, 2)[0].animate.set_color(WHITE),
-                    FadeOut(symbols),
-                    lag_ratio=0,
-                ),
-                lag_ratio=0.0,
-            ),
+            ab_tree.animate(lag_ratio=0).set_color(WHITE),
+            FadeOut(counts_combined, lag_ratio=0),
+            FadeOut(symbols),
         )
 
         title_scale = 0.85
@@ -1419,6 +1486,117 @@ class Thumbnail3(MovingCameraScene):
 
         self.wait()
 
+class Interlude(MovingCameraScene):
+    def construct(self):
+        # SAME AS THUMBNAIL 3
+        ab = ABTree(
+            [
+                [[123]],
+                [[111], [2345]],
+                [[r"\textit{most}"], [r"\textit{elegant}"], [r"\textit{search}"], [r"\textit{structure}"]],
+            ],
+            layer_buffer=0.2,
+            node_buffer=0.3,
+            add_leafs=False,
+        ).scale(2.5)
+
+        the = Tex("\sc The").scale(0.85)
+        a = Tex("\sc (a,b)")
+        trees = Tex("\sc Tree")
+        dash = Tex("-").scale(1.6).stretch_to_fit_height(Tex("-").get_height() * 2)
+
+        text = VGroup(the, a, dash, trees).scale(2.2)
+
+        for e in ab.edges_individually:
+            e.scale(1.4).set_stroke_width(6)
+
+        # hack
+        ab.edges_individually[-1].scale(0.001)
+        ab.edges_individually[-2].scale(0.001)
+        ab.edges_individually[-3].scale(0.001)
+        ab.edges_individually[-4].scale(0.001)
+
+        #ab.edges_by_node_index(1, 0).set_color(GRAY)
+        #ab.edges_by_node_index(1, 1).set_color(GRAY)
+        #ab.node_by_index(2, 0)[0].set_color(GRAY)
+        #ab.node_by_index(2, 1)[0].set_color(GRAY)
+        #ab.node_by_index(2, 2)[0].set_color(GRAY)
+        #ab.node_by_index(2, 3)[0].set_color(GRAY)
+        #ab.node_by_index(2, 0)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 1)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 2)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 3)[1].set_stroke_color(GRAY)
+
+        ab.node_by_index(2, 1)[0][0].shift(DOWN * 0.035)
+
+        ab.node_by_index(2, 0)[0].scale(0.9)
+        ab.node_by_index(2, 1)[0].scale(0.9)
+        ab.node_by_index(2, 2)[0].scale(0.9)
+        ab.node_by_index(2, 3)[0].scale(0.9)
+
+        bee = SVGMobject("assets/bee.svg")\
+                .scale(0.9).move_to(ab.node_by_index(1, 0)[0])\
+                .rotate(PI / 15)\
+                .shift(UP * 0.7 + LEFT * 0.9)
+
+        cache = SVGMobject("assets/cache_line.svg")\
+                .scale(1.05).move_to(ab.node_by_index(1, 1)[0])\
+                .rotate(-PI / 20)\
+                .shift(UP * 0.6 + RIGHT * 1.05)
+
+        cache[1].set_color(GREEN)
+        cache[2].set_color(GREEN)
+
+        ab.node_by_index(0, 0)[0].become(the.move_to(ab.node_by_index(0, 0)[0]))
+        ab.node_by_index(1, 0)[0].become(a.move_to(ab.node_by_index(1, 0)[0]))
+        ab.node_by_index(1, 1)[0].become(trees.move_to(ab.node_by_index(1, 1)[0]))
+
+        dash.scale(1.15)
+        dash.move_to(VGroup(
+            Dot().next_to(ab.node_by_index(1, 0), RIGHT),
+            Dot().next_to(ab.node_by_index(1, 1), LEFT),
+        )).shift(LEFT * 0.115)
+
+        x = VGroup(
+            Tex(r"\textit{most}"),
+            Tex(r"\textit{elegant}"),
+        ).arrange(DOWN).next_to(the, LEFT, buff=1.5).scale(0.8)
+
+        y = VGroup(
+            Tex(r"\textit{search}"),
+            Tex(r"\textit{structure}"),
+        ).arrange(DOWN).next_to(the, RIGHT, buff=1.5).scale(0.8)
+
+        self.add(ab.skeleton)
+        #self.add(bee)
+        #self.add(cache)
+        #self.add(text)
+
+        self.camera.frame.scale(0.8)
+
+        text.set_z_index(10000)
+
+        self.play(
+            AnimationGroup(
+                Write(text, run_time=1.5),
+                AnimationGroup(
+                    AnimationGroup(
+                        FadeIn(ab.node_by_index(2, 0)[0]),
+                        FadeIn(ab.node_by_index(2, 1)[0]),
+                        FadeIn(ab.node_by_index(2, 2)[0]),
+                        FadeIn(ab.node_by_index(2, 3)[0]),
+                        lag_ratio=0.1,
+                    ),
+                    AnimationGroup(
+                        FadeIn(bee, shift=UP * 0.5 + LEFT * .25),
+                        FadeIn(cache, shift=UP * 0.3 + RIGHT * .25),
+                    ),
+                    lag_ratio=0.5,
+                ),
+                lag_ratio=0.7,
+            ),
+        )
+
 
 class Search(MovingCameraScene):
     @fade
@@ -1643,6 +1821,8 @@ class Insertion(MovingCameraScene):
 class Deletion(MovingCameraScene):
     @fade
     def construct(self):
+        ab_text = Tex(r"\underline{$(a,b)$-tree}").scale(1.25).scale(S)
+
         ### NOTE: this is literally a copy-paste of the entire insertion
         self.next_section(skip_animations=True)
 
@@ -2209,7 +2389,11 @@ class Deletion(MovingCameraScene):
         )
 
         self.play(
-            Write(eq[0][5:]),
+            Write(eq[0][5:10]),
+        )
+
+        self.play(
+            FadeIn(eq[0][10:]),
         )
 
         a[0].set_color(DARK_COLOR)
@@ -2278,6 +2462,7 @@ class Deletion(MovingCameraScene):
             Transform(tree.subtree_by_index(1, 0), tree_to_transform.subtree_by_index(1, 0)),
             Transform(tree.edges_by_node_index(0, 0), tree_to_transform.edges_by_node_index(0, 0)),
             Transform(tree.node_by_index(0, 0), tree_to_transform.node_by_index(0, 0)),
+            Transform(tree.node_by_index(1, 1)[1], tree_to_transform.node_by_index(1, 1)[1]),
             Transform(tree.node_by_index(1, 1)[0][0], tree_to_transform.node_by_index(2, 3)[0][0]),
             Transform(tree.node_by_index(2, 2)[0][1], tree_to_transform.node_by_index(1, 1)[0][0]),
             Transform(tree.node_by_index(2, 2)[0][0], tree_to_transform.node_by_index(2, 2)[0][0]),
@@ -2292,6 +2477,7 @@ class Deletion(MovingCameraScene):
             Transform(tree.edges_by_node_index(2, 2)[2], tree_to_transform.edges_by_node_index(2, 3)[0]),
             Transform(tree.edges_by_node_index(2, 3)[0], tree_to_transform.edges_by_node_index(2, 3)[1]),
             Transform(tree.node_by_index(2, 3)[1], tree_to_transform.node_by_index(2, 3)[1]),
+            run_time=1.5,
         )
 
         ab_tree_both = ABTree(
@@ -2369,11 +2555,20 @@ class Deletion(MovingCameraScene):
         tree.move_to(self.camera.frame).align_to(tc, DOWN)
 
         dl.align_to(dl.copy().move_to(tree), RIGHT)
+        self.remove(dl)
+        self.add(ab_text)
+        ab_text.move_to(dl).align_to(dl, DOWN)
 
         self.play(
-            self.camera.frame.animate.move_to(VGroup(tree, dl)).scale(1/0.65),
+            self.camera.frame.animate.move_to(VGroup(tree, ab_text)).scale(1/0.65),
             FadeOut(a),
         )
+
+        # oof
+        print(tree.get_center() - ab_text.get_center())
+        print(self.camera.frame.get_height())
+        print(tree.get_height())
+        print(ab_text.get_height())
 
 
 class Summary(MovingCameraScene):
@@ -2468,21 +2663,19 @@ class SelectingAB(MovingCameraScene):
                 [[0], [2], [5], [7]],
             ],
             fill_background=False,
-        )
+        ).set_height(4.781904820000001)
 
-        ab = VGroup(Tex(r"\underline{\textit{Deletion}}").scale(1.25), tree).arrange(DOWN, buff=1).scale(S)
+        #ab = VGroup(Tex(r"\underline{\textit{Deletion}}").scale(1.25), tree).arrange(DOWN, buff=1).scale(S)
 
-        ab_text = Tex(r"\underline{$(a,b)$-tree}").scale(1.25).move_to(ab[0]).scale(S)
+        ab_text = Tex(r"\underline{$(a,b)$-tree}").scale(1.25).scale(S).set_height(1.0112004875)
 
-        # copy-pasted
-        self.camera.frame.move_to(VGroup(ab)).set_height(VGroup(ab).get_height() * 1.4)
+        tree.shift(UP * -3.84538207)  # from Deletion prints
+        self.camera.frame.set_height(9.0639165645).move_to(VGroup(tree, ab_text))  # from Deletion prints
 
-        self.add(ab)
+        self.add(tree, ab_text)
 
-        self.play(
-            FadeOut(ab[0], shift=LEFT * 4.2),
-            FadeIn(ab_text, shift=LEFT * 4.2),
-        )
+        # hack for KdenLive
+        self.wait()
 
         q1 = Tex("?").move_to(ab_text[0][1]).scale(1.25 * S)
         q2 = Tex("?").move_to(ab_text[0][3]).scale(1.25 * S).align_to(q1, DOWN)
@@ -2573,19 +2766,30 @@ class SelectingAB(MovingCameraScene):
         self.play(FadeIn(cls, shift=RIGHT * .25, lag_ratio=0.03))
 
         cls2 = VGroup(
-            Tex("$64 \cdot 8\\mathrm{b}$").scale(0.4).move_to(cls[0]).align_to(cls[0], LEFT),
-            Tex("$64 \cdot 8\\mathrm{b}$").scale(0.4).move_to(cls[1]).align_to(cls[1], LEFT),
-            Tex("$64 \cdot 8\\mathrm{b}$").scale(0.4).move_to(cls[2]).align_to(cls[2], LEFT),
-            Tex("$64 \cdot 8\\mathrm{b}$").scale(0.4).move_to(cls[3]).align_to(cls[3], LEFT),
-            Tex("$64 \cdot 8\\mathrm{b}$").scale(0.4).move_to(cls[4]).align_to(cls[4], LEFT),
-            Tex("$64 \cdot 8\\mathrm{b}$").scale(0.4).move_to(cls[5]).align_to(cls[5], LEFT),
+            Tex("$8 \cdot 64\\mathrm{b}$").scale(0.4).move_to(cls[0]).align_to(cls[0], LEFT),
+            Tex("$8 \cdot 64\\mathrm{b}$").scale(0.4).move_to(cls[1]).align_to(cls[1], LEFT),
+            Tex("$8 \cdot 64\\mathrm{b}$").scale(0.4).move_to(cls[2]).align_to(cls[2], LEFT),
+            Tex("$8 \cdot 64\\mathrm{b}$").scale(0.4).move_to(cls[3]).align_to(cls[3], LEFT),
+            Tex("$8 \cdot 64\\mathrm{b}$").scale(0.4).move_to(cls[4]).align_to(cls[4], LEFT),
+            Tex("$8 \cdot 64\\mathrm{b}$").scale(0.4).move_to(cls[5]).align_to(cls[5], LEFT),
         )
 
         self.play(
-            *[
-                Transform(cls[i][0][2:], cls2[i][0][2:])
-                for i in range(len(cls))
-            ]
+            AnimationGroup(
+                AnimationGroup(
+                    *[
+                        FadeTransform(cls[i][0][0:], cls2[i][0][2:])
+                        for i in range(len(cls))
+                    ]
+                ),
+                AnimationGroup(
+                    *[
+                        FadeIn(cls2[i][0][:2])
+                        for i in range(len(cls))
+                    ]
+                ),
+                lag_ratio=0.25,
+            ),
         )
 
         # I'm sorry

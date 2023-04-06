@@ -10,6 +10,9 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
+<!-- TODO: standardized pause animations -->
+<!-- TODO: intro s mým logem (animovaný thumbnail) -->
+
 ---
 FEVER DREAM
 ---
@@ -39,6 +42,8 @@ INTRODUCTION
 Wow that was a weird dream.
 
 Anyway, in today's video, I'll introduce you to $(a,b)$-trees, which are a more generalized version of binary search trees.
+They are more commonly known as B or B+ trees, but I'll be cover them here in their most general form, which is $(a,b)$.
+
 As you can see, they are no longer binary, since their nodes can have more than two children.
 
 Just like binary trees, they are used for quickly storing and locating items based on their keys.
@@ -129,7 +134,7 @@ This adds a key to the node above, which might in turn brake its condition, so w
 Let's insert a few more values to better illustrate what the operation does to the tree.
 
 While all this seems sensible, what we've done here is only possible thanks to our carefully selected conditions:
-Firstly, splitting a node makes the two resulting nodes have at least $\lfloor (b+1)/2 \rfloor$ children, which, thanks to our inequality on $b$, is at least $a$, making them valid.
+Firstly, splitting a node makes the two resulting nodes have at least $\lfloor (b+1)/2 \rfloor$ children, which, thanks to the inequality on $b$, is at least $a$, making them valid.
 Secondly, the root can have from $2$ to $b$ children (instead of $a$ to $b$), having $2$ right after it is split, as you can see here.
 
 
@@ -137,7 +142,7 @@ Secondly, the root can have from $2$ to $b$ children (instead of $a$ to $b$), ha
 DELETION
 ---
 
-Adding this many keys to the tree is making it a little crowded, so let's in delete some keys.
+Adding this many keys to the tree is making it a little crowded, so let's in turn delete some.
 Let's assume that the key we want to delete is present and we run search to find it.
 
 If it's in the second to last layer, we can simply delete it, along with one of its leafs.
@@ -154,7 +159,7 @@ Replacing the missing key neatly reduces our problem to the previous case and is
 
 Now we can simply remove the leftover leaf and... yikes, that doesn't look healthy.
 
-It seems that removing this key broke the condition on the number of children, with node having less than $a$, so let's fix it.
+It seems that removing this key broke the condition on the number of children, with this node having less than $a$, so let's fix it.
 Since the problem node has at least one adjacent node, we can do one of two things:
 
 a) either merge the two nodes or,
@@ -162,14 +167,13 @@ b) steal one of the adjacent node's keys
 
 If the adjacent node has $a$ children (like in this case), we can't just steal a key since it would bring the adjacent node below the limit, so we'll have to merge, which looks as follows.
 Notice that this moves a key from the node above, which might again break its condition (similar to insert), so we might have to recursively fix the same problem in the nodes above.
-As a sanity check, the merged node will have $a - 1 + a$ children, which is, again thanks to our inequality, at most $b$, making it valid.
+Just to check that we didn't break anything, the merged node will have $a - 1 + a$ children, which is, again thanks to our inequality, at most $b$, making it valid.
 
 To see the other case in action, let's remove another key.
 As we see, its adjacent node has more than $a$ children, meaning that we can steal the closest neighbouring key.
 We do so by moving the closest key up and the key above down, which again perserves the ordering of the tree.
 
 One thing to note is that in cases where both operations are possible (i.e. you have two neighbours and can steal from one and merge with the other), you should always steal, which is generally bad life advice but in this case saves you from possibly having to fix the parent node.
-
 
 ---
 SELECTING A, B
@@ -182,8 +186,8 @@ While it doesn't really matter in terms of theoretical analysis since all of the
 
 Code runs on real hardware and the main way to make it fast is to make it cache-friendly -- ideally, a node should fit into a single cache line, regardless of its size.
 
-For example, my cache lines are $64B$, which means that they can hold at most $64$ $8b$ values.
-A node consists of keys and pointers to its children, each of which is a $64b$ number, meaning that the maximum $b$ value is $4$, making $a$ at most $2$.
+For example, my cache lines are $64B$, which means that they can hold at most $8$ $64b$ values.
+A node consists of keys and pointers to its children, meaning that the maximum $b$ value is $4$, making $a$ at most $2$.
 
 To test this, I used an open-source $(a,b)$-tree implementation (link in the description) to run benchmarks on all of the common operations for varying sizes of $a$ and $b$.
 Plotting the runtimes, I got a result that I didn't really expect -- it seems that the optimal value for $a,b$ is different for each of the operations and is definitely not $2,4$.
