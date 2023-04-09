@@ -10,9 +10,6 @@ header-includes:
 \hrule
 \vspace{1.5em}
 
-<!-- TODO: standardized pause animations -->
-<!-- TODO: intro s mým logem (animovaný thumbnail) -->
-
 ---
 FEVER DREAM
 ---
@@ -146,6 +143,7 @@ Adding this many keys to the tree is making it a little crowded, so let's in tur
 Let's assume that the key we want to delete is present and we run search to find it.
 
 If it's in the second to last layer, we can simply delete it, along with one of its leafs.
+We're quite fortunate that this didn't bring the number of children below the limit, which can happen and we will see how to resolve it once it does.
 
 If it's not in the second to last layer, we'll remove it but since this leaves and empty spot, we'd like to replace it with a key from the second to last layer to reduce the problem to the previous case.
 Pause here and think about which key we can put in its place.
@@ -203,7 +201,7 @@ There is much more to this and if you're interested, I linked a paper that cover
 USAGE
 ---
 
-Now that you know what an $(a,b)$-tree is, you might say Tom this is pretty cool but why should I care?
+Now that you know what an $(a,b)$-tree is, you might say why should I care?
 Well, to really convince you that this isn't just some useless piece of computer science theory, you are likely using some sort of an $(a,b)$-tree right now as you're watching this video and he is why.
 They are widely used by filesystems for indexing files, including Apple's APFS, Microsoft's NTFS and Linux's Ext4.
 They are also used by a number of languages for dictionary and set implementations, including Rust, C++ and Java (ok, technically, the last two use R&B trees, but those are actually just $(a,b)$-trees, so I think it counts).

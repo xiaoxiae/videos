@@ -30,6 +30,6 @@ for path in glob(os.path.abspath(os.path.join(raw_directory, "*.wav"))):
     meter = pyln.Meter(rate)
     loudness = meter.integrated_loudness(data)
 
-    loudness_normalized_audio = pyln.normalize.loudness(data, loudness, -15.0)
+    loudness_normalized_audio = pyln.normalize.loudness(data, loudness, -25.0)
 
     sf.write(os.path.join(normalized_directory, name), loudness_normalized_audio, rate)

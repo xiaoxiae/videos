@@ -227,7 +227,7 @@ def create_node(keys, fill_background=True, half=None, short=False):
 
 
 class ABTree(VMobject):
-    def __init__(self, layers, fill_background=True, add_leafs=True, leaf_buffer=0.25, node_buffer=0.4, layer_buffer=0.4, **kwargs):
+    def __init__(self, layers, fill_background=True, add_leafs=True, leaf_buffer=0.25, node_buffer=0.4, layer_buffer=0.4, is_interlude=False, **kwargs):
         super().__init__(**kwargs)
 
         self.skeleton = VGroup()
@@ -322,7 +322,7 @@ class ABTree(VMobject):
                 self.node_edges[node] = None
                 continue
 
-            edges = self._create_edges(node)
+            edges = self._create_edges(node, is_interlude=is_interlude)
             self.edges.add(edges)
             self.edges_individually.add(*edges)
             self.skeleton.add(*edges)
@@ -332,12 +332,22 @@ class ABTree(VMobject):
         self.add(self.layer_mobjects)
         self.add(self.edges)
 
-    def _create_edges(self, node, fill_background=True):
+    def _create_edges(self, node, fill_background=True, is_interlude=False):
         node_keys = self.nodes_to_keys[node]
+
+        # NOTE: last change, maybe fucks everything up
+        key_count = len(node_keys)
+        modifier = 1 if key_count == 1\
+                else 1.2 if key_count == 2\
+                else 1.4
+
+        if is_interlude:
+            modifier = 1.8
+        # NOTE: fuckup ends here
 
         top = VGroup(*[Dot().scale(0.001)
                        for _ in range(len(node_keys) + 1)])\
-                .arrange(RIGHT, KEYS_IN_NODE_BUFF)\
+                .arrange(RIGHT, KEYS_IN_NODE_BUFF * modifier)\
                 .move_to(node)\
                 .align_to(node, DOWN)\
 

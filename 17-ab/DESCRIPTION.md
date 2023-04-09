@@ -27,17 +27,20 @@ Social media:
 ► Website (for other things I'm up to): https://slama.dev/
 ► Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
-Thanks to Matěj Kripner, František Voldřich, guys at @polylog7346 and TODO for feedback.
+Thanks to Matěj Kripner, František Voldřich, Jakub Pelc, Hansen Pascal, and guys at @polylog7346 for valuable feedback.
 
 ------------------
 
 [CZ] Martin Mareš: Průvodce labyrintem algoritmů:
 http://pruvodce.ucw.cz/
 
+[EN] Effect of Node Size on the Performance of Cache-Conscious B+-trees:
+https://pages.cs.wisc.edu/~jignesh/publ/cci.pdf
+
 [EN] frozenca/BTree: open-source C++ B-tree implementation:
 https://github.com/frozenca/BTree
 
-[EN] Wikipedia: (a,b)-tree-related articles:
+[EN] Other (a,b)-tree-related resources:
 https://en.wikipedia.org/wiki/(a,b)-tree
 https://en.wikipedia.org/wiki/B%2B_tree
 https://en.wikipedia.org/wiki/B-tree
