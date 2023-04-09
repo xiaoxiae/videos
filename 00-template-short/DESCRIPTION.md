@@ -5,7 +5,7 @@
 
 Source code: https://github.com/xiaoxiae/videos/tree/master/<name-of-folder>
 
-Music:
+Music (in the order it appears in the video):
 ► <credit the music used>
 
 Software used:
@@ -16,6 +16,7 @@ Software used:
 ► arecord (audio recording): https://linux.die.net/man/1/arecord
 ► sox (audio processing): http://sox.sourceforge.net/
 ► Inkscape (vector image editing): https://inkscape.org/
+► Stable Diffusion (image generation): https://stablediffusionweb.com/
 
 Social media:
 ► Website (for other things I'm up to): https://slama.dev/

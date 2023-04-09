@@ -3,15 +3,25 @@ An introduction to (a,b)-trees -- definition, operations, usage.
 ------------------
 
 Timetable:
-0:00 - <something>
-1:36 - <something else>
+0:00 - Fever dream?
+0:28 - Introduction
+2:04 - Basics
+3:47 - Search
+4:33 - Insertion
+6:06 - Deletion
+8:51 - Selecting (a, b)
+10:36 - Usage
+11:22 - Outro
 
 ------------------
 
 Source code: https://github.com/xiaoxiae/videos/tree/master/17-ab/
 
-Music:
-► <credit the music used>
+Music (in the order it appears in the video):
+► The Big Ten by Blue Dot Sessions: https://app.sessions.blue/browse/track/170869
+► Cases to Rest by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
+► Maisie Dreamer by Blue Dot Sessions: https://app.sessions.blue/browse/track/31458
+► Thannoid by Blue Dot Sessions: https://app.sessions.blue/browse/track/126782
 
 Software used:
 ► Manim (animation software): https://github.com/ManimCommunity/manim/

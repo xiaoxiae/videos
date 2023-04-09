@@ -31,7 +31,7 @@ It could alternatively serve as a workflow document for anyone who would like to
 	- also make sure that the resolution matches the video files (`Project > Project Settings > 4K UHD 2160p 60 fps`), though adding the video folder should prompt this
 	- use 3 video and 3 audio tracks
 - start adding the scenes
-- the voice audio should be **full**, the music audio should be apx. **-32 dB** (there is an effect to do this)
+- the voice audio should be **full**, the music audio should be apx. **-25 dB** (there is an effect to do this)
 - to create a freeze frame, use the next segment and a **freeze** modifier (without any parameters)
 
 ## Post-render
