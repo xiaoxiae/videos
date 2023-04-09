@@ -177,8 +177,12 @@ class Fever(MovingCameraScene):
                 [[4]],
                 [[2], [6]],
                 [[1], [3], [5], [7]],
-            ]
+            ],
+            fill_background=True,
         ).scale(1.5)
+
+        for edge in binary_tree.edges_individually:
+            edge.scale(1.2)
 
         binary_tree.subtree_by_index(1, 0).set_stroke_color(BLACK)
         binary_tree.node_by_index(1, 0).set_color(BLACK).set_z_index(-1)
@@ -386,8 +390,6 @@ class Intro(MovingCameraScene):
             Write(ab),
         )
 
-        return
-
         group_cp = VGroup(ab.copy(), bst).arrange(buff=1.15)
         group_cp[0].align_to(group_cp[1], UP)
 
@@ -489,7 +491,7 @@ class Intro(MovingCameraScene):
         # TARGET 5
         bubbles, node_bubbles = get_tree_bubbles(binary_tree)
 
-        target = Tex("$5$").next_to(binary_tree.node_by_index(0, 0), UP).scale(0.8)
+        target = Tex("$5$").next_to(binary_tree.node_by_index(0, 0), UP).scale(0.8).set_z_index(10000)
 
         self.play(
             FadeIn(target, shift=UP * 0.1),
@@ -538,7 +540,7 @@ class Intro(MovingCameraScene):
             node_bubbles[binary_tree.node_by_index(2, 3)][1][0].animate.set_color(DARK_COLOR),
         )
 
-        target_cp = binary_tree.node_by_index(2, 2)[0].copy().set_opacity(0)
+        target_cp = binary_tree.node_by_index(2, 2)[0].copy().set_opacity(0).set_color(GREEN)
 
         self.play(
             Transform(target, target_cp),
@@ -555,7 +557,7 @@ class Intro(MovingCameraScene):
 
         # TARGET 8, COPY PASTED!
 
-        target = Tex("$8$").next_to(binary_tree.node_by_index(0, 0), UP).scale(0.8)
+        target = Tex("$8$").next_to(binary_tree.node_by_index(0, 0), UP).scale(0.8).set_z_index(10000)
 
         self.play(
             Write(target),
@@ -643,7 +645,7 @@ class Intro(MovingCameraScene):
 
         # TARGET 5 AB, COPY PASTED!
 
-        target = Tex("$5$").next_to(ab_tree.node_by_index(0, 0), UP).scale(0.8)
+        target = Tex("$5$").next_to(ab_tree.node_by_index(0, 0), UP).scale(0.8).set_z_index(10000)
 
         self.play(
             Write(target),
@@ -674,7 +676,7 @@ class Intro(MovingCameraScene):
             node_bubbles[ab_tree.node_by_index(1, 1)][1][0].animate.set_color(DARK_COLOR),
         )
 
-        target_cp = ab_tree.node_by_index(1, 2)[0][0].copy().set_opacity(0)
+        target_cp = ab_tree.node_by_index(1, 2)[0][0].copy().set_opacity(0).set_color(GREEN)
 
         self.play(
             Transform(target, target_cp),
@@ -696,7 +698,7 @@ class Intro(MovingCameraScene):
 
         # TARGET 8 AB, COPY PASTED!
 
-        target = Tex("$8$").next_to(ab_tree.node_by_index(0, 0), UP).scale(0.8)
+        target = Tex("$8$").next_to(ab_tree.node_by_index(0, 0), UP).scale(0.8).set_z_index(10000)
 
         self.play(
             Write(target),
@@ -1188,6 +1190,7 @@ class Basics(MovingCameraScene):
         ).arrange(DOWN, buff=0.2).scale(txt_scale)
 
         reqs = VGroup(reqs_title, reqs_list).arrange(DOWN, buff=0.3)
+        reqs_list[0][0][1:7].set_color(GREEN)
 
         reqs_list[1][0][1:4].set_color(BLUE)
         reqs_list[1][0][5:].set_color(BLUE)
@@ -1226,7 +1229,17 @@ class Basics(MovingCameraScene):
             )
         )
 
-        self.play(FadeIn(reqs_list[0], shift=RIGHT * 0.25))
+        self.play(
+            FadeIn(reqs_list[0], shift=RIGHT * 0.25),
+            ab_tree.node_by_index(2, 0).animate.set_color(GREEN),
+            ab_tree.node_by_index(2, 1).animate.set_color(GREEN),
+            ab_tree.node_by_index(2, 2).animate.set_color(GREEN),
+            ab_tree.node_by_index(2, 3).animate.set_color(GREEN),
+            ab_tree.node_by_index(2, 4).animate.set_color(GREEN),
+            ab_tree.node_by_index(2, 5).animate.set_color(GREEN),
+            ab_tree.node_by_index(2, 6).animate.set_color(GREEN),
+            ab_tree.node_by_index(2, 7).animate.set_color(GREEN),
+        )
 
         self.play(
             FadeIn(brace, shift=RIGHT * 0.2),
@@ -2196,7 +2209,11 @@ class Deletion(MovingCameraScene):
 
         self.play(
             AnimationGroup(
-                FadeIn(b1, shift=DOWN * 0.25),
+                AnimationGroup(
+                    FadeIn(b1, shift=DOWN * 0.25),
+                    tree.edges_by_node_index(2, 2)[0].animate.set_color(RED),
+                    tree.node_by_index(3, 4).animate.set_color(RED),
+                ),
                 FadeIn(ap1),
                 lag_ratio=0.5,
             ),
@@ -2205,7 +2222,13 @@ class Deletion(MovingCameraScene):
 
         self.play(
             AnimationGroup(
-                FadeIn(b2, shift=DOWN * 0.25),
+                AnimationGroup(
+                    FadeIn(b2, shift=DOWN * 0.25),
+                    tree.edges_by_node_index(2, 2)[1].animate.set_color(BLUE),
+                    tree.edges_by_node_index(2, 2)[2].animate.set_color(BLUE),
+                    tree.node_by_index(3, 5).animate.set_color(BLUE),
+                    tree.node_by_index(3, 6).animate.set_color(BLUE),
+                ),
                 FadeIn(ap2),
                 lag_ratio=0.5,
             ),
@@ -2245,6 +2268,7 @@ class Deletion(MovingCameraScene):
             self.camera.frame.animate.restore(),
             FadeOut(eq),
             tree.edges_by_node_index(1, 1).animate.set_color(WHITE),
+            tree.subtree_by_index(2, 2).animate.set_color(WHITE),
             tree.subtree_by_index(2, 3).animate.set_color(WHITE),
             FadeOut(ap1[0][0]),
             FadeOut(ap1[0][1]),
@@ -2339,8 +2363,8 @@ class Deletion(MovingCameraScene):
         ab_tree_both.edges_by_node_index(2, 2).set_color(BLUE)
         ab_tree_both.node_by_index(2, 3).set_color(RED)
         ab_tree_both.edges_by_node_index(2, 3).set_color(RED)
-        ab_tree_both.node_by_index(2, 4).set_color(RED)
-        ab_tree_both.edges_by_node_index(2, 4).set_color(RED)
+        ab_tree_both.node_by_index(2, 4).set_color(BLUE)
+        ab_tree_both.edges_by_node_index(2, 4).set_color(BLUE)
 
         self.add(ab_tree_both)
 
@@ -2361,6 +2385,7 @@ class Deletion(MovingCameraScene):
             self.camera.frame.animate.shift(DOWN * 8),
             a[0].animate.shift(DOWN * 8).set_color(WHITE),
             a[1].animate.shift(DOWN * 8),
+            run_time=1.5,
         )
 
         high = CreateHighlight(a[1])
@@ -2417,88 +2442,6 @@ class Deletion(MovingCameraScene):
         print(self.camera.frame.get_height())
         print(tree.get_height())
         print(ab_text.get_height())
-
-
-class Summary(MovingCameraScene):
-    @fade
-    def construct(self):
-        ab_tree = ABTree(
-            [
-                [[2, 4]],
-                [[1], [3], [5, 6, 7]],
-            ],
-            fill_background=False
-        )
-
-        ab = VGroup(Tex(r"Operation Summary").scale(1.25), ab_tree).arrange(UP, buff=1.5).scale(S)
-
-
-        table = Table(
-            [
-                [Tex(r"\underline{\textit{Search}}"), Tex(r"find where in the node it should be and go down")],
-                [Tex(r"\underline{\textit{Insertion}}"), Tex(r"search, insert the key + leaf and maybe split")],
-                [Tex(r"\underline{\textit{Deletion}}"), Tex(r"search, remove (possibly swapping) and maybe merge/steal")],
-            ],
-            v_buff=0.8,
-            h_buff=0.6,
-            element_to_mobject=lambda x: x,
-            include_outer_lines=True,
-            arrange_in_grid_config={"col_alignments": "rl"},
-            col_labels=[Tex(r"\textbf{Operation}"), Tex(r"\textbf{Summary}")],
-        ).scale(0.7)
-
-        table.remove(*table.get_vertical_lines())
-
-        table.get_horizontal_lines()[2].set_stroke_width(1.5)
-        table.get_horizontal_lines()[3].set_opacity(0)
-        table.get_horizontal_lines()[4].set_opacity(0)
-
-        #self.play(
-        #    Write(ab[0], run_time=1),
-        #)
-
-        shift = 0.25
-        for i in range(2):
-            table.get_entries((2 + i + 1,1)).shift(UP * (shift) * (i + 1))
-            table.get_entries((2 + i + 1,2)).shift(UP * (shift) * (i + 1))
-
-        table.get_horizontal_lines()[1].shift(UP * (shift) * (i + 1))
-
-        table.move_to(ab[1])
-
-
-        self.play(
-            FadeIn(
-                VGroup(
-                    table.get_horizontal_lines()[0],
-                    table.get_col_labels(),
-                    table.get_horizontal_lines()[2],
-                    table.get_horizontal_lines()[1],
-                )
-            )
-        )
-
-        for i in range(3):
-            self.play(
-                FadeIn(table.get_entries((2 + i,1)), shift=RIGHT * 0.25)
-            )
-
-            self.play(
-                Write(table.get_entries((2 + i,2)), run_time=1.5)
-            )
-
-
-class Benchmark(MovingCameraScene):
-    @fade
-    def construct(self):
-        g = get_benchmark_graph()
-
-        g = VGroup(*g)
-
-        self.add(g[-1][0][1][7])
-        self.add(g[-1][0][2][7])
-
-        self.wait()
 
 
 class SelectingAB(MovingCameraScene):

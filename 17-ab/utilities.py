@@ -337,9 +337,9 @@ class ABTree(VMobject):
 
         # NOTE: last change, maybe fucks everything up
         key_count = len(node_keys)
-        modifier = 1 if key_count == 1\
-                else 1.2 if key_count == 2\
-                else 1.4
+        modifier = 0.9 if key_count == 1\
+                else 1.15 if key_count == 2\
+                else 1.35
 
         if is_interlude:
             modifier = 1.8
