@@ -1,0 +1,653 @@
+1
+00:00:00,000 --> 00:00:01,433
+Has this ever happened to you?
+
+2
+00:00:01,783 --> 00:00:05,350
+You’re balancing your AVL tree, making sure it’s nice and neat and suddenly:
+
+3
+00:00:05,350 --> 00:00:07,416
+oh no, you made the wrong rotation!
+
+4
+00:00:07,950 --> 00:00:11,366
+The tree bursts into flames before you can even blink and you’re left wondering:
+
+5
+00:00:11,366 --> 00:00:12,433
+is there a better way?
+
+6
+00:00:13,050 --> 00:00:14,833
+Well, there is!
+
+7
+00:00:14,833 --> 00:00:16,766
+Introducing the (a,b)-tree.
+
+8
+00:00:16,766 --> 00:00:21,766
+It’s fast! It’s simple! And most importantly: it doesn’t have rotations!
+
+9
+00:00:22,116 --> 00:00:26,800
+AVL, go to hell (3x)
+
+10
+00:00:28,133 --> 00:00:29,166
+Wow that was a weird dream.
+
+11
+00:00:29,916 --> 00:00:33,500
+Anyway, in today’s video, I’ll introduce you to (a, b)-trees,
+
+12
+00:00:33,500 --> 00:00:35,900
+which are a more generalized version of binary search trees.
+
+13
+00:00:36,500 --> 00:00:38,833
+They are more commonly known as B or B+ trees,
+
+14
+00:00:38,833 --> 00:00:41,916
+but I’ll be cover them here in their most general form, which is (a, b).
+
+15
+00:00:43,250 --> 00:00:47,250
+As you can see, they are no longer binary, since their nodes can have more than two children.
+
+16
+00:00:48,916 --> 00:00:53,433
+Just like binary trees, they are used for quickly storing and locating items based on their keys.
+
+17
+00:00:55,083 --> 00:00:58,783
+If we want to find a key (for example 5) in a binary tree,
+
+18
+00:00:58,783 --> 00:01:03,316
+we start in the root and go right if the target is larger than the current node, else we go left.
+
+19
+00:01:04,283 --> 00:01:05,750
+In this case, the key is found.
+
+20
+00:01:06,700 --> 00:01:09,750
+However, if we tried the same with a key that isn’t in the tree,
+
+21
+00:01:11,766 --> 00:01:14,900
+we soon reach a leaf, at which point we know the key is not present.
+
+22
+00:01:16,700 --> 00:01:19,616
+For an (a, b)-tree, this procedure is very similar,
+
+23
+00:01:19,616 --> 00:01:23,399
+the only difference being that either the key is in the current node,
+
+24
+00:01:23,400 --> 00:01:26,783
+or it’s not and we follow the edge between the keys where it should be,
+
+25
+00:01:26,783 --> 00:01:30,366
+again either finding it...
+
+26
+00:01:30,366 --> 00:01:31,433
+or getting to a leaf.
+
+27
+00:01:33,683 --> 00:01:36,700
+(a, b)-trees address a number of shortcomings of binary trees,
+
+28
+00:01:36,716 --> 00:01:39,066
+mainly the fact that they can easily become unbalanced.
+
+29
+00:01:39,683 --> 00:01:45,116
+Repeatedly inserting items into a binary tree without other operations can make them lean to one side,
+
+30
+00:01:45,116 --> 00:01:47,133
+rendering all operations significantly slower.
+
+31
+00:01:48,300 --> 00:01:52,433
+There are ways to address this problem (like AVL trees or R&B trees),
+
+32
+00:01:52,433 --> 00:01:54,550
+but they are not nearly as elegant as (a, b)-trees.
+
+33
+00:01:55,316 --> 00:01:57,850
+So, without further ado, let’s dive in.
+
+34
+00:01:59,033 --> 00:02:04,033
+(if anyone is reading this, I hope you're having a great day :)
+
+35
+00:02:04,933 --> 00:02:06,950
+This is a bee-tree...
+
+36
+00:02:06,950 --> 00:02:09,016
+whoops, wrong emphasis...
+
+37
+00:02:09,016 --> 00:02:10,300
+this is (a, b)-tree.
+
+38
+00:02:10,949 --> 00:02:15,883
+It is made up of nodes, which contain keys that are always sorted from left to right.
+
+39
+00:02:16,833 --> 00:02:19,783
+The only exception are the leaves, which don’t contain any keys.
+
+40
+00:02:21,416 --> 00:02:23,633
+Each key separates two subtrees,
+
+41
+00:02:23,633 --> 00:02:27,933
+the left one containing keys that are smaller and the right one containing keys that are larger.
+
+42
+00:02:31,383 --> 00:02:35,433
+Each node has a number of children, which are determined by the parameters a and b
+
+43
+00:02:36,400 --> 00:02:40,050
+a is the minimum number of children a node can have and b is the maximum.
+
+44
+00:02:41,033 --> 00:02:45,250
+This is therefore a (2, 4)-tree, since each node has between 2 and 4 children.
+
+45
+00:02:46,533 --> 00:02:48,933
+There are, however, two exceptions:
+
+46
+00:02:48,933 --> 00:02:52,350
+first, the leaves have no children, because we don’t want an infinite tree.
+
+47
+00:02:53,400 --> 00:02:55,533
+The second is the root:
+
+48
+00:02:55,533 --> 00:03:00,500
+while other nodes can have between a and b children, the root can have between 2 and b,
+
+49
+00:03:00,500 --> 00:03:03,383
+otherwise building trees with certain numbers of keys wouldn’t be possible.
+
+50
+00:03:06,266 --> 00:03:09,933
+To keep the operations on the tree fast, there are some things it must satisfy at all times.
+
+51
+00:03:10,933 --> 00:03:13,183
+Firstly, all leaves must be on the same layer.
+
+52
+00:03:13,933 --> 00:03:17,800
+This forces the tree to have logarithmic depth and proving it is a nice exercise,
+
+53
+00:03:17,800 --> 00:03:18,933
+feel free to pause here and try.
+
+54
+00:03:20,350 --> 00:03:24,983
+Secondly, a ≥ 2 and b ≥ 2a − 1.
+
+55
+00:03:25,916 --> 00:03:30,916
+The limit on a is intuitive, since a node with only one child would have no keys, which doesn’t make sense.
+
+56
+00:03:32,000 --> 00:03:33,883
+The limit on b is a little more cryptic,
+
+57
+00:03:33,883 --> 00:03:36,433
+but will make sense when we start looking into the tree’s operations.
+
+58
+00:03:37,933 --> 00:03:41,283
+Speaking of the operations, the ones that I will cover in this video
+
+59
+00:03:41,283 --> 00:03:45,233
+are searching for a key, inserting a key and deleting a key.
+
+60
+00:03:46,966 --> 00:03:49,400
+Let’s start with the simplest operation, searching.
+
+61
+00:03:50,250 --> 00:03:53,083
+We’ve already seen an example, but let’s cover it more formally.
+
+62
+00:03:54,050 --> 00:03:57,550
+To search for a key, we start in the root and do the following:
+
+63
+00:03:57,550 --> 00:03:59,933
+first, find where in the current node the key should be.
+
+64
+00:04:03,816 --> 00:04:07,950
+If it’s not there, go to the subtree where it should be and repeat the process.
+
+65
+00:04:11,066 --> 00:04:12,483
+In this case, the key has been found.
+
+66
+00:04:14,583 --> 00:04:17,350
+Let’s now see what happens when we search for a key that isn’t in the tree.
+
+67
+00:04:24,416 --> 00:04:27,766
+As you see, we end up in a leaf with nowhere else to go,
+
+68
+00:04:27,766 --> 00:04:30,333
+so we know with absolute certainty that the key is not present.
+
+69
+00:04:33,516 --> 00:04:36,500
+Since just searching for keys is boring, let’s try to insert one.
+
+70
+00:04:37,533 --> 00:04:41,533
+Assuming that it’s not present, we’ll again run search...
+
+71
+00:04:41,533 --> 00:04:43,133
+and end up in one of the tree’s leaves.
+
+72
+00:04:44,316 --> 00:04:47,166
+Then we simply insert the key into the leaf’s parent node,
+
+73
+00:04:47,166 --> 00:04:48,700
+creating a new leaf in the process.
+
+74
+00:04:50,283 --> 00:04:54,633
+Now it might seem like we’re be done, but remember that since this is an (a, b)-tree,
+
+75
+00:04:54,633 --> 00:04:58,733
+a node can have at
+most b children, making the one that we just modified invalid.
+
+76
+00:04:59,666 --> 00:05:04,583
+Pause here and try to solve this problem; chances are the first thing you think of is the correct solution.
+
+77
+00:05:10,550 --> 00:05:12,650
+That’s right, the answer is violence!
+
+78
+00:05:12,650 --> 00:05:16,683
+We split the node down the middle, moving one key up to accommodate for the newly created node.
+
+79
+00:05:17,916 --> 00:05:21,516
+This adds a key to the node above, which might in turn brake its condition,
+
+80
+00:05:21,516 --> 00:05:24,266
+so we have to repeat the process until there are no more broken nodes.
+
+81
+00:05:26,733 --> 00:05:29,950
+Let’s insert a few more values to better illustrate what the operation does to the tree.
+
+82
+00:05:40,583 --> 00:05:42,166
+While all this seems sensible,
+
+83
+00:05:42,166 --> 00:05:45,600
+what we’ve done here is only possible thanks to our carefully selected conditions.
+
+84
+00:05:46,550 --> 00:05:51,366
+Firstly, splitting a node makes the two resulting nodes have at least ⌊(b + 1)/2⌋ children,
+
+85
+00:05:51,366 --> 00:05:55,516
+which, thanks to the inequality on b, is at least a, making them valid.
+
+86
+00:05:56,966 --> 00:06:01,033
+Secondly, the root can have from 2 to b children (instead of a to b),
+
+87
+00:06:01,033 --> 00:06:03,316
+having 2 right after it is split, as you can see here.
+
+88
+00:06:06,650 --> 00:06:10,900
+Adding this many keys to the tree is making it a little crowded, so let’s in turn delete some.
+
+89
+00:06:12,033 --> 00:06:15,850
+Let’s assume that the key we want to delete is present and we run search to find it.
+
+90
+00:06:18,300 --> 00:06:23,083
+If it’s in the second to last layer, we can simply delete it, along with one of its leaves.
+
+91
+00:06:24,250 --> 00:06:27,666
+We’re quite fortunate that this didn’t bring the number of children below the limit,
+
+92
+00:06:27,666 --> 00:06:30,350
+which can happen and we will see how to resolve it once it does.
+
+93
+00:06:32,466 --> 00:06:37,400
+If it’s not in the second to last layer, we’ll remove it but since this leaves and empty spot,
+
+94
+00:06:37,400 --> 00:06:42,233
+we’d like to replace it with a key from the second to last layer to reduce the problem to the previous case.
+
+95
+00:06:43,116 --> 00:06:45,883
+Pause here and think about which key we can put in its place.
+
+96
+00:06:51,666 --> 00:06:53,916
+The answer is actually twofold:
+
+97
+00:06:53,916 --> 00:06:57,033
+it’s both the closets smaller and the closest larger key,
+
+98
+00:06:57,033 --> 00:07:00,066
+since moving either of them to the missing spot would preserve the tree’s ordering.
+
+99
+00:07:01,833 --> 00:07:03,750
+Let’s assume that we want the closest larger key.
+
+100
+00:07:04,533 --> 00:07:09,166
+To find it in the tree, we know that since it’s larger than our missing key, it’s in its right subtree.
+
+101
+00:07:10,383 --> 00:07:14,050
+We also know that it’s the smallest key in this subtree, so it’s the leftmost one.
+
+102
+00:07:15,150 --> 00:07:18,750
+Replacing the missing key neatly reduces our problem to the previous case
+
+103
+00:07:18,750 --> 00:07:21,033
+and is a well-known trick for removing things from search trees.
+
+104
+00:07:22,900 --> 00:07:27,033
+Now we can simply remove the leftover leaf and... yikes, that doesn’t look healthy.
+
+105
+00:07:27,833 --> 00:07:31,466
+It seems that removing this key broke the condition on the number of children,
+
+106
+00:07:31,466 --> 00:07:33,866
+with this node having less than a, so let’s fix it.
+
+107
+00:07:34,983 --> 00:07:39,283
+Since the problem node has at least one adjacent node, we can do one of two things:
+
+108
+00:07:39,283 --> 00:07:40,183
+a) either merge the two nodes or,
+
+109
+00:07:41,183 --> 00:07:42,783
+b) steal one of the adjacent node’s keys.
+
+110
+00:07:44,200 --> 00:07:48,683
+If the adjacent node has a children (like in this case), we can’t just steal a key
+
+111
+00:07:48,683 --> 00:07:51,416
+since it would bring the adjacent node below the limit,
+
+112
+00:07:51,416 --> 00:07:53,666
+so we’ll have to merge, which looks as follows.
+
+113
+00:07:55,416 --> 00:07:57,716
+Notice that this moves a key from the node above,
+
+114
+00:07:57,716 --> 00:08:00,666
+which might again break its condition (similar to insert),
+
+115
+00:08:00,666 --> 00:08:03,650
+so we might have to recursively fix the same problem in the nodes above.
+
+116
+00:08:05,083 --> 00:08:10,566
+Just to check that we didn’t break anything, the merged node will have (a − 1) + a children,
+
+117
+00:08:10,566 --> 00:08:15,150
+which is, again thanks to our inequality, at most b, making it valid.
+
+118
+00:08:17,683 --> 00:08:20,133
+To see the other case in action, let’s remove another key.
+
+119
+00:08:21,950 --> 00:08:25,000
+As we see, its adjacent node has more than a
+children,
+
+120
+00:08:25,000 --> 00:08:27,233
+meaning that we can steal the closest neighbouring key.
+
+121
+00:08:28,100 --> 00:08:31,133
+We do so by moving the closest key up and the key above down,
+
+122
+00:08:31,133 --> 00:08:32,950
+which again perserves the ordering of the tree.
+
+123
+00:08:35,100 --> 00:08:38,716
+One thing to note is that in cases where both operations are possible
+
+124
+00:08:38,716 --> 00:08:42,283
+(i.e. you have two neighbours and can steal from one and merge with the other),
+
+125
+00:08:42,283 --> 00:08:45,866
+you should always steal, which is generally bad life advice
+
+126
+00:08:45,866 --> 00:08:48,566
+but in this case saves you from possibly having to fix the parent node.
+
+127
+00:08:51,483 --> 00:08:54,833
+And there you have it, we’ve covered the common operations of the (a, b)-tree.
+
+128
+00:08:54,833 --> 00:08:59,633
+Now that we know how they work, one question still remains – what should we set a and b to?
+
+129
+00:09:00,683 --> 00:09:03,250
+While it doesn’t really matter in terms of theoretical analysis
+
+130
+00:09:03,250 --> 00:09:05,583
+since all of the operations will be logarithmic,
+
+131
+00:09:05,583 --> 00:09:07,216
+it very much does matter in practice.
+
+132
+00:09:08,200 --> 00:09:13,250
+Code runs on real hardware and the main way to make it fast is to make it cache-friendly.
+
+133
+00:09:13,250 --> 00:09:17,366
+Ideally, a node should fit into a single cache line, regardless of its size.
+
+134
+00:09:18,783 --> 00:09:24,600
+For example, my cache lines are 64B, which means that they can hold at most 8 64b values.
+
+135
+00:09:25,500 --> 00:09:28,466
+A node consists of keys and pointers to its children,
+
+136
+00:09:28,466 --> 00:09:31,716
+meaning that the maximum b value is 4, making a at most 2.
+
+137
+00:09:32,766 --> 00:09:37,066
+To test this, I used an open-source (a, b)-tree implementation (link in the description)
+
+138
+00:09:37,066 --> 00:09:40,300
+to run benchmarks on all of the common operations for varying sizes of a and b.
+
+139
+00:09:41,600 --> 00:09:45,283
+Plotting the runtimes, I got a result that I didn’t really expect:
+
+140
+00:09:45,283 --> 00:09:50,583
+it seems that the optimal value for a, b is different for each of the operations and is definitely not 2, 4.
+
+141
+00:09:51,833 --> 00:09:56,750
+This is because the cache lines computation is an simplification of how a modern CPU behaves
+
+142
+00:09:56,750 --> 00:09:58,700
+and there could be number a of reasons for this result.
+
+143
+00:09:59,866 --> 00:10:03,283
+Firstly, the library stores keys and values in separate arrays,
+
+144
+00:10:03,283 --> 00:10:06,316
+which theoretically increases the optimal a, b values by a factor of two.
+
+145
+00:10:07,600 --> 00:10:11,266
+Secondly, the behavior largely depends on the way the structure is used,
+
+146
+00:10:11,266 --> 00:10:17,199
+which in my case consisted of n insertions, n searches and finally n deletions for n = 1 000 000
+
+147
+00:10:17,200 --> 00:10:19,250
+and might not be representative of other uses.
+
+148
+00:10:20,916 --> 00:10:23,250
+There is much more to this and if you’re interested,
+
+149
+00:10:23,250 --> 00:10:26,583
+I linked a paper that covers this in great detail in the description,
+
+150
+00:10:26,583 --> 00:10:30,200
+but the main point that you should take away is that while theory is good,
+
+151
+00:10:30,200 --> 00:10:33,466
+real world is a
+mess that no amount of computations can spare you from.
+
+152
+00:10:36,066 --> 00:10:39,666
+Now that you know what an (a, b)-tree is, you might say why should I care?
+
+153
+00:10:40,500 --> 00:10:44,833
+Well, to really convince you
+that this isn’t just some useless piece of computer science theory,
+
+154
+00:10:44,833 --> 00:10:49,116
+you are likely using some sort of an (a, b)-tree right now as you’re watching this video and he is why.
+
+155
+00:10:50,333 --> 00:10:52,883
+They are widely used by filesystems for indexing files,
+
+156
+00:10:52,883 --> 00:10:57,266
+including Apple’s APFS, Microsoft’s NTFS and Linux’s Ext4.
+
+157
+00:10:58,383 --> 00:11:02,183
+They are also used
+by a number of languages for dictionary and set implementations,
+
+158
+00:11:02,183 --> 00:11:05,633
+including Rust, C++ and Java
+
+159
+00:11:05,633 --> 00:11:10,800
+(ok, technically, the last two use R&B trees, but those are actually just (a, b)-trees, so I think it counts)
+
+160
+00:11:11,750 --> 00:11:13,583
+And, last but not least,
+
+161
+00:11:13,583 --> 00:11:20,083
+database systems like Microsoft SQL, Oracle, MySQL and SQLite all use them for storing their data.
+
+162
+00:11:22,766 --> 00:11:27,283
+And that’s all I have. I hope you found this somewhat interesting and thanks for watching!
+

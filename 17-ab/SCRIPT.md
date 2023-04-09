@@ -50,7 +50,7 @@ However, if we tried the same with a key that isn't in the tree, we soon reach a
 
 For an $(a,b)$-tree, this procedure is very similar, the only difference being that either the key is in the current node, or it's not and we follow the edge between the keys where it should be, again either finding it or getting to a leaf.
 
-$(a,b)$-trees address a number of shortcomings of binary trees, mainly the fact that they can easily become unbalanced -- repeatedly inserting items into a binary tree without other operations can make them lean to one side, rendering all operations significantly slower.
+$(a,b)$-trees address a number of shortcomings of binary trees, mainly the fact that they can easily become unbalanced. Repeatedly inserting items into a binary tree without other operations can make them lean to one side, rendering all operations significantly slower.
 There are ways to address this problem (like AVL trees or R&B trees), but they are not nearly as elegant as $(a,b)$-trees.
 
 So, without further ado, let's dive in.
@@ -62,33 +62,28 @@ BASICS
 
 \marginpar{\texttt{Basics}}
 
-This is $(a,b)$-tree.
-Whoops, wrong emphasis... this is $(a,b)$-tree.
+This is a bee-tree... whoops, wrong emphasis... this is $(a,b)$-tree.
 
 It is made up of nodes, which contain keys that are always sorted from left to right.
-The only exception are the leafs, which don't contain any keys.
+The only exception are the leaves, which don't contain any keys.
 
 Each key separates two subtrees, the left one containing keys that are smaller and the right one containing keys that are larger.
 
-Each node has a number of children, which are determined by the parameters $a$ and $b$ -- $a$ is the minimum number of children a node can have and $b$ is the maximum.
+Each node has a number of children, which are determined by the parameters $a$ and $b$. $a$ is the minimum number of children a node can have and $b$ is the maximum.
 This is therefore a $(2,4)$-tree, since each node has between $2$ and $4$ children.
-There are, however, two exceptions: first, the leafs have no children, because we don't want an infinite tree.
+There are, however, two exceptions: first, the leaves have no children, because we don't want an infinite tree.
 The second is the root -- while other nodes can have between $a$ and $b$ children, the root can have between $2$ and $b$, otherwise building trees with certain numbers of keys wouldn't be possible.
 
 To keep the operations on the tree fast, there are some things it must satisfy at all times.
 
-Firstly, all leafs must be on the same layer.
+Firstly, all leaves must be on the same layer.
 This forces the tree to have logarithmic depth and proving it is a nice exercise, feel free to pause here and try.
 
 Secondly, $a \ge 2$ and $b \ge 2a - 1$.
 The limit on $a$ is intuitive, since a node with only one child would have no keys, which doesn't make sense.
 The limit on $b$ is a little more cryptic, but will make sense when we start looking into the tree's operations.
 
-Speaking of the operations, the ones that I will cover in this video are
-
-- searching for a key,
-- inserting a key and
-- deleting a key
+Speaking of the operations, the ones that I will cover in this video are searching for a key, inserting a key and deleting a key.
 
 
 ---
@@ -117,7 +112,7 @@ INSERTION
 
 Since just searching for keys is boring, let's try to insert one.
 
-Assuming that it's not present, we'll again run search and end up in one of the tree's leafs.
+Assuming that it's not present, we'll again run search and end up in one of the tree's leaves.
 Then we simply insert the key into the leaf's parent node, creating a new leaf in the process.
 
 Now it might seem like we're be done, but remember that since this is an $(a,b)$-tree, a node can have at most $b$ children, making the one that we just modified invalid.
@@ -130,7 +125,7 @@ This adds a key to the node above, which might in turn brake its condition, so w
 
 Let's insert a few more values to better illustrate what the operation does to the tree.
 
-While all this seems sensible, what we've done here is only possible thanks to our carefully selected conditions:
+While all this seems sensible, what we've done here is only possible thanks to our carefully selected conditions.
 Firstly, splitting a node makes the two resulting nodes have at least $\lfloor (b+1)/2 \rfloor$ children, which, thanks to the inequality on $b$, is at least $a$, making them valid.
 Secondly, the root can have from $2$ to $b$ children (instead of $a$ to $b$), having $2$ right after it is split, as you can see here.
 
@@ -142,13 +137,13 @@ DELETION
 Adding this many keys to the tree is making it a little crowded, so let's in turn delete some.
 Let's assume that the key we want to delete is present and we run search to find it.
 
-If it's in the second to last layer, we can simply delete it, along with one of its leafs.
+If it's in the second to last layer, we can simply delete it, along with one of its leaves.
 We're quite fortunate that this didn't bring the number of children below the limit, which can happen and we will see how to resolve it once it does.
 
 If it's not in the second to last layer, we'll remove it but since this leaves and empty spot, we'd like to replace it with a key from the second to last layer to reduce the problem to the previous case.
 Pause here and think about which key we can put in its place.
 
-The answer is actually twofold -- it's both the closets smaller and the closest larger key, since moving either of them to the missing spot would preserve the tree's ordering.
+The answer is actually twofold: it's both the closets smaller and the closest larger key, since moving either of them to the missing spot would preserve the tree's ordering.
 
 Let's assume that we want the closest larger key.
 To find it in the tree, we know that since it's larger than our missing key, it's in its right subtree.
@@ -161,11 +156,11 @@ It seems that removing this key broke the condition on the number of children, w
 Since the problem node has at least one adjacent node, we can do one of two things:
 
 a) either merge the two nodes or,
-b) steal one of the adjacent node's keys
+b) steal one of the adjacent node's keys.
 
 If the adjacent node has $a$ children (like in this case), we can't just steal a key since it would bring the adjacent node below the limit, so we'll have to merge, which looks as follows.
 Notice that this moves a key from the node above, which might again break its condition (similar to insert), so we might have to recursively fix the same problem in the nodes above.
-Just to check that we didn't break anything, the merged node will have $a - 1 + a$ children, which is, again thanks to our inequality, at most $b$, making it valid.
+Just to check that we didn't break anything, the merged node will have $(a - 1) + a$ children, which is, again thanks to our inequality, at most $b$, making it valid.
 
 To see the other case in action, let's remove another key.
 As we see, its adjacent node has more than $a$ children, meaning that we can steal the closest neighbouring key.
@@ -182,13 +177,14 @@ And there you have it, we've covered the common operations of the $(a,b)$-tree.
 Now that we know how they work, one question still remains -- what should we set $a$ and $b$ to?
 While it doesn't really matter in terms of theoretical analysis since all of the operations will be logarithmic, it very much does matter in practice.
 
-Code runs on real hardware and the main way to make it fast is to make it cache-friendly -- ideally, a node should fit into a single cache line, regardless of its size.
+Code runs on real hardware and the main way to make it fast is to make it cache-friendly.
+Ideally, a node should fit into a single cache line, regardless of its size.
 
 For example, my cache lines are $64B$, which means that they can hold at most $8$ $64b$ values.
 A node consists of keys and pointers to its children, meaning that the maximum $b$ value is $4$, making $a$ at most $2$.
 
 To test this, I used an open-source $(a,b)$-tree implementation (link in the description) to run benchmarks on all of the common operations for varying sizes of $a$ and $b$.
-Plotting the runtimes, I got a result that I didn't really expect -- it seems that the optimal value for $a,b$ is different for each of the operations and is definitely not $2,4$.
+Plotting the runtimes, I got a result that I didn't really expect: it seems that the optimal value for $a,b$ is different for each of the operations and is definitely not $2,4$.
 
 This is because the cache lines computation is an simplification of how a modern CPU behaves and there could be number a of reasons for this result.
 Firstly, the library stores keys and values in separate arrays, which theoretically increases the optimal $a,b$ values by a factor of two.
