@@ -32,8 +32,8 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 arguments = parser.parse_args()
 
 
-def render_scene(scene):
-    """Render a single scene """
+def render_scene(scene: str):
+    """Render a single scene."""
     quality_mapping = {
         "m": (1280, 720, 30),
         "h": (1920, 1080, 60),
@@ -64,6 +64,7 @@ scenes = []
 
 # please lord forgive me for I have sinned
 # this is needed because classes ending with Transparent are going to be rendered transparently
+# and classes that contain "Test" are ignored
 with open("scenes.py", "r") as f:
     for line in f.read().splitlines():
         if match := re.match(r"\s*class\s+(.+?)\(.*Scene\)\s*:", line):
@@ -75,6 +76,9 @@ if arguments.scene is None:
         shutil.rmtree(video_directory)
 
     for scene in scenes:
+        if "Test" in scene:
+            continue
+
         render_scene(scene)
 else:
     # remove only the scene and its folders when the scene is specified
