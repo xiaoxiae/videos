@@ -489,6 +489,29 @@ def fibonacci_sphere(samples=5000):
         yield np.array((x, y, z))
 
 
+class Addd(Animation):
+
+    def __init__(self, mobject: Mobject, pos, introducer=True, **kwargs):
+        self.original = mobject.copy()
+        self.pos = pos
+
+        super().__init__(mobject, introducer=introducer, **kwargs)
+
+    def interpolate_mobject(self, alpha: float) -> None:
+        """A function that gets called every frame, for the animation to... animate."""
+        a = self.rate_func(alpha)
+
+        destination = self.original.copy().move_to(self.pos).align_to(self.pos, RIGHT).get_center()
+
+        pos = self.original.get_center() * (1 - a) + destination * a
+
+        fade = 0 if a < 0.5 else (a - 0.5) * 2
+
+        new_mobject = self.original.copy().move_to(pos).fade(fade)
+
+        self.mobject.become(new_mobject)
+
+
 class FeasibleArea3D(VGroup, metaclass=ConvertToOpenGL):
     """Yeah no this implementation is an act of terrorism holy shit.
 
@@ -683,157 +706,6 @@ def parse_graph(graph, s=0.13, t=0.13, scale=2):
         orient_edge(g, v, w)
 
     return g
-
-class MyShowPartial(Animation):
-    def __init__(
-        self,
-        mobject,
-        **kwargs,
-    ):
-        pointwise = getattr(mobject, "pointwise_become_partial", None)
-        if not callable(pointwise):
-            raise NotImplementedError("This animation is not defined for this Mobject.")
-        super().__init__(mobject, **kwargs)
-
-    def interpolate_submobject(
-        self,
-        submobject: Mobject,
-        starting_submobject: Mobject,
-        alpha: float,
-    ) -> None:
-        submobject.pointwise_become_partial(
-            starting_submobject, *self._get_bounds(alpha)
-        ).set_opacity(BIG_OPACITY + (1 - alpha) * (1 - BIG_OPACITY))
-
-    def _get_bounds(self, alpha: float) -> None:
-        raise NotImplementedError("Please use Create or ShowPassingFlash") 
-
-class MyCreate(MyShowPartial):
-    def __init__(
-        self,
-        mobject,
-        lag_ratio: float = 1.0,
-        introducer: bool = True,
-        **kwargs,
-    ) -> None:
-        super().__init__(mobject, lag_ratio=lag_ratio, introducer=introducer, **kwargs)
-
-    def _get_bounds(self, alpha: float) -> tuple[int, float]:
-        return (0, alpha)
-
-class _MyFade(Transform):
-    """Fade :class:`~.Mobject` s in or out.
-
-    Parameters
-    ----------
-    mobjects
-        The mobjects to be faded.
-    shift
-        The vector by which the mobject shifts while being faded.
-    target_position
-        The position to/from which the mobject moves while being faded in. In case
-        another mobject is given as target position, its center is used.
-    scale
-        The factor by which the mobject is scaled initially before being rescaling to
-        its original size while being faded in.
-
-    """
-
-    def __init__(
-        self,
-        *mobjects: Mobject,
-        shift: np.ndarray | None = None,
-        target_position: np.ndarray | Mobject | None = None,
-        scale: float = 1,
-        **kwargs,
-    ) -> None:
-        if not mobjects:
-            raise ValueError("At least one mobject must be passed.")
-        if len(mobjects) == 1:
-            mobject = mobjects[0]
-        else:
-            mobject = Group(*mobjects)
-
-        self.point_target = False
-        if shift is None:
-            if target_position is not None:
-                if isinstance(target_position, (Mobject, OpenGLMobject)):
-                    target_position = target_position.get_center()
-                shift = target_position - mobject.get_center()
-                self.point_target = True
-            else:
-                shift = ORIGIN
-        self.shift_vector = shift
-        self.scale_factor = scale
-        super().__init__(mobject, **kwargs)
-
-    def _create_faded_mobject(self, fadeIn: bool) -> Mobject:
-        """Create a faded, shifted and scaled copy of the mobject.
-
-        Parameters
-        ----------
-        fadeIn
-            Whether the faded mobject is used to fade in.
-
-        Returns
-        -------
-        Mobject
-            The faded, shifted and scaled copy of the mobject.
-        """
-        faded_mobject = self.mobject.copy()
-        faded_mobject.fade(1)
-        direction_modifier = -1 if fadeIn and not self.point_target else 1
-        faded_mobject.shift(self.shift_vector * direction_modifier)
-        faded_mobject.scale(self.scale_factor)
-        return faded_mobject
-
-
-class MyFadeIn(_MyFade):
-    """Fade in :class:`~.Mobject` s.
-
-    Parameters
-    ----------
-    mobjects
-        The mobjects to be faded in.
-    shift
-        The vector by which the mobject shifts while being faded in.
-    target_position
-        The position from which the mobject starts while being faded in. In case
-        another mobject is given as target position, its center is used.
-    scale
-        The factor by which the mobject is scaled initially before being rescaling to
-        its original size while being faded in.
-
-    Examples
-    --------
-
-    .. manim :: FadeInExample
-
-        class FadeInExample(Scene):
-            def construct(self):
-                dot = Dot(UP * 2 + LEFT)
-                self.add(dot)
-                tex = Tex(
-                    "FadeIn with ", "shift ", " or target\\_position", " and scale"
-                ).scale(1)
-                animations = [
-                    FadeIn(tex[0]),
-                    FadeIn(tex[1], shift=DOWN),
-                    FadeIn(tex[2], target_position=dot),
-                    FadeIn(tex[3], scale=1.5),
-                ]
-                self.play(AnimationGroup(*animations, lag_ratio=0.5))
-
-    """
-
-    def __init__(self, *mobjects: Mobject, **kwargs) -> None:
-        super().__init__(*mobjects, introducer=True, **kwargs)
-
-    def create_target(self):
-        return self.mobject
-
-    def create_starting_mobject(self):
-        return self._create_faded_mobject(fadeIn=True)
 
 
 def ComplexTex(*args, **kwargs):

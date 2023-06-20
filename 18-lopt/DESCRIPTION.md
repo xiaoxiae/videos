@@ -31,8 +31,11 @@ Social media:
 
 ------------------
 
-[EN] George B. Dantzig (1982): Reminiscences about the origins of linear programming
-https://apps.dtic.mil/sti/pdfs/ADA112060.pdf
-
 [EN] Gerard Sierksma; Yori Zwols (2015). Linear and Integer Optimization: Theory and Practice
 https://www.taylorfrancis.com/books/mono/10.1201/b18378/linear-integer-optimization-gerard-sierksma-gerard-sierksma-yori-zwols
+
+[CZ] Přednáška Jiřího Sgalla: Lineární programování a kombinatorická optimalizace
+https://iuuk.mff.cuni.cz/~sgall/vyuka/LP/
+
+[EN] George B. Dantzig (1982): Reminiscences about the origins of linear programming
+https://apps.dtic.mil/sti/pdfs/ADA112060.pdf
