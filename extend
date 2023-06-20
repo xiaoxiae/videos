@@ -8,9 +8,9 @@ parser = argparse.ArgumentParser(
     description="A script for extending still solid frames in a video."
 )
 
-parser.add_argument("-i", "--input", help="the input video name")
-parser.add_argument("-o", "--output", help="the output video name")
-parser.add_argument("-c", "--color", help="the color to extend (defaults to 0,255,0)", default="0,255,0")
+parser.add_argument("-i", "--input", help="the input video name", required=True)
+parser.add_argument("-o", "--output", help="the output video name", required=True)
+parser.add_argument("-c", "--color", help="the color to extend (defaults to green, i.e. 0,255,0)", default="0,255,0")
 parser.add_argument("-t", "--threshold", help="how close the frames have to be to the color (defaults to 30)", default=30)
 
 arguments = parser.parse_args()
