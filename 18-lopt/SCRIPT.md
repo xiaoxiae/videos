@@ -10,6 +10,8 @@ header-includes:
 - \newcommand{\note}[1]{\todo[color=blue!40]{#1}}
 ---
 
+\todo{make the 3D animation longer (5 sec)}
+
 \hrule
 \vspace{1.5em}
 
@@ -67,8 +69,14 @@ To solve the problem, all we then have to do is move in this direction and recor
 And, surprisingly, that's all there is to linear programming -- we want to find the value of real variables that are subject to linear inequalities and that maximize a linear function.
 
 Now this is a pretty simple example, but a linear program can be much more complex.
-\todo{animation of lifting up to 3D space and showing the region (override the surface class)}
+
+\note{add the 3D animation in cutting here}
+
 It can contain any number of inequalities, which complicate the shape of our region, and also any number of variables, which bring us from 2D for 2 variables to 3D for 3 and beyond... so while the general concept stays the same, our simple geometric solution won't do for larger programs.
+
+\note{render this for as long as I'm talking}
+
+The nobel price I mentioned at the beginning off the video was awarded to Kantorovich and Koopmans in 1975 for formulating a number of classical logistics and economics problems in this model, which are again too complicated to be solved geometrically.
 
 \newpage
 
@@ -77,10 +85,10 @@ It can contain any number of inequalities, which complicate the shape of our reg
 ALGORITHMIC SOLUTION (SIMPLEX METHOD)
 ---
 
-Instead, let's look at how to solve a linear program algorithmically using the Simplex method.
+So instead, let's look at how to solve a linear program algorithmically using the Simplex method.
 
 Similar to the geometric solution, we will again be moving in the direction of the objective function, but we'll do so in a smarter way.
-For this, we'll use the fact that at the optimum will be achieved in at least one vertex.
+For this, we'll use the fact that the optimum will be achieved in at least one vertex.
 It can sometimes be more, like a whole line, but some vertex will still achieve it, as we see by doing a full rotation.
 
 This means that we can move from vertex to vertex (which is called pivotting), always picking one that brings us closer to our goal, until we can't any longer, at which point we know we found the optimum.
@@ -105,12 +113,12 @@ To understand how pivotting works numerically, let's consider what happens when 
 Taking $(0, 0)$ as an example, we see that two of the inequalities are tight, which means that the left side is equal to the right side (in this case because both $x_1$ and $x_2$ are 0).
 
 Now say we want to pivot from this vertex to an adjacent one.
-To perform the pivot, we first have to loosen one inequality (which determines the direction we move in) and tighten another (which determines how far we go).
+To perform this pivot, we first have to loosen one inequality (which determines the direction we move in) and tighten another (which determines how far we go).
 
 This is the crucial idea behind the simplex algorithm -- loosen one and tighten another, until we reach the optimum.
 
 In order to calculate which variables to loosen and which to tighten, we'll slightly modify our program to make the math easier.
-We'll introduce new variables for each inequality called slack variables, which act as the difference between the left and the right side, turning the inequalities into equalities.
+We'll introduce new variables for each inequality called slack variables, which act as the difference between the left and the right side, thus turning the inequalities into equalities.
 This means that a tight inequality before is the same as a variable being set to zero now -- as you see, since $s_1$ and $s_2$ are zero, the first and third equalities become tight.
 
 Feel free to pause here for a second and make sure that this transformation makes sense to you.
@@ -126,7 +134,7 @@ Okay, now we're finally ready for the pivot.
 
 \note{again, we'll blur and have a cropped animation of the previous pivot, with some borders}
 First, we need to loosen a variable to determine which direction to go.
-There is a number of methods for selecting which variable to loosen, but we'll stick with the most commonly used one called called Dantzig's pivot rule, after the inventor himself.
+There is a number of methods for selecting which to loosen, but we'll stick with the most commonly used one called called Dantzig's pivot rule, after the inventor himself.
 The rule is very simple -- we select the variable with the largest positive coefficient in the objective function (i.e. the one representing the steepest direction towards the optimum).
 
 In our case, this is $x_2$, which we loosen and start heading in its direction.
@@ -136,15 +144,15 @@ Now that we've selected the direction to move in, we have to determine how far, 
 To see what choices we have, we'll look at equalities where $x_2$ appears, which are $s_2$ and $s_3$, since these are the loose variables constraining it.
 We want to make either $s_2$ or $s_3$ tight but, as we see, only one of them keeps us in the area of valid solutions... so how can we calculate which one it is?
 
-Well let's simulate what happens when we move further in the selected direction.
-We see that $x_2$ is increasing and its value eventually reaches $4000$, which makes it equal to the constant value for the second equality, making $s_2$ tight.
+Well let's simulate what happens when we move in the selected direction.
+We see that $x_2$ is increasing and its value eventually reaches $4000$, which evens out the constant value for the second equality, making $s_2$ tight.
 Now if we were to go further, $s_2$ would have to go negative for the equality to still work, which is not allowed since all variables have to be non-negative!
 
-So, in other words, to calculate which variable to tighten, we're interested in the ratio between $x_2$ and the constants -- the closer to $0$ it is, the sooner we reach it.
+So, in other words, to calculate which variable to tighten, we're interested in the ratio between $x_2$ and the constants -- the larger it is, the sooner we reach it.
 And, as we've seen, it is indeed $s_2$, which we tighten.
 
-\todo{do this -- pan down, add the inequality and show that it's on the other side}
-Note that if it is greater than zero (for example if we had another equality like this one), we wouldn't want it since we could increase $x_2$ however we wanted but we still wouldn't reach the constant value.
+Note that if it is greater than zero (for example if we had another equality like this one), we wouldn't want it since increasing $x_2$ in this case will never zero out the constant (since it's in opposite direction).
+So what we actually want is the largest non-positive ratio.
 
 Now that we've loosened $x_2$ and tightened $s_2$, we still have to fix the equalities and the objective function -- remember that loose variables belong only on the left side, which now isn't the case, as you can see by the highlighted $s_2$s and $x_2$s.
 Swapping them solves the problem for the second equality, which we can now use as substitutes for the remaining $x_2$s.
@@ -251,13 +259,13 @@ So as an introduction to linear programming, I think we've covered most of the i
 However, we've covered them rather superficially and there is a great deal of nuance to each of them.
 
 For the simplex method, what if $(0, 0)$ isn't a vertex -- how do we start?
-Also, the way we described it, it might run in exponential time or even get stuck in an infinite loop -- how do we fix this?
+Also, the way we described it, the method might run in exponential time and may even get stuck in an infinite loop -- how do we fix this?
 
 For duality, does every linear program have a dual and if so, how do we create it?
 And once we do, how can we use it in developing fast algorithms?
 
 And, last but not least, are there classes of ILP problems that can be solved in polynomial time?
-And for those that aren't in such class, can we at least approximate them in polynomial time?
+And for those that aren't in such class, can we at least get approximate solutions in polynomial time?
 
 I like to think that most topics, linear programming included, can be thought of as an iceberg (in this case a convex one) -- the surface contains simple concepts that everyone can see, but if you dive down, you can discover a whole new world, a part of which we'll explore in the next video.
 

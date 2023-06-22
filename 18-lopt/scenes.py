@@ -33,6 +33,42 @@ class TestColoring(MovingCameraScene):
         self.wait()
 
 
+class TransparentNobel(MovingCameraScene):
+    def construct(self):
+        img_scale = 0.4
+        text_scale = 0.9
+        subtext_scale = 0.65
+
+        kantorovich = ImageMobject("assets/kantorovich.jpg")\
+                      .set_height(self.camera.frame.get_height() * img_scale)
+
+        kantorovich.add(SurroundingRectangle(kantorovich, color=WHITE, buff=-0.01))
+
+        koopmans = ImageMobject("assets/koopmans.jpg")\
+                   .set_height(self.camera.frame.get_height() * img_scale)
+
+        koopmans.add(SurroundingRectangle(koopmans, color=WHITE, buff=-0.01))
+
+        a = Group(
+            Tex(r"\underline{Nobel Price in Economics}").scale(text_scale),
+            Group(kantorovich, koopmans).arrange(),
+            Tex(r"\textit{Kantorovich, Koopmans (1975)}").scale(subtext_scale),
+        ).arrange(DOWN, buff=0.3).scale(1.1)
+
+        economics = Tex(r"$\leftarrow$ economics").next_to(koopmans, RIGHT)
+        logistics = Tex(r"logistics $\rightarrow$").next_to(kantorovich, LEFT)
+
+        self.play(FadeIn(a))
+
+        self.play(
+            AnimationGroup(
+                FadeIn(logistics),
+                FadeIn(economics),
+                lag_ratio=0.1,
+            )
+        )
+
+
 class Intro(MovingCameraScene):
     @fade
     def construct(self):
@@ -632,6 +668,14 @@ class Duality(MovingCameraScene):
         ).move_to(guide3).set_color_by_gradient((RED, GREEN)).set_opacity(0.35)
         sr.set_sheen_direction(unit_vector(OF_INITIAL[0] * RIGHT + OF_INITIAL[1] * UP))
 
+        print(
+            "SR",
+            list(Dot().align_to(self.camera.frame, UP + RIGHT).get_center()),
+            list(Dot().align_to(self.camera.frame, DOWN + RIGHT).get_center()),
+            list(Dot().align_to(rect3, RIGHT).get_center()),
+            list(guide3.get_center()),
+        )
+
         self.remove(main_group, rect2, equivalenece)
 
         big_hl = CreateHighlight(ineqs)
@@ -892,8 +936,6 @@ class Duality(MovingCameraScene):
              for i in range(len(ipts))],
             vi[1].animate.scale(1.25),
         )
-
-        # TODO: 3D stuff here
 
         self.play(
             *[iextras[i].animate.shift(-inorms[i] * ipts[i][-2] * 1.1)
@@ -3258,8 +3300,6 @@ class Duality(MovingCameraScene):
 
 class Farmer(MovingCameraScene):
     def construct(self):
-        self.next_section(skip_animations=True)
-
         farm = ImageMobject("assets/midjourney/farm-12-16-out.png")\
                 .set_height(self.camera.frame.get_height())\
                 .align_to(self.camera.frame, LEFT).set_z_index(5)
@@ -3924,7 +3964,7 @@ class Farmer(MovingCameraScene):
                 )
             )
 
-        print(numberplane.get_center())
+        print("NUMBERPLANE CENTER", numberplane.get_center())
 
         iextras = []
         ipts = [
@@ -3958,33 +3998,38 @@ class Farmer(MovingCameraScene):
             best_score = float('inf')
             best_pos = None
 
-            for d in obj.dots:
-                score = d.get_center()[0] * OF_INITIAL[0] + d.get_center()[1] * OF_INITIAL[1]
+            #for d in obj.dots:
+            #    score = d.get_center()[0] * OF_INITIAL[0] + d.get_center()[1] * OF_INITIAL[1]
 
-                if score < best_score:
-                    best_score = score
-                    best_pos = d.get_center()
+            #    if score < best_score:
+            #        best_score = score
+            #        best_pos = d.get_center()
 
-            of_arrow_shadow.put_start_and_end_on(
-                best_pos,
-                best_pos + of_arrow_shadow.get_end() - of_arrow_shadow.get_start()
-            )
+            #of_arrow_shadow.put_start_and_end_on(
+            #    best_pos,
+            #    best_pos + of_arrow_shadow.get_end() - of_arrow_shadow.get_start()
+            #)
 
         self.add(area)
         area.add_updater(ineqs_complex_updater)
+
+        of_arrow_shadow.save_state()
 
         self.play(
             *[iextras[i].animate.shift(inorms[i] * ipts[i][-2])
              for i in range(len(ipts))],
             vi[1].animate.scale(1.25),
+            of_arrow_shadow.animate.put_start_and_end_on(
+                np.array([1.4983125140164602, -1.627322003750033, 0.0]),
+                np.array([1.4983125140164602, -1.627322003750033, 0.0]) + of_arrow_shadow.get_end() - of_arrow_shadow.get_start(),
+            )
         )
-
-        # TODO: 3D stuff here
 
         self.play(
             *[iextras[i].animate.shift(-inorms[i] * ipts[i][-2] * 1.1)
              for i in range(len(ipts))],
             FadeOut(vm, vi, vo),
+            of_arrow_shadow.animate.restore(),
         )
 
         area.remove_updater(ineqs_complex_updater)
@@ -5184,6 +5229,10 @@ class Farmer(MovingCameraScene):
         )
 
         self.remove(t1, t2)
+        t1.set_opacity(0)
+        t1[0][0].set_opacity(0)
+        t2.set_opacity(0)
+        t2[0][0].set_opacity(0)
 
         ineqs4[0][17:17+1].set_opacity(1)
         ineqs4[0][30:30+1].set_opacity(1)
@@ -5270,19 +5319,119 @@ class Farmer(MovingCameraScene):
             i5.animate.set_color(YELLOW),
         )
 
-        self.next_section()
-
+        # correct is 2.5
+        area.save_state()
+        i3.shift(UP * 3)
+        i2.shift(UP * 1.5)
+        i1.shift(UP * 1.5)
         self.play(
-            of_dot.animate.shift(UP * 2),
-            of_arrow_shadow_2.animate.shift(UP * 2),
+            of_dot.animate.shift(UP * 3),
+            of_arrow_shadow_2.animate.shift(UP * 3),
             VGroup(
                 i5, of_arrow_shadow, area, numberplane, labels[0],
-                idot, idot_correct,
-            ).animate.shift(UP * 2),
-            run_time=1,
+            ).animate.shift(UP * 3),
         )
 
-        return
+        ORIGIN_OFFSET = of_arrow_shadow.get_start()
+
+        ineqs_tmp = ComplexTex(r"""$$\begin{aligned}
+              s_1 &= 3\,000 - x_1 \\[-0.2em]
+              s_2 &= 4\,000 \phantom{{} - x_1} - x_2 \\[-0.2em]
+              s_3 &= 5\,000 - x_1 - x_2 \\[-0.2em]
+              s_4 &= 2\,000 - x_1 + 2.0x_2
+                \end{aligned}$$""").move_to(ineqs3).align_to(ineqs3, DOWN)\
+                        .set_z_index(ineqs3.get_z_index())
+        align_object_by_coords(
+            ineqs_tmp,
+            ineqs_tmp[0][0].get_center(),
+            ineqs4[0][0].get_center(),
+        )
+        ineqs_tmp[0][33:33+2].set_color(GRAY)
+        ineqs_tmp[0][41:41+2].set_color(YELLOW)
+
+        i6 = Inequality2D(1, -2, "<=", 2).set_color(GRAY).shift(ORIGIN_OFFSET).set_z_index(i5.get_z_index())  # UP because 3.5
+        i6.crop_to_screen(self.camera.frame)
+
+        ac = area.copy()
+        ac.clear_inequalities()
+        ac.add_inequalities([i1, i2, i3, i4, i5, i6])
+
+        inter2 = intersection(
+            line(i6.line.get_start(), i6.line.get_end()),
+            line(i1.line.get_start(), i1.line.get_end()),
+        )
+        idot2 = area.dots[0].copy().move_to([*inter2, 0]).scale(1.5)
+
+        ca = CurvedArrow(
+            start_point=of_arrow_shadow.get_start(),
+            end_point=idot2.get_center() + LEFT * 0.1 + UP * 0.1,
+            angle = PI / 1.5,
+        ).set_z_index(idot2.get_z_index())
+
+        hlpos = CreateHighlight(ineqs_tmp[0][43:]).set_color(POSSIBLE_COLOR)
+        hls4 = CreateHighlight(ineqs_tmp[0][33:33+2]).set_color(POSSIBLE_COLOR)
+
+        six = Tex("$1\,000$").set_z_index(ineqs_tmp.get_z_index() + 1).scale(0.9).next_to(ineqs_tmp, UP, buff=0.5)
+        ch = CreateHighlight(six).set_color(POSSIBLE_COLOR)
+
+        self.play(
+            Create(i6),
+            FadeOut(area),
+            FadeIn(ac),
+            FadeIn(idot2),
+            FadeIn(ineqs_tmp[0][33:]),
+            FadeIn(hlpos, hls4),
+            #i3.animate.set_opacity(BIG_OPACITY),
+            #i5.animate.set_opacity(BIG_OPACITY),
+            ineqs4.animate.set_opacity(BIG_OPACITY),
+            #idot.animate.set_opacity(BIG_OPACITY),
+        )
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    Addd(ineqs_tmp[0][43:43+4].copy(), six, lor=LEFT),
+                    Addd(ineqs_tmp[0][36:36+4].copy(), six, lor=RIGHT),
+                ),
+                FadeIn(six, ch),
+                lag_ratio=0.25,
+            ),
+        )
+
+        self.play(
+            Write(ca),
+
+            ineqs_tmp[0][33:33+2].animate.set_color(RED),
+            VGroup(ch).animate.set_color(RED),
+            hlpos.animate.set_color(RED),
+            hls4.animate.set_color(RED),
+            idot2.animate.set_color(RED),
+            i6.animate.set_color(RED),
+        )
+
+        area.set_opacity(0)
+
+        self.play(
+            of_dot.animate.shift(DOWN * 3),
+            of_arrow_shadow_2.animate.shift(DOWN * 3),
+            VGroup(
+                i5, of_arrow_shadow, numberplane, labels[0],
+            ).animate.shift(DOWN * 3),
+            area.animate.restore(),
+            FadeOut(ineqs_tmp[0][33:], shift=DOWN * 3),
+            FadeOut(ac, shift=DOWN * 3),
+            FadeOut(ca, shift=DOWN * 3),
+            FadeOut(idot2, shift=DOWN * 3),
+            FadeOut(ineqs_tmp[0][33:]),
+            FadeOut(hlpos, hls4),
+            FadeOut(i6, shift=DOWN * 3),
+            ineqs4.animate.set_opacity(1),
+            FadeOut(six, ch),
+        )
+
+        i3.shift(DOWN * 3)
+        i2.shift(DOWN * 1.5)
+        i1.shift(DOWN * 1.5)
 
         hlp1 = CreateHighlight(ineqs4[0][10:10+2]).set_color(POSSIBLE_COLOR).set_color(RED)
         hlp2 = hl2.set_color(RED)
@@ -5981,17 +6130,10 @@ class TestSteps(MovingCameraScene):
         self.wait()
 
 
-class TestAddd(ThreeDScene):
-    def construct(self):
-        s = Square()
-        self.add(s)
-
-        self.play(Addd(s, RIGHT * 3))
-
-
 class Test3D(ThreeDScene):
-    @fade
     def construct(self):
+        TEST = False
+        UPDATER = True
         offset = np.array([ 1.12563452, -2,          0        ])
 
         axes = ThreeDAxes(
@@ -6005,14 +6147,14 @@ class Test3D(ThreeDScene):
                 "stroke_width": 4,
                 "include_ticks": False,
             },
-            num_axis_pieces=10,  # mb edit this
+            num_axis_pieces=10,  # mb edit this?
             stroke_width = 6,
             tips=False,
         )
 
         axes.z_axis.set_opacity(0)
 
-        area = FeasibleArea3D(test=False)
+        area = FeasibleArea3D(test=TEST)
 
         seed(0xbeef)
         area.add_inequalities([
@@ -6039,29 +6181,70 @@ class Test3D(ThreeDScene):
 
         sorted_dots = sorted(list(area.dots), key=lambda x: tuple(x.get_center()))
 
-        #for i, d in enumerate(sorted_dots):
-        #    self.add(Tex(str(i)).move_to(d.get_center()).shift(OUT))
-
         # I'm too lazyyyyyy
         center = np.array((1.5, 1.5, 0))
 
         additional_ineqs = []
         for i in range(len(sorted_dots)):
             s = uniform(0.07, 0.15)
-
             norm = center - sorted_dots[i].get_center()
-
             d = np.dot(norm, sorted_dots[i].get_center() + norm * s)
-
             additional_ineqs.append(Inequality3D(*(-norm), "<=", -d))
 
-        # TODO: tmp (to see topdown)
         top = Inequality3D(0, 0, 1, "<=", 0.01)
         bottom = Inequality3D(0, 0, -1, "<=", 0.01)
         additional_ineqs.append(top)
         additional_ineqs.append(bottom)
 
         OF_BIG = np.array((1.2, 1.7, 1.1))
+
+        vt = ValueTracker()
+        vt.set_value(0.01)
+        self.add(vt)
+
+        ORIG_OFFSET = -offset - np.array([1.5, 1.5, 0])
+
+        PREV_V = [0]
+
+        def please_for_the_love_of_god_end_my_suffering_updater(obj, dt):
+            """Feeling cute might nuke my CPU idk hehe 😊."""
+
+            v = vt.get_value()
+
+            if v == PREV_V[0]:
+                return
+
+            PREV_V[0] = v
+
+            top.d = v
+            bottom.d = v
+
+            min_dot = min([(np.dot(OF_BIG, d.get_center()), d.get_center()) for d in area.dots])[1]
+
+            arrow.become(Arrow3D(
+                start=min_dot,
+                end=min_dot + OF_BIG,
+                resolution=8
+            ))
+
+            v /= 1.4
+
+            # a shit hack
+            # because the initial dots stay on the scene idk why
+            for o in area.dots:
+                o.set_opacity(0)
+
+            # a shit hack
+            # because the initial dots stay on the scene idk why
+            for o in area.edges:
+                o.set_opacity(0)
+
+            area._update_area(shift=offset + ORIG_OFFSET * v)
+
+        area.add_inequalities(additional_ineqs)
+
+        axes.shift(offset)
+        area.shift(offset)
 
         min_dot = min([(np.dot(OF_BIG, d.get_center()), d.get_center()) for d in area.dots])[1]
 
@@ -6070,26 +6253,6 @@ class Test3D(ThreeDScene):
             end=min_dot + OF_BIG,
             resolution=8
         )
-
-        vt = ValueTracker()
-        vt.set_value(0.01)
-        self.add(vt)
-
-        def please_for_the_love_of_god_end_my_suffering_updater(obj, dt):
-            """Feeling cute might nuke my CPU idk hehe 😊."""
-            top.d = vt.get_value()
-            bottom.d = vt.get_value()
-
-            area._update_area()
-            area.shift(offset)
-
-        #vt.add_updater(please_for_the_love_of_god_end_my_suffering_updater)
-
-        area.add_inequalities(additional_ineqs)
-
-        axes.shift(offset)
-        area.shift(offset)
-        arrow.shift(offset)
 
         labels = VGroup(
             Tex("$x_p$").scale(1.2).move_to(axes)\
@@ -6102,14 +6265,54 @@ class Test3D(ThreeDScene):
                     .set_color(CARROT_COLOR),
         )
 
+        #sr = SurroundingRectangle(
+        #    VGroup(
+        #        Dot().move_to([7.031111111111111, 3.92, 0.0]),
+        #        Dot().move_to([7.031111111111111, -3.92, 0.0]),
+        #        Dot().move_to([-1.8298420755781173, 0.0, 0.0]),
+        #    ),
+        #    fill_opacity=1,
+        #).move_to([2.6256345177664975, 0.0, 0.0]).set_color_by_gradient((RED, GREEN)).set_opacity(0.35)
+        #sr.set_sheen_direction(unit_vector(OF_INITIAL[0] * RIGHT + OF_INITIAL[1] * UP))
+
         self.add(axes, area, arrow, labels)
 
-        self.wait()
+        if UPDATER:
+            vt.add_updater(please_for_the_love_of_god_end_my_suffering_updater)
 
-        return
+        extra_anims = [
+            axes.x_axis.animate.shift(ORIG_OFFSET),
+            axes.y_axis.animate.shift(ORIG_OFFSET),
+            axes.z_axis.animate.set_opacity(1).shift(ORIG_OFFSET),
+            vt.animate.set_value(1.4),
+            FadeOut(labels, shift=ORIG_OFFSET),
+        ]
 
-        # TODO: add anims such that center of the polygon is in the center of the screen
-        self.move_camera(phi=75 * DEGREES, theta=30 * DEGREES, added_anims=[axes.z_axis.animate.set_opacity(1), vt.animate.set_value(1.5)], run_time=3)
+        if not UPDATER:
+            extra_anims.append(area.animate.shift(ORIG_OFFSET))
+
+        self.move_camera(phi=75 * DEGREES, theta=30 * DEGREES, added_anims=extra_anims, run_time=3 if not TEST else 1)
+
+        self.begin_ambient_camera_rotation(rate=0.2)
+
+        if UPDATER:
+            vt.remove_updater(please_for_the_love_of_god_end_my_suffering_updater)
+
+        self.wait(4)
+
+        if UPDATER:
+            vt.add_updater(please_for_the_love_of_god_end_my_suffering_updater)
+
+        extra_anims = [
+            axes.x_axis.animate.shift(-ORIG_OFFSET - offset),
+            axes.y_axis.animate.shift(-ORIG_OFFSET - offset),
+            axes.z_axis.animate.set_opacity(0).shift(-ORIG_OFFSET - offset),
+            vt.animate.set_value(0.01),
+            FadeIn(labels, shift=-ORIG_OFFSET - offset),
+        ]
+
+        self.move_camera(phi=0, theta=-PI / 2, added_anims=extra_anims, run_time=2 if not TEST else 1)
+
 
 
 class TransparentSilhouettes(MovingCameraScene):
@@ -6462,6 +6665,8 @@ class TransparentBinaryHint(MovingCameraScene):
 
         sr = SurroundingRectangle(VGroup(a, b, c), fill_color=BLACK, stroke_color=WHITE, buff=0.35, fill_opacity=0.5)
         sr2 = SurroundingRectangle(d, fill_color=BLACK, stroke_color=WHITE, buff=0.35, fill_opacity=0.5)
+
+        VGroup(a, b, c, sr, sr2).scale(0.75)
 
         self.play(FadeIn(a, b, c, sr))
 
@@ -6911,7 +7116,6 @@ class Knapsack(MovingCameraScene):
             FadeIn(hl),
         )
 
-        self.play(Transform(hl, CreateHighlight(outknap.code[0][-4:])))
         self.play(Transform(hl, CreateHighlight(outknap.code[1][10:10+3])))
         self.play(Transform(hl, CreateHighlight(outknap.code[1][18:18+3])))
         self.play(Transform(hl, CreateHighlight(outknap.code[1][22:22+3])))
@@ -7326,7 +7530,7 @@ class Outro(MovingCameraScene):
         ).arrange(DOWN, buff=0.15).next_to(bt, DOWN, buff=0.3).set_color(RED)
         ctt = VGroup(
             Tex(r"\it Fast classes?").scale(subtext_scale),
-            Tex(r"\it Fast algorithms?").scale(subtext_scale),
+            Tex(r"\it Approximations?").scale(subtext_scale),
         ).arrange(DOWN, buff=0.15).next_to(ct, DOWN, buff=0.3).set_color(RED)
 
         self.play(FadeIn(text))

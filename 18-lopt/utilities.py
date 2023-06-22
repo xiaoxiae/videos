@@ -491,9 +491,10 @@ def fibonacci_sphere(samples=5000):
 
 class Addd(Animation):
 
-    def __init__(self, mobject: Mobject, pos, introducer=True, **kwargs):
+    def __init__(self, mobject: Mobject, pos, introducer=True, lor = RIGHT, **kwargs):
         self.original = mobject.copy()
         self.pos = pos
+        self.lor = lor
 
         super().__init__(mobject, introducer=introducer, **kwargs)
 
@@ -501,7 +502,7 @@ class Addd(Animation):
         """A function that gets called every frame, for the animation to... animate."""
         a = self.rate_func(alpha)
 
-        destination = self.original.copy().move_to(self.pos).align_to(self.pos, RIGHT).get_center()
+        destination = self.original.copy().move_to(self.pos).align_to(self.pos, self.lor).get_center()
 
         pos = self.original.get_center() * (1 - a) + destination * a
 
@@ -551,10 +552,9 @@ class FeasibleArea3D(VGroup, metaclass=ConvertToOpenGL):
         self.inequalities = []
         self._update_area()
 
-    def _update_area(self, vae=None):
+    def _update_area(self, vae=None, shift=np.array([0, 0, 0])):
         if self.test:
             dot_res = (2, 2)
-            line_res = (2, 2)
         else:
             dot_res = (8, 8)
             line_res = (8, 8)
@@ -573,11 +573,11 @@ class FeasibleArea3D(VGroup, metaclass=ConvertToOpenGL):
 
         if vertices:
             for vertex in vertices:
-                self.dots.add(Dot3D(resolution=dot_res).shift(vertex).scale(NORMAL_DOT_SCALE))
+                self.dots.add(Dot3D(resolution=dot_res).shift(vertex + shift).scale(NORMAL_DOT_SCALE))
         else:
             vertices = set()
 
-            for of in fibonacci_sphere():
+            for of in fibonacci_sphere(5000 if not self.test else 100):
                 model = LpProblem(sense=LpMaximize)
 
                 x = LpVariable(name="x")
@@ -592,18 +592,26 @@ class FeasibleArea3D(VGroup, metaclass=ConvertToOpenGL):
 
                 model += of[0] * x + of[1] * y + of[2] * z
 
-                status = model.solve(PULP_CBC_CMD(msg=False))
+                try:
+                    status = model.solve(PULP_CBC_CMD(msg=False))
 
-                vertices.add((x.value(), y.value(), z.value()))
+                    if x.value() is not None and y.value() is not None and z.value() is not None:
+                        vertices.add((x.value(), y.value(), z.value()))
+
+                except Exception as e:
+                    print(e)
 
             vertices = list(vertices)
 
             for i, vertex in enumerate(vertices):
-                self.dots.add(Dot3D(resolution=dot_res).shift(vertex).scale(NORMAL_DOT_SCALE))
+                self.dots.add(Dot3D(resolution=dot_res).shift(vertex + shift).scale(NORMAL_DOT_SCALE))
+
+        if self.test:
+            return
 
         if edges:
             for u, v in edges:
-                self.edges.add(Line3D(u, v, color=WHITE, resolution=line_res))
+                self.edges.add(Line3D(u, v, color=WHITE, resolution=line_res).shift(shift))
         else:
             for i in range(len(vertices)):
                 for j in range(i + 1, len(vertices)):
@@ -618,7 +626,7 @@ class FeasibleArea3D(VGroup, metaclass=ConvertToOpenGL):
                             tight_satisfactions += 1
 
                     if tight_satisfactions >= 2:
-                        self.edges.add(Line3D(u, v, color=WHITE, resolution=line_res))
+                        self.edges.add(Line3D(u, v, color=WHITE, resolution=line_res).shift(shift))
 
 
 def align_object_by_coords(obj, current, desired, animation=False):
