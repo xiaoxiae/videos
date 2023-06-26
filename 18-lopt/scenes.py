@@ -34,6 +34,7 @@ class TestColoring(MovingCameraScene):
 
 
 class TransparentNobel(MovingCameraScene):
+    @fade
     def construct(self):
         img_scale = 0.4
         text_scale = 0.9
@@ -50,22 +51,21 @@ class TransparentNobel(MovingCameraScene):
         koopmans.add(SurroundingRectangle(koopmans, color=WHITE, buff=-0.01))
 
         a = Group(
-            Tex(r"\underline{Nobel Price in Economics}").scale(text_scale),
-            Group(kantorovich, koopmans).arrange(),
-            Tex(r"\textit{Kantorovich, Koopmans (1975)}").scale(subtext_scale),
-        ).arrange(DOWN, buff=0.3).scale(1.1)
+            Group(kantorovich, Tex(r"\textit{Kantorovich} (USSR)").scale(subtext_scale)).arrange(DOWN, buff=0.3),
+            Group(koopmans, Tex(r"\textit{Koopmans} (US)").scale(subtext_scale)).arrange(DOWN, buff=0.3),
+        ).scale(1.1).arrange(RIGHT, buff=5.5)
 
-        economics = Tex(r"$\leftarrow$ economics").next_to(koopmans, RIGHT)
-        logistics = Tex(r"logistics $\rightarrow$").next_to(kantorovich, LEFT)
+        logistics = Tex(r"$\leftarrow$ logistics").next_to(kantorovich, RIGHT).shift(UP * 0.7)
+        economics = Tex(r"economics $\rightarrow$").next_to(koopmans, LEFT).shift(DOWN * 0.7)
 
         self.play(FadeIn(a))
 
         self.play(
-            AnimationGroup(
-                FadeIn(logistics),
-                FadeIn(economics),
-                lag_ratio=0.1,
-            )
+            FadeIn(logistics),
+        )
+
+        self.play(
+            FadeIn(economics),
         )
 
 
@@ -205,8 +205,7 @@ class Intro(MovingCameraScene):
 
 
 class Duality(MovingCameraScene):
-    # Yeah I'm not proud but the bug is really weird
-    # also makes logical sense to separate
+    @fade
     def construct(self):
         self.next_section(skip_animations=True)
 
@@ -857,11 +856,7 @@ class Duality(MovingCameraScene):
                 optimum_texts[i].animate(rate_func=there_and_back).scale(THERE_AND_BACK_SCALE),
             )
 
-        #vm = CreateMeaning(var, "$\mathbf{x} \in \mathbb{R}^{+}_{0}$")
-        #vi = CreateMeaning(ineqs, r"$\begin{aligned}\mathbf{0} &\le \mathbf{x} \\[0.05em] A\mathbf{x} &\le \mathbf{b}\end{aligned}$")
-        #vo = CreateMeaning(VGroup(of, exp), "$\max\ \mathbf{c}^T \mathbf{x}$")
-
-        vm = CreateMeaning(var, "\small variables $\in \mathbb{R}^{+}_{0}$")
+        vm = CreateMeaning(var, "\small variables $\in \mathbb{R}$")
         vi = CreateMeaning(ineqs, r"\small s.t. linear \par inequalities")
         vo = CreateMeaning(VGroup(of, exp), "\small maximizing \par linear function")
 
@@ -2895,6 +2890,7 @@ class Duality(MovingCameraScene):
             FadeOut(hl1, hl2),
             nonbas_vars.animate.set_opacity(1),
 
+            ineqs8[0][:7].animate.set_opacity(1),
             ineqs8[0][7:7+6].animate.set_opacity(1),
             ineqs8[0][20:20+3].animate.set_opacity(1),
             ineqs8[0][30:30+6].animate.set_opacity(1),
@@ -2909,6 +2905,23 @@ class Duality(MovingCameraScene):
 
         labels[0].shift(UP * 0.5)
         labels[0].set_z_index(rect_down.get_z_index() - 0.0001)
+
+        optimum_texts = VGroup(
+            Tex(r"$1\,000\ \mathrm{kg}$").scale(0.6)\
+                    .move_to(of_dot.copy().shift(UP)).align_to(numberplane.axes[0], UP).shift(DOWN * 0.25)\
+                    .set_z_index(100000),
+            Tex(r"$4\,000\ \mathrm{kg}$").scale(0.6)\
+                    .move_to(of_dot.copy().shift(UP)).align_to(numberplane.axes[1], RIGHT).shift(LEFT * 0.25)\
+                    .set_z_index(100000),
+            Tex(r"$\$8\,000$").scale(1)\
+                    .next_to(of_dot.copy().shift(UP), UP + RIGHT)\
+                    .set_z_index(100000),
+        )
+
+        sweep.move_to(of_dot.copy().shift(UP))
+
+        for i in range(3):
+            optimum_texts[i].add(CreateSR(optimum_texts[i]))
 
         self.play(
             Succession(
@@ -2931,7 +2944,17 @@ class Duality(MovingCameraScene):
             ),
             Succession(
                 Wait(0.25),
-                VGroup(numberplane, of_dot, of_arrow_shadow_2, i3, i5, of_arrow_shadow, area, labels[0]).animate.shift(UP),
+                VGroup(numberplane, of_dot, of_arrow_shadow, area, labels[0]).animate.shift(UP),
+                run_time=1.5,
+            ),
+            Succession(
+                Wait(0.25),
+                FadeOut(i3, i5, of_arrow_shadow_2, shift=UP),
+                run_time=1.5,
+            ),
+            Succession(
+                Wait(0.25),
+                FadeIn(optimum_texts[2], sweep, shift=UP),
                 run_time=1.5,
             ),
             AnimationGroup(
@@ -2995,8 +3018,8 @@ class Duality(MovingCameraScene):
             Succession(
                 Wait(0.25),
                 AnimationGroup(
-                    Addd(an, t),
-                    Addd(bn, t),
+                    Addd(an.copy(), t),
+                    Addd(bn.copy(), t),
                 ),
             ),
             Succession(
@@ -3058,9 +3081,9 @@ class Duality(MovingCameraScene):
             Succession(
                 Wait(0.25),
                 AnimationGroup(
-                    Addd(an, t2),
-                    Addd(bn, t2),
-                    Addd(cn, t2),
+                    Addd(an.copy(), t2),
+                    Addd(bn.copy(), t2),
+                    Addd(cn.copy(), t2),
                 ),
             ),
             Succession(
@@ -3108,7 +3131,8 @@ class Duality(MovingCameraScene):
             FadeOut(bn),
             FadeOut(cn),
             rect_large.animate.shift(LEFT * spacing2),
-            FadeOut(area, of_arrow_shadow, numberplane, of_dot, of_arrow_shadow_2, i3, i5, labels, sr),
+            FadeOut(area, of_arrow_shadow, numberplane, of_dot, of_arrow_shadow_2, optimum_texts[2], sweep, labels, sr),
+            #FadeOut(area, of_arrow_shadow, numberplane, of_dot, of_arrow_shadow_2, i3, i5, labels, sr),
             FadeOut(t[0][:-5]),
             FadeOut(t2[0][-4:]),
             exp_base.animate.restore(),
@@ -3218,24 +3242,37 @@ class Duality(MovingCameraScene):
             exp_base,
         )
 
+        primal_correct = VGroup(
+            var_base,
+            ineqs_base,
+            exp_base,
+        ).copy().arrange(DOWN, buff=0.7).move_to(primal).align_to(primal, UP).shift(DOWN * 1)
+
+        primal_correct[0][0][10:10+2].set_color(ORANGE)
+        primal_correct[0][0][13:13+2].set_color(ORANGE)
+        primal_correct[1][0][0:0+2].set_color(ORANGE)
+        primal_correct[1][0][3:3+2].set_color(ORANGE)
+        primal_correct[1][0][7:7+2].set_color(ORANGE)
+        primal_correct[1][0][14:14+2].set_color(ORANGE)
+        primal_correct[1][0][21:21+2].set_color(ORANGE)
+        primal_correct[1][0][24:24+2].set_color(ORANGE)
+        primal_correct[2][0][6:6+2].set_color(ORANGE)
+        primal_correct[2][0][12:12+2].set_color(ORANGE)
+
         dual = VGroup(
             vary,
             ineqsy,
             expy,
         )
 
-        self.play(
-            var_base[0][10:10+2].animate.set_color(ORANGE),
-            var_base[0][13:13+2].animate.set_color(ORANGE),
-            ineqs_base[0][0:0+2].animate.set_color(ORANGE),
-            ineqs_base[0][3:3+2].animate.set_color(ORANGE),
-            ineqs_base[0][7:7+2].animate.set_color(ORANGE),
-            ineqs_base[0][14:14+2].animate.set_color(ORANGE),
-            ineqs_base[0][21:21+2].animate.set_color(ORANGE),
-            ineqs_base[0][24:24+2].animate.set_color(ORANGE),
-            exp_base[0][6:6+2].animate.set_color(ORANGE),
-            exp_base[0][12:12+2].animate.set_color(ORANGE),
-        )
+        dual_correct = VGroup(
+            vary,
+            ineqsy,
+            expy,
+        ).copy().arrange(DOWN, buff=0.6).move_to(dual).align_to(dual, UP).shift(DOWN * 1)
+
+        # hack for cutting
+        self.wait()
 
         for obj in self.mobjects:
             self.remove(obj)
@@ -3251,8 +3288,8 @@ class Duality(MovingCameraScene):
             AnimationGroup(
                 FadeOut(of_base, ofy),
                 AnimationGroup(
-                    primal.animate.arrange(DOWN, buff=0.7).move_to(primal).align_to(primal, UP).shift(DOWN * 1),
-                    dual.animate.arrange(DOWN, buff=0.6).move_to(dual).align_to(dual, UP).shift(DOWN * 1),
+                    Transform(primal, primal_correct),
+                    Transform(dual, dual_correct),
                 ),
                 AnimationGroup(
                     Write(primal_text),
@@ -3299,6 +3336,7 @@ class Duality(MovingCameraScene):
 
 
 class Farmer(MovingCameraScene):
+    @fade
     def construct(self):
         farm = ImageMobject("assets/midjourney/farm-12-16-out.png")\
                 .set_height(self.camera.frame.get_height())\
@@ -3571,9 +3609,12 @@ class Farmer(MovingCameraScene):
                     c2.animate.set_opacity(1),
                     goal.animate.set_opacity(1),
                 ),
-                Write(exp, run_time=1.5),
                 lag_ratio=0.5,
             )
+        )
+
+        self.play(
+            Write(exp, run_time=1.5),
         )
 
         g = VGroup(
@@ -3724,14 +3765,15 @@ class Farmer(MovingCameraScene):
                     #theory_group.animate.shift(LEFT * theory_group.get_x() * 2),
                     equivalenece.animate.shift(LEFT * theory_group.get_x() * 2).set_opacity(0),
                 ),
-                AnimationGroup(
-                    FadeIn(numberplane.background_lines),
-                    FadeIn(numberplane.axes),
-                    #FadeIn(labels)
-                ),
                 lag_ratio=0.5,
             ),
         )
+
+        self.play(
+            FadeIn(numberplane.background_lines),
+            FadeIn(numberplane.axes),
+        )
+
 
         labels_tmp = labels.copy()
         xptmp = var[0][10:10+2].copy()
@@ -3939,11 +3981,7 @@ class Farmer(MovingCameraScene):
                 optimum_texts[i].animate(rate_func=there_and_back).scale(THERE_AND_BACK_SCALE),
             )
 
-        #vm = CreateMeaning(var, "$\mathbf{x} \in \mathbb{R}^{+}_{0}$")
-        #vi = CreateMeaning(ineqs, r"$\begin{aligned}\mathbf{0} &\le \mathbf{x} \\[0.05em] A\mathbf{x} &\le \mathbf{b}\end{aligned}$")
-        #vo = CreateMeaning(VGroup(of, exp), "$\max\ \mathbf{c}^T \mathbf{x}$")
-
-        vm = CreateMeaning(var, "\small variables $\in \mathbb{R}^{+}_{0}$")
+        vm = CreateMeaning(var, "\small variables $\in \mathbb{R}$")
         vi = CreateMeaning(ineqs, r"\small s.t. linear \par inequalities")
         vo = CreateMeaning(VGroup(of, exp), "\small maximizing \par linear function")
 
@@ -6130,10 +6168,9 @@ class TestSteps(MovingCameraScene):
         self.wait()
 
 
-class Test3D(ThreeDScene):
+class Pain3D(ThreeDScene):
     def construct(self):
         TEST = False
-        UPDATER = True
         offset = np.array([ 1.12563452, -2,          0        ])
 
         axes = ThreeDAxes(
@@ -6147,7 +6184,7 @@ class Test3D(ThreeDScene):
                 "stroke_width": 4,
                 "include_ticks": False,
             },
-            num_axis_pieces=10,  # mb edit this?
+            num_axis_pieces=100,  # mb edit this?
             stroke_width = 6,
             tips=False,
         )
@@ -6181,8 +6218,8 @@ class Test3D(ThreeDScene):
 
         sorted_dots = sorted(list(area.dots), key=lambda x: tuple(x.get_center()))
 
-        # I'm too lazyyyyyy
-        center = np.array((1.5, 1.5, 0))
+        # I'm too lazyyyyyyyyyy
+        center = np.array((1.5, 2, 0))
 
         additional_ineqs = []
         for i in range(len(sorted_dots)):
@@ -6199,10 +6236,9 @@ class Test3D(ThreeDScene):
         OF_BIG = np.array((1.2, 1.7, 1.1))
 
         vt = ValueTracker()
-        vt.set_value(0.01)
-        self.add(vt)
+        vt.set_value(0.0035)
 
-        ORIG_OFFSET = -offset - np.array([1.5, 1.5, 0])
+        ORIG_OFFSET = -offset - center
 
         PREV_V = [0]
 
@@ -6219,16 +6255,6 @@ class Test3D(ThreeDScene):
             top.d = v
             bottom.d = v
 
-            min_dot = min([(np.dot(OF_BIG, d.get_center()), d.get_center()) for d in area.dots])[1]
-
-            arrow.become(Arrow3D(
-                start=min_dot,
-                end=min_dot + OF_BIG,
-                resolution=8
-            ))
-
-            v /= 1.4
-
             # a shit hack
             # because the initial dots stay on the scene idk why
             for o in area.dots:
@@ -6239,7 +6265,22 @@ class Test3D(ThreeDScene):
             for o in area.edges:
                 o.set_opacity(0)
 
+            v /= 1.4
+
             area._update_area(shift=offset + ORIG_OFFSET * v)
+
+            min_dot = min([(np.dot(OF_BIG, d.get_center()), d.get_center()) for d in area.dots])[1]
+
+            ofa, ofb, ofc = OF_BIG
+
+            arrow.become(Arrow3D(
+                start=min_dot,
+                end=min_dot + np.array([ofa, ofb, ofc * v]),
+                resolution=8,
+                base_radius=0.17 - 0.04 * v,
+                height=0.35,
+                thickness=0.025,
+            ))
 
         area.add_inequalities(additional_ineqs)
 
@@ -6265,20 +6306,12 @@ class Test3D(ThreeDScene):
                     .set_color(CARROT_COLOR),
         )
 
-        #sr = SurroundingRectangle(
-        #    VGroup(
-        #        Dot().move_to([7.031111111111111, 3.92, 0.0]),
-        #        Dot().move_to([7.031111111111111, -3.92, 0.0]),
-        #        Dot().move_to([-1.8298420755781173, 0.0, 0.0]),
-        #    ),
-        #    fill_opacity=1,
-        #).move_to([2.6256345177664975, 0.0, 0.0]).set_color_by_gradient((RED, GREEN)).set_opacity(0.35)
-        #sr.set_sheen_direction(unit_vector(OF_INITIAL[0] * RIGHT + OF_INITIAL[1] * UP))
-
         self.add(axes, area, arrow, labels)
+        self.add(vt)
 
-        if UPDATER:
-            vt.add_updater(please_for_the_love_of_god_end_my_suffering_updater)
+        please_for_the_love_of_god_end_my_suffering_updater(vt, 0)
+
+        vt.add_updater(please_for_the_love_of_god_end_my_suffering_updater)
 
         extra_anims = [
             axes.x_axis.animate.shift(ORIG_OFFSET),
@@ -6288,31 +6321,34 @@ class Test3D(ThreeDScene):
             FadeOut(labels, shift=ORIG_OFFSET),
         ]
 
-        if not UPDATER:
-            extra_anims.append(area.animate.shift(ORIG_OFFSET))
+        #self.move_camera(phi=75 * DEGREES, theta=-PI / 2, added_anims=extra_anims, run_time=5 if not TEST else 1)
+        self.move_camera(phi=75 * DEGREES, theta=30 * DEGREES, added_anims=extra_anims, run_time=5 if not TEST else 1)
 
-        self.move_camera(phi=75 * DEGREES, theta=30 * DEGREES, added_anims=extra_anims, run_time=3 if not TEST else 1)
+        vt.remove_updater(please_for_the_love_of_god_end_my_suffering_updater)
 
         self.begin_ambient_camera_rotation(rate=0.2)
+        self.wait(19.36)
 
-        if UPDATER:
-            vt.remove_updater(please_for_the_love_of_god_end_my_suffering_updater)
-
-        self.wait(4)
-
-        if UPDATER:
-            vt.add_updater(please_for_the_love_of_god_end_my_suffering_updater)
+        vt.add_updater(please_for_the_love_of_god_end_my_suffering_updater)
 
         extra_anims = [
-            axes.x_axis.animate.shift(-ORIG_OFFSET - offset),
-            axes.y_axis.animate.shift(-ORIG_OFFSET - offset),
-            axes.z_axis.animate.set_opacity(0).shift(-ORIG_OFFSET - offset),
-            vt.animate.set_value(0.01),
-            FadeIn(labels, shift=-ORIG_OFFSET - offset),
+            axes.x_axis.animate.shift(-ORIG_OFFSET),
+            axes.y_axis.animate.shift(-ORIG_OFFSET),
+            axes.z_axis.animate.set_opacity(0).shift(-ORIG_OFFSET),
+            vt.animate.set_value(0.0035),
+            FadeIn(labels, shift=-ORIG_OFFSET),
         ]
 
-        self.move_camera(phi=0, theta=-PI / 2, added_anims=extra_anims, run_time=2 if not TEST else 1)
+        self.move_camera(phi=0, theta=3 * PI / 2, added_anims=extra_anims, run_time=3 if not TEST else 1)
 
+
+class Transparent1939(MovingCameraScene):
+    @fade
+    def construct(self):
+        n = Tex("1939").scale(1.5).align_to(self.camera.frame, UP + RIGHT)
+        n.shift(DOWN * 0.9 + LEFT * 1.6)
+
+        self.play(Write(n))
 
 
 class TransparentSilhouettes(MovingCameraScene):
@@ -6522,7 +6558,7 @@ class TransparentFunnyXD(MovingCameraScene):
 
 
 class ILP(MovingCameraScene):
-    # no fade here to force me to use Kdenlive one
+    @fade
     def construct(self):
         numberplane = NumberPlane(
             x_range=(- 2 * 7.111111111111111, 2 * 7.111111111111111, 1),
@@ -6713,6 +6749,8 @@ class Knapsack(MovingCameraScene):
             *[VGroup(Dot().scale(w).set_color(cols[i]).set_sheen(0.5), Tex(f"${int(w)}$").scale(0.2 * w).set_z_index(1).set_color(BLACK)) for i, w in enumerate(weights)],
             *[Tex(f"${p}\\scriptstyle \$$").scale(1) for p in prices],
         ).arrange_in_grid(rows=2, cell_alignment=DOWN, buff=(0.2, 0.4)).align_to(DOWN).shift(DOWN * 0.7).scale(1.2)
+
+        icp = items.copy()
 
         self.play(
             FadeIn(*[i[0] for i in items[:n]], lag_ratio=0.05),
@@ -7044,19 +7082,37 @@ class Knapsack(MovingCameraScene):
             ),
         )
 
+        pulp = VGroup(
+            Tex(r"PuLP package").scale(1.25),
+            Tex(r"\texttt{> pip install pulp}"),
+        ).arrange(DOWN, buff=0.3).set_z_index(100000000).scale(0.6)
+        pulp[1].align_to(pulp[0], LEFT)
+        pulp[1].set_color(GRAY)
+
+        arrow = Arrow(start=ORIGIN, end=UP).next_to(code.code[0][5:5+4], DOWN).set_z_index(100000000)
+        pulp.next_to(arrow, DOWN).shift(RIGHT * 0.9)
+
         self.play(
-            FadeIn(code.code[0], run_time=0.7)
+            AnimationGroup(
+                FadeIn(code.code[0], lag_ratio=0, run_time=1),
+                FadeIn(pulp, arrow, lag_ratio=0, run_time=1.25),
+                lag_ratio=0.5,
+            )
         )
 
         self.play(
             AnimationGroup(
-                FadeIn(code.code[3]),
-                FadeIn(code.code[4]),
-                FadeIn(code.code[5]),
-                FadeIn(code.code[6]),
-                FadeIn(code.code[7]),
-                lag_ratio=0.05,
-                run_time=1.5,
+                FadeOut(pulp, arrow, run_time=1.25),
+                AnimationGroup(
+                    FadeIn(code.code[3]),
+                    FadeIn(code.code[4]),
+                    FadeIn(code.code[5]),
+                    FadeIn(code.code[6]),
+                    FadeIn(code.code[7]),
+                    lag_ratio=0.05,
+                    run_time=1.5,
+                ),
+                lag_ratio=0.4,
             ),
         )
 
@@ -7110,18 +7166,71 @@ class Knapsack(MovingCameraScene):
             self.camera.frame.animate.move_to(VGroup(code, title, outknap)).scale(1.05),
         )
 
-        hl = CreateHighlight(outknap.code[0][-4:])
+        hl = CreateHighlight(outknap.code[0][-4:], stroke_width=2, buff=0.05)
+
+        icp.set_z_index(10000).scale(0.4).next_to(outknap, DOWN, buff=0.25)
+        bg.set_z_index(10000000)
+        bg.save_state()
+
+        self.camera.frame.save_state()
 
         self.play(
-            FadeIn(hl),
+            AnimationGroup(
+                AnimationGroup(
+                    self.camera.frame.animate.move_to(VGroup(icp, outknap)).scale(0.4),
+                    code.animate.set_opacity(BIG_OPACITY),
+                    g.animate.set_opacity(BIG_OPACITY),
+                    bg.animate.fade(1 - BIG_OPACITY),
+                ),
+                AnimationGroup(
+                    FadeIn(icp),
+                    FadeIn(hl),
+                ),
+                lag_ratio=0.5,
+            ),
         )
 
-        self.play(Transform(hl, CreateHighlight(outknap.code[1][10:10+3])))
-        self.play(Transform(hl, CreateHighlight(outknap.code[1][18:18+3])))
-        self.play(Transform(hl, CreateHighlight(outknap.code[1][22:22+3])))
-        self.play(Transform(hl, CreateHighlight(outknap.code[1][26:26+3])))
+        self.play(
+            Transform(hl, CreateHighlight(outknap.code[1][10:10+3], stroke_width=2, buff=0.05)),
+            *[
+                icp[i].animate.set_opacity(BIG_OPACITY)
+                for i in [0, 2, 3, 4, 5, 6, 7]
+            ],
+            *[
+                icp[i + n].animate.set_opacity(BIG_OPACITY)
+                for i in [0, 2, 3, 4, 5, 6, 7]
+            ],
+        )
 
-        self.play(FadeOut(hl))
+        self.play(
+            Transform(hl, CreateHighlight(outknap.code[1][18:18+3], stroke_width=2, buff=0.05)),
+            icp[3].animate.set_opacity(1),
+            icp[3 + n].animate.set_opacity(1),
+        )
+
+        self.play(
+            Transform(hl, CreateHighlight(outknap.code[1][22:22+3], stroke_width=2, buff=0.05)),
+            icp[4].animate.set_opacity(1),
+            icp[4 + n].animate.set_opacity(1),
+        )
+
+        self.play(
+            Transform(hl, CreateHighlight(outknap.code[1][26:26+3], stroke_width=2, buff=0.05)),
+            icp[5].animate.set_opacity(1),
+            icp[5 + n].animate.set_opacity(1),
+        )
+
+        self.play(
+            AnimationGroup(
+                FadeOut(hl, icp),
+                AnimationGroup(
+                    self.camera.frame.animate.restore(),
+                    code.animate.set_opacity(1),
+                    g.animate.set_opacity(1),
+                    bg.animate.restore(),
+                ),
+            ),
+        )
 
         fade_rect = get_fade_rect()
 
@@ -7507,11 +7616,19 @@ class Outro(MovingCameraScene):
         text_scale = 0.8
         subtext_scale = 0.65
 
-        a = Rectangle(width=1.6, height=0.9, fill_color=BLACK)
-        b = Rectangle(width=1.6, height=0.9, fill_color=BLACK)
-        c = Rectangle(width=1.6, height=0.9, fill_color=BLACK)
+        a = Rectangle(width=1.6, height=0.9, fill_color=BLACK).set_z_index(10)
+        b = Rectangle(width=1.6, height=0.9, fill_color=BLACK).set_z_index(10)
+        c = Rectangle(width=1.6, height=0.9, fill_color=BLACK).set_z_index(10)
 
-        g = VGroup(a, b, c).arrange(buff=0.3).set(width = self.camera.frame.width * 0.85)
+        aimg = ImageMobject("assets/1-simplex.png").set_height(a.get_height() * 0.99).move_to(a)
+        bimg = ImageMobject("assets/2-duality.png").set_height(b.get_height() * 0.99).move_to(b)
+        cimg = ImageMobject("assets/3-ilp.png").set_height(c.get_height() * 0.99).move_to(c)
+
+        g = Group(
+            Group(a, aimg),
+            Group(b, bimg),
+            Group(c, cimg),
+        ).arrange(buff=0.3).set(width = self.camera.frame.width * 0.85)
 
         at = Tex("Simplex Method").scale(text_scale).next_to(a, DOWN)
         bt = Tex("Duality").scale(text_scale).next_to(b, DOWN)
@@ -7519,8 +7636,8 @@ class Outro(MovingCameraScene):
 
         att = VGroup(
             Tex(r"\it Initial solution?").scale(subtext_scale),
-            Tex(r"\it Exponential?").scale(subtext_scale),
-            Tex(r"\it Infinite loop?").scale(subtext_scale),
+            Tex(r"\it Exponential!").scale(subtext_scale),
+            Tex(r"\it Infinite loop!").scale(subtext_scale),
         ).arrange(DOWN, buff=0.15).next_to(at, DOWN, buff=0.3).set_color(RED)
         att[2].shift(UP * 0.05)
 
@@ -7535,10 +7652,11 @@ class Outro(MovingCameraScene):
 
         self.play(FadeIn(text))
 
-        self.play(FadeIn(a, at))
-        self.play(Succession(Wait(0.25), FadeIn(b, bt)))
+        self.play(FadeIn(a, at, aimg))
 
-        self.play(Succession(Wait(0.25), FadeIn(c, ct)))
+        self.play(FadeIn(b, bt, bimg))
+
+        self.play(FadeIn(c, ct, cimg))
 
         self.play(FadeIn(att[0]))
         self.play(FadeIn(att[1]))
@@ -7621,6 +7739,9 @@ class Outro(MovingCameraScene):
                     FadeOut(a),
                     FadeOut(b),
                     FadeOut(c),
+                    FadeOut(aimg),
+                    FadeOut(bimg),
+                    FadeOut(cimg),
                     att.animate.shift(DOWN * 5 + RIGHT * 2),
                     btt.animate.shift(DOWN * 5),
                     ctt.animate.shift(DOWN * 5 + LEFT * 2),
@@ -7712,14 +7833,14 @@ class Outro(MovingCameraScene):
                 FadeIn(sq, run_time=1.5),
             ),
             Succession(
-                Wait(0.2),
+                Wait(0.5),
                 AnimationGroup(*[Succession(Wait(0.07 * i), FadeIn(t)) for i, t in enumerate(texts)]),
             ),
             FadeOut(text),
             self.camera.frame.animate.shift(DOWN * 4).scale(1.45),
             water.animate.shift(DOWN * 8),
             #run_time=0.2,
-            run_time=2,
+            run_time=3,
         )
 
         a2.remove_updater(updater)

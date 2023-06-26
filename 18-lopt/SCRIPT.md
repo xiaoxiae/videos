@@ -10,8 +10,6 @@ header-includes:
 - \newcommand{\note}[1]{\todo[color=blue!40]{#1}}
 ---
 
-\todo{make the 3D animation longer (5 sec)}
-
 \hrule
 \vspace{1.5em}
 
@@ -119,7 +117,7 @@ This is the crucial idea behind the simplex algorithm -- loosen one and tighten 
 
 In order to calculate which variables to loosen and which to tighten, we'll slightly modify our program to make the math easier.
 We'll introduce new variables for each inequality called slack variables, which act as the difference between the left and the right side, thus turning the inequalities into equalities.
-This means that a tight inequality before is the same as a variable being set to zero now -- as you see, since $s_1$ and $s_2$ are zero, the first and third equalities become tight.
+This means that a tight inequality before is the same as a variable being set to zero now -- as you see, since $s_1$ and $s_3$ are zero, the first and third equalities become tight.
 
 Feel free to pause here for a second and make sure that this transformation makes sense to you.
 
@@ -176,7 +174,7 @@ Okay -- for the next pivot, we repeat exactly what we did for the first one:
 
 and we're done!
 We can see this because all of the coefficients of the objective function are now negative so we can't improve any further.
-The optimum is $8000$, again achieved in $(1000, 4000)$ (we don't care about the slack variable) which is the same as the one from our geometric solution, which is a good indicator that the algorithm works as intended.
+The optimum is $8000$, again achieved by setting $x_1$ to $1000$ and $x_2$ to $4000$, which is the same as the one from our geometric solution, which is a good indicator that the algorithm works as intended.
 
 \newpage
 
@@ -186,7 +184,7 @@ DUALITY
 ---
 
 \note{blur and fade to the stupid joke}
-So at this point, we have solved the problem both geometrically and algorithmically, but it would be pretty hard to convince someone else that we really did if we were to just show them the result.
+So at this point, we have solved the problem both geometrically and algorithmically, but it would be pretty hard to convince someone else that we did if we were to just show them the result.
 It would be nice if we could prove that the solution we found is truly optimal.
 
 One thing that comes to mind is combining the inequalities in a way that creates an upper bound on the objective function, because that would show that we literally can not get a better result.
@@ -195,7 +193,7 @@ Or, let's say 0.2 times the first plus 0.7 times the second plus the third gives
 
 This looks promising so let's formalize and turn these numbers into variables.
 They have to be non-negative (otherwise the inequality flips) and must be set in such a way that the left side is at least the objective function (since we want to constrain it).
-Finally, we want to minimize the right side, which is the following expression and... we just created a linear program.
+Finally, we want to minimize the right side and... we just created a linear program.
 
 This is called the dual linear program and is, in my opinion, perhaps the most beautiful thing about linear programming.
 The dual bounds our original linear program (which we'll call the primal from now on) and vice versa -- solutions to the primal will always be less than or equal to the solutions of the dual and this is referred to as the weak duality theorem.
@@ -213,7 +211,7 @@ INTEGER LINEAR PROGRAMMING
 ---
 
 It's now safe to say that we've thoroughly covered the farmer's problem, but it turns out that we were actually pretty lucky.
-When formulating the problem, we decided that the variables can be real numbers, since planting a fraction of a Kg makes sense.
+When formulating the problem, we decided that the variables are real numbers, since planting a fraction of a Kg makes sense.
 However, imagine that the things we wanted to plant were trees -- in that case, we would like to restrict the solutions to integers only (since planting a portion of a tree is difficult).
 
 This is referred to as integer linear programming (or ILP for short) and it naturally poses two questions: is the problem easier or harder than linear programming and can we still solve it efficiently?
@@ -236,16 +234,17 @@ Alternatively, if we put the variables into a vector, the linear program can be 
 
 And since there's been enough theory, let's write some Python code that solves this problem using the `pulp` package, which is an excellent tool for formulating and solving linear programs of all shapes and sizes.
 
-Taking the data from the example we've seen, we'll formulate the variables, the single inequality and the objective function and finally solve the problem.
+Taking the data from the example we've seen, we'll formulate the variables, the single inequality, the objective function and finally solve the problem.
 
-Printing the output, the optimal value of the items in this case is $84$, if we take item $2$, $4$, $5$, and $6$.
+Printing the output, the optimal price of the items in this case is $84$, if we take items $2$, $4$, $5$, and $6$.
 
 So while the problem is still NP-hard, there is a significant amount of optimizations that the solver can do, which makes it run very fast on real-world data (and likely much faster compared to whatever program you and I can write).
 
 As another `pulp` example, this is an implementation of the farmer's problem that we saw earlier in the video.
+I have to say that solving the problem we spent the majority of the video on in 20 lines of code and a fraction of a second feels pretty satisfying.
 
-\note{show my website (actually) -- a recording as I'm scrolling by}
-There are many more examples of problems that can be solved with both regular and integer linear programming and if you're interested, I left a link to my website showcasing the interesting ones in the description.
+\note{show my website, right as I say this}
+There are many more examples that can be solved with both regular and integer linear programming and if you're interested, I left a link to my website showcasing the interesting ones in the description.
 
 
 \newpage
@@ -259,10 +258,10 @@ So as an introduction to linear programming, I think we've covered most of the i
 However, we've covered them rather superficially and there is a great deal of nuance to each of them.
 
 For the simplex method, what if $(0, 0)$ isn't a vertex -- how do we start?
-Also, the way we described it, the method might run in exponential time and may even get stuck in an infinite loop -- how do we fix this?
+Also, the way we described it, the method might run in exponential time and may even get stuck in an infinite loop -- can we fix this?
 
 For duality, does every linear program have a dual and if so, how do we create it?
-And once we do, how can we use it in developing fast algorithms?
+And once we do, can we use it in developing fast algorithms for the primal?
 
 And, last but not least, are there classes of ILP problems that can be solved in polynomial time?
 And for those that aren't in such class, can we at least get approximate solutions in polynomial time?

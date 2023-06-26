@@ -556,7 +556,7 @@ class FeasibleArea3D(VGroup, metaclass=ConvertToOpenGL):
         if self.test:
             dot_res = (2, 2)
         else:
-            dot_res = (8, 8)
+            dot_res = (14, 14)
             line_res = (8, 8)
 
         for dot in self.dots:
