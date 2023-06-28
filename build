@@ -10,7 +10,7 @@ import re
 from glob import glob
 
 
-video_directory = "video"
+VIDEO_DIRECTORY = "video"
 
 parser = argparse.ArgumentParser()
 
@@ -26,6 +26,12 @@ parser.add_argument(
     choices=["m", "h", "k"],
     default="k",
     help="the quality of the video (4K by default)"
+)
+
+parser.add_argument(
+    "-r", "--rename-only",
+    help="only perform scene renaming",
+    action='store_true',
 )
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -61,6 +67,27 @@ def render_scene(scene: str):
         quit()
 
 
+def rename_scene(scene: str):
+    """Use Manim's partial movie txt file to rename the videos to 1.mp4, 2.mp4 etc..."""
+    partial_file_path = os.path.join(VIDEO_DIRECTORY, scene, "partial_movie_file_list.txt")
+
+    if os.path.exists(partial_file_path):
+        with open(partial_file_path) as f:
+            for i, video in enumerate(f.read().splitlines()[1:]):
+                path, name = os.path.split(video[11:-1])
+
+                ext = os.path.splitext(name)[1][1:]
+
+                original_path = os.path.join(path, name)
+                changed_path = os.path.join(path, f"{i+1}.{ext}")
+
+                os.rename(original_path, changed_path)
+
+        os.remove(partial_file_path)
+    else:
+        print(f"WARNING: Partial movie file list for scene '{scene}' doesn't exists, not doing anything!")
+
+
 scenes = []
 
 # please lord forgive me for I have sinned
@@ -73,44 +100,34 @@ with open("scenes.py", "r") as f:
 
 if arguments.scenes is None or len(arguments.scenes) == 0:
     # remove everything when no scene is specified
-    if os.path.exists(video_directory):
-        shutil.rmtree(video_directory)
+    if not arguments.rename_only:
+        if os.path.exists(VIDEO_DIRECTORY):
+            shutil.rmtree(VIDEO_DIRECTORY)
 
     for scene in scenes:
+        # skip test scenes
         if "Test" in scene:
             continue
 
-        render_scene(scene)
+        if not arguments.rename_only:
+            render_scene(scene)
+
+        rename_scene(scene)
 else:
     for scene in arguments.scenes:
+        scene_folder = os.path.join(VIDEO_DIRECTORY, scene)
+
         # remove only the scene and its folders when the scene is specified
-        scene_folder = os.path.join(video_directory, scene)
-        if os.path.exists(scene_folder):
-            shutil.rmtree(scene_folder)
+        if not arguments.rename_only:
+            if os.path.exists(scene_folder):
+                shutil.rmtree(scene_folder)
 
-        for ext in ["mp4", "mov"]:
-            scene_video = os.path.join(video_directory, scene + f".{ext}")
-            if os.path.exists(scene_video):
-                os.remove(scene_video)
+            for ext in ["mp4", "mov"]:
+                scene_video = os.path.join(VIDEO_DIRECTORY, scene + f".{ext}")
+                if os.path.exists(scene_video):
+                    os.remove(scene_video)
 
-        render_scene(scene)
+        if not arguments.rename_only:
+            render_scene(scene)
 
-
-# rename to [1..n].whatever
-for scene in os.listdir(video_directory):
-    if os.path.isdir(os.path.join(video_directory, scene)):
-        partial_file_path = os.path.join(video_directory, scene, "partial_movie_file_list.txt")
-
-        if os.path.exists(partial_file_path):
-            with open(partial_file_path) as f:
-                for i, video in enumerate(f.read().splitlines()[1:]):
-                    path, name = os.path.split(video[11:-1])
-
-                    ext = os.path.splitext(name)[1][1:]
-
-                    original_path = os.path.join(path, name)
-                    changed_path = os.path.join(path, f"{i+1}.{ext}")
-
-                    os.rename(original_path, changed_path)
-
-            os.remove(partial_file_path)
+        rename_scene(scene)
