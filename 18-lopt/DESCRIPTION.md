@@ -1,5 +1,7 @@
 A visual-heavy introduction to Linear Programming including basic definitions, solution via the Simplex method and the principle of duality.
 
+More problems: https://slama.dev/youtube/linear-programming-in-python/
+
 ------------------
 
 Timetable:
@@ -11,7 +13,11 @@ Timetable:
 Source code: https://github.com/xiaoxiae/videos/tree/master/18-lopt/
 
 Music (in the order it appears in the video):
-► <credit the music used>
+► Cases to Rest by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
+► Thannoid by Blue Dot Sessions: https://app.sessions.blue/browse/track/126782
+► ZigZag Heart by Blue Dot Sessions: https://app.sessions.blue/browse/track/31462
+► Maisie Dreamer by Blue Dot Sessions: https://app.sessions.blue/browse/track/31458
+► Night Light by Blue Dot Sessions: https://app.sessions.blue/browse/track/189819
 
 Software used:
 ► Manim (animation software): https://github.com/ManimCommunity/manim/
@@ -27,7 +33,7 @@ Social media:
 ► Website (for other things I'm up to): https://slama.dev/
 ► Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
-Thanks to Matěj Kripner, Lucia Zhang and Teo Tuicu for valuable feedback.
+Thanks to Matěj Kripner, Lucia Zhang, Kateřina Sulková, Mohit Shrestha, Václav Rozhoň (@polylog) and Teo Tuicu for valuable feedback.
 
 ------------------
 

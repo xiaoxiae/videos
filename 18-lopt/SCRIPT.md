@@ -18,7 +18,7 @@ header-includes:
 INTRODUCTION
 ---
 
-Would you like to win a Nobel price in economics?
+Would you like to win a Nobel prize in economics?
 Or be able to formulate and solve NP-hard problems in an efficient way?
 Or perhaps transcend the mortal plane and achieve eternal life?
 
@@ -62,7 +62,7 @@ This is pretty useful, since we now know that any solution to our problem will b
 Pause here and see if you can figure out what it means geometrically in terms of this visualization.
 
 Since the objective function is also linear, it defines a direction in which its value increases.
-To solve the problem, all we then have to do is move in this direction and record the last intersection, which is the optimum (in our case, $1000$ Kgs of potato seeds and $4000$ Kgs of carrot seeds, bringing the total profit to $8000$ dollars.
+To solve the problem, all we then have to do is move in this direction and record the last intersection, which is the optimum (in our case, $1000$ Kgs of potato seeds and $4000$ Kgs of carrot seeds, bringing the total profit to $8000$ dollars).
 
 And, surprisingly, that's all there is to linear programming -- we want to find the value of real variables that are subject to linear inequalities and that maximize a linear function.
 
@@ -74,7 +74,7 @@ It can contain any number of inequalities, which complicate the shape of our reg
 
 \note{render this for as long as I'm talking}
 
-The nobel price I mentioned at the beginning off the video was awarded to Kantorovich and Koopmans in 1975 for formulating a number of classical logistics and economics problems in this model, which are again too complicated to be solved geometrically.
+The Nobel prize I mentioned at the beginning off the video was awarded to Kantorovich and Koopmans in 1975 for formulating a number of classical logistics and economics problems in this model, which are again too complicated to be solved geometrically.
 
 \newpage
 
@@ -117,7 +117,7 @@ This is the crucial idea behind the simplex algorithm -- loosen one and tighten 
 
 In order to calculate which variables to loosen and which to tighten, we'll slightly modify our program to make the math easier.
 We'll introduce new variables for each inequality called slack variables, which act as the difference between the left and the right side, thus turning the inequalities into equalities.
-This means that a tight inequality before is the same as a variable being set to zero now -- as you see, since $s_1$ and $s_3$ are zero, the first and third equalities become tight.
+This means that a tight inequality before is the same as a variable being set to zero now. As you see, since $s_1$ and $s_3$ are zero, the first and third equalities become tight.
 
 Feel free to pause here for a second and make sure that this transformation makes sense to you.
 
@@ -126,7 +126,7 @@ We again start in $(0, 0)$, which means that the initial tight variables will be
 The tight variables are usually called non-basic and the loose are called basic, but we'll stick with tight and loose for now (since that's what they geometrically mean).
 
 Before we start the first pivot, we'll do two things: first, we'll hide the positive inequalities -- they still apply, mind you, but we don't need them for the actual computation, so there's no point in keeping them on the screen.
-Second, we'll further rewrite the equalities such that the left side only contains loose variables with a coefficient of $1$ -- this makes calculating the current solution trivial, since we can just set the tight variables to $0$ and look at the constants.
+Second, we'll further rewrite the equalities such that the left side only contains loose variables with a coefficient of $1$. This makes calculating the current solution trivial, since we can just set the tight variables to $0$ and look at the constants.
 
 Okay, now we're finally ready for the pivot.
 
@@ -159,20 +159,18 @@ After simplifying, we have successfully completed the pivot.
 As a sanity check, we see that setting the tight variables to zero again determines the vertex we're in, with the objective function's value increasing to $6800$.
 
 At this point, I highly urge you to pause the video and do the next pivot yourself, since it's a great way of checking how well you understand the algorithm.
-To help you out a bit, here are the steps you need to take:
+To help you out a bit, here are the steps you need to take.
 
-- first, loosen a variable using Dantzig's pivot rule
-- second, tighten a variable given the largest non-positive ratio and finally
-- fix the equalities by swapping and substituting
+First, loosen a variable using Dantzig's pivot rule, second, tighten a variable given the largest non-positive ratio and finally fix the equalities by swapping and substituting.
 
 \note{pause here}
-Okay -- for the next pivot, we repeat exactly what we did for the first one:
+Okay -- for the next pivot, we repeat exactly what we did for the first one.
 
-- we determine the variable to loosen by the largest positive coefficient in the objective function, which is $x_1$,
-- we look at where $x_1$ appears in the equalities and compare the ratios -- the largest non-positive one corresponds to $s_3$, which we tighten and finally
-- we fix the equalities and the objective function such that the loose variables are only on the left side...
+We determine the variable to loosen by the largest positive coefficient in the objective function, which is $x_1$,
+we look at where $x_1$ appears in the equalities and compare the ratios -- the largest non-positive one corresponds to $s_3$, which we tighten and finally
+we fix the equalities and the objective function such that the loose variables are only on the left side.
 
-and we're done!
+And we're done!
 We can see this because all of the coefficients of the objective function are now negative so we can't improve any further.
 The optimum is $8000$, again achieved by setting $x_1$ to $1000$ and $x_2$ to $4000$, which is the same as the one from our geometric solution, which is a good indicator that the algorithm works as intended.
 
@@ -266,6 +264,6 @@ And once we do, can we use it in developing fast algorithms for the primal?
 And, last but not least, are there classes of ILP problems that can be solved in polynomial time?
 And for those that aren't in such class, can we at least get approximate solutions in polynomial time?
 
-I like to think that most topics, linear programming included, can be thought of as an iceberg (in this case a convex one) -- the surface contains simple concepts that everyone can see, but if you dive down, you can discover a whole new world, a part of which we'll explore in the next video.
+I like to think that most topics, linear programming included, can be thought of as an iceberg (in this case a convex one). The surface contains simple concepts that everyone can see, but if you dive down, you can discover a whole new world, a part of which we'll explore in the next video.
 
 So if you found this interesting, stay tuned and thank you for watching!

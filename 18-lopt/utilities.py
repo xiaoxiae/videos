@@ -741,6 +741,111 @@ def MyCode(path, lang="python", **kwargs):
         code.remove(code[1])  # idk man what the fuck is the Manim code class
         return code
 
-def MyFlash(*args, num_lines=13, **kwargs):
-    return Flash(*args, num_lines=13, **kwargs)
+class MyFlash(AnimationGroup):
+    """Send out lines in all directions.
+
+    Parameters
+    ----------
+    point
+        The center of the flash lines. If it is a :class:`.~Mobject` its center will be used.
+    line_length
+        The length of the flash lines.
+    num_lines
+        The number of flash lines.
+    flash_radius
+        The distance from `point` at which the flash lines start.
+    line_stroke_width
+        The stroke width of the flash lines.
+    color
+        The color of the flash lines.
+    time_width
+        The time width used for the flash lines. See :class:`.~ShowPassingFlash` for more details.
+    run_time
+        The duration of the animation.
+    kwargs
+        Additional arguments to be passed to the :class:`~.Succession` constructor
+
+    Examples
+    --------
+    .. manim:: UsingFlash
+
+        class UsingFlash(Scene):
+            def construct(self):
+                dot = Dot(color=YELLOW).shift(DOWN)
+                self.add(Tex("Flash the dot below:"), dot)
+                self.play(Flash(dot))
+                self.wait()
+
+    .. manim:: FlashOnCircle
+
+        class FlashOnCircle(Scene):
+            def construct(self):
+                radius = 2
+                circle = Circle(radius)
+                self.add(circle)
+                self.play(Flash(
+                    circle, line_length=1,
+                    num_lines=30, color=RED,
+                    flash_radius=radius+SMALL_BUFF,
+                    time_width=0.3, run_time=2,
+                    rate_func = rush_from
+                ))
+    """
+
+    def __init__(
+        self,
+        point,
+        line_length: float = 0.2,
+        num_lines: int = 13,
+        flash_radius: float = 0.1,
+        line_stroke_width: int = 3,
+        color: str = YELLOW,
+        time_width: float = 1,
+        run_time: float = 1.0,
+        z_index: float = 1,
+        opacity: float = 1,
+        **kwargs
+    ) -> None:
+        if isinstance(point, Mobject):
+            self.point = point.get_center()
+        else:
+            self.point = point
+        self.color = color
+        self.line_length = line_length
+        self.num_lines = num_lines
+        self.flash_radius = flash_radius
+        self.line_stroke_width = line_stroke_width
+        self.run_time = run_time
+        self.time_width = time_width
+        self.z_index = z_index
+        self.opacity = opacity
+        self.animation_config = kwargs
+
+        self.lines = self.create_lines()
+        animations = self.create_line_anims()
+        super().__init__(*animations, group=self.lines)
+
+    def create_lines(self) -> VGroup:
+        lines = VGroup()
+        for angle in np.arange(0, TAU, TAU / self.num_lines):
+            line = Line(self.point, self.point + self.line_length * RIGHT)
+            line.shift((self.flash_radius) * RIGHT)
+            line.set_opacity(self.opacity)
+            line.set_z_index(self.z_index)
+            line.rotate(angle, about_point=self.point)
+            lines.add(line)
+        lines.set_color(self.color)
+        lines.set_stroke(width=self.line_stroke_width)
+        return lines
+
+    def create_line_anims(self) -> Iterable["ShowPassingFlash"]:
+        return [
+            ShowPassingFlash(
+                line,
+                time_width=self.time_width,
+                run_time=self.run_time,
+                **self.animation_config,
+            )
+            for line in self.lines
+        ]
     
