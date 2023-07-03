@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # encode using h264 and downscale to 1080p and 720p
-ffmpeg -i "video.mp4" -vcodec libx264 -crf 28 "2160p.mp4"
+ffmpeg -i "video.mp4" -vcodec libx264 -crf 18 "2160p.mp4"
 
 if [ -f ../.short ]; then
-	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 28 -s "1080x1920" "1080p.mp4"
-	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 28 -s "720x1280" "720p.mp4"
+	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 18 -s "1080x1920" "1080p.mp4"
+	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 18 -s "720x1280" "720p.mp4"
 else
-	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 28 -s "1920x1080" "1080p.mp4"
-	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 28 -s "1280x720" "720p.mp4"
+	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 18 -s "1920x1080" "1080p.mp4"
+	ffmpeg -i "2160p.mp4" -vcodec libx264 -crf 18 -s "1280x720" "720p.mp4"
 fi
 
 # remove the original
