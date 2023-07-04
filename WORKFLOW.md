@@ -52,13 +52,13 @@ It could alternatively serve as a workflow document for anyone who would like to
 	- subtitles: from file (with timing)
 	- final screen (non-shorts) - import from the previous video
 4. step:
-	- make the video public
+	- make the video public (planned release at some time)
 
 ## Post-YouTube upload
 - add a link to the new video to:
 	- my website (`videos.py` script)
 	- this repository's `README.md`
-	- Patreon
+	- Patreon (again planned release)
 
 ### Useful Kdenlive shortuts
 

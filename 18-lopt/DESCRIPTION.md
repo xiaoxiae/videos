@@ -5,8 +5,12 @@ More problems: https://slama.dev/youtube/linear-programming-in-python/
 ------------------
 
 Timetable:
-0:00 - <something>
-1:36 - <something else>
+0:00 - Introduction
+0:26 - Basics
+3:44 - Simplex Method
+11:47 - Duality
+14:01 - Integer Linear Programming
+17:31 - Conclusion
 
 ------------------
 
@@ -33,7 +37,7 @@ Social media:
 ► Website (for other things I'm up to): https://slama.dev/
 ► Patreon (if you'd like to support me): https://www.patreon.com/TomasSlama
 
-Thanks to Matěj Kripner, Lucia Zhang, Kateřina Sulková, Mohit Shrestha, Václav Rozhoň (@polylog) and Teo Tuicu for valuable feedback.
+Thanks to Matěj Kripner, Martin Balko, Lucia Zhang, Václav Rozhoň (@polylog), Kateřina Sulková, Mohit Shrestha, Teo Tuicu and Tomáš Sláma (my dad, not me) for valuable feedback.
 
 ------------------
 

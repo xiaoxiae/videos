@@ -9,6 +9,7 @@ Source code to my videos, found on my [YouTube channel](https://www.youtube.com/
 - 2021/04/28: **[Vizing's theorem](https://www.youtube.com/watch?v=OZWZpQmGp0g)** - _A proof of Vizing's theorem about graph edge coloring._
 
 ## Other
+- 2023/7/03: **[The Art of Linear Programming](https://www.youtube.com/watch?v=E72DWgKP_1Y)** - _A visual-heavy introduction to Linear Programming including basic definitions, solution via the Simplex method and the principle of duality._
 - 2023/1/20: **[Thesesus and the Minotaur | Exploring State Space](https://www.youtube.com/watch?v=umszOeerdsU)** - _A visual introduction to algorithms that explore the state space (BFS, Dijkstra, A*)._
 - 2022/8/16: **[The Remarkable BEST-SAT Algorithm](https://www.youtube.com/watch?v=OV82ab-C85w)** - _A dive into the remarkable BEST-SAT approximation algorithm._
 - 2021/12/31: **[Bathroom Tile Programming](https://www.youtube.com/watch?v=KlaEp6ydVhA)** - _A dive into the unconventional bathroom tile programming model._

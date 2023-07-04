@@ -48,7 +48,7 @@ you also have 5 tons of fertilizer,
 which has to be used when planting in a 1:1 ratio
 
 13
-00:00:42,166 --> 00:00:47,166
+00:00:42,166 --> 00:00:46,783
 (i.e. 1 kilogram of potato or carrot seeds requires 1 kilogram of fertilizer).
 
 14
@@ -64,942 +64,942 @@ Your goal is to maximize your profit this season –
 how much potatoes and carrots should you plant?
 
 17
-00:01:02,050 --> 00:01:04,050
+00:01:02,300 --> 00:01:04,300
 To solve this problem, let’s first formalize it.
 
 18
-00:01:05,416 --> 00:01:10,950
+00:01:05,666 --> 00:01:11,200
 We’ll start by creating variables x_p and x_c for the amount of potatoes and carrots planted (in Kgs).
 
 19
-00:01:11,666 --> 00:01:16,466
+00:01:11,916 --> 00:01:16,716
 Both are non-negative real numbers, since planting a negative amount of seeds is difficult,
 
 20
-00:01:16,466 --> 00:01:18,083
+00:01:16,716 --> 00:01:18,333
 and are bounded by the amount we have.
 
 21
-00:01:19,200 --> 00:01:23,466
+00:01:19,450 --> 00:01:23,716
 Additionally, their sum is bounded by the amount of fertilizer we have,
 
 22
-00:01:23,483 --> 00:01:27,050
+00:01:23,733 --> 00:01:27,300
 since it has to be used in a 1:1 ratio for both potatoes and carrots.
 
 23
-00:01:28,466 --> 00:01:35,316
+00:01:28,716 --> 00:01:35,566
 The profit can then be described as 1.2x_p + 1.7x_c and we’ll call it the objective function,
 
 24
-00:01:35,316 --> 00:01:37,566
+00:01:35,566 --> 00:01:37,816
 since it’s the function we’re trying to maximize.
 
 25
-00:01:39,250 --> 00:01:43,516
+00:01:39,500 --> 00:01:43,766
 Now that the problem is formalized, it might be helpful to visualize it.
 
 26
-00:01:43,516 --> 00:01:48,683
+00:01:43,766 --> 00:01:48,933
 Since we have two variables, it’s probably a good idea to use a plane with one axis for each.
 
 27
-00:01:49,550 --> 00:01:53,183
+00:01:49,800 --> 00:01:53,433
 To display the inequalities, we can notice that they are all linear,
 
 28
-00:01:53,183 --> 00:01:56,283
+00:01:53,433 --> 00:01:56,533
 which means that they are just a weighted sum of the variables
 
 29
-00:01:56,283 --> 00:02:01,083
+00:01:56,533 --> 00:02:01,333
 and each one defines a line with valid values on one side (a half-plane, to be exact).
 
 30
-00:02:02,400 --> 00:02:07,150
+00:02:02,650 --> 00:02:07,400
 To satisfy all of the inequalities, we’re interested in the intersection of these half-planes,
 
 31
-00:02:07,150 --> 00:02:08,416
+00:02:07,400 --> 00:02:08,666
 which is the following region.
 
 32
-00:02:09,916 --> 00:02:15,550
+00:02:10,166 --> 00:02:15,800
 This is pretty useful, since we now know that any solution to our problem will be contained here,
 
 33
-00:02:15,550 --> 00:02:18,450
+00:02:15,800 --> 00:02:18,700
 but our main task is to maximize the objective function.
 
 34
-00:02:19,450 --> 00:02:24,450
+00:02:19,700 --> 00:02:24,700
 Pause here and see if you can figure out what it means geometrically in terms of this visualization.
 
 35
-00:02:29,916 --> 00:02:34,916
+00:02:30,166 --> 00:02:35,166
 Since the objective function is also linear, it defines a direction in which its value increases.
 
 36
-00:02:36,166 --> 00:02:44,483
+00:02:36,416 --> 00:02:44,733
 To solve the problem, all we then have to do is move in this direction and record the last intersection, which is the optimum
 
 37
-00:02:44,483 --> 00:02:52,216
+00:02:44,733 --> 00:02:52,466
 (in our case, 1000 Kgs of potato seeds and 4000 Kgs of carrot seeds, bringing the total profit to 8000 dollars).
 
 38
-00:02:53,150 --> 00:02:57,383
+00:02:53,400 --> 00:02:57,633
 And, surprisingly, that’s all there is to linear programming –
 
 39
-00:02:57,383 --> 00:03:04,000
+00:02:57,633 --> 00:03:04,250
 we want to find the value of real variables that are subject to linear inequalities and that maximize a linear function.
 
 40
-00:03:05,316 --> 00:03:09,550
+00:03:05,566 --> 00:03:09,800
 Now this is a pretty simple example, but a linear program can be much more complex.
 
 41
-00:03:10,416 --> 00:03:15,016
+00:03:10,666 --> 00:03:15,266
 It can contain any number of inequalities, which complicate the shape of our region,
 
 42
-00:03:15,016 --> 00:03:22,666
+00:03:15,266 --> 00:03:22,916
 and also any number of variables, which bring us from 2D for 2 variables to 3D for 3 and beyond...
 
 43
-00:03:22,666 --> 00:03:28,333
+00:03:22,916 --> 00:03:28,583
 so while the general concept stays the same, our simple geometric solution won’t do for larger programs.
 
 44
-00:03:29,400 --> 00:03:31,900
+00:03:29,650 --> 00:03:32,150
 The Nobel Prize I mentioned at the beginning off the video
 
 45
-00:03:31,900 --> 00:03:35,433
+00:03:32,150 --> 00:03:35,683
 was awarded to Kantorovich and Koopmans in 1975
 
 46
-00:03:35,466 --> 00:03:39,766
+00:03:35,716 --> 00:03:40,016
 for formulating a number of classical logistics and economics problems in this model,
 
 47
-00:03:39,766 --> 00:03:42,683
+00:03:40,016 --> 00:03:42,933
 which are again too complicated to be solved geometrically.
 
 48
-00:03:43,916 --> 00:03:49,066
+00:03:44,166 --> 00:03:49,316
 So instead, let’s look at how to solve a linear program algorithmically using the Simplex method.
 
 49
-00:03:50,233 --> 00:03:56,183
+00:03:50,483 --> 00:03:56,433
 Similar to the geometric solution, we will again be moving in the direction of the objective function,
 
 50
-00:03:56,183 --> 00:03:57,566
+00:03:56,433 --> 00:03:57,816
 but we’ll do so in a smarter way.
 
 51
-00:03:58,583 --> 00:04:03,200
+00:03:58,833 --> 00:04:03,450
 For this, we’ll use the fact that the optimum will be achieved in at least one vertex.
 
 52
-00:04:04,133 --> 00:04:07,050
+00:04:04,383 --> 00:04:07,300
 It can sometimes be more, like a whole line,
 
 53
-00:04:07,050 --> 00:04:10,866
+00:04:07,300 --> 00:04:11,116
 but some vertex will still achieve it, as we see by doing a full rotation.
 
 54
-00:04:14,966 --> 00:04:19,416
+00:04:15,216 --> 00:04:19,666
 This means that we can move from vertex to vertex (which is called pivotting),
 
 55
-00:04:19,416 --> 00:04:22,783
+00:04:19,666 --> 00:04:23,033
 always picking one that brings us closer to our goal,
 
 56
-00:04:22,766 --> 00:04:26,483
+00:04:23,016 --> 00:04:26,733
 until we can’t any longer, at which point we know we found the optimum.
 
 57
-00:04:27,800 --> 00:04:30,866
+00:04:28,050 --> 00:04:31,116
 But before I tell you how it works, let me tell you a short story.
 
 58
-00:04:32,433 --> 00:04:36,066
+00:04:32,683 --> 00:04:36,316
 It’s 1939 and a student of mathematics arrives late to a lecture.
 
 59
-00:04:36,800 --> 00:04:41,250
+00:04:37,050 --> 00:04:41,500
 He sees two problems on the board and, assuming they are homework, writes them down.
 
 60
-00:04:42,016 --> 00:04:46,916
+00:04:42,266 --> 00:04:47,166
 They prove to be more challenging than usual, but he perseveres and hands them back a week later,
 
 61
-00:04:46,916 --> 00:04:48,816
+00:04:47,166 --> 00:04:49,066
 with an apology that they took him so long.
 
 62
-00:04:50,116 --> 00:04:54,966
+00:04:50,366 --> 00:04:55,216
 A few weeks go by and the student is surprised by a knock on the door by the professor himself,
 
 63
-00:04:54,950 --> 00:04:59,066
+00:04:55,200 --> 00:04:59,316
 who reveals to him that they were two famous unsolved problems in the field of statistics.
 
 64
-00:05:00,183 --> 00:05:02,700
+00:05:00,433 --> 00:05:02,950
 You might have heard this story, or a version of it,
 
 65
-00:05:02,700 --> 00:05:05,383
+00:05:02,950 --> 00:05:05,633
 since it’s an urban legend in the mathematical world,
 
 66
-00:05:05,383 --> 00:05:09,316
+00:05:05,633 --> 00:05:09,566
 but what you might not know is that the student was Goerge B. 
 Dantzig,
 
 67
-00:05:09,316 --> 00:05:11,366
+00:05:09,566 --> 00:05:11,616
 the inventor of the algorithm I just described.
 
 68
-00:05:12,700 --> 00:05:18,800
+00:05:12,950 --> 00:05:19,050
 I stumbled upon this story about Dantzig and many more when doing research for this video  and it was too good to exclude,
 
 69
-00:05:18,800 --> 00:05:20,566
+00:05:19,050 --> 00:05:20,816
 so if there’s something you should to take away,
 
 70
-00:05:20,566 --> 00:05:22,700
+00:05:20,816 --> 00:05:22,950
 it’s that George B. Dantzig was a really cool guy.
 
 71
-00:05:25,400 --> 00:05:27,216
+00:05:25,650 --> 00:05:27,466
 Getting back to the topic at hand,
 
 72
-00:05:27,216 --> 00:05:33,083
+00:05:27,466 --> 00:05:33,333
 we’ll first rename the variables to x_1 and x_2 , which is the standard way of naming variables in a linear program.
 
 73
-00:05:34,366 --> 00:05:38,750
+00:05:34,616 --> 00:05:39,000
 To understand how pivotting works numerically, let’s consider what happens when we’re in a vertex.
 
 74
-00:05:39,966 --> 00:05:44,550
+00:05:40,216 --> 00:05:44,800
 Taking (0, 0) as an example, we see that two of the inequalities are tight,
 
 75
-00:05:44,550 --> 00:05:47,866
+00:05:44,800 --> 00:05:48,116
 which means that the left side is equal to the right side
 
 76
-00:05:47,866 --> 00:05:50,216
+00:05:48,116 --> 00:05:50,466
 (in this case because both x_1 and x_2 are 0).
 
 77
-00:05:51,516 --> 00:05:54,483
+00:05:51,766 --> 00:05:54,733
 Now say we want to pivot from this vertex to an adjacent one.
 
 78
-00:05:55,500 --> 00:05:56,983
+00:05:55,750 --> 00:05:57,233
 To perform this pivot,
 
 79
-00:05:56,983 --> 00:06:02,150
+00:05:57,233 --> 00:06:02,400
 we first have to loosen one inequality (which determines the direction we move in)
 
 80
-00:06:02,150 --> 00:06:05,249
+00:06:02,400 --> 00:06:05,500
 and tighten another (which determines how far we go).
 
 81
-00:06:06,583 --> 00:06:10,283
+00:06:06,833 --> 00:06:10,533
 This is the crucial idea behind the simplex algorithm –
 
 82
-00:06:10,300 --> 00:06:13,866
+00:06:10,550 --> 00:06:14,116
 loosen one and tighten another, until we reach the optimum.
 
 83
-00:06:15,816 --> 00:06:19,516
+00:06:16,566 --> 00:06:20,266
 In order to calculate which variables to loosen and which to tighten,
 
 84
-00:06:19,516 --> 00:06:21,966
+00:06:20,266 --> 00:06:22,716
 we’ll slightly modify our program to make the math easier
 
 85
-00:06:22,666 --> 00:06:26,700
+00:06:23,416 --> 00:06:27,450
 We’ll introduce new variables for each inequality called slack variables,
 
 86
-00:06:26,700 --> 00:06:30,133
+00:06:27,450 --> 00:06:30,883
 which act as the difference between the left and the right side,
 
 87
-00:06:30,133 --> 00:06:32,650
+00:06:30,883 --> 00:06:33,400
 thus turning the inequalities into equalities.
 
 88
-00:06:33,833 --> 00:06:39,150
+00:06:34,583 --> 00:06:39,900
 This means that a tight inequality before is the same as a variable being set to zero now.
 
 89
-00:06:40,116 --> 00:06:45,116
+00:06:40,866 --> 00:06:45,866
 As you see, since s_1 and s_3 are zero, the first and third equalities become tight.
 
 90
-00:06:46,433 --> 00:06:50,400
+00:06:47,183 --> 00:06:51,150
 Feel free to pause here for a second and make sure that this transformation makes sense to you.
 
 91
-00:06:52,733 --> 00:06:54,383
+00:06:53,483 --> 00:06:55,133
 Let’s now get to the actual computation.
 
 92
-00:06:55,283 --> 00:06:59,866
+00:06:56,033 --> 00:07:00,616
 We again start in (0, 0), which means that the initial tight variables will be x_1 and x_2.
 
 93
-00:07:01,066 --> 00:07:05,883
+00:07:01,816 --> 00:07:06,633
 The tight variables are usually called non-basic and the loose are called basic,
 
 94
-00:07:05,883 --> 00:07:09,316
+00:07:06,633 --> 00:07:10,066
 but we’ll stick with tight and loose for now (since that’s what they geometrically mean).
 
 95
-00:07:11,066 --> 00:07:13,800
+00:07:11,816 --> 00:07:14,550
 Before we start the first pivot, we’ll do two things:
 
 96
-00:07:14,783 --> 00:07:17,900
+00:07:15,533 --> 00:07:18,650
 first, we’ll hide the positive 
 inequalities –
 
 97
-00:07:17,900 --> 00:07:22,216
+00:07:18,650 --> 00:07:22,966
 they still apply, mind you, but we don’t need them for the actual computation,
 
 98
-00:07:22,216 --> 00:07:24,450
+00:07:22,966 --> 00:07:25,200
 so there’s no point in keeping them on the screen.
 
 99
-00:07:25,950 --> 00:07:28,783
+00:07:26,700 --> 00:07:29,533
 Second, we’ll further rewrite the equalities
 
 100
-00:07:28,783 --> 00:07:32,700
+00:07:29,533 --> 00:07:33,450
 such that the left side only contains loose variables with a coefficient of 1.
 
 101
-00:07:33,633 --> 00:07:39,533
+00:07:34,383 --> 00:07:40,283
 This makes calculating the current solution trivial, since we can just set the tight variables to 0 and look at the constants.
 
 102
-00:07:41,783 --> 00:07:44,116
+00:07:42,533 --> 00:07:44,866
 Okay, now we’re finally ready for the pivot.
 
 103
-00:07:44,966 --> 00:07:49,216
+00:07:45,716 --> 00:07:49,966
 First, we need to loosen a variable to determine which direction to go.
 
 104
-00:07:50,283 --> 00:07:53,616
+00:07:51,033 --> 00:07:54,366
 There is a number of methods for selecting which to loosen,
 
 105
-00:07:53,616 --> 00:07:57,300
+00:07:54,366 --> 00:07:58,050
 but we’ll stick with the most commonly used one called called Dantzig’s pivot rule,
 
 106
-00:07:57,300 --> 00:07:58,500
+00:07:58,050 --> 00:07:59,250
 after the inventor himself.
 
 107
-00:07:59,883 --> 00:08:02,283
+00:08:00,633 --> 00:08:03,033
 The rule is very simple –
 
 108
-00:08:02,283 --> 00:08:06,866
+00:08:03,033 --> 00:08:07,616
 we select the variable with the largest positive coefficient in the objective function
 
 109
-00:08:06,866 --> 00:08:10,283
+00:08:07,616 --> 00:08:11,033
 (i.e. the one representing the steepest direction towards the optimum).
 
 110
-00:08:11,566 --> 00:08:16,283
+00:08:12,316 --> 00:08:17,033
 In our case, this is x_2 , which we loosen and start heading in its direction.
 
 111
-00:08:18,616 --> 00:08:24,033
+00:08:19,366 --> 00:08:24,783
 Now that we’ve selected the direction to move in, we have to determine how far, which we’ll do by tightening.
 
 112
-00:08:25,116 --> 00:08:30,900
+00:08:25,866 --> 00:08:31,650
 To see what choices we have, we’ll look at equalities where x_2 appears, which are s_2 and s_3 ,
 
 113
-00:08:30,900 --> 00:08:33,333
+00:08:31,650 --> 00:08:34,083
 since these are the loose variables constraining it.
 
 114
-00:08:34,666 --> 00:08:38,666
+00:08:35,416 --> 00:08:39,416
 We want to make either s_2 or s_3 tight but, as we see,
 
 115
-00:08:38,666 --> 00:08:44,266
+00:08:39,416 --> 00:08:45,016
 only one of them keeps us in the area of valid solutions... so how can we calculate which one it is?
 
 116
-00:08:45,416 --> 00:08:48,716
+00:08:46,166 --> 00:08:49,466
 Well let’s simulate what happens when we move in the selected direction.
 
 117
-00:08:50,200 --> 00:08:54,416
+00:08:50,950 --> 00:08:55,166
 We see that x_2 is increasing and its value eventually reaches 4000,
 
 118
-00:08:54,416 --> 00:08:58,650
+00:08:55,166 --> 00:08:59,400
 which evens out the constant value for the second equality, making s_2 tight.
 
 119
-00:08:59,916 --> 00:09:04,983
+00:09:00,666 --> 00:09:05,733
 Now if we were to go further, s_2 would have to go negative for the equality to still work,
 
 120
-00:09:04,983 --> 00:09:08,150
+00:09:05,733 --> 00:09:08,900
 which is not allowed since all variables have to be non-negative!
 
 121
-00:09:10,083 --> 00:09:14,000
+00:09:10,833 --> 00:09:14,750
 So, in other words, to calculate which variable to tighten,
 
 122
-00:09:14,000 --> 00:09:19,916
+00:09:14,750 --> 00:09:20,666
 we’re interested in the ratio between x_2 and the constants – the larger it is, the sooner we reach it.
 
 123
-00:09:20,633 --> 00:09:24,616
+00:09:21,383 --> 00:09:25,366
 And, as we’ve seen, it is indeed s_2 , which we tighten.
 
 124
-00:09:26,066 --> 00:09:31,183
+00:09:26,816 --> 00:09:31,933
 Note that if it is greater than zero (for example if we had another equality like this one),
 
 125
-00:09:31,183 --> 00:09:35,966
+00:09:31,933 --> 00:09:36,716
 we wouldn’t want it since increasing x_2 in this case will never zero out the constant
 
 126
-00:09:35,966 --> 00:09:37,250
+00:09:36,716 --> 00:09:38,000
 (since it’s in opposite direction).
 
 127
-00:09:38,650 --> 00:09:42,016
+00:09:39,400 --> 00:09:42,766
 So what we actually want is the largest non-positive ratio.
 
 128
-00:09:44,400 --> 00:09:50,849
+00:09:45,150 --> 00:09:51,600
 Now that we’ve loosened x_2 and tightened s_2 , we still have to fix the equalities and the objective function –
 
 129
-00:09:50,850 --> 00:09:54,083
+00:09:51,600 --> 00:09:54,833
 remember that loose variables belong only on the left side,
 
 130
-00:09:54,083 --> 00:09:57,950
+00:09:54,833 --> 00:09:58,700
 which now isn’t the case, as you can see by the highlighted s_2s and x_2s.
 
 131
-00:09:59,250 --> 00:10:02,666
+00:10:00,000 --> 00:10:03,416
 Swapping them solves the problem for the second equality,
 
 132
-00:10:02,666 --> 00:10:05,599
+00:10:03,416 --> 00:10:06,350
 which we can now use as substitutes for the remaining x_2s.
 
 133
-00:10:07,333 --> 00:10:11,433
+00:10:08,083 --> 00:10:12,183
 After simplifying, we have successfully completed the pivot
 
 134
-00:10:12,933 --> 00:10:18,666
+00:10:13,683 --> 00:10:19,416
 As a sanity check, we see that setting the tight variables to zero again determines the vertex we’re in,
 
 135
-00:10:18,666 --> 00:10:21,699
+00:10:19,416 --> 00:10:22,450
 with the objective function’s value increasing to 6800.
 
 136
-00:10:24,416 --> 00:10:28,816
+00:10:25,166 --> 00:10:29,566
 At this point, I highly urge you to pause the video and do the next pivot yourself,
 
 137
-00:10:28,816 --> 00:10:31,883
+00:10:29,566 --> 00:10:32,633
 since it’s a great way of checking how well you understand the algorithm.
 
 138
-00:10:33,016 --> 00:10:35,616
+00:10:33,766 --> 00:10:36,366
 To help you out a bit, here are the steps you need to take:
 
 139
-00:10:36,616 --> 00:10:40,533
+00:10:37,366 --> 00:10:41,283
 First, loosen a variable using Dantzig’s pivot rule,
 
 140
-00:10:40,533 --> 00:10:45,083
+00:10:41,283 --> 00:10:45,833
 second, tighten a variable given the largest non-positive ratio
 
 141
-00:10:45,083 --> 00:10:48,366
+00:10:45,833 --> 00:10:49,116
 and finally fix the equalities by swapping and substituting.
 
 142
-00:10:54,333 --> 00:10:58,266
+00:10:55,416 --> 00:10:59,350
 Okay – for the next pivot, we repeat exactly what we did for the first one.
 
 143
-00:10:59,150 --> 00:11:04,650
+00:11:00,233 --> 00:11:05,733
 We determine the variable to loosen by the largest positive coefficient in the objective function, which is x_1 ,
 
 144
-00:11:06,366 --> 00:11:10,683
+00:11:07,450 --> 00:11:11,766
 we look at where x1 appears in the equalities and compare the ratios –
 
 145
-00:11:10,933 --> 00:11:14,816
+00:11:12,016 --> 00:11:15,900
 the largest non-positive one corresponds to s_3 , which we tighten
 
 146
-00:11:15,850 --> 00:11:19,183
+00:11:16,933 --> 00:11:20,266
 and finally we fix the equalities and the objective function
 
 147
-00:11:19,183 --> 00:11:21,199
+00:11:20,266 --> 00:11:22,283
 such that the loose variables are only on the left side.
 
 148
-00:11:22,866 --> 00:11:24,483
+00:11:23,950 --> 00:11:25,566
 And we’re done!
 
 149
-00:11:24,483 --> 00:11:29,333
+00:11:25,566 --> 00:11:30,416
 We can see this because all of the coefficients of the objective function are now negative
 
 150
-00:11:29,333 --> 00:11:30,800
+00:11:30,416 --> 00:11:31,883
 so we can’t improve any further.
 
 151
-00:11:32,600 --> 00:11:38,683
+00:11:33,683 --> 00:11:39,766
 The optimum is 8000, again achieved by setting x_1 to 1000 and x_2 to 4000,
 
 152
-00:11:38,683 --> 00:11:41,750
+00:11:39,766 --> 00:11:42,833
 which is the same as the one from our geometric solution,
 
 153
-00:11:41,750 --> 00:11:44,400
+00:11:42,833 --> 00:11:45,483
 which is a good indicator that the algorithm works as intended.
 
 154
-00:11:46,300 --> 00:11:50,949
+00:11:47,383 --> 00:11:52,033
 So at this point, we have solved the problem both geometrically and algorithmically,
 
 155
-00:11:50,950 --> 00:11:53,750
+00:11:52,033 --> 00:11:54,833
 but it would be pretty hard to convince someone else that we did
 
 156
-00:11:53,750 --> 00:11:55,366
+00:11:54,833 --> 00:11:56,450
 if we were to just show them the result.
 
 157
-00:11:57,466 --> 00:12:01,233
+00:11:58,550 --> 00:12:02,316
 It would be nice if we could prove that the solution we found is truly optimal.
 
 158
-00:12:02,566 --> 00:12:05,683
+00:12:03,650 --> 00:12:06,766
 One thing that comes to mind is combining the inequalities
 
 159
-00:12:05,683 --> 00:12:09,116
+00:12:06,766 --> 00:12:10,200
 in a way that creates an upper bound on the objective function,
 
 160
-00:12:09,116 --> 00:12:12,033
+00:12:10,200 --> 00:12:13,116
 because that would show that we literally can not get a better result.
 
 161
-00:12:13,183 --> 00:12:20,383
+00:12:14,266 --> 00:12:21,466
 As an example, if we multiply the first inequality by 1.2 and the second by 1.7 and we sum them up,
 
 162
-00:12:20,383 --> 00:12:24,849
+00:12:21,466 --> 00:12:25,933
 we get that the objective function is less than or equal to 10 400,
 
 163
-00:12:24,850 --> 00:12:28,033
+00:12:25,933 --> 00:12:29,116
 which tells us that the objective function can never be greater than that.
 
 164
-00:12:29,133 --> 00:12:35,750
+00:12:30,216 --> 00:12:36,833
 Or, let’s say 0.2 times the first plus 0.7 times the second plus the third
 
 165
-00:12:35,750 --> 00:12:38,483
+00:12:36,833 --> 00:12:39,566
 gives a better estimate of 8400.
 
 166
-00:12:40,566 --> 00:12:44,533
+00:12:41,650 --> 00:12:45,616
 This looks promising so let’s formalize and turn these numbers into variables.
 
 167
-00:12:46,600 --> 00:12:50,316
+00:12:47,683 --> 00:12:51,400
 They have to be non-negative (otherwise the inequality flips)
 
 168
-00:12:50,316 --> 00:12:54,466
+00:12:51,400 --> 00:12:55,550
 and must be set in such a way that the left side is at least the objective function
 
 169
-00:12:54,466 --> 00:12:55,600
+00:12:55,550 --> 00:12:56,683
 (since we want to constrain it).
 
 170
-00:12:57,300 --> 00:13:02,133
+00:12:58,383 --> 00:13:03,216
 Finally, we want to minimize the right side and... we just created a linear program.
 
 171
-00:13:03,583 --> 00:13:07,200
+00:13:04,666 --> 00:13:08,283
 This is called the dual linear program and is, in my opinion,
 
 172
-00:13:07,200 --> 00:13:09,533
+00:13:08,283 --> 00:13:10,616
 perhaps the most beautiful thing about linear programming.
 
 173
-00:13:10,683 --> 00:13:17,050
+00:13:11,766 --> 00:13:18,133
 The dual bounds our original linear program (which 
 we’ll call the primal from now on) and vice versa –
 
 174
-00:13:17,050 --> 00:13:21,349
+00:13:18,133 --> 00:13:22,433
 solutions to the primal will always 
 be less than or equal to the solutions of the dual
 
 175
-00:13:21,350 --> 00:13:23,983
+00:13:22,433 --> 00:13:25,066
 and this is referred to as the weak duality theorem.
 
 176
-00:13:25,533 --> 00:13:28,733
+00:13:26,616 --> 00:13:29,816
 Now this is not quite what we had in mind –
 
 177
-00:13:28,733 --> 00:13:30,500
+00:13:29,816 --> 00:13:31,583
 we actually wanted an equality,
 
 178
-00:13:30,500 --> 00:13:35,500
+00:13:31,583 --> 00:13:36,583
 because only then would we be able to confirm that the solution we found is truly the optimum.
 
 179
-00:13:36,450 --> 00:13:40,916
+00:13:37,533 --> 00:13:42,000
 This is referred to as the strong duality theorem and, incredibly,
 
 180
-00:13:40,916 --> 00:13:43,716
+00:13:42,000 --> 00:13:44,800
 if the primal has an optimum, it holds true,
 
 181
-00:13:43,716 --> 00:13:46,716
+00:13:44,800 --> 00:13:47,800
 meaning that we can always find the proof that we were looking for.
 
 182
-00:13:48,700 --> 00:13:50,416
+00:13:49,783 --> 00:13:51,500
 Besides proving optimality,
 
 183
-00:13:50,416 --> 00:13:55,616
+00:13:51,500 --> 00:13:56,700
 duality has a number of other interesting uses that are sadly beyond the scope of this video,
 
 184
-00:13:55,616 --> 00:13:57,016
+00:13:56,700 --> 00:13:58,100
 but will likely be in the next one.
 
 185
-00:13:59,533 --> 00:14:02,833
+00:14:01,700 --> 00:14:05,000
 It’s now safe to say that we’ve thoroughly covered the farmer’s problem,
 
 186
-00:14:02,833 --> 00:14:05,150
+00:14:05,000 --> 00:14:07,316
 but it turns out that we were actually pretty lucky.
 
 187
-00:14:06,133 --> 00:14:10,266
+00:14:08,300 --> 00:14:12,433
 When formulating the problem, we decided that the variables are real numbers,
 
 188
-00:14:10,266 --> 00:14:12,500
+00:14:12,433 --> 00:14:14,666
 since planting a fraction of a Kg makes sense.
 
 189
-00:14:13,583 --> 00:14:17,866
+00:14:15,750 --> 00:14:20,033
 However, imagine that the things we wanted to plant were trees –
 
 190
-00:14:17,866 --> 00:14:21,500
+00:14:20,033 --> 00:14:23,666
 in that case, we would like to restrict the solutions to integers only
 
 191
-00:14:21,500 --> 00:14:24,066
+00:14:23,666 --> 00:14:26,233
 (since planting a portion of a tree is difficult).
 
 192
-00:14:25,266 --> 00:14:30,400
+00:14:27,433 --> 00:14:32,566
 This is referred to as integer linear programming (or ILP for short)
 
 193
-00:14:30,400 --> 00:14:33,416
+00:14:32,566 --> 00:14:35,583
 and it naturally poses two questions:
 
 194
-00:14:33,416 --> 00:14:36,733
+00:14:35,583 --> 00:14:38,900
 is the problem easier or harder than linear programming
 
 195
-00:14:36,733 --> 00:14:38,750
+00:14:38,900 --> 00:14:40,916
 and can we still solve it efficiently?
 
 196
-00:14:40,316 --> 00:14:43,366
+00:14:42,483 --> 00:14:45,533
 Well, to illustrate that it gets a whole lot harder,
 
 197
-00:14:43,366 --> 00:14:47,033
+00:14:45,533 --> 00:14:49,200
 we’ll formulate the knapsack problem (an infamous NP-hard problem),
 
 198
-00:14:47,033 --> 00:14:48,433
+00:14:49,200 --> 00:14:50,600
 as an integer linear program.
 
 199
-00:14:49,850 --> 00:14:54,466
+00:14:52,016 --> 00:14:56,633
 The task is this: we’re given n items, each having a weight and a price.
 
 200
-00:14:55,933 --> 00:15:00,383
+00:14:58,100 --> 00:15:02,550
 Given a backpack with a carry weight (say 17 kg),
 
 201
-00:15:00,383 --> 00:15:03,600
+00:15:02,550 --> 00:15:05,766
 our task is to  maximize the price of the items we take
 
 202
-00:15:03,600 --> 00:15:05,016
+00:15:05,766 --> 00:15:07,183
 without exceeding the carry weight.
 
 203
-00:15:06,666 --> 00:15:09,666
+00:15:09,083 --> 00:15:12,083
 For this problem, using binary variables will be very useful.
 
 204
-00:15:11,000 --> 00:15:13,516
+00:15:13,416 --> 00:15:15,933
 We can achieve this by creating a variable and adding inequalities
 
 205
-00:15:13,516 --> 00:15:16,866
+00:15:15,933 --> 00:15:19,283
 such that its value is between 0 and 1.
 
 206
-00:15:18,083 --> 00:15:20,083
+00:15:20,500 --> 00:15:22,500
 Since it’s an integer linear program,
 
 207
-00:15:20,083 --> 00:15:23,983
+00:15:22,500 --> 00:15:26,400
 the only values the variable can have will therefore be 0 and 1.
 
 208
-00:15:26,116 --> 00:15:31,650
+00:15:28,533 --> 00:15:34,066
 There will be one binary variable for each item, having value 1 if we take it and 0 if we don’t.
 
 209
-00:15:32,900 --> 00:15:35,433
+00:15:35,733 --> 00:15:38,266
 There will only be one additional inequality,
 
 210
-00:15:35,433 --> 00:15:39,283
+00:15:38,266 --> 00:15:42,116
 which is that the weight of the items we carry doesn’t exceed the backpack’s carry weight.
 
 211
-00:15:40,383 --> 00:15:44,583
+00:15:43,216 --> 00:15:47,416
 This can be done by multiplying the binary variables with their weights –
 
 212
-00:15:44,583 --> 00:15:50,500
+00:15:47,416 --> 00:15:53,333
 if the item is not taken, its variable will be 0 and its weight won’t be counted, otherwise it will be.
 
 213
-00:15:52,516 --> 00:15:57,116
+00:15:55,350 --> 00:15:59,950
 Similarly, the function to maximize is the price of the items we carry,
 
 214
-00:15:57,116 --> 00:16:00,583
+00:15:59,950 --> 00:16:03,416
 again done by multiplying the binary variables with their prices.
 
 215
-00:16:02,783 --> 00:16:06,083
+00:16:05,616 --> 00:16:08,916
 Alternatively, if we put the variables into a vector,
 
 216
-00:16:06,083 --> 00:16:09,833
+00:16:08,916 --> 00:16:12,666
 the linear program can be stated like this, which is quite a bit more concise.
 
 217
-00:16:11,516 --> 00:16:13,633
+00:16:14,350 --> 00:16:16,466
 And since there’s been enough theory,
 
 218
-00:16:13,633 --> 00:16:17,500
+00:16:16,466 --> 00:16:20,333
 let’s write some Python code that solves this problem using the pulp package,
 
 219
-00:16:17,500 --> 00:16:21,866
+00:16:20,333 --> 00:16:24,700
 which is an excellent tool for formulating and solving linear programs of all shapes and sizes.
 
 220
-00:16:23,350 --> 00:16:25,816
+00:16:26,433 --> 00:16:28,900
 Taking the data from the example we’ve seen,
 
 221
-00:16:25,816 --> 00:16:33,250
+00:16:28,900 --> 00:16:36,333
 we’ll formulate the variables, the single inequality, the objective function and finally solve the problem.
 
 222
-00:16:34,583 --> 00:16:42,783
+00:16:37,666 --> 00:16:45,866
 Printing the output, the optimal price of the items in this case is 84, if we take items 2, 4, 5, and 6.
 
 223
-00:16:45,616 --> 00:16:47,716
+00:16:49,033 --> 00:16:51,133
 So while the problem is still NP-hard,
 
 224
-00:16:47,716 --> 00:16:51,183
+00:16:51,133 --> 00:16:54,600
 there is a significant amount of optimizations that the solver can do,
 
 225
-00:16:51,183 --> 00:16:53,816
+00:16:54,600 --> 00:16:57,233
 which makes it run very fast on real-world data
 
 226
-00:16:53,816 --> 00:16:56,933
+00:16:57,233 --> 00:17:00,350
 (and likely much faster compared to whatever program you and I can write).
 
 227
-00:16:59,166 --> 00:17:00,833
+00:17:02,583 --> 00:17:04,250
 As another pulp example,
 
 228
-00:17:00,833 --> 00:17:04,349
+00:17:04,250 --> 00:17:07,766
 this is an implementation of the farmer’s problem that we saw earlier in the video.
 
 229
-00:17:05,416 --> 00:17:09,233
+00:17:08,833 --> 00:17:12,650
 I have to say that solving the problem we spent the majority of the video on
 
 230
-00:17:09,233 --> 00:17:12,700
+00:17:12,650 --> 00:17:16,116
 in 20 lines of code and a fraction of a second feels pretty satisfying.
 
 231
-00:17:14,733 --> 00:17:16,533
+00:17:18,650 --> 00:17:20,450
 There are many more examples that can be solved
 
 232
-00:17:16,533 --> 00:17:20,650
+00:17:20,450 --> 00:17:24,566
 with both regular and integer linear programming and if you’re interested,
 
 233
-00:17:20,650 --> 00:17:23,900
+00:17:24,566 --> 00:17:27,816
 I left a link to my website showcasing the interesting ones in the description.
 
 234
-00:17:27,416 --> 00:17:32,766
+00:17:31,333 --> 00:17:36,683
 So as an introduction to linear programming, I think we’ve covered most of the important topics,
 
 235
-00:17:32,766 --> 00:17:37,600
+00:17:36,683 --> 00:17:41,516
 that being the simplex method, duality and integer linear programming.
 
 236
-00:17:38,866 --> 00:17:43,866
+00:17:42,783 --> 00:17:47,783
 However, we’ve covered them rather superficially and there is a great deal of nuance to each of them.
 
 237
-00:17:45,366 --> 00:17:49,583
+00:17:49,283 --> 00:17:53,500
 For the simplex method, what if (0, 0) isn’t a vertex – how do we start?
 
 238
-00:17:50,800 --> 00:17:55,716
+00:17:54,716 --> 00:17:59,633
 Also, the way we described it, the method might run in exponential time
 
 239
-00:17:55,716 --> 00:17:59,166
+00:17:59,633 --> 00:18:03,083
 and may even get stuck in an infinite loop – can we fix this?
 
 240
-00:18:00,916 --> 00:18:06,650
+00:18:04,833 --> 00:18:10,566
 For duality, does every linear program have a dual and if so, how do we create it?
 
 241
-00:18:07,633 --> 00:18:12,633
+00:18:11,550 --> 00:18:16,550
 And once we do, can we use it in developing fast algorithms for the primal?
 
 242
-00:18:13,616 --> 00:18:15,966
+00:18:17,533 --> 00:18:19,883
 And, last but not least,
 
 243
-00:18:15,966 --> 00:18:19,316
+00:18:19,883 --> 00:18:23,233
 are there classes of ILP problems that can be solved in polynomial time?
 
 244
-00:18:20,200 --> 00:18:25,200
+00:18:24,116 --> 00:18:29,116
 And for those that aren’t in such class, can we at least get approximate solutions in polynomial time?
 
 245
-00:18:26,783 --> 00:18:32,350
+00:18:30,700 --> 00:18:36,266
 I like to think that most topics, linear programming included, can be thought of as an iceberg
 
 246
-00:18:32,350 --> 00:18:33,716
+00:18:36,266 --> 00:18:37,633
 (in this case a convex one).
 
 247
-00:18:34,750 --> 00:18:37,533
+00:18:38,666 --> 00:18:41,450
 The surface contains simple concepts that everyone can see,
 
 248
-00:18:38,416 --> 00:18:41,400
+00:18:42,333 --> 00:18:45,316
 but if you dive down, you can discover a whole new world,
 
 249
-00:18:41,400 --> 00:18:43,150
+00:18:45,316 --> 00:18:47,066
 a part of which we’ll explore in the next video.
 
 250
-00:18:44,000 --> 00:18:47,800
+00:18:47,916 --> 00:18:51,716
 So if you found this interesting, stay tuned and thank you for watching!
 
