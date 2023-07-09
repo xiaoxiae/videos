@@ -17,4 +17,5 @@ Source code to my videos, found on my [YouTube channel](https://www.youtube.com/
 ## Shorts
 - 2022/11/16: **[What does this weird C program do?](https://youtube.com/shorts/X9pN7XZFbyE)** - A very strange C program that adds numbers.
 - 2022/11/14: **[Encoding Numbers using Dots and Parentheses](https://youtube.com/shorts/JY0_ApbZYkQ)** - A really cool way of encoding numbers using dots and parentheses.
+- 2023/07/10: **[The real difference between BFS and DFS](https://youtube.com/shorts/1tYtjRSWkVk)** - What is the real difference between BFS and DFS?
 

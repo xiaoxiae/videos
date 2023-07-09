@@ -29,6 +29,7 @@ Links to music used throughout my videos, along with their licensing and attribu
 - used in 12 - State Space
 - used in 17 - AB Tree
 - used in 18 - LP
+- used in 20 - BFSvDFS
 
 ► Cases to Rest by Blue Dot Sessions: https://app.sessions.blue/browse/track/139762
 - used in 13 - Primes Dots
