@@ -1321,6 +1321,119 @@ class Outro(MovingCameraScene):
                 result = tree.bubble_insert(3, scale=S, pause_between_shift=False)
 
 
+class TransparentInterlude(MovingCameraScene):
+    @fade
+    def construct(self):
+        ab = ABTree(
+            [
+                [[123]],
+                [[111], [2345]],
+                [[r"\textit{most}"], [r"\textit{elegant}"], [r"\textit{search}"], [r"\textit{structure}"]],
+            ],
+            layer_buffer=0.2,
+            node_buffer=0.3,
+            add_leafs=False,
+            is_interlude=True,
+        ).scale(2.5)
+
+        the = Tex("\sc The").scale(0.85)
+        a = Tex("\sc (a,b)")
+        trees = Tex("\sc Tree")
+        dash = Tex("-").scale(1.6).stretch_to_fit_height(Tex("-").get_height() * 2)
+
+        text = VGroup(the, a, dash, trees).scale(2.2)
+
+        for e in ab.edges_individually:
+            e.scale(1.4).set_stroke_width(6)
+
+        # hack
+        ab.edges_individually[-1].scale(0.001)
+        ab.edges_individually[-2].scale(0.001)
+        ab.edges_individually[-3].scale(0.001)
+        ab.edges_individually[-4].scale(0.001)
+
+        #ab.edges_by_node_index(1, 0).set_color(GRAY)
+        #ab.edges_by_node_index(1, 1).set_color(GRAY)
+        #ab.node_by_index(2, 0)[0].set_color(GRAY)
+        #ab.node_by_index(2, 1)[0].set_color(GRAY)
+        #ab.node_by_index(2, 2)[0].set_color(GRAY)
+        #ab.node_by_index(2, 3)[0].set_color(GRAY)
+        #ab.node_by_index(2, 0)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 1)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 2)[1].set_stroke_color(GRAY)
+        #ab.node_by_index(2, 3)[1].set_stroke_color(GRAY)
+
+        ab.node_by_index(2, 1)[0][0].shift(DOWN * 0.035)
+
+        ab.node_by_index(2, 0)[0].scale(0.9)
+        ab.node_by_index(2, 1)[0].scale(0.9)
+        ab.node_by_index(2, 2)[0].scale(0.9)
+        ab.node_by_index(2, 3)[0].scale(0.9)
+
+        bee = SVGMobject("assets/bee.svg")\
+                .scale(0.9).move_to(ab.node_by_index(1, 0)[0])\
+                .rotate(PI / 15)\
+                .shift(UP * 0.7 + LEFT * 0.9)
+
+        cache = SVGMobject("assets/cache_line.svg")\
+                .scale(1.05).move_to(ab.node_by_index(1, 1)[0])\
+                .rotate(-PI / 20)\
+                .shift(UP * 0.6 + RIGHT * 1.05)
+
+        cache[1].set_color(GREEN)
+        cache[2].set_color(GREEN)
+
+        ab.node_by_index(0, 0)[0].become(the.move_to(ab.node_by_index(0, 0)[0]))
+        ab.node_by_index(1, 0)[0].become(a.move_to(ab.node_by_index(1, 0)[0]))
+        ab.node_by_index(1, 1)[0].become(trees.move_to(ab.node_by_index(1, 1)[0]))
+
+        dash.scale(1.15)
+        dash.move_to(VGroup(
+            Dot().next_to(ab.node_by_index(1, 0), RIGHT),
+            Dot().next_to(ab.node_by_index(1, 1), LEFT),
+        )).shift(LEFT * 0.115)
+
+        x = VGroup(
+            Tex(r"\textit{most}"),
+            Tex(r"\textit{elegant}"),
+        ).arrange(DOWN).next_to(the, LEFT, buff=1.5).scale(0.8)
+
+        y = VGroup(
+            Tex(r"\textit{search}"),
+            Tex(r"\textit{structure}"),
+        ).arrange(DOWN).next_to(the, RIGHT, buff=1.5).scale(0.8)
+
+        self.add(ab.skeleton)
+        #self.add(bee)
+        #self.add(cache)
+        #self.add(text)
+
+        self.camera.frame.scale(0.8)
+
+        text.set_z_index(10000)
+
+        self.play(
+            AnimationGroup(
+                Write(text, run_time=1.5),
+                AnimationGroup(
+                    AnimationGroup(
+                        FadeIn(ab.node_by_index(2, 0)[0]),
+                        FadeIn(ab.node_by_index(2, 1)[0]),
+                        FadeIn(ab.node_by_index(2, 2)[0]),
+                        FadeIn(ab.node_by_index(2, 3)[0]),
+                        lag_ratio=0.35,
+                    ),
+                    AnimationGroup(
+                        FadeIn(bee, shift=UP * 0.5 + LEFT * .25),
+                        FadeIn(cache, shift=UP * 0.3 + RIGHT * .25),
+                    ),
+                    lag_ratio=0.5,
+                ),
+                lag_ratio=0.7,
+            ),
+        )
+
+
 class Interlude(MovingCameraScene):
     @fade
     def construct(self):
