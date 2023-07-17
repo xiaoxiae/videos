@@ -1,6 +1,11 @@
 manim
+open3d
 opencv-python
 pulp
+pycolmap
 pyloudnorm
 pysoundfile
 pyyaml
+
+# latest IPython is bugged with ManimGL
+ipython==8.0.1
