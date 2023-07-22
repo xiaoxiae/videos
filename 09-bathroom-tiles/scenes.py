@@ -3002,3 +3002,410 @@ class Thumbnail(Scene):
 
 
         self.wait()
+
+
+class TransparentThumbnail(Scene):
+    @fade
+    def construct(self):
+        FADE_COEFFICIENT = 0.75
+
+        self.next_section(skip_animations=True)
+
+        task = HighlightedTex(
+            r"{\bf Task:} |accept| input \(\Leftrightarrow\) parentheses are balanced",
+            color=GREEN,
+        )
+
+        self.play(FadeInUp(task))
+
+        parentheses = Tex("$(\ (\ )\ (\ )\ )\ (\ )$").next_to(task, DOWN).scale(2)
+
+        self.play(
+            AnimationGroup(
+                task.animate.shift(UP),
+                FadeInUp(parentheses),
+            )
+        )
+
+        def BracketBetweenPoints(
+            p1, p2, direction=UP, color=WHITE, width=0.06, height=0.22, **kwargs
+        ):
+            w = width
+            h = height
+
+            r1 = Rectangle(width=w, height=h).next_to(p1, direction, buff=0)
+            r3 = Rectangle(width=w, height=h).next_to(p2, direction, buff=0)
+
+            r2 = (
+                Rectangle(width=(abs(p1[0] - p2[0]) + w), height=w)
+                .align_to(r1, direction)
+                .set_x((r1.get_x() + r3.get_x()) / 2)
+            )
+
+            return Union(r1, r2, r3, fill_color=color, fill_opacity=1, stroke_width=0)
+
+        braces = [
+            BracketBetweenPoints(
+                Dot().next_to(parentheses[0][0], DOWN, buff=0.1).get_center(),
+                Dot().next_to(parentheses[0][5], DOWN, buff=0.1).get_center(),
+                direction=DOWN,
+                height=0.43,
+                color=GRAY,
+            ).scale(0.95),
+            BracketBetweenPoints(
+                Dot().next_to(parentheses[0][1], DOWN, buff=0.1).get_center(),
+                Dot().next_to(parentheses[0][2], DOWN, buff=0.1).get_center(),
+                direction=DOWN,
+                color=GRAY,
+            ).scale(0.78),
+            BracketBetweenPoints(
+                Dot().next_to(parentheses[0][3], DOWN, buff=0.1).get_center(),
+                Dot().next_to(parentheses[0][4], DOWN, buff=0.1).get_center(),
+                direction=DOWN,
+                color=GRAY,
+            ).scale(0.78),
+            BracketBetweenPoints(
+                Dot().next_to(parentheses[0][6], DOWN, buff=0.1).get_center(),
+                Dot().next_to(parentheses[0][7], DOWN, buff=0.1).get_center(),
+                direction=DOWN,
+                color=GRAY,
+            ).scale(0.78),
+        ]
+
+        self.play(
+            FadeInUp(braces[0], move_factor=0.1),
+            FadeInUp(braces[1], move_factor=0.1),
+            FadeInUp(braces[2], move_factor=0.1),
+            FadeInUp(braces[3], move_factor=0.1),
+            run_time=0.65,
+        )
+
+        wall, tileset = examples["parentheses"]
+        tileset_scale = 0.7
+
+        tileset.scale(tileset_scale)
+
+        tileset.move_to(ORIGIN).shift(TILESET_OFFSET).shift(UP * 0.5)
+        wall.move_to(ORIGIN).shift(WALL_OFFSET * 0.8)
+
+        for i in range(len(wall.input)):
+            wall.get_color_object_in_direction(UP).remove(
+                wall.get_color_object_characters_in_direction(UP)[i]
+            )
+
+        self.play(
+            AnimationGroup(
+                AnimationGroup(
+                    task.animate.next_to(tileset, UP).shift(TASK_OFFSET * 0.8),
+                    AnimationGroup(
+                        FadeOutUp(braces[0], move_factor=0.1),
+                        FadeOutUp(braces[1], move_factor=0.1),
+                        FadeOutUp(braces[2], move_factor=0.1),
+                        FadeOutUp(braces[3], move_factor=0.1),
+                        run_time=0.5,
+                    ),
+                    *[
+                        Transform(
+                            parentheses[0][i],
+                            wall.get_color_object_characters_in_direction(UP)[i].copy(),
+                        )
+                        for i in range(len(wall.input))
+                    ],
+                    run_time=1,
+                ),
+                AnimationGroup(
+                    FadeInUp(wall),
+                    FadeInUp(tileset),
+                    run_time=0.7,
+                ),
+                lag_ratio=0.3,
+            )
+        )
+
+        tileset.scale(1 / tileset_scale)
+
+        result_wall = find_tiling(tileset, wall, max_height=2)
+
+        for i in range(wall.w):
+            for j in range(wall.h):
+                wall.add_tile(result_wall.get_tile(i, j), i, j, copy=True)
+
+        tileset.scale(tileset_scale)
+
+        self.play(
+            AnimationGroup(*[t.animateWrite() for t in wall.tiles], lag_ratio=0.01)
+        )
+
+        self.play(*wall.animateFillFlash())
+
+        for i in range(wall.w):
+            for j in range(wall.h):
+                wall.remove_tile(result_wall.get_tile(i, j))
+
+        parentheses_coefficient = 0.085
+
+        shift = 0.43
+
+        def highlight_parentheses(indexes, prev_indexes=[[]]):
+            if prev_indexes == [[]]:
+                for i in range(wall.w):
+                    parentheses[0][i].scale(INDICATE_SCALE).shift(
+                        UP * parentheses_coefficient
+                        + (ORIGIN if i in indexes else DOWN * shift)
+                    )
+                    parentheses[0][i].save_state()
+                    parentheses[0][i].scale(1 / INDICATE_SCALE).shift(
+                        DOWN * parentheses_coefficient
+                        + (ORIGIN if i in indexes else UP * shift)
+                    )
+
+            for i in range(wall.w):
+                if i in prev_indexes[0]:
+                    parentheses[0][i].save_state()
+
+            result = AnimationGroup(
+                *[
+                    (
+                        parentheses[0][i].animate.restore()
+                        if i in indexes and i not in prev_indexes[0]
+                        else (
+                            parentheses[0][i]
+                            .animate.scale(1 / INDICATE_SCALE)
+                            .shift(DOWN * parentheses_coefficient)
+                        ).fade(FADE_COEFFICIENT)
+                        if i not in indexes and i in prev_indexes[0]
+                        else parentheses[0][i].animate.fade(FADE_COEFFICIENT)
+                        if prev_indexes == [[]]
+                        else parentheses[0][i].animate.fade(0)
+                    )
+                    for i in range(wall.w)
+                ]
+            )
+
+            prev_indexes[0] = indexes
+
+            return result
+
+        def highlight_tiles(indexes, cache=[[[]]]):
+            first = False
+            if cache == [[[]]]:
+                first = True
+                cache[0] = [(i, j) for i in range(wall.w) for j in range(wall.h)]
+
+            for i in range(wall.w):
+                for j in range(wall.h):
+                    if (i, j) in cache[0]:
+                        if first:
+                            wall.shift(ORIGIN if (i, j) in indexes else DOWN * shift)
+
+                        wall.get_tile(i, j).save_state()
+
+                        if first:
+                            wall.shift(ORIGIN if (i, j) in indexes else UP * shift)
+
+            result = AnimationGroup(
+                *[
+                    wall.get_tile(i, j).animate.fade(FADE_COEFFICIENT)
+                    if (i, j) not in indexes and (i, j) in cache[0]
+                    else wall.get_tile(i, j).animate.restore()
+                    if (i, j) in indexes
+                    else wall.get_tile(i, j).animate.fade(0)
+                    for i in range(wall.w)
+                    for j in range(wall.h)
+                ],
+                run_time=0.75,
+            )
+
+            cache[0] = indexes
+
+            return result
+
+        p_copy = parentheses.copy().shift(DOWN * shift)
+
+        self.next_section()
+
+        self.play(highlight_parentheses([0, 5]))
+
+        self.play(
+            highlight_tiles(
+                [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 0)]
+            )
+        )
+
+        return
+
+        brace_offset = 0.25
+        bs = []
+        for i, (text, start, end) in enumerate(
+            [
+                ("single", tileset[0], tileset[1]),
+                (
+                    ["opening", "closing"],
+                    [tileset[2], tileset[8]],
+                    [tileset[2], tileset[8]],
+                ),
+                ("path creation", tileset[3], tileset[7]),
+                ("fill", tileset[9], tileset[9]),
+            ]
+        ):
+
+            def get_b_local(t, s, e):
+                b = BraceBetweenPoints(
+                    Point().next_to(s, UP + LEFT, buff=0).get_center(),
+                    Point().next_to(e, UP + RIGHT, buff=0).get_center(),
+                    direction=UP,
+                    color=NOTES_COLOR,
+                ).scale([-1, NOTES_SCALE, 1])
+
+                return [
+                    b,
+                    Tex(t, color=NOTES_COLOR)
+                    .next_to(b, UP)
+                    .scale(NOTES_SCALE)
+                    .shift(DOWN * 0.1),
+                ]
+
+            b_local = []
+
+            if type(text) is list:
+                for t, s, e in zip(text, start, end):
+                    b_local += get_b_local(t, s, e)
+            else:
+                b_local = get_b_local(text, start, end)
+
+            bs += b_local
+
+            additional = []
+
+            if i == 3:
+                b_local[-1].shift(UP * 0.08)
+
+                additional += [highlight_tiles([(6, 1), (7, 1)])]
+                additional += [highlight_parentheses([])]
+
+            if i == 1:
+                additional += [highlight_tiles([(0, 0), (5, 0)])]
+                additional += [highlight_parentheses((0, 5))]
+
+            if i == 2:
+                additional += [
+                    highlight_tiles(
+                        [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 0)]
+                    )
+                ]
+
+            if i == 0:
+                for b in b_local:
+                    b.shift(DOWN * shift)
+
+                self.play(
+                    task.animate.shift(UP * shift / 2),
+                    parentheses.animate.shift(DOWN * shift),
+                    wall.animate.shift(DOWN * shift),
+                    tileset.animate.shift(DOWN * shift),
+                )
+
+                self.play(
+                    *[FadeInUp(b, move_factor=0.1) for b in b_local],
+                    highlight_parentheses([1, 2, 3, 4, 6, 7]),
+                    highlight_tiles([(2, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]),
+                )
+
+            else:
+                self.play(*[FadeInUp(b) for b in b_local], *additional)
+
+        self.play(
+            highlight_tiles([(i, j) for i in range(wall.w) for j in range(wall.h)]),
+            Transform(parentheses, p_copy),
+        )
+
+        wall.save_state()
+        tileset.save_state()
+
+        self.play(
+            wall.get_tile(5, 0)
+            .get_color_object_in_direction(DOWN)
+            .animate.set_fill(PALETTE[1]),
+            wall.get_tile(5, 1)
+            .get_color_object_in_direction(UP)
+            .animate.set_fill(PALETTE[1]),
+            tileset[6].get_color_object_in_direction(UP).animate.set_fill(PALETTE[1]),
+            tileset[7].get_color_object_in_direction(UP).animate.set_fill(PALETTE[1]),
+            tileset[7].get_color_object_in_direction(DOWN).animate.set_fill(PALETTE[1]),
+            tileset[8].get_color_object_in_direction(DOWN).animate.set_fill(PALETTE[1]),
+        )
+
+        self.play(
+            Rotate(parentheses[0][5]),
+            Rotate(parentheses[0][0]),
+            Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP)),
+            Rotate(wall.get_tile(0, 0).get_color_object_in_direction(UP)),
+        )
+
+        self.play(
+            wall.animate.restore(),
+            tileset.animate.restore(),
+            Rotate(parentheses[0][5], angle=-PI),
+            Rotate(parentheses[0][0], angle=-PI),
+            Rotate(wall.get_tile(5, 0).get_color_object_in_direction(UP), angle=-PI),
+            Rotate(wall.get_tile(0, 0).get_color_object_in_direction(UP), angle=-PI),
+        )
+
+        self.play(*[FadeOutUp(b) for b in bs])
+
+        no2 = Tex(r"$\frac{1}{2}n$").next_to(task, DOWN)
+        no2dot = Tex(r"$1 \cdot \frac{1}{2}n$").next_to(task, DOWN)
+        no2o = (
+            Tex(r"time complexity: $\mathcal{O}(n)$")
+            .next_to(task, DOWN)
+            .align_to(task[1][0], LEFT)
+        )
+
+        self.play(Write(no2))
+        self.play(TransformMatchingShapes(no2, no2dot))
+        self.play(TransformMatchingShapes(no2dot, no2o))
+
+        self.play(
+            no2o.animate.shift(DOWN * 2.2),
+            task.animate.shift(DOWN * 2.2),
+            FadeOutDown(wall, move_factor=2.2),
+            FadeOutDown(tileset, move_factor=2.2),
+            FadeOutDown(parentheses, move_factor=2.2),
+            run_time=1.5,
+        )
+
+        opt = HighlightedTex(
+            r"|optimal| time complexity: $\mathcal{O}(\log n)$"
+        ).next_to(no2o, DOWN)
+        opt.shift(LEFT * (-no2o[0][0].get_x() + opt[1][0].get_x()))
+
+        self.play(FadeInDown(opt))
+
+        arrows = [
+            Arrow(
+                start=UP,
+                end=DOWN,
+                stroke_width=10,
+                max_stroke_width_to_length_ratio=10,
+                max_tip_length_to_length_ratio=0.5,
+            )
+            .align_on_border(DOWN)
+            .shift(LEFT + UP),
+            Arrow(
+                start=UP,
+                end=DOWN,
+                stroke_width=10,
+                max_stroke_width_to_length_ratio=10,
+                max_tip_length_to_length_ratio=0.5,
+            )
+            .align_on_border(DOWN)
+            .shift(RIGHT + UP),
+        ]
+
+        self.play(
+            opt.animate.shift(UP * 1.25),
+            no2o.animate.shift(UP * 1.25),
+            task.animate.shift(UP * 1.25),
+            FadeInUp(arrows[0], move_factor=0.6),
+            FadeInUp(arrows[1], move_factor=0.6),
+        )

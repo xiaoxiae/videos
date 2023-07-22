@@ -3,7 +3,9 @@ from utilities import *
 GRAPH_SCALE = 3.2
 
 HIDDEN_COLOR = DARKER_GRAY
+HIDDEN_COLOR_2 = DARK_GRAY
 HIGHLIGHT_COLOR = YELLOW
+COOLOR = GREEN
 
 
 def yield_spanning_trees(vertices, edges):
@@ -866,19 +868,19 @@ class Thumbnail(MovingCameraScene):
 
 
         for e in g_background.edges:
-            g_background.edges[e].set_color(HIDDEN_COLOR)
+            g_background.edges[e].set_color(HIDDEN_COLOR_2)
         for v in g_background.vertices:
-            g_background.vertices[v].set_color(HIDDEN_COLOR)
+            g_background.vertices[v].set_color(HIDDEN_COLOR_2)
 
         for e in g2_background.edges:
-            g2_background.edges[e].set_color(HIDDEN_COLOR)
+            g2_background.edges[e].set_color(HIDDEN_COLOR_2)
         for v in g2_background.vertices:
-            g2_background.vertices[v].set_color(HIDDEN_COLOR)
+            g2_background.vertices[v].set_color(HIDDEN_COLOR_2)
 
         for e in g3_background.edges:
-            g3_background.edges[e].set_color(HIDDEN_COLOR)
+            g3_background.edges[e].set_color(HIDDEN_COLOR_2)
         for v in g3_background.vertices:
-            g3_background.vertices[v].set_color(HIDDEN_COLOR)
+            g3_background.vertices[v].set_color(HIDDEN_COLOR_2)
 
         g.shift(LEFT * 2.5)
         g_background.shift(LEFT * 2.5)
