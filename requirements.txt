@@ -6,6 +6,7 @@ pycolmap
 pyloudnorm
 pysoundfile
 pyyaml
+scikit-image
 
 # latest IPython is bugged with ManimGL
 ipython==8.0.1

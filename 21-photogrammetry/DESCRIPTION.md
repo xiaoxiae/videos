@@ -8,7 +8,7 @@ Timetable:
 
 ------------------
 
-Source code: https://github.com/xiaoxiae/videos/tree/master/<name-of-folder>
+Source code: https://github.com/xiaoxiae/videos/tree/master/21-photogrammetry
 
 Music (in the order it appears in the video):
 ► <credit the music used>
@@ -31,5 +31,13 @@ Social media:
 
 ------------------
 
-[<LANGUAGE>] <Person's Thing I used to make the video>:
-https://url.com
+[EN] David G. Lowe: Distinctive Image Features from Scale-Invariant Keypoints (2004):
+https://link.springer.com/content/pdf/10.1023/B:VISI.0000029664.99615.94.pdf?pdf=button
+
+[EN] Russ Islam: Implementing SIFT in Python: A Complete Guide
+Part 1: https://medium.com/@russmislam/implementing-sift-in-python-a-complete-guide-part-1-306a99b50aa5
+Part 2: https://medium.com/@russmislam/implementing-sift-in-python-a-complete-guide-part-2-c4350274be2b
+Code: https://github.com/rmislam/PythonSIFT
+
+[EN] Carsten Rother: Computer Vision - 3D reconstruction (lecture 2022/2023)
+https://hci.iwr.uni-heidelberg.de/content/computer-vision-3d-reconstruction-2 
