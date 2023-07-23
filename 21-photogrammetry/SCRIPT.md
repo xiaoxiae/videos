@@ -18,22 +18,29 @@ INTRODUCTION
 ---
 
 > Thumbnail images on left -> object on the right? Or an object on a pedestal and images from different angles?
+
 > The second thing maybe better (+ render in blender for nice effect)
 > maybe half wireframe half the model (same thing as in my thesis)
 > Do this with a nice rock outside (so there is a lot of detail)
 
-> Will Bosi and BoD
+> Me climbing zooming out (as a grid)
+> Yes, there are all unique text at the bottom
 
 You probably don't know this about me, but I like to boulder.
 Like a lot.
 Honestly, a little too much.
 
-Anyway, one of the things that fascinate me is the rise of replica boulders, which are made by scanning the holds on the real boulder and creating an exact indoor replica for training.
+> The Lattice training video
 
-> A video of me taking pictures of a hold to the 3D model, (showing the images that I take)
-> Then something like COLMAP drag-n-drop and watch it reconstruct the models
+One of the things that fascinate me is the rise of replica boulders, which are made by scanning the holds on the real boulder and creating an exact indoor replica for training.
 
-Now the simplest way to obtain the models without expensive sensors is to take images of the holds and use one of the readily available photogrammetry programs to generate their 3D models... but how do they actually work?
+> A video of me taking pictures of a hold to the 3D model (showing the images that I take)
+> Probably take tripod + camera + a clip microphone and take images with a phone
+> Then something like COLMAP drag-n-drop and watch it reconstruct the models (again from the side)
+> First walk there, take pictures, walk back, then at the PC doing the drag-n-drop (visually from phone to PC would be funny)
+>   then somthing
+
+Now the simplest way to obtain the models is to take images of the holds with a camera, place them into one of the readily available photogrammetry programs, wait a little (or a lot, depending on how many images you have) and viola, you've got the model... but how do you go from 2D images to 3D models?
 
 > Left side images, right side model, something like ? in the middle, then zoom into the thingy
 
@@ -46,6 +53,7 @@ OVERVIEW
 ---
 
 > left side images, right side the 3D model (interactively rendered and moved?)
+> black box in the middle, then move into the blackbox
 
 As I've previously mentioned, our goal is to start with a bunch of 2D images of an object, taken from different angles, and end up with a 3D model that resembles the object as closely as possible.
 There are a number of problems we'll need to tackle as we go, but they can be broadly separated into two parts: sparse reconstruction and dense reconstruction.
@@ -54,8 +62,8 @@ For sparse reconstruction, we want to determine a handful of important features 
 
 We can then use those in dense reconstruction to generate a much larger number of features and from those a textured model.
 
-Every photogrammetry software does more-or-less exactly this but uses slightly different techniques and algorithms.
-For the sake of this video, I will cover the most common techniques and share additional resources in the description for those interested.
+Every photogrammetry software does more-or-less exactly this but with slightly different techniques and algorithms.
+So for the sake of this video, I will cover the most common techniques and share additional resources in the description for those interested.
 
 Okay, let's start with sparse reconstruction.
 
@@ -64,20 +72,23 @@ Okay, let's start with sparse reconstruction.
 SPARSE RECONSTRUCTION
 ---
 
-> show an image of the rock
+> show an image
 > flash in SIFT descriptors of the image
 > fade in another image and match multiple descriptors from one to another
 > transform the images into cameras and project onto points that are seen by both
 
 The core of sparse reconstruction are features.
-We can think of features spots in the images that are somehow interesting and distinctive.
-We do this because if we can match the same feature across multiple different images, we can triangulate where the cameras have to be for the geometry to make sense.
+We can think of features as spots in the images that are in some way interesting.
+We do this because if we can match same features across multiple different images, we can triangulate where the cameras have to be for the geometry to make sense.
 
-> now zoom back to the image
+> go back to the image
+
+But we're getting ahead of ourselves.
+Let's first figure out how to find features.
+
 > show the places we're talking about
 
-For a position in the image to be considered a feature, we want it to be somehow interesting.
-As an example, this <TODO> is not very interesting, while this sharp corner is.
+As we've previously mentioned, we want positions in the image that are somehow interesting.
 
 > TODO: explain how this is done via the scale space
 > mention that it's a gaussian scale space, what a DoG is (no, not that dog)
@@ -85,19 +96,27 @@ As an example, this <TODO> is not very interesting, while this sharp corner is.
 > also mention that the details are a bit tricky, but the main point is that we have a feature point if it's the local maximum in the adjacent scales
 > since this creates a lot of points (some of which aren't all that great), additionally filter by using threshold (is it very bright/dark?)
 
-Once we determine where the features are, we'll calculate their descriptors.
-These can be thought of as the descriptions of the feature and it surroundings, and it should stay the same if the feature is present in multiple images (so that we can match it).
+One way would be to look at pixels that are smaller/larger than all of their neighbours (i.e. the local extremes).
+This might work if the image was clean, but if you add any sort of noise or scale the image then all the features change, which probably shouldn't be happening.
 
-> scale-space differences (good features should be present in low-res versions)
-> dominant orientations (rotation + affine transformation-invariant)
 
+TODO: stuff with the scale space
+
+Now that we've determined where the features are, we'll calculate their descriptors.
+These can be thought of as information about the feature and its surroundings, and it should be the same if the feature is present in multiple images (so that we can match it).
+
+> make these centered at the feature we're looking at
+
+We need these to be resilient to transforms like rotation, scaling, brightness and changes in perspective
 This is honestly very sensible since moving from one angle to another can change any and all of those, so we have to be mindful of that.
 
-Okay, so at this point we have managed to detect features and their descriptors in all of their images and we'd like to detect the same features across multiple different images.
-This is a pretty standard problem called the "Nearest neighbor search," where the task is to find the closest TODO this is too long
-Now we could, for every feature, check all other features and mark those that are similar as matches, but since each image can have thousands of points, this would be very slow.
+> dominant orientations (rotation + affine transformation-invariant)
 
-Instead, we'll use a clever datastructure which allows us to do this much quicker.
+
+Okay, so at this point we have managed to detect features and compute their descriptors in all of their images, and we'd like to match features across multiple different images.
+Now we could, for every feature, check all other features and mark those whose descriptors are similar as matches, but since each image can have thousands of features, this would be extremely slow.
+
+Instead, we'll use a clever datastructure which speeds things up quite a bit.
 
 > we want to identify nearest neighbours -- use a k-d tree and best-bin-first
 > they should also be much better than others (ration between first and second)
@@ -107,7 +126,14 @@ We'd like to look at the matched points across the images and use them to infer 
 To understand why, we'll have to make a slight detour into how a standard camera creates images.
 
 > the pinhole model
-> that we want the center of the image
+> how far into affine coordinates do I want to go?
+> that we want the center of the image, but it doesn't work like that
+> sparse reconstruction lecture 3 -- show the pinhole model
+> explain some basic math behind it (what happens when we change the focal length)
+> explain how to get the matrix that we multiply by
+
+...
+
 > https://scipy-cookbook.readthedocs.io/items/bundle_adjustment.html
 > https://www.comp.nus.edu.sg/~cs4243/lecture/camera.pdf
 
@@ -117,4 +143,11 @@ Bundle adjustment
 DENSE RECONSTRUCTION
 ---
 
-TODO
+
+
+---
+OTHER APPROACHES
+---
+
+> iPhone's lidar
+> NERF (although not technically photogrammetry)
