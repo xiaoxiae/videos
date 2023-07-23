@@ -1876,92 +1876,9 @@ class Thumbnail(MovingCameraScene):
 
         self.next_section()
 
-        text_other = Tex(r"\Large The Blossom algorithm").scale(1.3)
+        text_other = Tex(r"\Large The Blossom Algorithm").scale(1.3)
         i = 5
         text_other[0][i].set_color(BLACK)
-
-        S = 1.3
-        text_other.scale(S)
-        img = SVGMobject("flower.svg").scale(0.225).move_to(text_other[0][i]).shift(LEFT * 0.02).scale(S)
-
-        GR = Group(text_other, img).move_to(text).shift(UP * 0.2)
-
-        self.add(GR)
-        self.remove(text)
-
-        FG = Group(GR, g)
-
-        self.camera.frame.move_to(FG).set_height(FG.get_height() * 1.4)
-
-        self.wait()
-
-
-class TransparentThumbnail(MovingCameraScene):
-    def construct(self):
-        self.next_section(skip_animations=True)
-
-        g = parse_graph(
-            """
-1 2 <10.402934501867037, 17.34415069651897> <16.203839106744862, 19.547491168818176>
-2 3 <16.203839106744862, 19.547491168818176> <22.178420402084758, 17.787256748775246> 
-3 4 <22.178420402084758, 17.787256748775246> <20.774348346247653, 23.755044257314765>
-2 4 <16.203839106744862, 19.547491168818176> <20.774348346247653, 23.755044257314765>
-4 5 <20.774348346247653, 23.755044257314765> <27.05817492976113, 23.859707295924565>
-6 5 <28.449708119653423, 17.768804208250373> <27.05817492976113, 23.859707295924565>
-4 7 <20.774348346247653, 23.755044257314765> <17.47242508549339, 29.021438342487553>
-5 8 <27.05817492976113, 23.859707295924565> <31.15502907598739, 28.586235859209886>
-8 9 <31.15502907598739, 28.586235859209886> <37.31660856822276, 28.245054265211092> 
-6 10 <28.449708119653423, 17.768804208250373> <34.660938508332286, 16.631467003826533>
-10 11 <34.660938508332286, 16.631467003826533> <40.60957109101587, 18.40703837992414>
-3 6 <22.178420402084758, 17.787256748775246> <28.449708119653423, 17.768804208250373>
-5 12 <27.05817492976113, 23.859707295924565> <33.0788344527837, 22.821541250821294>
-2 13 <16.203839106744862, 19.547491168818176> <12.52911329849324, 24.494238155627645>
-                """,
-            s=0.12 / NODE_SCALE,
-            t=-0.12 / NODE_SCALE,
-        ).scale(GRAPH_SCALE * NODE_SCALE).shift(DOWN * 0.65)
-
-        text = Tex("\large augmenting paths").next_to(g, UP * 3)
-
-        self.play(
-            Write(text),
-            Write(g),
-            )
-
-        M = [(5, 8), (6, 10), (2, 4)]
-        MV = edgesToVertices(M)
-
-        self.play(
-            *[ApplyFunction(match_edge, g.edges[e]) for e in M],
-            *[g.vertices[v].animate.set_color(MATCHING_COLOR) for v, _ in M],
-            *[g.vertices[v].animate.set_color(MATCHING_COLOR) for _, v in M],
-            *[
-                g.vertices[v].animate.set_color(EXPOSED_COLOR)
-                for v in g.vertices
-                if v not in MV
-            ],
-        )
-
-        animate_augment_path_partial(self, g, [(8, 9), (5, 8), (4, 5), (2, 4), (1, 2)],
-                add_animations_between=[
-                    Circumscribe(g.vertices[9], Circle, color=AUGMENTING_COLOR),
-                    Circumscribe(g.vertices[1], Circle, color=AUGMENTING_COLOR),
-                    ])
-
-        self.play(text.animate.shift(UP * 0.2),
-                g.animate.shift(DOWN * 0.2))
-
-        text2 = Tex(r"\scriptsize \em contains an augmenting path $\Leftrightarrow$ matching is not maximum$^{\ast}$").next_to(text, DOWN)
-
-        box = Tex(r"$\ast$ proof in description – theorem 2.4").scale(0.5).align_on_border(UP + RIGHT)
-        frame = SurroundingRectangle(box, color=WHITE, stroke_width=2)
-
-
-        self.next_section()
-
-        text_other = Tex(r"\Large The Blossom algorithm").scale(1.3)
-        i = 5
-        text_other[0][i].set_opacity(0)
 
         S = 1.3
         text_other.scale(S)

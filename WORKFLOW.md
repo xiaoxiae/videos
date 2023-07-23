@@ -59,3 +59,11 @@ It could alternatively serve as a workflow document for anyone who would like to
 	- my website (`videos.py` script)
 	- this repository's `README.md`
 	- Patreon (again planned release)
+
+
+# Other
+
+## Changing a video name
+- YouTube
+- README of this repo
+- Website (+ delete videos folder)
