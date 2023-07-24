@@ -3,7 +3,7 @@
 Since the time of the ancient Greeks, the best ideas were born in the bathroom – just ask Archimedes.
 
 2
-00:00:07,249 --> 00:00:12,599
+00:00:07,250 --> 00:00:12,600
 This would come in handy for programming, but unfortunately, laptops and moisture don’t get along very well.
 
 3
@@ -107,7 +107,7 @@ This means that we have to end with a 0, because a remainder 0 after division ha
 The tiles are divided into two groups:
 
 28
-00:02:40,316 --> 00:02:44,049
+00:02:40,316 --> 00:02:44,050
 we carry over the number of threes we’ve seen when the input contains a zero,
 
 29
@@ -171,7 +171,7 @@ What we’ll do here instead is measure the minimum number of rows needed to acc
 When the input is not accepted, there will be no rows to count since the tiling doesn’t exist.
 
 44
-00:04:05,883 --> 00:04:11,049
+00:04:05,883 --> 00:04:11,050
 We’ll therefore exclude rejected inputs from the calculation altogether, since there is no good way to measure them.
 
 45
@@ -179,7 +179,7 @@ We’ll therefore exclude rejected inputs from the calculation altogether, since
 But so far, we’ve only seen problems requiring exactly one row, so let’s look at one that requires a bit more.
 
 46
-00:04:19,065 --> 00:04:25,083
+00:04:19,066 --> 00:04:25,083
 The task is to create a program that accepts the input, if and only if it contains parentheses that are balanced
 
 47
@@ -195,7 +195,7 @@ One solution might look like this.
 Although daunting at first, the best way to understand it is to look at a successful tiling.
 
 50
-00:04:38,700 --> 00:04:45,349
+00:04:38,700 --> 00:04:45,350
 As you can see, the tiles are defined in such a way that they connect each corresponding pair of parentheses using the wall itself.
 
 51

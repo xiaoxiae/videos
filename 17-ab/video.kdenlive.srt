@@ -87,7 +87,7 @@ we soon reach a leaf, at which point we know the key is not present.
 For an (a, b)-tree, this procedure is very similar,
 
 23
-00:01:19,616 --> 00:01:23,399
+00:01:19,616 --> 00:01:23,400
 the only difference being that either the key is in the current node,
 
 24
@@ -296,7 +296,7 @@ Now it might seem like we’re be done, but remember that since this is an (a, b
 
 75
 00:04:54,633 --> 00:04:58,733
-a node can have at
+a node can have at 
 most b children, making the one that we just modified invalid.
 
 76
@@ -473,7 +473,7 @@ To see the other case in action, let’s remove another key.
 
 119
 00:08:21,950 --> 00:08:25,000
-As we see, its adjacent node has more than a
+As we see, its adjacent node has more than a 
 children,
 
 120
@@ -581,7 +581,7 @@ which theoretically increases the optimal a, b values by a factor of two.
 Secondly, the behavior largely depends on the way the structure is used,
 
 146
-00:10:11,266 --> 00:10:17,199
+00:10:11,266 --> 00:10:17,200
 which in my case consisted of n insertions, n searches and finally n deletions for n = 1 000 000
 
 147
@@ -602,7 +602,7 @@ but the main point that you should take away is that while theory is good,
 
 151
 00:10:30,200 --> 00:10:33,466
-real world is a
+real world is a 
 mess that no amount of computations can spare you from.
 
 152
@@ -611,7 +611,7 @@ Now that you know what an (a, b)-tree is, you might say why should I care?
 
 153
 00:10:40,500 --> 00:10:44,833
-Well, to really convince you
+Well, to really convince you 
 that this isn’t just some useless piece of computer science theory,
 
 154
@@ -628,7 +628,7 @@ including Apple’s APFS, Microsoft’s NTFS and Linux’s Ext4.
 
 157
 00:10:58,383 --> 00:11:02,183
-They are also used
+They are also used 
 by a number of languages for dictionary and set implementations,
 
 158

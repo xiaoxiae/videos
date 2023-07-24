@@ -1,7 +1,8 @@
 **/__pycache__
 **/media
 **/video
-**/audio*
+**/audio
+**/assets
 **/ignored
 **/export
 **/recordings

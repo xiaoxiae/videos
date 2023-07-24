@@ -3,7 +3,7 @@
 Imagine you’re the manager of a company that owns a number of factories,
 
 2
-00:00:03,649 --> 00:00:07,600
+00:00:03,650 --> 00:00:07,600
 each of which can produce one of at most two products.
 
 3
@@ -44,7 +44,7 @@ An easy way to think of it is that you have groups of literals
 
 12
 00:00:38,800 --> 00:00:40,933
- and at least one from each group has to be satisfied.
+and at least one from each group has to be satisfied.
 
 13
 00:00:42,050 --> 00:00:46,883
@@ -91,7 +91,7 @@ which exchanges an improved running time for a solution that is close to, but no
 Interestingly, one of SAT’s best approximation algorithms
 
 24
-00:01:42,383 --> 00:01:46,949
+00:01:42,383 --> 00:01:46,950
 is a random combination of two of its other, worse approximation algorithms,
 
 25
@@ -131,7 +131,7 @@ but instead that as many as possible are.
 In this case, by setting the literals like so, three out of four clauses can be satisfied!
 
 34
-00:02:21,483 --> 00:02:25,049
+00:02:21,483 --> 00:02:25,050
 Our first algorithm to solve MAX-SAT will be entirely random,
 
 35
@@ -244,7 +244,7 @@ We’ll create abinary variable for each literal and clause in the formula.
 
 62
 00:04:17,700 --> 00:04:21,149
-The
+The 
 expression to maximize will be the sum of clause variables,
 
 63
@@ -264,8 +264,8 @@ depending on the clause literals.
 If we, for example, take a look at the third inequality,
 
 67
-00:04:36,166 --> 00:04:41,099
- the only way for y to be 1 is if at least one of the literal variables are satisfied
+00:04:36,166 --> 00:04:41,100
+the only way for y to be 1 is if at least one of the literal variables are satisfied
 
 68
 00:04:41,100 --> 00:04:44,200
@@ -340,7 +340,7 @@ but it won’t be solving MAX-SAT anymore,
 since the variables can now be any number from 0 to 1.
 
 86
-00:05:37,466 --> 00:05:42,849
+00:05:37,466 --> 00:05:42,850
 We can demonstrate this on the following expression, constructing this relaxed linear program.
 
 87
@@ -396,7 +396,7 @@ For this part of the video,
 I present a proof for how well LP-SAT performs on the size of the clauses
 
 100
-00:06:34,766 --> 00:06:36,099
+00:06:34,766 --> 00:06:36,100
 (same as we’ve done for RAND-SAT).
 
 101
@@ -416,7 +416,7 @@ For the proof, we’ll use the following two facts.
 Fact A is the inequality of arithmetic and geometric means,
 
 105
-00:06:51,349 --> 00:06:54,783
+00:06:51,350 --> 00:06:54,783
 which states that for any sequence of non-negative real numbers,
 
 106
@@ -449,7 +449,7 @@ feel free to pause here and think it through.
 
 113
 00:07:19,000 --> 00:07:22,733
- If you recall, this is the relaxed linear program we used as hints for LP-SAT
+If you recall, this is the relaxed linear program we used as hints for LP-SAT
 
 114
 00:07:23,733 --> 00:07:27,400
@@ -464,7 +464,7 @@ and a clause containing k_j literals.
 For it to not be satisfied,
 
 117
-00:07:31,650 --> 00:07:37,299
+00:07:31,650 --> 00:07:37,300
 LP-SAT has to decide that all its positive literals be false and its negative literals be true,
 
 118
@@ -517,7 +517,7 @@ This is exactly what we wanted,
 
 130
 00:08:22,150 --> 00:08:27,516
-because the expected number of satisfied clauses is equal to the sum of the probabilities that they are satisfied, 
+because the expected number of satisfied clauses is equal to the sum of the probabilities that they are satisfied,
 
 131
 00:08:27,516 --> 00:08:30,000
@@ -572,7 +572,7 @@ As you can see, RAND-SAT seems to be performing better the larger the clause is.
 This is no surprise, since the more variables there are, the higher chance is for RAND-SAT to pick one correctly.
 
 144
-00:09:26,283 --> 00:09:29,949
+00:09:26,283 --> 00:09:29,950
 On the other hand, LP-SAT performs worse the larger the clause is,
 
 145
@@ -584,7 +584,7 @@ ultimately converging to the constant we arrived at during the proof.
 This prompts an intersting idea
 
 147
-00:09:36,199 --> 00:09:40,533
+00:09:36,200 --> 00:09:40,533
 since RAND-SAT performs better for longer clauses and LP-SAT performs better for shorter ones,
 
 148
@@ -626,3 +626,4 @@ I really hope you enjoyed this video, as it took a while to make
 157
 00:10:15,416 --> 00:10:19,166
 and hope it inspired you to further explore the wonderful world of approximation algorithms.
+

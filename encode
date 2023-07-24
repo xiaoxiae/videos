@@ -12,4 +12,4 @@ else
 fi
 
 # remove the original
-rm "video.mp4"
+mv "video.mp4" "original.mp4"

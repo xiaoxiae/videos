@@ -32,7 +32,7 @@ Honestly, a little too much.
 
 > The Lattice training video
 
-One of the things that fascinate me is the rise of replica boulders, which are made by scanning the holds on the real boulder and creating an exact indoor replica for training.
+Anyway, one of the things that fascinate me is the rise of replica boulders, which are made by scanning the holds on the real boulder and creating an exact indoor replica for training.
 
 > A video of me taking pictures of a hold to the 3D model (showing the images that I take)
 > Probably take tripod + camera + a clip microphone and take images with a phone

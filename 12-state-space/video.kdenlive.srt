@@ -208,7 +208,7 @@ the algorithm uses a queue of states to explore,
 
 53
 00:02:45,265 --> 00:02:46,232
-beginning with the starting
+beginning with the starting 
 one.
 
 54
@@ -453,7 +453,7 @@ that the problem fundamentally didn’t change –
 
 114
 00:05:56,606 --> 00:05:59,909
-we still have a state which we can use to
+we still have a state which we can use to 
 generate neighbouring states
 
 115
@@ -594,7 +594,7 @@ we implemented a general algorithm to solve problems that have states
 
 149
 00:07:55,508 --> 00:07:57,577
-where the
+where the 
 goal is to get from one to another
 
 150
@@ -670,7 +670,7 @@ the clay robot costs 2 ore
 the obsidian robot costs 3 ore and 14 clay
 
 168
-00:08:41,320 --> 00:08:43,522
+00:08:41,320 --> 00:08:43,523
 and the geode robot costs 2 ore and 7 obsidian
 
 169
@@ -755,7 +755,7 @@ When going from the starting state (which is an ore robot and no resources),
 
 189
 00:09:57,947 --> 00:10:00,299
-the problem doesn’t branch
+the problem doesn’t branch 
 too much initially,
 
 190
