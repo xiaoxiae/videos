@@ -92,8 +92,12 @@ Let's first figure out how to find the features.
 
 > grayscale the image (smoothly)
 > show two pixels (drag them out) and why it's hard for RGB images
+> find the correct value for the size of the images - we want enough features for it to be interesting (not too much, not too little)
+> maybe something like 400x300
+> we can animate the shrinking as literally scale and then zoom (or, well, scale back) while showing the dimensions and having the image slightly faded
 
 For the sake of simplicity, we'll be working with grayscale images for the rest of the video, otherwise comparing values of pixels becomes complicated.
+Let's also shrink them down a bit to see the pixel values better.
 
 > show the places we're talking about
 
@@ -109,6 +113,9 @@ This might work if the image has good quality, but if you add just a little bit 
 > also mention that the details are a bit tricky, but the main point is that we have a feature point if it's the local maximum in the adjacent scales
 > since this creates a lot of points (some of which aren't all that great), additionally filter by using threshold (is it very bright/dark?)
 
+We obviously don't want that, so we'll use a better approach called SIFT, which stands for Scale-Invariant Feature Transform.
+SIFT is based on the idea that a good feature should still be present when we reduce the image detail by scaling down or blurring.
+
 > TODO: visually show that SIFT is much more resilient to this using the same operations (side by side)
 
 Here is a side-by-side comparison.
@@ -117,15 +124,20 @@ Here is a side-by-side comparison.
 > animate some numbers appearing for each feature
 > then take a specific one and show a line + zoom in on the images
 
-Now that we've determined where the features are, we need to calculate their descriptors to start matching them across images.
-These can be thought of as information about the feature and its surroundings, and it should, for a given feature, stay the same across multiple images.
+Now that we've determined where the features are, we need to calculate their descriptors.
+Descriptors store information about the feature and its surroundings and, ideally, a feature should have very similar descriptors across multiple images and they should also be very different from other features, so we can correctly match them.
 
-Again, a simple algorithm could calculate the descriptor of a feature as the average value near its position.
-This is unsurprisingly as bad as it is simple and we can see this by trying to match these two images -- that doesn't look great.
+For example, a simple descriptor could just be the average value of the pixels near its position.
+This is unsurprisingly as bad as it is simple, and we can see this by trying it on these two images -- yeah, that doesn't look great.
 
-TODO: transition
+This approach is bad for a few reasons, the most important being that numbers aren't enough.
+We want to be able to encode more than just brightness and so we'll need to use vectors.
 
-Since just numbers seem to be a little restrictive, let's say that the descriptor will be a vector with a magnitude of the average value and direction being the image gradient.
+> add something like a note about the Sobel operator, which is how we calculated.
+> then do the same operations on the image
+
+An improved descriptor could then be a vector with a magnitude of the average value and orientation set to the image gradient (i.e. the direction of the color change).
+This should at least somewhat improve stability when rotating or scaling the image, but, again, not by much
 
 Let's improve this a bit and say that a descriptor is actually a lot of vectors ...
 
