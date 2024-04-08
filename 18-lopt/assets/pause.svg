@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="841.70068"
+   height="841.70068"
+   viewBox="0 0 841.70068 841.70069"
+   sodipodi:docname="pause.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.85058595"
+     inkscape:cx="348.58323"
+     inkscape:cy="49.965556"
+     inkscape:window-width="1914"
+     inkscape:window-height="2126"
+     inkscape:window-x="3840"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g8" />
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g8"
+     transform="translate(578.76984,-166.27936)">
+    <circle
+       id="path2417"
+       cx="-157.91949"
+       cy="587.1297"
+       r="376.05521" />
+    <path
+       style="fill:#ffffff"
+       d="m -278.41949,778.07884 c -1.1,-0.46443 -3.125,-2.05488 -4.5,-3.53434 l -2.5,-2.68992 v -184.9002 -184.9002 l 3.26923,-3.26923 3.26923,-3.26924 h 40.96154 40.96154 l 3.26923,3.26924 3.26923,3.26923 v 184.96153 184.96154 l -3.26831,3.26923 -3.26831,3.26923 -39.73169,0.20377 c -21.85243,0.11208 -40.63169,-0.17621 -41.73169,-0.64064 z m 160,0 c -1.1,-0.46443 -3.125,-2.05488 -4.5,-3.53434 l -2.5,-2.68992 v -184.9002 -184.9002 l 3.26923,-3.26923 3.26923,-3.26924 h 40.961541 40.96154 l 3.26923,3.26924 3.26923,3.26923 v 184.96153 184.96154 l -3.26831,3.26923 -3.26831,3.26923 -39.73169,0.20377 c -21.85243,0.11208 -40.631691,-0.17621 -41.731691,-0.64064 z"
+       id="path293" />
+    <circle
+       id="path340"
+       cx="-157.91949"
+       cy="587.1297"
+       r="395.85034"
+       style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke;stop-color:#000000" />
+  </g>
+</svg>
